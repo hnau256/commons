@@ -35,6 +35,10 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 
+    implementation("arrow-core")
+    implementation("arrow-core-serialization")
+    implementation("arrow-fx-coroutines")
+
     // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
         implementation("kotlinx-serialization-core")
