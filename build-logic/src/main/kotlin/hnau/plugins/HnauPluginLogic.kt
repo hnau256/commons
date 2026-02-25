@@ -35,6 +35,12 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 
+    // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
+    if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
+        implementation("kotlinx-serialization-core")
+        implementation("kotlinx-serialization-json")
+    }
+
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             freeCompilerArgs.add("-Xjsr305=strict")
@@ -43,4 +49,9 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
         }
     }
+}
+
+private fun Project.implementation(libName: String) {
+    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+    dependencies.add("implementation", libs.findLibrary(libName).get())
 }
