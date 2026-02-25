@@ -3,3 +3,26 @@ plugins {
 }
 
 rootProject.name = "commons"
+
+fun findAndIncludeModules(
+    dir: File,
+    pathPrefix: String = "",
+) {
+    dir
+        .listFiles { file ->
+            file.isDirectory &&
+                    !file.name.startsWith(".") &&
+                    file.name != "build" &&
+                    file.name != "gradle"
+        }
+        ?.forEach { file ->
+            val currentPath = listOfNotNull(pathPrefix.takeIf(String::isNotEmpty), file.name)
+                .joinToString(separator = ":")
+            when (File(file, "build.gradle.kts").exists()) {
+                true -> include(":$currentPath")
+                false -> findAndIncludeModules(file, currentPath)
+            }
+        }
+}
+
+findAndIncludeModules(rootDir)
