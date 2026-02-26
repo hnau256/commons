@@ -90,6 +90,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
 
         publications.withType<MavenPublication>().configureEach {
+            groupId = "org.hnau.commons"
             artifactId =
                 when (name) {
                     "kotlinMultiplatform" -> artifactIdValue
@@ -101,7 +102,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     // Dependencies
     if (path != ":kotlin") {
-        //addDependency(HnauDependency.Internal(project(":kotlin")))
+        addDependency(HnauDependency.Internal(project(":kotlin")))
     }
 
     // Conditional dependencies
