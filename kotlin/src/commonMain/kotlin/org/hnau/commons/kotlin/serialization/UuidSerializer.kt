@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.serialization
+package org.hnau.commons.kotlin.serialization
 
-import hnau.commons.kotlin.mapper.Mapper
-import hnau.commons.kotlin.mapper.stringToUuid
+import org.hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.stringToUuid
 import kotlinx.serialization.builtins.serializer
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

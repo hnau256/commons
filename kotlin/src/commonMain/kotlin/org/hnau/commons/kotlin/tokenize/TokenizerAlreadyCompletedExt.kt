@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.tokenize
+package org.hnau.commons.kotlin.tokenize
 
 internal fun <I, T> Tokenizer.Companion.alreadyCompleted(
     value: T,

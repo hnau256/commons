@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
-import hnau.commons.kotlin.joinEscaped
-import hnau.commons.kotlin.splitEscaped
+import org.hnau.commons.kotlin.joinEscaped
+import org.hnau.commons.kotlin.splitEscaped
 
 fun Mapper.Companion.stringToStringsBySeparator(
     separator: Char,

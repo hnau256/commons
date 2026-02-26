@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 import arrow.core.Nel
 import arrow.core.NonEmptyList

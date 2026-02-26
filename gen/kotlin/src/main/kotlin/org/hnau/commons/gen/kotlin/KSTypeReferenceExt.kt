@@ -1,9 +1,9 @@
-package hnau.commons.gen.kotlin
+package org.hnau.commons.gen.kotlin
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeReference
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.ifNull
 
 fun KSTypeReference.resolve(
     logger: KSPLogger,

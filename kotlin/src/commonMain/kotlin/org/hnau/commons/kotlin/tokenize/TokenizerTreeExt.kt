@@ -1,9 +1,9 @@
-package hnau.commons.kotlin.tokenize
+package org.hnau.commons.kotlin.tokenize
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrNull
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.ifNull
 
 internal fun <T> Tokenizer.OptionFactory.Companion.stringsTree(
     variants: NonEmptyList<Pair<String, T>>,

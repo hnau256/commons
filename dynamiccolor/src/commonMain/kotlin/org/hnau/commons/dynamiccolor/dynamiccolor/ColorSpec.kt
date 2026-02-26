@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.dynamiccolor
+package org.hnau.commons.dynamiccolor.dynamiccolor
 
-import hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme.Platform
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme.Platform
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.palettes.TonalPalette
 
 /** An interface defining all the necessary methods that could be different between specs. */
 interface ColorSpec {

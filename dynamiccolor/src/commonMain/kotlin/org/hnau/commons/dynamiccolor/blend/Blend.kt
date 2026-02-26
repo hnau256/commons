@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package hnau.commons.dynamiccolor.blend
+package org.hnau.commons.dynamiccolor.blend
 
-import hnau.commons.dynamiccolor.hct.Cam16
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.utils.ColorUtils
-import hnau.commons.dynamiccolor.utils.MathUtils
+import org.hnau.commons.dynamiccolor.hct.Cam16
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.utils.ColorUtils
+import org.hnau.commons.dynamiccolor.utils.MathUtils
 import kotlin.math.min
 
 /** Functions for blending in HCT and CAM16. */

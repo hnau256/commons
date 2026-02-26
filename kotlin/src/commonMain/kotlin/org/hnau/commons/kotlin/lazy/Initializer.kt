@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.lazy
+package org.hnau.commons.kotlin.lazy
 
 import arrow.core.None
 import arrow.core.Option

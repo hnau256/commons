@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 inline fun <T, reified E : Enum<E>> Mapper.Companion.toEnum(
     crossinline extractValue: E.() -> T,

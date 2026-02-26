@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi

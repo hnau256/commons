@@ -1,9 +1,9 @@
-package hnau.commons.kotlin.coroutines
+package org.hnau.commons.kotlin.coroutines
 
-import hnau.commons.kotlin.Loadable
-import hnau.commons.kotlin.Loading
-import hnau.commons.kotlin.Ready
-import hnau.commons.kotlin.map
+import org.hnau.commons.kotlin.Loadable
+import org.hnau.commons.kotlin.Loading
+import org.hnau.commons.kotlin.Ready
+import org.hnau.commons.kotlin.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

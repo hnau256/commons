@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.scheme
+package org.hnau.commons.dynamiccolor.scheme
 
-import hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
-import hnau.commons.dynamiccolor.dynamiccolor.ColorSpecs
-import hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme
-import hnau.commons.dynamiccolor.dynamiccolor.Variant
-import hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
+import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpecs
+import org.hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme
+import org.hnau.commons.dynamiccolor.dynamiccolor.Variant
+import org.hnau.commons.dynamiccolor.hct.Hct
 
 /** A playful theme - the source color's hue does not appear in the theme. */
 class SchemeFruitSalad(

@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.coroutines.flow.state.mutable
+package org.hnau.commons.kotlin.coroutines.flow.state.mutable
 
-import hnau.commons.kotlin.coroutines.flow.state.mapState
-import hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.temperature
+package org.hnau.commons.dynamiccolor.temperature
 
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.utils.ColorUtils
-import hnau.commons.dynamiccolor.utils.MathUtils
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.utils.ColorUtils
+import org.hnau.commons.dynamiccolor.utils.MathUtils
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2

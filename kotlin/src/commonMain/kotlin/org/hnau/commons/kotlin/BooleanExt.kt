@@ -1,4 +1,4 @@
-package hnau.commons.kotlin
+package org.hnau.commons.kotlin
 
 inline fun <R> Boolean.foldBoolean(
     ifTrue: () -> R,

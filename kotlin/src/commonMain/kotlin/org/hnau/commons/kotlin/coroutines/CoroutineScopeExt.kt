@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.coroutines
+package org.hnau.commons.kotlin.coroutines
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -1,4 +1,4 @@
-package hnau.commons.kotlin
+package org.hnau.commons.kotlin
 
 import arrow.core.NonEmptyList
 import arrow.core.None

@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 data class Mapper<I, O>(
     val direct: (I) -> O,

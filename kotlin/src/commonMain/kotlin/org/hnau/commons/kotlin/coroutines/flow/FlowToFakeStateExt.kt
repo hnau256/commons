@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.coroutines.flow
+package org.hnau.commons.kotlin.coroutines.flow
 
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.awaitCancellation

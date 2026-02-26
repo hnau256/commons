@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.tokenize
+package org.hnau.commons.kotlin.tokenize
 
 import arrow.core.None
 import arrow.core.Option

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.dynamiccolor
+package org.hnau.commons.dynamiccolor.dynamiccolor
 
 /** Named colors, otherwise known as tokens, or roles, in the Material Design system. */
 class MaterialDynamicColors {

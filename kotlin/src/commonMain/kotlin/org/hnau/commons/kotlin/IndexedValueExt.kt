@@ -1,4 +1,4 @@
-package hnau.commons.kotlin
+package org.hnau.commons.kotlin
 
 inline fun <I, O> IndexedValue<I>.map(
     transform: (I) -> O,

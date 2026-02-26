@@ -1,6 +1,6 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.ifNull
 
 fun Mapper.Companion.stringToStringsPairBySeparator(
     separator: Char,

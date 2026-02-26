@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json

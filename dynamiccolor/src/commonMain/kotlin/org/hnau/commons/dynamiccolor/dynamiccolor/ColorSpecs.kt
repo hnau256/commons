@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.dynamiccolor
+package org.hnau.commons.dynamiccolor.dynamiccolor
 
-import hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
+import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
 
 /** A utility class to get the correct color spec for a given spec version. */
 object ColorSpecs {

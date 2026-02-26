@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.palettes
+package org.hnau.commons.dynamiccolor.palettes
 
-import hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.hct.Hct
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

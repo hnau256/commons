@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.coroutines.flow.state
+package org.hnau.commons.kotlin.coroutines.flow.state
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

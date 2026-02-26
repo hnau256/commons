@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.tokenize
+package org.hnau.commons.kotlin.tokenize
 
 private val floatTokenizerOptionFactory = Tokenizer.OptionFactory<Char, Float> { firstChar ->
     when {

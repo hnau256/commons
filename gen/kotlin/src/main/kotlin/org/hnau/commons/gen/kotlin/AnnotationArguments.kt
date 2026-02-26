@@ -1,9 +1,9 @@
-package hnau.commons.gen.kotlin
+package org.hnau.commons.gen.kotlin
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotation
-import hnau.commons.kotlin.foldNullable
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.ifNull
 
 class AnnotationArguments(
     @PublishedApi

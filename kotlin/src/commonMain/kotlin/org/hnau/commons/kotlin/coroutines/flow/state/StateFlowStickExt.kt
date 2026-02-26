@@ -1,12 +1,12 @@
-package hnau.commons.kotlin.coroutines.flow.state
+package org.hnau.commons.kotlin.coroutines.flow.state
 
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
 import arrow.core.toOption
-import hnau.commons.kotlin.coroutines.createChild
-import hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.coroutines.createChild
+import org.hnau.commons.kotlin.foldNullable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow

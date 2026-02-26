@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.tokenize
+package org.hnau.commons.kotlin.tokenize
 
 internal interface Tokenizer<I, out T> {
 

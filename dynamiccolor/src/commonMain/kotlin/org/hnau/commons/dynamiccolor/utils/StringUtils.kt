@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.utils
+package org.hnau.commons.dynamiccolor.utils
 
 /** Utility methods for string representations of colors. */
 internal object StringUtils {

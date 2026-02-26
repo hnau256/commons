@@ -1,12 +1,12 @@
-package hnau.commons.kotlin.coroutines
+package org.hnau.commons.kotlin.coroutines
 
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
-import hnau.commons.kotlin.Loadable
-import hnau.commons.kotlin.Loading
-import hnau.commons.kotlin.Ready
+import org.hnau.commons.kotlin.Loadable
+import org.hnau.commons.kotlin.Loading
+import org.hnau.commons.kotlin.Ready
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.SharingStarted

@@ -12,11 +12,11 @@ gradlePlugin {
     plugins {
         create("jvm") {
             id = "hnau-jvm"
-            implementationClass = "hnau.plugins.JvmPlugin"
+            implementationClass = "org.hnau.plugins.JvmPlugin"
         }
         create("kmp") {
             id = "hnau-kmp"
-            implementationClass = "hnau.plugins.KmpPlugin"
+            implementationClass = "org.hnau.plugins.KmpPlugin"
         }
     }
 }

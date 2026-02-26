@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
 fun <T> Mapper.Companion.takeIf(
     predicate: (T) -> Boolean,

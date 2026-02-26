@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.lazy
+package org.hnau.commons.kotlin.lazy
 
 class AsyncLazy<T>(
   private val init: suspend () -> T,

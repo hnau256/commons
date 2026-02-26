@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.coroutines.flow.state
+package org.hnau.commons.kotlin.coroutines.flow.state
 
 import arrow.core.NonEmptyList
-import hnau.commons.kotlin.coroutines.createChild
+import org.hnau.commons.kotlin.coroutines.createChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package hnau.commons.gen.kotlin
+package org.hnau.commons.gen.kotlin
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -6,8 +6,8 @@ import com.google.devtools.ksp.symbol.KSName
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import hnau.commons.kotlin.foldNullable
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.ifNull
 
 @Deprecated("")
 fun KSAnnotation.toAnnotationSpec(

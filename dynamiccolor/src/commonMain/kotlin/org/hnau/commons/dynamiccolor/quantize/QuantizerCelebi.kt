@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.quantize
+package org.hnau.commons.dynamiccolor.quantize
 
 /**
  * An image quantizer that improves on the quality of a standard K-Means algorithm by setting the

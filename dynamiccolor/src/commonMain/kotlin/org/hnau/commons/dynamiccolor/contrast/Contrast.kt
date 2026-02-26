@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.contrast
+package org.hnau.commons.dynamiccolor.contrast
 
-import hnau.commons.dynamiccolor.utils.ColorUtils
+import org.hnau.commons.dynamiccolor.utils.ColorUtils
 import kotlin.math.abs
 import kotlin.math.max
 

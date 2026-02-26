@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.score
+package org.hnau.commons.dynamiccolor.score
 
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.utils.MathUtils
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.utils.MathUtils
 import kotlin.math.floor
 import kotlin.math.roundToInt
 

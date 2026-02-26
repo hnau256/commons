@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.dynamiccolor
+package org.hnau.commons.dynamiccolor.dynamiccolor
 
-import hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.palettes.TonalPalette
-import hnau.commons.dynamiccolor.utils.MathUtils
+import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpec.SpecVersion
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.dynamiccolor.utils.MathUtils
 import kotlin.math.min
 import kotlin.math.round
 

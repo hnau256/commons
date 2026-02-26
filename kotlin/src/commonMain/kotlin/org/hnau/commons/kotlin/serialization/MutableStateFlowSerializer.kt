@@ -1,6 +1,6 @@
-package hnau.commons.kotlin.serialization
+package org.hnau.commons.kotlin.serialization
 
-import hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.KSerializer
 

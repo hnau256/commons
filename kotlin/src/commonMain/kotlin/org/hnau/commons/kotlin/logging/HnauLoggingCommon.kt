@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.logging
+package org.hnau.commons.kotlin.logging
 
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger

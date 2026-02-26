@@ -1,9 +1,9 @@
-package hnau.commons.gen.kotlin
+package org.hnau.commons.gen.kotlin
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSName
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.ifNull
 
 fun KSDeclaration.getQualifiedName(
     logger: KSPLogger,

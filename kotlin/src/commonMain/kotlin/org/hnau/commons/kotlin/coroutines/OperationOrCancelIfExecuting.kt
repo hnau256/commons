@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.coroutines
+package org.hnau.commons.kotlin.coroutines
 
-import hnau.commons.kotlin.coroutines.flow.state.mapState
-import hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.foldNullable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow

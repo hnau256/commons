@@ -1,4 +1,4 @@
-package hnau.plugins
+package org.hnau.plugins
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import org.gradle.api.JavaVersion

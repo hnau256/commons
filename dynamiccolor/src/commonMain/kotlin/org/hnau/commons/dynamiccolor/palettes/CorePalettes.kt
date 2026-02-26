@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.palettes
+package org.hnau.commons.dynamiccolor.palettes
 
 /**
  * Comprises foundational palettes to build a color scheme.

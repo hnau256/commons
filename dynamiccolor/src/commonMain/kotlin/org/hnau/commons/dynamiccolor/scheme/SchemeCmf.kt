@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.scheme
+package org.hnau.commons.dynamiccolor.scheme
 
-import hnau.commons.dynamiccolor.dynamiccolor.ColorSpec
-import hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme
-import hnau.commons.dynamiccolor.dynamiccolor.Variant
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpec
+import org.hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme
+import org.hnau.commons.dynamiccolor.dynamiccolor.Variant
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.palettes.TonalPalette
 
 /** A Dynamic Color theme with 2 source colors. */
 class SchemeCmf(

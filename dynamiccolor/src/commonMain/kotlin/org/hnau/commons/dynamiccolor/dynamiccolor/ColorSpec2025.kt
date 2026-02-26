@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hnau.commons.dynamiccolor.dynamiccolor
+package org.hnau.commons.dynamiccolor.dynamiccolor
 
-import hnau.commons.dynamiccolor.contrast.Contrast
-import hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme.Platform
-import hnau.commons.dynamiccolor.dynamiccolor.ToneDeltaPair.DeltaConstraint
-import hnau.commons.dynamiccolor.dynamiccolor.ToneDeltaPair.TonePolarity
-import hnau.commons.dynamiccolor.hct.Hct
-import hnau.commons.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.dynamiccolor.contrast.Contrast
+import org.hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme.Platform
+import org.hnau.commons.dynamiccolor.dynamiccolor.ToneDeltaPair.DeltaConstraint
+import org.hnau.commons.dynamiccolor.dynamiccolor.ToneDeltaPair.TonePolarity
+import org.hnau.commons.dynamiccolor.hct.Hct
+import org.hnau.commons.dynamiccolor.palettes.TonalPalette
 import kotlin.math.max
 import kotlin.math.min
 

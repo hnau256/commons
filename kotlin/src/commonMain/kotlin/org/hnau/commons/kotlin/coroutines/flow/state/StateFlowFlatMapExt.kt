@@ -1,7 +1,7 @@
-package hnau.commons.kotlin.coroutines.flow.state
+package org.hnau.commons.kotlin.coroutines.flow.state
 
-import hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
-import hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
+import org.hnau.commons.kotlin.ifNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

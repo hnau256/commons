@@ -1,10 +1,10 @@
-package hnau.commons.kotlin
+package org.hnau.commons.kotlin
 
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
-import hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty

@@ -1,6 +1,6 @@
-package hnau.commons.kotlin.mapper
+package org.hnau.commons.kotlin.mapper
 
-import hnau.commons.kotlin.it
+import org.hnau.commons.kotlin.it
 
 fun <T> Mapper.Companion.equality() = Mapper<T, T>(::it, ::it)
 

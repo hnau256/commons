@@ -1,4 +1,4 @@
-package hnau.commons.kotlin.serialization
+package org.hnau.commons.kotlin.serialization
 
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.serializers.FormattedInstantSerializer
