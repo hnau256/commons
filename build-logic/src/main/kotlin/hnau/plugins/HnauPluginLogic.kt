@@ -36,6 +36,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
             kotlinExtension.jvm()
+            kotlinExtension.linuxX64()
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
                 namespace = "hnau.commons." + path.drop(1).replace(':', '.')
