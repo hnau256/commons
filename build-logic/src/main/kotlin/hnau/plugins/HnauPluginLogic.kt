@@ -93,11 +93,25 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     addDependency("kotlinx-coroutines-core")
     addDependency("kotlinx-datetime")
     addDependency("kotlinx-atomicfu")
+    addDependency("kermit")
 
     // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
         addDependency("kotlinx-serialization-core")
         addDependency("kotlinx-serialization-json")
+    }
+
+    // Добавляем kermit-slf4j для JVM/Android
+    val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
+    if (kmpExtension != null) {
+        kmpExtension.sourceSets.findByName("jvmMain")?.dependencies {
+            implementation(libs.findLibrary("kermit-slf4j").get())
+        }
+        kmpExtension.sourceSets.findByName("androidMain")?.dependencies {
+            implementation(libs.findLibrary("kermit-slf4j").get())
+        }
+    } else {
+        dependencies.add("implementation", libs.findLibrary("kermit-slf4j").get())
     }
 
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
