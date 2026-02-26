@@ -2,24 +2,27 @@
 kotlin = "2.3.10"
 jvm = "17"
 serialization = "1.10.0"
-coroutines = "1.10.1"
-datetime = "0.7.0"
-atomicfu = "0.27.0"
+coroutines = "1.10.2"
+datetime = "0.7.1"
+atomicfu = "0.31.0"
 arrow = "2.2.1.1"
 agp = "9.0.1"
 androidCompileSdk = "35"
 androidMinSdk = "21"
+dokka = "2.1.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-multiplatform = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [libraries]
 # Build logic
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+dokka-gradle-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
 
 # Kotlinx
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "serialization" }

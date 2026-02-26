@@ -9,11 +9,15 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -32,6 +36,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             configure<JavaPluginExtension> {
                 sourceCompatibility = JavaVersion.toVersion(jvmVersion)
                 targetCompatibility = JavaVersion.toVersion(jvmVersion)
+                withSourcesJar()
             }
         }
 
@@ -40,7 +45,9 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             plugins.apply("org.jetbrains.kotlin.multiplatform")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
-            kotlinExtension.jvm()
+            kotlinExtension.jvm {
+                withSourcesJar()
+            }
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
                 namespace = "org.hnau.commons." + hnauPath('.')
@@ -49,6 +56,15 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
         }
     }
+
+    // Dokka
+    plugins.apply("org.jetbrains.dokka")
+    val dokkaHtmlTask = tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+    val javadocJar =
+        tasks.register<Jar>("javadocJar") {
+            from(dokkaHtmlTask.flatMap { it.outputDirectory })
+            archiveClassifier.set("javadoc")
+        }
 
     // Publishing
     plugins.apply("maven-publish")
@@ -60,6 +76,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                     "kotlinMultiplatform" -> artifactIdValue
                     else -> artifactId.replace(project.name, artifactIdValue)
                 }
+            artifact(javadocJar)
         }
 
         if (type == HnauProjectType.JVM) {
