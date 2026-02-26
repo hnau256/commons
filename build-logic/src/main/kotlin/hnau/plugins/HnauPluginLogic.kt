@@ -26,6 +26,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 enum class HnauProjectType { JVM, KMP }
 
+private sealed interface HnauDependency {
+    class External(
+        val alias: String,
+    ) : HnauDependency
+
+    class Internal(
+        val project: Project,
+    ) : HnauDependency
+}
+
 internal fun Project.configureHnau(type: HnauProjectType) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
     val jvmVersion = libs.requireVersion("jvm")
@@ -89,13 +99,13 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     // Dependencies
     if (path != ":kotlin") {
-        addDependency(project(":kotlin"))
+        addDependency(HnauDependency.Internal(project(":kotlin")))
     }
 
     // Conditional dependencies
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
-        addDependency("kotlinx-serialization-core")
-        addDependency("kotlinx-serialization-json")
+        addDependency(HnauDependency.External("kotlinx-serialization-core"))
+        addDependency(HnauDependency.External("kotlinx-serialization-json"))
     }
 
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -112,14 +122,14 @@ private fun VersionCatalog.requireVersion(alias: String): String = findVersion(a
 
 private fun Project.hnauPath(separator: Char): String = path.drop(1).replace(':', separator)
 
-private fun Project.addDependency(dependency: Any) {
+private fun Project.addDependency(dependency: HnauDependency) {
     val actualDependency =
         when (dependency) {
-            is String -> {
+            is HnauDependency.External -> {
                 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-                libs.findLibrary(dependency).get()
+                libs.findLibrary(dependency.alias).get()
             }
-            else -> dependency
+            is HnauDependency.Internal -> dependency.project
         }
 
     val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
