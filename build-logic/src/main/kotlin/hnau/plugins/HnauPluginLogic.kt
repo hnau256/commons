@@ -43,7 +43,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             kotlinExtension.jvm()
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
-                namespace = "hnau.commons." + path.drop(1).replace(':', '.')
+                namespace = "org.hnau.commons." + hnauPath('.')
                 compileSdk = libs.requireVersion("androidCompileSdk").toInt()
                 minSdk = libs.requireVersion("androidMinSdk").toInt()
             }
@@ -53,7 +53,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     // Publishing
     plugins.apply("maven-publish")
     configure<PublishingExtension> {
-        val artifactIdValue = path.drop(1).replace(':', '-')
+        val artifactIdValue = hnauPath('-')
         publications.withType<MavenPublication>().configureEach {
             artifactId =
                 when (name) {
@@ -94,6 +94,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 }
 
 private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
+
+private fun Project.hnauPath(separator: Char): String = path.drop(1).replace(':', separator)
 
 private fun Project.addDependency(libName: String) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
