@@ -7,7 +7,11 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -30,18 +34,36 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                 targetCompatibility = JavaVersion.toVersion(jvmVersion)
             }
         }
+
         HnauProjectType.KMP -> {
             plugins.apply("com.android.kotlin.multiplatform.library")
             plugins.apply("org.jetbrains.kotlin.multiplatform")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
             kotlinExtension.jvm()
-            kotlinExtension.linuxX64()
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
                 namespace = "hnau.commons." + path.drop(1).replace(':', '.')
                 compileSdk = libs.requireVersion("androidCompileSdk").toInt()
                 minSdk = libs.requireVersion("androidMinSdk").toInt()
+            }
+        }
+    }
+
+    plugins.apply("maven-publish")
+    configure<PublishingExtension> {
+        val artifactIdValue = path.drop(1).replace(':', '-')
+        publications.withType<MavenPublication>().configureEach {
+            artifactId = when (name) {
+                "kotlinMultiplatform" -> artifactIdValue
+                else -> artifactId.replace(project.name, artifactIdValue)
+            }
+        }
+
+        if (type == HnauProjectType.JVM) {
+            publications.create<MavenPublication>("maven") {
+                from(components["java"])
+                artifactId = artifactIdValue
             }
         }
     }
@@ -70,7 +92,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 }
 
-private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
+private fun VersionCatalog.requireVersion(alias: String): String =
+    findVersion(alias).get().requiredVersion
 
 private fun Project.addDependency(libName: String) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
