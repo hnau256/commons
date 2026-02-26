@@ -15,6 +15,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
@@ -86,32 +87,15 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 
-    // Безусловные зависимости
-    addDependency("arrow-core")
-    addDependency("arrow-core-serialization")
-    addDependency("arrow-fx-coroutines")
-    addDependency("kotlinx-coroutines-core")
-    addDependency("kotlinx-datetime")
-    addDependency("kotlinx-atomicfu")
-    addDependency("kermit")
+    // Dependencies
+    if (path != ":kotlin") {
+        addDependency(project(":kotlin"))
+    }
 
-    // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
+    // Conditional dependencies
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
         addDependency("kotlinx-serialization-core")
         addDependency("kotlinx-serialization-json")
-    }
-
-    // Добавляем kermit-slf4j для JVM/Android
-    val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
-    if (kmpExtension != null) {
-        kmpExtension.sourceSets.findByName("jvmMain")?.dependencies {
-            implementation(libs.findLibrary("kermit-slf4j").get())
-        }
-        kmpExtension.sourceSets.findByName("androidMain")?.dependencies {
-            implementation(libs.findLibrary("kermit-slf4j").get())
-        }
-    } else {
-        dependencies.add("implementation", libs.findLibrary("kermit-slf4j").get())
     }
 
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -128,16 +112,22 @@ private fun VersionCatalog.requireVersion(alias: String): String = findVersion(a
 
 private fun Project.hnauPath(separator: Char): String = path.drop(1).replace(':', separator)
 
-private fun Project.addDependency(libName: String) {
-    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-    val library = libs.findLibrary(libName).get()
+private fun Project.addDependency(dependency: Any) {
+    val actualDependency =
+        when (dependency) {
+            is String -> {
+                val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+                libs.findLibrary(dependency).get()
+            }
+            else -> dependency
+        }
 
     val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
     when (kmpExtension) {
-        null -> dependencies.add("implementation", library)
+        null -> dependencies.add("implementation", actualDependency)
         else ->
             kmpExtension.sourceSets.getByName("commonMain").dependencies {
-                implementation(library)
+                implementation(actualDependency)
             }
     }
 }

@@ -10,7 +10,8 @@ agp = "9.0.1"
 androidCompileSdk = "35"
 androidMinSdk = "21"
 dokka = "2.1.0"
-kermit = "2.0.8"
+kermit = "2.0.4"
+slf4j = "2.0.17"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -39,4 +40,4 @@ arrow-fx-coroutines = { group = "io.arrow-kt", name = "arrow-fx-coroutines", ver
 
 # Logging
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
-kermit-slf4j = { group = "co.touchlab", name = "kermit-slf4j", version.ref = "kermit" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
