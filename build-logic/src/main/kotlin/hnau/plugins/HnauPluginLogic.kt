@@ -3,6 +3,7 @@ package hnau.plugins
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
@@ -18,7 +19,7 @@ enum class HnauProjectType { JVM, KMP }
 
 internal fun Project.configureHnau(type: HnauProjectType) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-    val jvmVersion = libs.findVersion("jvm").get().requiredVersion
+    val jvmVersion = libs.requireVersion("jvm")
     val jvmTarget = JvmTarget.fromTarget(jvmVersion)
 
     when (type) {
@@ -38,18 +39,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
                 namespace = "hnau.commons." + path.drop(1).replace(':', '.')
-                compileSdk =
-                    libs
-                        .findVersion("androidCompileSdk")
-                        .get()
-                        .requiredVersion
-                        .toInt()
-                minSdk =
-                    libs
-                        .findVersion("androidMinSdk")
-                        .get()
-                        .requiredVersion
-                        .toInt()
+                compileSdk = libs.requireVersion("androidCompileSdk").toInt()
+                minSdk = libs.requireVersion("androidMinSdk").toInt()
             }
         }
     }
@@ -77,6 +68,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 }
+
+private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
 
 private fun Project.addDependency(libName: String) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
