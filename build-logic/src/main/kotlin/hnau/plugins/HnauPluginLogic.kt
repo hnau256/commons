@@ -50,20 +50,21 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 
+    // Publishing
     plugins.apply("maven-publish")
     configure<PublishingExtension> {
         val artifactIdValue = path.drop(1).replace(':', '-')
         publications.withType<MavenPublication>().configureEach {
-            artifactId = when (name) {
-                "kotlinMultiplatform" -> artifactIdValue
-                else -> artifactId.replace(project.name, artifactIdValue)
-            }
+            artifactId =
+                when (name) {
+                    "kotlinMultiplatform" -> artifactIdValue
+                    else -> artifactId.replace(project.name, artifactIdValue)
+                }
         }
 
         if (type == HnauProjectType.JVM) {
             publications.create<MavenPublication>("maven") {
                 from(components["java"])
-                artifactId = artifactIdValue
             }
         }
     }
@@ -92,8 +93,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 }
 
-private fun VersionCatalog.requireVersion(alias: String): String =
-    findVersion(alias).get().requiredVersion
+private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
 
 private fun Project.addDependency(libName: String) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
