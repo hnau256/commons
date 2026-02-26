@@ -1,8 +1,10 @@
 package hnau.plugins
 
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
@@ -28,9 +30,26 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
         }
         HnauProjectType.KMP -> {
+            plugins.apply("com.android.kotlin.multiplatform.library")
             plugins.apply("org.jetbrains.kotlin.multiplatform")
-            configure<KotlinMultiplatformExtension> {
-                jvm()
+
+            val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
+            kotlinExtension.jvm()
+
+            (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
+                namespace = "hnau.commons." + path.drop(1).replace(':', '.')
+                compileSdk =
+                    libs
+                        .findVersion("androidCompileSdk")
+                        .get()
+                        .requiredVersion
+                        .toInt()
+                minSdk =
+                    libs
+                        .findVersion("androidMinSdk")
+                        .get()
+                        .requiredVersion
+                        .toInt()
             }
         }
     }
@@ -41,6 +60,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     addDependency("arrow-fx-coroutines")
     addDependency("kotlinx-coroutines-core")
     addDependency("kotlinx-datetime")
+    addDependency("kotlinx-atomicfu")
 
     // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
@@ -65,8 +85,9 @@ private fun Project.addDependency(libName: String) {
     val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
     when (kmpExtension) {
         null -> dependencies.add("implementation", library)
-        else -> kmpExtension.sourceSets.getByName("commonMain").dependencies {
-            implementation(library)
-        }
+        else ->
+            kmpExtension.sourceSets.getByName("commonMain").dependencies {
+                implementation(library)
+            }
     }
 }

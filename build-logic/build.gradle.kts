@@ -5,6 +5,7 @@ plugins {
 repositories {
     mavenCentral()
     google()
+    gradlePluginPortal()
 }
 
 gradlePlugin {
@@ -22,14 +23,5 @@ gradlePlugin {
 
 dependencies {
     implementation(libs.kotlin.gradle.plugin)
-}
-
-repositories {
-    mavenCentral()
-    google()
-    gradlePluginPortal()
-}
-
-dependencies {
-    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.android.gradle.plugin)
 }
