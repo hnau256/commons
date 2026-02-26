@@ -15,7 +15,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
@@ -81,6 +80,13 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     plugins.apply("maven-publish")
     configure<PublishingExtension> {
         val artifactIdValue = hnauPath('-')
+
+        if (type == HnauProjectType.JVM) {
+            publications.create<MavenPublication>("maven") {
+                from(components["java"])
+            }
+        }
+
         publications.withType<MavenPublication>().configureEach {
             artifactId =
                 when (name) {
@@ -88,12 +94,6 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                     else -> artifactId.replace(project.name, artifactIdValue)
                 }
             artifact(javadocJar)
-        }
-
-        if (type == HnauProjectType.JVM) {
-            publications.create<MavenPublication>("maven") {
-                from(components["java"])
-            }
         }
     }
 
