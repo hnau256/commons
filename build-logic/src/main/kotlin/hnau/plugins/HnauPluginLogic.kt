@@ -101,7 +101,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     // Dependencies
     if (path != ":kotlin") {
-        addDependency(HnauDependency.Internal(project(":kotlin")))
+        //addDependency(HnauDependency.Internal(project(":kotlin")))
     }
 
     // Conditional dependencies
