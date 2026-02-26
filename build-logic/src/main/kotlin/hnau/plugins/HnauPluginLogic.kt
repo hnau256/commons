@@ -35,14 +35,17 @@ internal fun Project.configureHnau(type: HnauProjectType) {
         }
     }
 
-    implementation("arrow-core")
-    implementation("arrow-core-serialization")
-    implementation("arrow-fx-coroutines")
+    // Безусловные зависимости
+    addDependency("arrow-core")
+    addDependency("arrow-core-serialization")
+    addDependency("arrow-fx-coroutines")
+    addDependency("kotlinx-coroutines-core")
+    addDependency("kotlinx-datetime")
 
     // Явная проверка: наш плагин должен быть подключен ПОСЛЕ плагинов-технологий
     if (plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
-        implementation("kotlinx-serialization-core")
-        implementation("kotlinx-serialization-json")
+        addDependency("kotlinx-serialization-core")
+        addDependency("kotlinx-serialization-json")
     }
 
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -55,7 +58,15 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 }
 
-private fun Project.implementation(libName: String) {
+private fun Project.addDependency(libName: String) {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-    dependencies.add("implementation", libs.findLibrary(libName).get())
+    val library = libs.findLibrary(libName).get()
+
+    val kmpExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
+    when (kmpExtension) {
+        null -> dependencies.add("implementation", library)
+        else -> kmpExtension.sourceSets.getByName("commonMain").dependencies {
+            implementation(library)
+        }
+    }
 }

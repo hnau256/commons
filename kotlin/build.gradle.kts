@@ -1,4 +1,14 @@
 plugins {
     kotlin("plugin.serialization")
-    id("hnau-jvm")
+    id("hnau-kmp")
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(libs.kotlinx.atomicfu)
+            }
+        }
+    }
 }
