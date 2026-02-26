@@ -142,7 +142,6 @@ class Hct private constructor(argb: Int) {
      * @param tone 0 <= tone <= 100; invalid values are corrected.
      * @return HCT representation of a color in default viewing conditions.
      */
-    @JvmStatic
     fun from(hue: Double, chroma: Double, tone: Double): Hct {
       val argb = HctSolver.solveToInt(hue, chroma, tone)
       return Hct(argb)
@@ -154,22 +153,18 @@ class Hct private constructor(argb: Int) {
      * @param argb ARGB representation of a color.
      * @return HCT representation of a color in default viewing conditions
      */
-    @JvmStatic
     fun fromInt(argb: Int): Hct {
       return Hct(argb)
     }
 
-    @JvmStatic
     fun isBlue(hue: Double): Boolean {
       return hue >= 250 && hue < 270
     }
 
-    @JvmStatic
     fun isYellow(hue: Double): Boolean {
       return hue >= 105 && hue < 125
     }
 
-    @JvmStatic
     fun isCyan(hue: Double): Boolean {
       return hue >= 170 && hue < 207
     }

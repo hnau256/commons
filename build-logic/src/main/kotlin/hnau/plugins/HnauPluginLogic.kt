@@ -58,6 +58,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             kotlinExtension.jvm {
                 withSourcesJar()
             }
+            kotlinExtension.linuxX64 {
+            }
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
                 namespace = "org.hnau.commons." + hnauPath('.')

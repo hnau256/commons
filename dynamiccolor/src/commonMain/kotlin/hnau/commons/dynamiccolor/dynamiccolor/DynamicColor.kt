@@ -139,7 +139,6 @@ data class DynamicColor(
      * @param name The name of the dynamic color.
      * @param argb The source color from which to extract the hue and chroma.
      */
-    @JvmStatic
     fun fromArgb(name: String, argb: Int): DynamicColor {
       val hct = Hct.fromInt(argb)
       val palette = TonalPalette.fromInt(argb)
@@ -150,7 +149,6 @@ data class DynamicColor(
      * Given a background tone, find a foreground tone, while ensuring they reach a contrast ratio
      * that is as close to ratio as possible.
      */
-    @JvmStatic
     fun foregroundTone(bgTone: Double, ratio: Double): Double {
       val lighterTone = Contrast.lighterUnsafe(bgTone, ratio)
       val darkerTone = Contrast.darkerUnsafe(bgTone, ratio)
@@ -182,7 +180,6 @@ data class DynamicColor(
      * Adjust a tone down such that white has 4.5 contrast, if the tone is reasonably close to
      * supporting it.
      */
-    @JvmStatic
     fun enableLightForeground(tone: Double): Double {
       return if (tonePrefersLightForeground(tone) && !toneAllowsLightForeground(tone)) {
         49.0
@@ -201,18 +198,15 @@ data class DynamicColor(
      * Since `tertiaryContainer` in dark monochrome scheme requires a tone of 60, it should not be
      * adjusted. Therefore, 60 is excluded here.
      */
-    @JvmStatic
     fun tonePrefersLightForeground(tone: Double): Boolean {
       return tone.roundToInt() < 60
     }
 
     /** Tones less than ~T50 always permit white at 4.5 contrast. */
-    @JvmStatic
     fun toneAllowsLightForeground(tone: Double): Boolean {
       return tone.roundToInt() <= 49
     }
 
-    @JvmStatic
     fun getInitialToneFromBackground(
       background: ((DynamicScheme) -> DynamicColor?)?
     ): (DynamicScheme) -> Double {

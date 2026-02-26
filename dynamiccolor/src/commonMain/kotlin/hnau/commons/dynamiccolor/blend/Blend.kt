@@ -33,7 +33,6 @@ object Blend {
    * @return The design color with a hue shifted towards the system's color, a slightly
    *   warmer/cooler variant of the design color's hue.
    */
-  @JvmStatic
   fun harmonize(designColor: Int, sourceColor: Int): Int {
     val fromHct = Hct.fromInt(designColor)
     val toHct = Hct.fromInt(sourceColor)
@@ -55,7 +54,6 @@ object Blend {
    * @param amount how much blending to perform; 0.0 >= and <= 1.0
    * @return from, with a hue blended towards to. Chroma and tone are constant.
    */
-  @JvmStatic
   fun hctHue(from: Int, to: Int, amount: Double): Int {
     val ucs = cam16Ucs(from, to, amount)
     val ucsCam = Cam16.fromInt(ucs)
@@ -72,7 +70,6 @@ object Blend {
    * @param amount how much blending to perform; 0.0 >= and <= 1.0
    * @return from, blended towards to. Hue, chroma, and tone will change.
    */
-  @JvmStatic
   fun cam16Ucs(from: Int, to: Int, amount: Double): Int {
     val fromCam = Cam16.fromInt(from)
     val toCam = Cam16.fromInt(to)

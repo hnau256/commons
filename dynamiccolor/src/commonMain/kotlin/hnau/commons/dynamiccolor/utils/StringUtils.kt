@@ -17,15 +17,20 @@ package hnau.commons.dynamiccolor.utils
 
 /** Utility methods for string representations of colors. */
 internal object StringUtils {
-  /**
-   * Hex string representing color, ex. #ff0000 for red.
-   *
-   * @param argb ARGB representation of a color.
-   */
-  fun hexFromArgb(argb: Int): String {
-    val red = ColorUtils.redFromArgb(argb)
-    val blue = ColorUtils.blueFromArgb(argb)
-    val green = ColorUtils.greenFromArgb(argb)
-    return String.format("#%02x%02x%02x", red, green, blue)
-  }
+    /**
+     * Hex string representing color, ex. #ff0000 for red.
+     *
+     * @param argb ARGB representation of a color.
+     */
+    fun hexFromArgb(argb: Int): String {
+        val red = ColorUtils.redFromArgb(argb)
+        val blue = ColorUtils.blueFromArgb(argb)
+        val green = ColorUtils.greenFromArgb(argb)
+        return buildString {
+            append("#")
+            append(red.toString(16).padStart(2, '0'))
+            append(green.toString(16).padStart(2, '0'))
+            append(blue.toString(16).padStart(2, '0'))
+        }
+    }
 }

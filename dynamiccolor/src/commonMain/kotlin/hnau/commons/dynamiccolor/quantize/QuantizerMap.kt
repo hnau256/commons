@@ -15,21 +15,24 @@
  */
 package hnau.commons.dynamiccolor.quantize
 
-import java.util.LinkedHashMap
+import kotlin.collections.LinkedHashMap
 
 /** Creates a dictionary with keys of colors, and values of count of the color */
 class QuantizerMap : Quantizer {
-  var colorToCount: MutableMap<Int, Int>? = null
-    private set
+    var colorToCount: MutableMap<Int, Int>? = null
+        private set
 
-  override fun quantize(pixels: IntArray, maxColors: Int): QuantizerResult {
-    val pixelByCount: MutableMap<Int, Int> = LinkedHashMap()
-    for (pixel in pixels) {
-      val currentPixelCount = pixelByCount[pixel]
-      val newPixelCount = if (currentPixelCount == null) 1 else currentPixelCount + 1
-      pixelByCount[pixel] = newPixelCount
+    override fun quantize(
+        pixels: IntArray,
+        maxColors: Int,
+    ): QuantizerResult {
+        val pixelByCount: MutableMap<Int, Int> = LinkedHashMap()
+        for (pixel in pixels) {
+            val currentPixelCount = pixelByCount[pixel]
+            val newPixelCount = if (currentPixelCount == null) 1 else currentPixelCount + 1
+            pixelByCount[pixel] = newPixelCount
+        }
+        colorToCount = pixelByCount
+        return QuantizerResult(pixelByCount)
     }
-    colorToCount = pixelByCount
-    return QuantizerResult(pixelByCount)
-  }
 }

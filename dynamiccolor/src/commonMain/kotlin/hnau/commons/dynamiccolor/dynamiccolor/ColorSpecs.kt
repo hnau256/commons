@@ -23,17 +23,14 @@ object ColorSpecs {
   private val SPEC_2025: ColorSpec = ColorSpec2025()
   private val SPEC_2026: ColorSpec = ColorSpec2026()
 
-  @JvmStatic
   fun get(): ColorSpec {
     return get(SpecVersion.SPEC_2021)
   }
 
-  @JvmStatic
   fun get(specVersion: SpecVersion): ColorSpec {
     return get(specVersion, false)
   }
 
-  @JvmStatic
   fun get(specVersion: SpecVersion, isExtendedFidelity: Boolean): ColorSpec {
     return when (specVersion) {
       SpecVersion.SPEC_2025 -> SPEC_2025
