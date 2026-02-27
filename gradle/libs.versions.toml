@@ -10,7 +10,6 @@ agp = "9.0.1"
 androidCompileSdk = "36"
 androidMinSdk = "21"
 compose = "1.10.1"
-compose-material3 = "1.10.0-alpha05"
 dokka = "2.1.0"
 kermit = "2.0.4"
 slf4j = "2.0.17"
@@ -68,5 +67,6 @@ android-activityCompose = { module = "androidx.activity:activity-compose", versi
 # Compose
 compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
 compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
-compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "compose-material3" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version = "1.10.0-alpha05" }
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
+compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }

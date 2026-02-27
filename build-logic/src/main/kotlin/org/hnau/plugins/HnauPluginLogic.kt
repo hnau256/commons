@@ -100,6 +100,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                 addDependency(HnauDependency.External("compose-foundation"))
                 addDependency(HnauDependency.External("compose-material3"))
                 addDependency(HnauDependency.External("compose-ui"))
+                addDependency(HnauDependency.External("compose-icons-extended"))
             }
         }
     }

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.goback.GoBackHandler
 import org.hnau.commons.app.projector.uikit.TopBarAction
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
+import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.foldNullable
 
@@ -63,9 +66,9 @@ class BackButtonProjector(
                         .offset(x = width - buttonSize),
                 onClick = { goBackHandler.value?.invoke() },
             ) {
-//                Icon(
-//                    icon = Icons.AutoMirrored.Filled.ArrowBack,
-//                )
+                Icon(
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                )
             }
         }
         LaunchedEffect(Unit) {
