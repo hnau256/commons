@@ -18,6 +18,10 @@ gradlePlugin {
             id = "hnau-kmp"
             implementationClass = "org.hnau.plugins.KmpPlugin"
         }
+        create("compose") {
+            id = "hnau-compose"
+            implementationClass = "org.hnau.plugins.ComposePlugin"
+        }
     }
 }
 

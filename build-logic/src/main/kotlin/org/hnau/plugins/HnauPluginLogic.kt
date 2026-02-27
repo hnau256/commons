@@ -23,7 +23,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-enum class HnauProjectType { JVM, KMP }
+enum class HnauProjectType {
+    JVM,
+    KMP,
+    COMPOSE,
+    ;
+
+    val isKmp: Boolean get() = this == KMP || this == COMPOSE
+}
 
 private sealed interface HnauDependency {
     class External(
@@ -40,8 +47,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     val jvmVersion = libs.requireVersion("jvm")
     val jvmTarget = JvmTarget.fromTarget(jvmVersion)
 
-    when (type) {
-        HnauProjectType.JVM -> {
+    when {
+        type == HnauProjectType.JVM -> {
             plugins.apply("org.jetbrains.kotlin.jvm")
             configure<JavaPluginExtension> {
                 sourceCompatibility = JavaVersion.toVersion(jvmVersion)
@@ -50,14 +57,22 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
         }
 
-        HnauProjectType.KMP -> {
+        type.isKmp -> {
+            if (type == HnauProjectType.COMPOSE) {
+                plugins.apply("org.jetbrains.kotlin.plugin.compose")
+                plugins.apply("org.jetbrains.compose")
+            }
+
             plugins.apply("com.android.kotlin.multiplatform.library")
             plugins.apply("org.jetbrains.kotlin.multiplatform")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
-            kotlinExtension.jvm {
+            val jvmTargetName = if (type == HnauProjectType.COMPOSE) "desktop" else "jvm"
+
+            kotlinExtension.jvm(jvmTargetName) {
                 withSourcesJar()
             }
+
             kotlinExtension.linuxX64 {
             }
 
@@ -65,6 +80,20 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                 namespace = "org.hnau.commons." + hnauPath('.')
                 compileSdk = libs.requireVersion("androidCompileSdk").toInt()
                 minSdk = libs.requireVersion("androidMinSdk").toInt()
+            }
+
+            if (type == HnauProjectType.COMPOSE) {
+                afterEvaluate {
+                    val composeVersion = libs.requireVersion("compose")
+                    kotlinExtension.sourceSets.getByName("commonMain").dependencies {
+                        implementation("org.jetbrains.compose.runtime:runtime:$composeVersion")
+                        implementation("org.jetbrains.compose.foundation:foundation:$composeVersion")
+                        implementation("org.jetbrains.compose.material3:material3:$composeVersion")
+                        implementation("org.jetbrains.compose.ui:ui:$composeVersion")
+                        implementation("org.jetbrains.compose.components:components-resources:$composeVersion")
+                        implementation("org.jetbrains.compose.components:components-ui-tooling-preview:$composeVersion")
+                    }
+                }
             }
         }
     }
