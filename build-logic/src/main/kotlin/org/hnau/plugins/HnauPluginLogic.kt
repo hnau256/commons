@@ -29,7 +29,11 @@ enum class HnauProjectType {
     COMPOSE,
     ;
 
-    val isKmp: Boolean get() = this == KMP || this == COMPOSE
+    val isKmp: Boolean
+        get() = when (this) {
+            JVM -> false
+            KMP, COMPOSE -> true
+        }
 }
 
 private sealed interface HnauDependency {
@@ -74,8 +78,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
 
             if (type != HnauProjectType.COMPOSE) {
-                kotlinExtension.linuxX64 {
-                }
+                kotlinExtension.linuxX64()
             }
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
@@ -85,18 +88,10 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
 
             if (type == HnauProjectType.COMPOSE) {
-                afterEvaluate {
-                    val composeVersion = libs.requireVersion("compose")
-                    val material3Version = libs.requireVersion("compose-material3")
-                    kotlinExtension.sourceSets.getByName("commonMain").dependencies {
-                        implementation("org.jetbrains.compose.runtime:runtime:$composeVersion")
-                        implementation("org.jetbrains.compose.foundation:foundation:$composeVersion")
-                        implementation("org.jetbrains.compose.material3:material3:$material3Version")
-                        implementation("org.jetbrains.compose.ui:ui:$composeVersion")
-                        implementation("org.jetbrains.compose.components:components-resources:$composeVersion")
-                        implementation("org.jetbrains.compose.components:components-ui-tooling-preview:$composeVersion")
-                    }
-                }
+                addDependency(HnauDependency.External("compose-runtime"))
+                addDependency(HnauDependency.External("compose-foundation"))
+                addDependency(HnauDependency.External("compose-material3"))
+                addDependency(HnauDependency.External("compose-ui"))
             }
         }
     }
@@ -153,7 +148,8 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 }
 
-private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
+private fun VersionCatalog.requireVersion(alias: String): String =
+    findVersion(alias).get().requiredVersion
 
 private fun Project.hnauPath(separator: Char): String = path.drop(1).replace(':', separator)
 
@@ -164,6 +160,7 @@ private fun Project.addDependency(dependency: HnauDependency) {
                 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
                 libs.findLibrary(dependency.alias).get()
             }
+
             is HnauDependency.Internal -> dependency.project
         }
 

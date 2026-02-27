@@ -62,4 +62,10 @@ slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 
 # Android
 android-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.1" }
-android-activityCompose = { module = "androidx.activity:activity-compose", version = "1.12.2" }
+android-activityCompose = { module = "androidx.activity:activity-compose", version = "1.12.4" }
+
+# Compose
+compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
+compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "compose-material3" }
+compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
