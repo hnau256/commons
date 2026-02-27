@@ -1,0 +1,80 @@
+package org.hnau.commons.app.projector.stack
+
+import org.hnau.commons.app.model.stack.NonEmptyStack
+import org.hnau.commons.kotlin.coroutines.createChild
+import org.hnau.commons.kotlin.coroutines.flow.state.mapStateLite
+import org.hnau.commons.kotlin.coroutines.flow.state.runningFoldState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
+
+data class StackProjectorTail<K, P>(
+    val projector: P,
+    val isNew: Boolean?,
+    val key: K,
+)
+
+@PublishedApi
+internal data class TailInfo<K, P>(
+    val cancel: () -> Unit,
+    val stackKeys: Set<K>,
+    val tail: StackProjectorTail<K, P>,
+)
+
+@Suppress("FunctionName")
+fun <M, K, P> StackProjectorTail(
+    scope: CoroutineScope,
+    modelsStack: StateFlow<NonEmptyStack<M>>,
+    extractKey: (M) -> K,
+    createProjector: (CoroutineScope, M) -> P,
+): StateFlow<StackProjectorTail<K, P>> {
+
+    fun NonEmptyStack<M>.keys(): Set<K> = all.map(extractKey).toSet()
+
+    fun createTailInfo(
+        isNew: Boolean?,
+        keys: Set<K>,
+        model: M,
+    ): TailInfo<K, P> {
+        val projectorScope = scope.createChild()
+        return TailInfo(
+            cancel = { projectorScope.cancel() },
+            tail = StackProjectorTail(
+                projector = createProjector(projectorScope, model),
+                isNew = isNew,
+                key = extractKey(model),
+            ),
+            stackKeys = keys,
+        )
+    }
+
+    @Suppress("DEPRECATION")
+    return modelsStack
+        .runningFoldState(
+            scope = scope,
+            createInitial = { stack ->
+                createTailInfo(
+                    isNew = null,
+                    keys = stack.keys(),
+                    model = stack.tail,
+                )
+            },
+            operation = { previousInfo, newStack ->
+                val model = newStack.tail
+                val key = extractKey(model)
+                val keys = newStack.keys()
+                if (previousInfo.tail.key == key) {
+                    return@runningFoldState previousInfo.copy(
+                        stackKeys = keys,
+                    )
+                }
+                previousInfo.cancel()
+                createTailInfo(
+                    isNew = key !in previousInfo.stackKeys,
+                    keys = keys,
+                    model = model,
+                )
+            }
+        )
+        .mapStateLite(TailInfo<K, P>::tail)
+}
