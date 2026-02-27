@@ -67,12 +67,13 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             plugins.apply("org.jetbrains.kotlin.multiplatform")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
+            val jvmTargetName = if (type == HnauProjectType.COMPOSE) "desktop" else "jvm"
+
+            kotlinExtension.jvm(jvmTargetName) {
+                withSourcesJar()
+            }
 
             if (type != HnauProjectType.COMPOSE) {
-                val jvmTargetName = "jvm"
-                kotlinExtension.jvm(jvmTargetName) {
-                    withSourcesJar()
-                }
                 kotlinExtension.linuxX64 {
                 }
             }
