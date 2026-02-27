@@ -1,6 +1,11 @@
 package org.hnau.plugins
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import com.vanniktech.maven.publish.SourcesJar
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
@@ -12,12 +17,15 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -98,32 +106,70 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     // Dokka
     plugins.apply("org.jetbrains.dokka")
-    val dokkaHtmlTask = tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
-    val javadocJar =
-        tasks.register<Jar>("javadocJar") {
-            from(dokkaHtmlTask.flatMap { it.outputDirectory })
-            archiveClassifier.set("javadoc")
-        }
 
-    // Publishing
-    plugins.apply("maven-publish")
-    configure<PublishingExtension> {
-        val artifactIdValue = hnauPath('-')
+    plugins.apply("com.vanniktech.maven.publish")
+    plugins.apply("signing")
 
-        if (type == HnauProjectType.JVM) {
-            publications.create<MavenPublication>("maven") {
-                from(components["java"])
+    extensions.configure<MavenPublishBaseExtension> {
+        publishToMavenCentral()
+        signAllPublications()
+
+        configure(
+            when (type.isKmp) {
+                true -> KotlinMultiplatform(
+                    javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                    sourcesJar = SourcesJar.Sources(),
+                )
+
+                false -> KotlinJvm(
+                    javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                    sourcesJar = SourcesJar.Sources(),
+                )
+            }
+
+        )
+
+        coordinates(
+            groupId = "org.hnau.commons",
+            artifactId = hnauPath('-'),
+            version = project.version.toString()
+        )
+
+        pom {
+            name.set(project.name)
+            url.set("https://github.com/hnau256/commons")
+            description.set(project.name)
+            licenses {
+                license {
+                    name.set("MIT License")
+                    url.set("https://opensource.org/licenses/MIT")
+                }
+            }
+            developers {
+                developer {
+                    id.set("hnau256")
+                    name.set("Mark Zorikhin")
+                    email.set("hnau256@gmail.com")
+                }
+            }
+            scm {
+                connection.set("scm:git:github.com/hnau256/commons.git")
+                url.set("https://github.com/hnau256/commons")
             }
         }
+    }
 
-        publications.withType<MavenPublication>().configureEach {
-            groupId = "org.hnau.commons"
-            artifactId =
-                when (name) {
-                    "kotlinMultiplatform" -> artifactIdValue
-                    else -> artifactId.replace(project.name, artifactIdValue)
-                }
-            artifact(javadocJar)
+    extra["mavenCentralUsername"] = providers.gradleProperty("mavenCentralUsername").orNull
+    extra["mavenCentralPassword"] = providers.gradleProperty("mavenCentralPassword").orNull
+
+    // Настройка GPG
+    configure<SigningExtension> {
+        val keyId = providers.gradleProperty("signing.keyId").orNull
+        val password = providers.gradleProperty("signing.password").orNull
+        val secretKey = providers.gradleProperty("signing.secretKey").orNull
+
+        if (secretKey != null && password != null) {
+            useInMemoryPgpKeys(keyId, secretKey, password)
         }
     }
 
