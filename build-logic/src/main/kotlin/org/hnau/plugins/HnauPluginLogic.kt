@@ -67,13 +67,14 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             plugins.apply("org.jetbrains.kotlin.multiplatform")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
-            val jvmTargetName = if (type == HnauProjectType.COMPOSE) "desktop" else "jvm"
 
-            kotlinExtension.jvm(jvmTargetName) {
-                withSourcesJar()
-            }
-
-            kotlinExtension.linuxX64 {
+            if (type != HnauProjectType.COMPOSE) {
+                val jvmTargetName = "jvm"
+                kotlinExtension.jvm(jvmTargetName) {
+                    withSourcesJar()
+                }
+                kotlinExtension.linuxX64 {
+                }
             }
 
             (kotlinExtension as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
@@ -85,10 +86,11 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             if (type == HnauProjectType.COMPOSE) {
                 afterEvaluate {
                     val composeVersion = libs.requireVersion("compose")
+                    val material3Version = libs.requireVersion("compose-material3")
                     kotlinExtension.sourceSets.getByName("commonMain").dependencies {
                         implementation("org.jetbrains.compose.runtime:runtime:$composeVersion")
                         implementation("org.jetbrains.compose.foundation:foundation:$composeVersion")
-                        implementation("org.jetbrains.compose.material3:material3:$composeVersion")
+                        implementation("org.jetbrains.compose.material3:material3:$material3Version")
                         implementation("org.jetbrains.compose.ui:ui:$composeVersion")
                         implementation("org.jetbrains.compose.components:components-resources:$composeVersion")
                         implementation("org.jetbrains.compose.components:components-ui-tooling-preview:$composeVersion")
