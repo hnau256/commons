@@ -14,16 +14,7 @@ kotlin {
                 api(libs.kotlinx.datetime)
                 api(libs.kotlinx.atomicfu)
                 api(libs.kermit)
-            }
-        }
-        jvmMain {
-            dependencies {
-                api(libs.slf4j.api)
-            }
-        }
-        androidMain {
-            dependencies {
-                api(libs.slf4j.api)
+                api(libs.kermit.extensions)
             }
         }
     }
