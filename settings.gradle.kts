@@ -4,7 +4,7 @@ pluginManagement {
         google()
         gradlePluginPortal()
     }
-    includeBuild("build-logic")
+    includeBuild("plugins")
 }
 
 plugins {
@@ -31,7 +31,7 @@ fun findAndIncludeModules(
                 !file.name.startsWith(".") &&
                 file.name != "build" &&
                 file.name != "gradle" &&
-                file.name != "build-logic"
+                file.name != "plugins"
         }?.forEach { file ->
             val currentPath =
                 listOfNotNull(pathPrefix.takeIf(String::isNotEmpty), file.name)
