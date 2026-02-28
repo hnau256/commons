@@ -14,7 +14,6 @@ kotlin {
                 api(libs.kotlinx.datetime)
                 api(libs.kotlinx.atomicfu)
                 api(libs.kermit)
-                api(libs.kermit.extensions)
             }
         }
     }
