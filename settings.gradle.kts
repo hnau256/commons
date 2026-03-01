@@ -28,11 +28,12 @@ fun findAndIncludeModules(
     dir
         .listFiles { file ->
             file.isDirectory &&
-                !file.name.startsWith(".") &&
-                file.name != "build" &&
-                file.name != "gradle" &&
-                file.name != "plugins"
-        }?.forEach { file ->
+                    !file.name.startsWith(".") &&
+                    file.name != "build" &&
+                    file.name != "gradle" &&
+                    file.name != "plugins"
+        }
+        ?.forEach { file ->
             val currentPath =
                 listOfNotNull(pathPrefix.takeIf(String::isNotEmpty), file.name)
                     .joinToString(separator = ":")
