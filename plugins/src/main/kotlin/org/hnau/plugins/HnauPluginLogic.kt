@@ -14,9 +14,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -55,7 +53,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     when {
         type == HnauProjectType.JVM -> {
-            plugins.apply("org.jetbrains.kotlin.jvm")
+            addPluginIfNotApplied("org.jetbrains.kotlin.jvm")
             configure<JavaPluginExtension> {
                 sourceCompatibility = JavaVersion.toVersion(jvmVersion)
                 targetCompatibility = JavaVersion.toVersion(jvmVersion)
@@ -65,12 +63,12 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
         type.isKmp -> {
             if (type == HnauProjectType.COMPOSE) {
-                plugins.apply("org.jetbrains.kotlin.plugin.compose")
-                plugins.apply("org.jetbrains.compose")
+                addPluginIfNotApplied("org.jetbrains.kotlin.plugin.compose")
+                addPluginIfNotApplied("org.jetbrains.compose")
             }
 
-            plugins.apply("com.android.kotlin.multiplatform.library")
-            plugins.apply("org.jetbrains.kotlin.multiplatform")
+            addPluginIfNotApplied("org.jetbrains.kotlin.multiplatform")
+            addPluginIfNotApplied("com.android.kotlin.multiplatform.library")
 
             val kotlinExtension = extensions.getByType<KotlinMultiplatformExtension>()
             val jvmTargetName = if (type == HnauProjectType.COMPOSE) "desktop" else "jvm"
@@ -100,10 +98,10 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 
     // Dokka
-    plugins.apply("org.jetbrains.dokka")
+    addPluginIfNotApplied("org.jetbrains.dokka")
 
-    plugins.apply("com.vanniktech.maven.publish")
-    plugins.apply("signing")
+    addPluginIfNotApplied("com.vanniktech.maven.publish")
+    addPluginIfNotApplied("signing")
 
     extensions.configure<MavenPublishBaseExtension> {
         publishToMavenCentral()
@@ -188,6 +186,13 @@ internal fun Project.configureHnau(type: HnauProjectType) {
             }
         }
     }
+}
+
+private fun Project.addPluginIfNotApplied(plugin: String) {
+    if (plugins.hasPlugin(plugin)) {
+        return
+    }
+    plugins.apply(plugin)
 }
 
 private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
