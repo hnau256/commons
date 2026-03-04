@@ -11,7 +11,7 @@ androidCompileSdk = "36"
 androidMinSdk = "21"
 compose = "1.10.1"
 dokka = "2.1.0"
-kermit = "2.0.4"
+kermit = "2.0.8"
 
 ksp = "2.3.6"
 kotlinpoet = "2.2.0"
@@ -58,7 +58,6 @@ arrow-fx-coroutines = { group = "io.arrow-kt", name = "arrow-fx-coroutines", ver
 
 # Logging
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
-kermit-extensions = { group = "co.touchlab", name = "kermit-extensions", version.ref = "kermit" }
 
 # Android
 android-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.1" }
@@ -69,4 +68,4 @@ compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", v
 compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }
 compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version = "1.10.0-alpha05" }
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
-compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
+compose-icons-core = { group = "org.jetbrains.compose.material", name = "material-icons-core", version = "1.7.3" }

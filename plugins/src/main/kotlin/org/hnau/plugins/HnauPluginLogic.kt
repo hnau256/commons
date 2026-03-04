@@ -12,20 +12,13 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -38,10 +31,11 @@ enum class HnauProjectType {
     ;
 
     val isKmp: Boolean
-        get() = when (this) {
-            JVM -> false
-            KMP, COMPOSE -> true
-        }
+        get() =
+            when (this) {
+                JVM -> false
+                KMP, COMPOSE -> true
+            }
 }
 
 private sealed interface HnauDependency {
@@ -100,7 +94,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
                 addDependency(HnauDependency.External("compose-foundation"))
                 addDependency(HnauDependency.External("compose-material3"))
                 addDependency(HnauDependency.External("compose-ui"))
-                addDependency(HnauDependency.External("compose-icons-extended"))
+                addDependency(HnauDependency.External("compose-icons-core"))
             }
         }
     }
@@ -117,23 +111,24 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
         configure(
             when (type.isKmp) {
-                true -> KotlinMultiplatform(
-                    javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
-                    sourcesJar = SourcesJar.Sources(),
-                )
+                true ->
+                    KotlinMultiplatform(
+                        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                        sourcesJar = SourcesJar.Sources(),
+                    )
 
-                false -> KotlinJvm(
-                    javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
-                    sourcesJar = SourcesJar.Sources(),
-                )
-            }
-
+                false ->
+                    KotlinJvm(
+                        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                        sourcesJar = SourcesJar.Sources(),
+                    )
+            },
         )
 
         coordinates(
             groupId = "org.hnau.commons",
             artifactId = hnauPath('-'),
-            version = project.version.toString()
+            version = project.version.toString(),
         )
 
         pom {
@@ -195,8 +190,7 @@ internal fun Project.configureHnau(type: HnauProjectType) {
     }
 }
 
-private fun VersionCatalog.requireVersion(alias: String): String =
-    findVersion(alias).get().requiredVersion
+private fun VersionCatalog.requireVersion(alias: String): String = findVersion(alias).get().requiredVersion
 
 private fun Project.hnauPath(separator: Char): String = path.drop(1).replace(':', separator)
 
