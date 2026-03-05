@@ -105,19 +105,19 @@ internal fun Project.configureHnau(type: HnauProjectType) {
 
     extensions.configure<MavenPublishBaseExtension> {
         publishToMavenCentral()
-        signAllPublications()
 
+        val dokkaTaskName = "dokkaGeneratePublicationHtml"
         configure(
             when (type.isKmp) {
                 true ->
                     KotlinMultiplatform(
-                        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                        javadocJar = JavadocJar.Dokka(dokkaTaskName),
                         sourcesJar = SourcesJar.Sources(),
                     )
 
                 false ->
                     KotlinJvm(
-                        javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+                        javadocJar = JavadocJar.Dokka(dokkaTaskName),
                         sourcesJar = SourcesJar.Sources(),
                     )
             },
