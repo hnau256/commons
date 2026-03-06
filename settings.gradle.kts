@@ -1,6 +1,6 @@
 pluginManagement {
-    includeBuild("../plugins")
     repositories {
+        mavenLocal()
         mavenCentral()
         google()
         gradlePluginPortal()
@@ -9,7 +9,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("org.hnau.settings") version "0.1.0"
+    id("org.hnau.settings") version "1.0.0"
 }
 
 rootProject.name = "commons"
