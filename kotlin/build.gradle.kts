@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.ksp)
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.serialization)
     id("hnau-kmp")
 }
 
