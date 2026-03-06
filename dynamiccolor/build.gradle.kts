@@ -1,4 +1,7 @@
 plugins {
-    id("hnau-kmp")
+    id("org.hnau.project")
 }
 
+hnau {
+    kmp {}
+}

@@ -1,12 +1,19 @@
 plugins {
-    alias(libs.plugins.kotlin.serialization)
-    id("hnau-compose")
+    id("org.hnau.project")
 }
 
-kotlin {
+hnau {
+    kmp {
+        compose = true
+    }
+    serialization = true
+}
+
+configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":kotlin"))
                 implementation(project(":app:model"))
                 implementation(project(":dynamiccolor"))
                 implementation(libs.kotlinx.immutable)

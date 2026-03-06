@@ -1,12 +1,17 @@
 plugins {
-    alias(libs.plugins.kotlin.serialization)
-    id("hnau-kmp")
+    id("org.hnau.project")
 }
 
-kotlin {
+hnau {
+    kmp {}
+    serialization = true
+}
+
+configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":kotlin"))
                 implementation(libs.kotlinx.io)
             }
         }

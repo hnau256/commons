@@ -1,47 +1,24 @@
 pluginManagement {
+    includeBuild("../plugins")
     repositories {
         mavenCentral()
         google()
         gradlePluginPortal()
     }
-    includeBuild("plugins")
 }
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        google()
-    }
+    id("org.hnau.settings") version "0.1.0"
 }
 
 rootProject.name = "commons"
 
-fun findAndIncludeModules(
-    dir: File,
-    pathPrefix: String = "",
-) {
-    dir
-        .listFiles { file ->
-            file.isDirectory &&
-                    !file.name.startsWith(".") &&
-                    file.name != "build" &&
-                    file.name != "gradle" &&
-                    file.name != "plugins"
-        }
-        ?.forEach { file ->
-            val currentPath =
-                listOfNotNull(pathPrefix.takeIf(String::isNotEmpty), file.name)
-                    .joinToString(separator = ":")
-            when (File(file, "build.gradle.kts").exists()) {
-                true -> include(":$currentPath")
-                false -> findAndIncludeModules(file, currentPath)
-            }
-        }
+hnauSettings {
+    allModules {
+        group = "org.hnau.commons"
+        version = "1.2.2"
+        includeHnauCommons = false
+        gitUrl = "https://github.com/hnau256/commons"
+    }
 }
-
-findAndIncludeModules(rootDir)

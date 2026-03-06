@@ -1,13 +1,16 @@
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.serialization)
-    id("hnau-kmp")
+    id("org.hnau.project")
 }
 
-kotlin {
+hnau {
+    kmp(includeHnauCommons = false)
+    serialization = true
+    ksp {
+        arrowOptics = true
+    }
+}
+
+configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
     sourceSets {
         commonMain {
             dependencies {
@@ -21,15 +24,5 @@ kotlin {
                 api(libs.kermit)
             }
         }
-    }
-}
-
-dependencies {
-    add("kspCommonMainMetadata", libs.arrow.optics.processor)
-}
-
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
     }
 }
