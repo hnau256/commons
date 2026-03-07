@@ -15,6 +15,8 @@ internal fun LoggableInfo.Companion.create(
 
         className = className,
 
+        loggableClassDeclaration = classDeclaration,
+
         classPackage = classDeclaration
             .packageName
             .asString(),

@@ -62,7 +62,10 @@ internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
 
     codeGenerator
         .createNewFile(
-            dependencies = Dependencies(false),
+            dependencies = Dependencies(
+                aggregating = false,
+                sources = listOfNotNull(loggableClassDeclaration.containingFile).toTypedArray(),
+            ),
             packageName = classPackage,
             fileName = fileName,
         )
