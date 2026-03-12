@@ -8,13 +8,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":kotlin"))
-                implementation(libs.kotlinx.io)
-            }
-        }
-
-        androidMain {
-            dependencies {
-                implementation(libs.android.appcompat)
+                implementation(hnau.kotlinx.io)
             }
         }
     }
