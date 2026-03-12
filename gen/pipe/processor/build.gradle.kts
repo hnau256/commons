@@ -1,10 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    id("org.hnau.project")
-}
-
-hnau {
-    jvm()
+    id(hnau.plugins.hnau.jvm.get().pluginId)
 }
 
 dependencies {

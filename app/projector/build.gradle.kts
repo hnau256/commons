@@ -1,15 +1,9 @@
 plugins {
-    id("org.hnau.project")
+    id(hnau.plugins.kotlin.serialization.get().pluginId)
+    id(hnau.plugins.hnau.ui.get().pluginId)
 }
 
-hnau {
-    kmp {
-        compose = true
-    }
-    serialization = true
-}
-
-configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
+kotlin {
     sourceSets {
         commonMain {
             dependencies {

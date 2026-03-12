@@ -1,7 +1,3 @@
 plugins {
-    id("org.hnau.project")
-}
-
-hnau {
-    kmp {}
+    id(hnau.plugins.hnau.kmp.get().pluginId)
 }

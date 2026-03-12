@@ -1,3 +1,5 @@
+rootProject.name = "commons"
+
 pluginManagement {
     repositories {
         mavenLocal()
@@ -8,17 +10,13 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("org.hnau.settings") version "1.0.1"
+    id("org.hnau.plugin.settings") version "1.2.3"
 }
 
-rootProject.name = "commons"
-
-hnauSettings {
-    allModules {
-        group = "org.hnau.commons"
-        version = "1.2.4"
-        includeHnauCommons = false
+hnau {
+    groupId = "org.hnau.commons"
+    publish {
+        version = "1.2.5"
         gitUrl = "https://github.com/hnau256/commons"
     }
 }
