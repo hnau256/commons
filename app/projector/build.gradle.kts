@@ -10,11 +10,11 @@ kotlin {
                 implementation(project(":kotlin"))
                 implementation(project(":app:model"))
                 implementation(project(":dynamiccolor"))
-                implementation(libs.kotlinx.immutable)
+                implementation(libs.kotlinx.immutable) //TODO remove
             }
         }
 
-        androidMain {
+        androidMain { //TODO remove
             dependencies {
                 implementation(libs.android.appcompat)
                 implementation(libs.android.activityCompose)
