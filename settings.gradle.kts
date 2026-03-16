@@ -16,7 +16,7 @@ plugins {
 hnau {
     groupId = "org.hnau.commons"
     publish {
-        version = "1.3.0"
+        version = "1.3.1"
         gitUrl = "https://github.com/hnau256/commons"
     }
 }
