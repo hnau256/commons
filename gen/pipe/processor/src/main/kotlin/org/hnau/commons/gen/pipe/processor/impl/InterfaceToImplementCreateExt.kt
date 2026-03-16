@@ -77,24 +77,8 @@ private fun KSFunctionDeclaration.toFactoryMethod(
 
     val returnDeclaration = returnType.declaration
 
-    val returnClass = returnDeclaration
-        .let { it as? KSClassDeclaration }
-        ?: error("Return type of $functionLogString must be class, got ${returnDeclaration.qualifiedName?.asString()} with annotations: $annotations")
-
-    val returnTypeAnnotations = returnClass
-        .annotations
-        .map {
-            it.annotationType.resolve().declaration.qualifiedName!!.asString()
-        }
-        .toSet()
-
-    if (PipeAnnotationClassInfo.nameWithPackage !in returnTypeAnnotations) {
-        val annotations = returnTypeAnnotations.joinToString(
-            separator = ", ",
-            prefix = "[",
-            postfix = "]",
-        )
-        error("Return type of $functionLogString must bee annotated with @${PipeAnnotationClassInfo.nameWithPackage}, got ${returnClass.qualifiedName?.asString()} with annotations: $annotations")
+    if (returnDeclaration !is KSClassDeclaration) {
+        error("Return type of $functionLogString must be class, got ${returnDeclaration.qualifiedName?.asString()} with annotations: $annotations")
     }
 
     val name = simpleName.asString()
