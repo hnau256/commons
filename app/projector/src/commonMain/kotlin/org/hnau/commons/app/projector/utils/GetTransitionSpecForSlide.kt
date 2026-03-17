@@ -11,17 +11,18 @@ import kotlin.time.Duration.Companion.seconds
 
 enum class SlideOrientation { Horizontal, Vertical }
 
-fun <T> getTransitionSpecForSlideByIndex(
+fun <T, C : Comparable<C>> getTransitionSpecForSlideByCompare(
     duration: Duration = AnimationDuration,
     orientation: SlideOrientation,
     offsetFactor: Float = 0.25f,
-    extractIndex: (T) -> Int,
+    extractComparable: (T) -> C,
 ): AnimatedContentTransitionScope<T>.() -> ContentTransform = getTransitionSpecForSlide(
     duration = duration,
     orientation = orientation,
     slideCoefficientProvider = {
-        extractIndex(targetState)
-            .minus(extractIndex(initialState))
+
+        extractComparable(targetState)
+            .compareTo(extractComparable(initialState))
             .sign
             .times(offsetFactor)
     }
