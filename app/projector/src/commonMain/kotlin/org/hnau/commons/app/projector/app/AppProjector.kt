@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.app
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +26,7 @@ class AppProjector<M, S, P>(
     private val model: AppModel<M, S>,
     private val schemeConfig: DynamicSchemeConfig = DynamicSchemeConfig.default,
     createProjector: (CoroutineScope, M) -> P,
-    private val content: @Composable (P) -> Unit,
+    private val content: @Composable (P, PaddingValues) -> Unit,
 ) {
 
     private val projector = createProjector(
@@ -37,7 +38,9 @@ class AppProjector<M, S, P>(
         provideDynamicColorsGenerator()
 
     @Composable
-    fun Content() {
+    fun Content(
+        contentPadding: PaddingValues,
+    ) {
 
         val brightness: ThemeBrightness = model
             .appContext
@@ -80,7 +83,7 @@ class AppProjector<M, S, P>(
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground,
                 ) {
-                    content(projector)
+                    content(projector, contentPadding)
                 }
             }
         }
