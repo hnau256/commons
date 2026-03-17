@@ -10,13 +10,13 @@ pluginManagement {
 }
 
 plugins {
-    id("org.hnau.plugin.settings") version "1.2.6"
+    id("org.hnau.plugin.settings") version "1.2.10"
 }
 
 hnau {
     groupId = "org.hnau.commons"
     publish {
-        version = "1.4.0"
+        version = "1.4.1"
         gitUrl = "https://github.com/hnau256/commons"
     }
 }

@@ -1,13 +1,7 @@
 package org.hnau.commons.app.projector.utils
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kotlin.math.absoluteValue
@@ -16,6 +10,22 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 enum class SlideOrientation { Horizontal, Vertical }
+
+fun <T> getTransitionSpecForSlideByIndex(
+    duration: Duration = AnimationDuration,
+    orientation: SlideOrientation,
+    offsetFactor: Float = 0.25f,
+    extractIndex: (T) -> Int,
+): AnimatedContentTransitionScope<T>.() -> ContentTransform = getTransitionSpecForSlide(
+    duration = duration,
+    orientation = orientation,
+    slideCoefficientProvider = {
+        extractIndex(targetState)
+            .minus(extractIndex(initialState))
+            .sign
+            .times(offsetFactor)
+    }
+)
 
 fun <T> getTransitionSpecForSlide(
     duration: Duration = AnimationDuration,
@@ -60,4 +70,4 @@ private fun IntSize.toOffset(
     SlideOrientation.Vertical -> IntOffset(0, height)
 }
 
-private val AnimationDuration = 0.3.seconds
+private val AnimationDuration = 0.25.seconds
