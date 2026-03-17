@@ -1,9 +1,9 @@
 package org.hnau.commons.app.projector.utils.theme
 
 import androidx.compose.runtime.Immutable
-import org.hnau.commons.dynamiccolor.dynamiccolor.ColorSpec
-import org.hnau.commons.dynamiccolor.dynamiccolor.DynamicScheme
-import org.hnau.commons.dynamiccolor.dynamiccolor.Variant
+import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec
+import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.DynamicScheme
+import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.Variant
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 
 @Immutable
