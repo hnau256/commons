@@ -3,17 +3,22 @@ package org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils
 import com.squareup.kotlinpoet.ClassName
 
 object SealInfoCodeGeneratorConstants {
+    val serializableClassName = ClassName("kotlinx.serialization", "Serializable")
+    val serialNameClassName = ClassName("kotlinx.serialization", "SerialName")
 
-     val serializableClassName = ClassName("kotlinx.serialization", "Serializable")
-     val serialNameClassName = ClassName("kotlinx.serialization", "SerialName")
+    val intClassName = ClassName("kotlin", "Int")
 
-     val intClassName = ClassName("kotlin", "Int")
+    val stringClassName = ClassName("kotlin", "String")
 
-     val stringClassName = ClassName("kotlin", "String")
+    val comparableClassName = ClassName("kotlin", "Comparable")
 
-     const val setterParameterName = "newValue"
+    const val setterParameterName = "newValue"
 
-     const val ordinalPropertyName = "ordinal"
+    const val ordinalPropertyName = "ordinal"
 
-     const val namePropertyName = "name"
+    const val namePropertyName = "name"
+
+    const val compareToFunctionName = "compareTo"
+
+    const val compareToOtherParameterName = "other"
 }

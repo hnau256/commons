@@ -1,7 +1,10 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.generator
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
@@ -18,6 +21,27 @@ fun SealedInfo.toTypeSpec(): TypeSpec = TypeSpec
         modifiers += KModifier.SEALED
         visibility?.let { modifiers += it }
         addSuperinterface(parentClassName)
+
+        if (ordinal) {
+            addSuperinterface(
+                SealInfoCodeGeneratorConstants.comparableClassName.parameterizedBy(className),
+            )
+
+            funSpecs +=
+                FunSpec
+                    .builder(SealInfoCodeGeneratorConstants.compareToFunctionName)
+                    .addModifiers(KModifier.OVERRIDE)
+                    .addParameter(
+                        ParameterSpec
+                            .builder(
+                                name = SealInfoCodeGeneratorConstants.compareToOtherParameterName,
+                                type = className,
+                            ).build(),
+                    ).returns(SealInfoCodeGeneratorConstants.intClassName)
+                    .addStatement(
+                        "return ${SealInfoCodeGeneratorConstants.ordinalPropertyName} - ${SealInfoCodeGeneratorConstants.compareToOtherParameterName}.${SealInfoCodeGeneratorConstants.ordinalPropertyName}",
+                    ).build()
+        }
 
         if (serializable) {
             annotations += AnnotationSpec
