@@ -2,11 +2,8 @@ package org.hnau.commons.app.projector.uikit
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -18,8 +15,9 @@ import org.hnau.commons.app.projector.utils.plus
 
 @Composable
 fun FullScreen(
-    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues,
     backButtonWidth: Dp,
+    modifier: Modifier = Modifier,
     top: @Composable (contentPadding: PaddingValues) -> Unit = { contentPadding ->
         Box(
             modifier = Modifier
@@ -34,12 +32,11 @@ fun FullScreen(
     },
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
-    val insets = WindowInsets.systemBars.asPaddingValues()
     Overcompose(
         modifier = modifier.fillMaxSize(),
         top = {
             top(
-                insets.map(
+                contentPadding.map(
                     start = { start -> start + backButtonWidth },
                     bottom = { 0.dp },
                 )
@@ -47,14 +44,14 @@ fun FullScreen(
         },
         bottom = {
             bottom(
-                insets.copy(
+                contentPadding.copy(
                     top = 0.dp,
                 )
             )
         }
-    ) { contentPadding ->
+    ) { localContentPadding ->
         content(
-            contentPadding + insets.copy(
+            localContentPadding + contentPadding.copy(
                 top = 0.dp,
                 bottom = 0.dp,
             ),

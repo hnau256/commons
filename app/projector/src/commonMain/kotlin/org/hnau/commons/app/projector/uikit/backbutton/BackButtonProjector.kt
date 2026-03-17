@@ -4,13 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -51,13 +45,13 @@ class BackButtonProjector(
         get() = widthAnimation.value
 
     @Composable
-    fun Content() {
-        val insets = WindowInsets.systemBars.asPaddingValues()
+    fun Content(
+        contentPadding: PaddingValues,
+    ) {
         Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(insets),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
             contentAlignment = Alignment.TopStart,
         ) {
             TopBarAction(
