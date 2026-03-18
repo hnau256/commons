@@ -1,6 +1,7 @@
 package org.hnau.commons.app.projector.utils
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.runtime.Composable
@@ -8,6 +9,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
+import arrow.core.left
 
 @Composable
 inline fun PaddingValues.map(
@@ -108,3 +110,13 @@ operator fun PaddingValues.plus(
 val PaddingValuesZero: PaddingValues = PaddingValues(
     all = 0.dp,
 )
+
+@Composable
+fun PaddingValues.toWindowInsets(): WindowInsets = LocalLayoutDirection.current.let { layoutDirection ->
+    WindowInsets(
+        left = calculateLeftPadding(layoutDirection),
+        top = calculateTopPadding(),
+        right = calculateRightPadding(layoutDirection),
+        bottom = calculateBottomPadding(),
+    )
+}
