@@ -7,8 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.utils.SlideOrientation
-import org.hnau.commons.app.projector.utils.getTransitionSpecForSlide
+import org.hnau.commons.app.projector.uikit.transition.SlideOrientation
+import org.hnau.commons.app.projector.uikit.transition.getTransitionSpecForSlide
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration.Companion.seconds
 

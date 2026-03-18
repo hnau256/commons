@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.uikit.state.StateContent
-import org.hnau.commons.app.projector.uikit.state.TransitionSpec
+import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.kotlin.coroutines.ActionOrCancel
 import org.hnau.commons.kotlin.foldNullable

@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.utils
+package org.hnau.commons.app.projector.uikit.transition
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -8,8 +8,6 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-
-enum class SlideOrientation { Horizontal, Vertical }
 
 fun <T, C : Comparable<C>> getTransitionSpecForSlideByCompare(
     duration: Duration = AnimationDuration,
@@ -66,9 +64,9 @@ fun <T> getTransitionSpecForSlide(
 
 private fun IntSize.toOffset(
     orientation: SlideOrientation,
-): IntOffset = when (orientation) {
-    SlideOrientation.Horizontal -> IntOffset(width, 0)
-    SlideOrientation.Vertical -> IntOffset(0, height)
-}
+): IntOffset = orientation.fold(
+    ifHorizontal = { IntOffset(width, 0) },
+    ifVertical = { IntOffset(0, height) },
+)
 
 private val AnimationDuration = 0.25.seconds
