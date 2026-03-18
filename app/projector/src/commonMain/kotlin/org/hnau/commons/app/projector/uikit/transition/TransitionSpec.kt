@@ -17,6 +17,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.IntSize
+import org.hnau.commons.kotlin.foldBoolean
 
 object TransitionSpec {
 
@@ -45,70 +46,94 @@ object TransitionSpec {
     private fun <S> AnimatedContentTransitionScope<S>.buildSlideTransform(
         orientation: SlideOrientation
     ): ContentTransform {
+
         val enter = enterFadeIn + orientation.fold(
-            ifHorizontal = { expandHorizontally(enterIntSizeSpec, Alignment.Companion.CenterHorizontally) },
-            ifVertical = { expandVertically(enterIntSizeSpec, Alignment.Companion.CenterVertically) }
+            ifHorizontal = {
+                expandHorizontally(
+                    animationSpec = enterIntSizeSpec,
+                    expandFrom = Alignment.CenterHorizontally,
+                    clip = false,
+                )
+            },
+            ifVertical = {
+                expandVertically(
+                    animationSpec = enterIntSizeSpec,
+                    expandFrom = Alignment.CenterVertically,
+                    clip = false,
+                )
+            }
         )
 
         val exit = exitFadeOut + orientation.fold(
-            ifHorizontal = { shrinkHorizontally(exitIntSizeSpec, Alignment.Companion.CenterHorizontally) },
-            ifVertical = { shrinkVertically(exitIntSizeSpec, Alignment.Companion.CenterVertically) }
+            ifHorizontal = {
+                shrinkHorizontally(
+                    animationSpec = exitIntSizeSpec,
+                    shrinkTowards = Alignment.CenterHorizontally,
+                    clip = false,
+                )
+            },
+            ifVertical = {
+                shrinkVertically(
+                    animationSpec = exitIntSizeSpec,
+                    shrinkTowards = Alignment.CenterVertically,
+                    clip = false,
+                )
+            }
         )
 
         return enter togetherWith exit using createSizeTransform(orientation)
     }
 
-    private fun createSizeTransform(orientation: SlideOrientation): SizeTransform =
-        SizeTransform(clip = false) { initialSize, targetSize ->
-            val isAppearing = orientation.fold(
-                ifHorizontal = { initialSize.width == 0 },
-                ifVertical = { initialSize.height == 0 }
-            )
-            val isDisappearing = orientation.fold(
-                ifHorizontal = { targetSize.width == 0 },
-                ifVertical = { targetSize.height == 0 }
-            )
+    private fun createSizeTransform(
+        orientation: SlideOrientation,
+    ): SizeTransform = SizeTransform(
+        clip = false,
+    ) { initialSize, targetSize ->
 
-            when {
-                isAppearing -> keyframes {
-                    durationMillis = EnterDurationMillis
-                    orientation.fold(
-                        ifHorizontal = { IntSize(initialSize.width, targetSize.height) at 0 using FastOutSlowInEasing },
-                        ifVertical = { IntSize(targetSize.width, initialSize.height) at 0 using FastOutSlowInEasing }
-                    )
-                }
+        val isAppearing = orientation.fold(
+            ifHorizontal = { initialSize.width == 0 },
+            ifVertical = { initialSize.height == 0 }
+        )
 
-                isDisappearing -> keyframes {
-                    durationMillis = ExitDurationMillis
-                    orientation.fold(
-                        ifHorizontal = {
-                            IntSize(
-                                targetSize.width,
-                                initialSize.height
-                            ) at ExitDurationMillis using FastOutSlowInEasing
-                        },
-                        ifVertical = {
-                            IntSize(
-                                initialSize.width,
-                                targetSize.height
-                            ) at ExitDurationMillis using FastOutSlowInEasing
-                        }
-                    )
-                }
+        val isDisappearing = !isAppearing && orientation.fold(
+            ifHorizontal = { targetSize.width == 0 },
+            ifVertical = { targetSize.height == 0 }
+        )
 
-                else -> {
-                    val isExpanding = orientation.fold(
+        when {
+            isAppearing -> keyframes {
+                durationMillis = EnterDurationMillis
+                orientation.fold(
+                    ifHorizontal = { IntSize(initialSize.width, targetSize.height) },
+                    ifVertical = { IntSize(targetSize.width, initialSize.height) }
+                ) at 0 using FastOutSlowInEasing
+            }
+
+            isDisappearing -> keyframes {
+                durationMillis = ExitDurationMillis
+                orientation.fold(
+                    ifHorizontal = { IntSize(targetSize.width, initialSize.height) },
+                    ifVertical = { IntSize(initialSize.width, targetSize.height) }
+                ) at ExitDurationMillis using FastOutSlowInEasing
+            }
+
+            else -> {
+                orientation
+                    .fold(
                         ifHorizontal = { targetSize.width > initialSize.width },
                         ifVertical = { targetSize.height > initialSize.height }
                     )
-                    if (isExpanding) enterIntSizeSpec else exitIntSizeSpec
-                }
+                    .foldBoolean(
+                        ifTrue = { enterIntSizeSpec },
+                        ifFalse = { exitIntSizeSpec },
+                    )
             }
         }
+    }
 
 
-    private const val EnterDurationMillis = 220
-    private const val ExitDurationMillis = 90
+    private const val EnterDurationMillis = 250
+    private const val ExitDurationMillis = 200
 
     private val enterIntSizeSpec = tween<IntSize>(EnterDurationMillis)
     private val exitIntSizeSpec = tween<IntSize>(ExitDurationMillis)
