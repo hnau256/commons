@@ -9,7 +9,6 @@ kotlin {
             dependencies {
                 implementation(project(":kotlin"))
                 implementation(project(":app:model"))
-                implementation(hnau.kotlinx.immutable)
             }
         }
     }

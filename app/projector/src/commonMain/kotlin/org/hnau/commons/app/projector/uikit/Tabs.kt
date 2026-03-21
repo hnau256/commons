@@ -39,11 +39,10 @@ import androidx.compose.ui.util.lerp
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun <T> Tabs(
-    items: ImmutableList<T>,
+    items: List<T>,
     selected: T,
     onSelectedChanged: (T) -> Unit,
     modifier: Modifier = Modifier,

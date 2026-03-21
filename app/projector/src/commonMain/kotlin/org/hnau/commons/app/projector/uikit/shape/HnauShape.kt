@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.uikit.shape
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -12,7 +11,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.lerp
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 
-@Immutable
 class HnauShape(
     private val startTopRadiusFraction: Float = 1f,
     private val endTopRadiusFraction: Float = 1f,

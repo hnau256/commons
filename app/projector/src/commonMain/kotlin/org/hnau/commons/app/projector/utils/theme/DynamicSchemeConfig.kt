@@ -1,12 +1,10 @@
 package org.hnau.commons.app.projector.utils.theme
 
-import androidx.compose.runtime.Immutable
+import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.DynamicScheme
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.Variant
-import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 
-@Immutable
 data class DynamicSchemeConfig(
     val variant: Variant = Variant.TONAL_SPOT,
     val contrastLevel: Double = 1.0,

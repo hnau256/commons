@@ -9,8 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.mapMutableState
 import org.hnau.commons.kotlin.mapper.Mapper
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -46,7 +44,7 @@ fun rememberPagerState(
 @Composable
 fun <T> rememberPagerState(
     state: MutableStateFlow<T>,
-    items: ImmutableList<T>,
+    items: List<T>,
 ): PagerState = rememberPagerState(
     state = rememberCoroutineScope().let { scope ->
         remember(state, scope) {
@@ -67,5 +65,5 @@ inline fun <reified T : Enum<T>> rememberPagerState(
     state: MutableStateFlow<T>,
 ): PagerState = rememberPagerState(
     state = state,
-    items = remember { enumValues<T>().toImmutableList() },
+    items = remember { enumValues<T>().toList() },
 )
