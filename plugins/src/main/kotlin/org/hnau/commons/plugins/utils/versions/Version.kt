@@ -1,6 +1,6 @@
 package org.hnau.commons.plugins.utils.versions
 
-import org.hnau.commons.plugins.internal.GeneratedVersion
+import org.hnau.commons.plugins.internal.hnauCommonsVersion
 
 enum class Version(
     val version: String,
@@ -9,7 +9,7 @@ enum class Version(
     AndroidGradlePlugin("9.1.0"),
     ComposeMultiplatform("1.10.2"),
     ComposeMultiplatformMaterial3("1.10.0-alpha05"),
-    HnauCommons(GeneratedVersion.HNAU_COMMONS_VERSION),
+    HnauCommons(hnauCommonsVersion),
     KotlinxSerialization("1.10.0"),
     CommposeMultiplatformIcons("1.7.3"),
     JetpackCompose("1.10.4"),
