@@ -1,15 +1,16 @@
 package org.hnau.commons.plugins.project.projectext
 
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
 import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.project.utils.Constants
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.InputStream
 
 internal fun Project.applyKotlinComposePlugin() {
-
     applyPlugin(Versions.Plugins.kotlinCompose.withoutAlias.withoutVersion)
 
     val stabilityConfigPath = project
@@ -24,27 +25,12 @@ internal fun Project.applyKotlinComposePlugin() {
 
     project
         .tasks
-        .register(Constants.copyHnauComposeStabilityConfigTaskName) { task ->
-
-            task.doFirst {
-
-                val configContent = project
-                    .buildscript
-                    .classLoader
-                    .getResourceAsStream(Constants.composeStabilityConfigResourcesFileName)
-                    ?.use(InputStream::readBytes)
-                    ?: throw IllegalStateException("${Constants.composeStabilityConfigResourcesFileName} not found in plugin resources")
-
-                stabilityConfigPath
-                    .get()
-                    .asFile
-                    .apply { parentFile.mkdirs() }
-                    .writeBytes(configContent)
-            }
-
-            task
-                .outputs
-                .file(stabilityConfigPath)
+        .register(
+            Constants.copyHnauComposeStabilityConfigTaskName,
+            CopyComposeStabilityConfigTask::class.java,
+        ) { task ->
+            task.outputFile.set(stabilityConfigPath)
+            task.inputResourcePath.set(Constants.composeStabilityConfigResourcesFileName)
         }
 
     project
@@ -53,4 +39,29 @@ internal fun Project.applyKotlinComposePlugin() {
         .configureEach { task ->
             task.dependsOn(Constants.copyHnauComposeStabilityConfigTaskName)
         }
+}
+
+internal abstract class CopyComposeStabilityConfigTask : org.gradle.api.DefaultTask() {
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
+
+    @get:org.gradle.api.tasks.Internal
+    abstract val inputResourcePath: org.gradle.api.provider.Property<String>
+
+    @TaskAction
+    fun execute() {
+        val resourcePath = inputResourcePath.get()
+        val classLoader = this.javaClass.classLoader
+
+        val configContent = classLoader
+            .getResourceAsStream(resourcePath)
+            ?.use { it.readBytes() }
+            ?: throw IllegalStateException("$resourcePath not found in plugin resources")
+
+        outputFile
+            .get()
+            .asFile
+            .apply { parentFile.mkdirs() }
+            .writeBytes(configContent)
+    }
 }
