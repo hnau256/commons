@@ -1,5 +1,61 @@
 plugins {
-    id(hnau.plugins.hnau.plugins.get().pluginId)
+    id(
+        hnau.plugins.hnau.plugins
+            .get()
+            .pluginId,
+    )
+}
+
+// Task to generate version constant from version.properties
+val generateVersionConstant by tasks.registering {
+    val versionFile = rootProject.file("version.properties")
+    val outputDir = layout.buildDirectory.dir("generated-src/kotlin/main")
+    val outputFile = outputDir.map { it.file("org/hnau/commons/plugins/internal/GeneratedVersion.kt") }
+
+    inputs.file(versionFile)
+    outputs.file(outputFile)
+
+    doLast {
+        val version =
+            versionFile
+                .readLines()
+                .firstOrNull { it.startsWith("version=") }
+                ?.substringAfter("=")
+                ?.trim()
+                ?: error("version not found in version.properties")
+
+        outputFile.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                """
+                package org.hnau.commons.plugins.internal
+                
+                // Auto-generated from version.properties - DO NOT EDIT
+                internal object GeneratedVersion {
+                    const val HNAU_COMMONS_VERSION: String = "$version"
+                }
+                """.trimIndent(),
+            )
+        }
+    }
+}
+
+// Add generated source directory to Kotlin source sets
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir(layout.buildDirectory.dir("generated-src/kotlin/main"))
+    }
+}
+
+// Ensure compileKotlin depends on version generation
+tasks.compileKotlin {
+    dependsOn(generateVersionConstant)
+}
+
+// Configure task dependencies after evaluation
+afterEvaluate {
+    tasks.findByName("sourcesJar")?.dependsOn(generateVersionConstant)
+    tasks.findByName("dokkaGeneratePublicationHtml")?.dependsOn(generateVersionConstant)
 }
 
 gradlePlugin {
