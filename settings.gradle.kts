@@ -45,13 +45,10 @@ plugins {
     id("org.hnau.plugin.settings")
 }
 
-// Use the parsed project version for hnau extension
-val projectVersion = settings.extra["parsedProjectVersion"] as String
-
 hnau {
     groupId = "org.hnau.commons"
     publish {
-        version = projectVersion
+        version = settings.extra["parsedProjectVersion"] as String
         gitUrl = "https://github.com/hnau256/commons"
     }
 }
