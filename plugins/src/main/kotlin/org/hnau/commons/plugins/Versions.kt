@@ -69,10 +69,9 @@ internal object Versions {
         val javaGradlePlugin: PluginId =
             PluginId("java-gradle-plugin")
 
-        //update in build.gradle.kts
         val hnauProject: List<Aliased<Versioned<PluginId>>> =
             listOf("jvm", "kmp", "ui", "androidapp", "plugins").map { suffix ->
-                PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauPlugins withAlias "hnau-$suffix"
+                PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
             }
     }
 
