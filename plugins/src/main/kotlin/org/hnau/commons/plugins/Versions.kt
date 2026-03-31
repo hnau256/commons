@@ -195,10 +195,12 @@ internal object Versions {
             kotlinpoetGroup withArtifact "kotlinpoet" withVersion Version.Kotlinpoet withAlias "kotlinpoet-core",
             kotlinpoetGroup withArtifact "kotlinpoet-ksp" withVersion Version.Kotlinpoet withAlias "kotlinpoet-ksp",
             "com.google.devtools.ksp" withArtifact "symbol-processing-api" withVersion Version.Ksp withAlias "ksp-api",
+            "org.slf4j" withArtifact "slf4j-api" withVersion Version.Slf4j withAlias "slf4j-api",
+            "co.touchlab" withArtifact "kermit" withVersion Version.Kermit withAlias "kermit",
         )
 
         val unconditioned: List<Versioned<LibraryId>> = listOf(
-            "co.touchlab" withArtifact "kermit" withVersion Version.Kermit
+            "co.touchlab" withArtifact "kermit" withVersion Version.Kermit,
         )
     }
 }

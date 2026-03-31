@@ -43,29 +43,30 @@ class HnauSettingsPlugin : Plugin<Settings> {
     private fun collectProjects(
         projectDir: File,
         projectIdentifier: String = "",
-    ): List<String> = projectDir
-        .list()
-        .orEmpty()
-        .let { fileNames ->
-            if (projectIdentifier.isNotEmpty() && "build.gradle.kts" in fileNames) {
-                return listOf(projectIdentifier)
+    ): List<String> =
+        projectDir
+            .list()
+            .orEmpty()
+            .let { fileNames ->
+                if (projectIdentifier.isNotEmpty() && "build.gradle.kts" in fileNames) {
+                    return listOf(projectIdentifier)
+                }
+                fileNames
+                    .filterNot { it.startsWith('.') || it == "build" }
+                    .mapNotNull { fileName ->
+                        val childDir =
+                            projectDir
+                                .resolve(fileName)
+                                .takeIf(File::isDirectory)
+                                ?: return@mapNotNull null
+                        fileName to childDir
+                    }.flatMap { (fileName, childDir) ->
+                        collectProjects(
+                            projectDir = childDir,
+                            projectIdentifier = "$projectIdentifier:$fileName",
+                        )
+                    }
             }
-            fileNames
-                .filterNot { it.startsWith('.') || it == "build" }
-                .mapNotNull { fileName ->
-                    val childDir = projectDir
-                        .resolve(fileName)
-                        .takeIf(File::isDirectory)
-                        ?: return@mapNotNull null
-                    fileName to childDir
-                }
-                .flatMap { (fileName, childDir) ->
-                    collectProjects(
-                        projectDir = childDir,
-                        projectIdentifier = "$projectIdentifier:$fileName"
-                    )
-                }
-        }
 
     private fun createBomCatalog(catalogs: MutableVersionCatalogContainer) {
         catalogs.create("hnau") { catalog ->
@@ -93,19 +94,20 @@ class HnauSettingsPlugin : Plugin<Settings> {
                     )
                 }
 
-            val libraries = buildList {
-                addAll(Versions.HnauCommons.forBom)
-                addAll(Versions.Kotlinx.forBom)
-                addAll(Versions.Kotlinx.Serialization.forBom)
-                addAll(Versions.Standalone.forBom)
-            }
+            val libraries =
+                buildList {
+                    addAll(Versions.HnauCommons.forBom)
+                    addAll(Versions.Kotlinx.forBom)
+                    addAll(Versions.Kotlinx.Serialization.forBom)
+                    addAll(Versions.Standalone.forBom)
+                }
 
-            val usedVersions = listOf(
-                plugins,
-                libraries,
-            )
-                .flatten()
-                .map { it.withoutAlias.version }
+            val usedVersions =
+                listOf(
+                    plugins,
+                    libraries,
+                ).flatten()
+                    .map { it.withoutAlias.version }
 
             usedVersions.forEach { version ->
                 catalog.version(
