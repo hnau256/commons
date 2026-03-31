@@ -19,14 +19,17 @@ internal fun Project.configureKmp(
     applyPlugin(Versions.Plugins.kotlinMultiplatform.withoutAlias.withoutVersion)
 
     val projectType = ProjectType.Kmp(
-            kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java),
-        )
+        kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java),
+    )
 
     tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
         task.compilerOptions {
             jvmTarget.set(Versions.jvmTarget)
-            freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
         }
+    }
+
+    projectType.kmpExtension.compilerOptions {
+        freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
     }
 
     when (addCompose) {
