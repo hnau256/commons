@@ -1,14 +1,6 @@
 plugins {
-    id(
-        hnau.plugins.kotlin.serialization
-            .get()
-            .pluginId,
-    )
-    id(
-        hnau.plugins.hnau.kmp
-            .get()
-            .pluginId,
-    )
+    id(hnau.plugins.kotlin.serialization.get().pluginId)
+    id(hnau.plugins.hnau.kmp.get().pluginId)
 }
 
 kotlin {
@@ -23,7 +15,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(hnau.slf4j.api)
-                compileOnly(project(":plugins"))
+                implementation(project(":plugins"))
             }
         }
     }
