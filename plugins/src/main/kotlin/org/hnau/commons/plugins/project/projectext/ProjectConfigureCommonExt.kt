@@ -1,6 +1,8 @@
 package org.hnau.commons.plugins.project.projectext
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.kotlin.dsl.getByType
 import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
@@ -16,6 +18,11 @@ internal fun Project.configureCommon(
             dependency = Versions.HnauCommons.kotlin,
         )
     }
+
+    project
+        .extensions
+        .getByType<BasePluginExtension>()
+        .apply { archivesName.set(config.artifactId.artifactId) }
 
     buildList {
         addAll(Versions.Arrow.unconditioned)
