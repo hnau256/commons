@@ -1,5 +1,6 @@
 package org.hnau.commons.kotlin.logging.slf4j
 
+import org.hnau.commons.plugins.utils.versions.Version
 import org.slf4j.ILoggerFactory
 import org.slf4j.IMarkerFactory
 import org.slf4j.helpers.BasicMarkerFactory
@@ -21,7 +22,7 @@ class KermitSlf4jServiceProvider : SLF4JServiceProvider {
 
     override fun getMDCAdapter(): MDCAdapter = mdcAdapter
 
-    override fun getRequestedApiVersion(): String = "2.0.17"//Version.Slf4j.version
+    override fun getRequestedApiVersion(): String = Version.Slf4j.version
 
     override fun initialize() {
         // Nothing to initialize

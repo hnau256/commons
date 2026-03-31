@@ -15,7 +15,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(hnau.slf4j.api)
-                //implementation(project(":plugins"))
+                implementation(project(":plugins"))
             }
         }
     }

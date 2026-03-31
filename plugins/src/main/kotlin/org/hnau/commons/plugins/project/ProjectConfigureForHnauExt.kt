@@ -38,7 +38,9 @@ internal fun Project.configureForHnau(
             addAndroid = true,
         )
 
-        ModuleType.PLUGINS -> configurePlugins()
+        ModuleType.PLUGINS -> configurePlugins(
+            config = config,
+        )
     }
 
     configureCommon(

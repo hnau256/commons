@@ -4,16 +4,23 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.gradleKotlinDsl
 import org.hnau.commons.plugins.Versions
+import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
 
-internal fun Project.configurePlugins(): ProjectType {
+internal fun Project.configurePlugins(
+    config: ProjectConfig,
+): ProjectType {
+
+    configureJvm(
+        config = config,
+        addAndroid = false,
+    )
 
     val projectType = ProjectType.Jvm(
         isPlugins = true,
     )
 
     applyPlugin(Versions.Plugins.javaGradlePlugin)
-    applyPlugin(Versions.Plugins.kotlinJvm.withoutAlias.withoutVersion)
 
     dependencies {
         add("compileOnly", gradleApi())
