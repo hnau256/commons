@@ -17,13 +17,8 @@ internal fun Project.configureKmp(
 ): ProjectType.Kmp {
     applyPlugin(Versions.Plugins.kotlinMultiplatform.withoutAlias.withoutVersion)
 
-    project
-        .extensions
-        .getByType(KotlinMultiplatformExtension::class.java)
-        .jvmToolchain(Versions.jvmTargetInt)
-
     val projectType = ProjectType.Kmp(
-        kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java)
+        kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java),
     )
 
     projectType.kmpExtension.compilerOptions {
@@ -68,7 +63,6 @@ internal fun Project.configureKmp(
         }
 
         false -> {
-
             projectType
                 .kmpExtension
                 .jvm {

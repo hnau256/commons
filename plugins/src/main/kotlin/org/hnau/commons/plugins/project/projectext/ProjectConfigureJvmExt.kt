@@ -10,7 +10,6 @@ import org.hnau.commons.plugins.project.utils.Constants
 import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
 import org.hnau.commons.plugins.project.utils.androidNamespace
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureJvm(
@@ -25,11 +24,6 @@ internal fun Project.configureJvm(
     when (addAndroid) {
         false -> {
             applyPlugin(Versions.Plugins.kotlinJvm.withoutAlias.withoutVersion)
-
-            project
-                .extensions
-                .getByType(KotlinJvmProjectExtension::class.java)
-                .jvmToolchain(Versions.jvmTargetInt)
 
             project
                 .extensions
