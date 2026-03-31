@@ -8,6 +8,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(hnau.kotlinx.atomicfu)
+                implementation(hnau.kotlinx.serialization.json)
             }
         }
     }

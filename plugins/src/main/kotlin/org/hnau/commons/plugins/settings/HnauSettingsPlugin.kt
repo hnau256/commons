@@ -96,6 +96,7 @@ class HnauSettingsPlugin : Plugin<Settings> {
             val libraries = buildList {
                 addAll(Versions.HnauCommons.forBom)
                 addAll(Versions.Kotlinx.forBom)
+                addAll(Versions.Kotlinx.Serialization.forBom)
                 addAll(Versions.Standalone.forBom)
             }
 

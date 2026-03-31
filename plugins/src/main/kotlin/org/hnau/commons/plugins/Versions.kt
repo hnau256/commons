@@ -116,8 +116,15 @@ internal object Versions {
     object Kotlinx {
         private val group = GroupId("org.jetbrains.kotlinx")
 
-        val serialization = listOf("core", "json", "cbor").map { suffix ->
-            group withArtifact "kotlinx-serialization-$suffix" withVersion Version.KotlinxSerialization
+        object Serialization {
+
+            private val prefix = "kotlinx-serialization"
+
+            val core = group withArtifact "$prefix-core" withVersion Version.KotlinxSerialization
+
+            val forBom: List<Aliased<Versioned<LibraryId>>> = listOf("json", "cbor").map { suffix ->
+                group withArtifact "$prefix-$suffix" withVersion Version.KotlinxSerialization withAlias "kotlinx-serialization-$suffix"
+            }
         }
 
         val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(

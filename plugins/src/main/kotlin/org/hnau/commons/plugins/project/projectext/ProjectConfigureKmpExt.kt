@@ -16,42 +16,40 @@ internal fun Project.configureKmp(
     addCompose: Boolean,
 ): ProjectType.Kmp {
     applyPlugin(Versions.Plugins.kotlinMultiplatform.withoutAlias.withoutVersion)
-    applyPlugin(Versions.Plugins.androidMultiplatformLibrary.withoutAlias.withoutVersion)
 
     project
         .extensions
         .getByType(KotlinMultiplatformExtension::class.java)
         .jvmToolchain(Versions.jvmTargetInt)
 
-    if (addCompose) {
-        applyPlugin(Versions.Plugins.composeMultiplatform.withoutAlias.withoutVersion)
-        applyKotlinComposePlugin()
-    }
-
     val projectType = ProjectType.Kmp(
         kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java)
-    )
-
-    addAndroidDependencies(
-        projectType = projectType,
-        addCompose = addCompose,
     )
 
     projectType.kmpExtension.compilerOptions {
         freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
     }
 
-    (projectType.kmpExtension as ExtensionAware)
-        .extensions
-        .getByType(KotlinMultiplatformAndroidLibraryExtension::class.java)
-        .apply {
-            namespace = config.androidNamespace
-            compileSdk = Versions.compileSdk
-            minSdk = Versions.minSdk
-        }
-
     when (addCompose) {
         true -> {
+            applyPlugin(Versions.Plugins.androidMultiplatformLibrary.withoutAlias.withoutVersion)
+            applyPlugin(Versions.Plugins.composeMultiplatform.withoutAlias.withoutVersion)
+            applyKotlinComposePlugin()
+
+            addAndroidDependencies(
+                projectType = projectType,
+                addCompose = true,
+            )
+
+            (projectType.kmpExtension as ExtensionAware)
+                .extensions
+                .getByType(KotlinMultiplatformAndroidLibraryExtension::class.java)
+                .apply {
+                    namespace = config.androidNamespace
+                    compileSdk = Versions.compileSdk
+                    minSdk = Versions.minSdk
+                }
+
             projectType
                 .kmpExtension
                 .jvm(Constants.desktopTargetName) {

@@ -11,13 +11,8 @@ internal fun Project.configureSerializationIfNeed(
         return
     }
 
-    Versions
-        .Kotlinx
-        .serialization
-        .forEach { dependency ->
-            addDependency(
-                type = projectType,
-                dependency = dependency,
-            )
-        }
+    addDependency(
+        type = projectType,
+        dependency = Versions.Kotlinx.Serialization.core,
+    )
 }

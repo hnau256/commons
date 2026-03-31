@@ -9,6 +9,7 @@ kotlin {
             dependencies {
                 implementation(project(":kotlin"))
                 implementation(hnau.kotlinx.io)
+                implementation(hnau.kotlinx.serialization.json)
             }
         }
     }
