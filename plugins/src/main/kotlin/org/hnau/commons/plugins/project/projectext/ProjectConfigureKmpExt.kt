@@ -10,6 +10,7 @@ import org.hnau.commons.plugins.project.utils.ProjectType
 import org.hnau.commons.plugins.project.utils.androidNamespace
 import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 internal fun Project.configureKmp(
     config: ProjectConfig,
@@ -18,11 +19,14 @@ internal fun Project.configureKmp(
     applyPlugin(Versions.Plugins.kotlinMultiplatform.withoutAlias.withoutVersion)
 
     val projectType = ProjectType.Kmp(
-        kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java),
-    )
+            kmpExtension = extensions.getByType(KotlinMultiplatformExtension::class.java),
+        )
 
-    projectType.kmpExtension.compilerOptions {
-        freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
+    tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
+        task.compilerOptions {
+            jvmTarget.set(Versions.jvmTarget)
+            freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
+        }
     }
 
     when (addCompose) {
