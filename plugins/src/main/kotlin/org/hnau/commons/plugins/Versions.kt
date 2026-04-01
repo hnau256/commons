@@ -70,7 +70,7 @@ internal object Versions {
             PluginId("java-gradle-plugin")
 
         val hnauProject: List<Aliased<Versioned<PluginId>>> =
-            listOf("jvm", "kmp", "ui", "androidapp", "plugins").map { suffix ->
+            listOf("jvm", "jvmAndroidApp", "kmp", "kmpAndroid", "kmpAndroidWithCompose", "plugins").map { suffix ->
                 PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
             }
     }

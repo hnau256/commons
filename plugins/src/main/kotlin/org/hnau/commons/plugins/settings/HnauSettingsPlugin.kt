@@ -102,12 +102,12 @@ class HnauSettingsPlugin : Plugin<Settings> {
                     addAll(Versions.Standalone.forBom)
                 }
 
-            val usedVersions =
-                listOf(
-                    plugins,
-                    libraries,
-                ).flatten()
-                    .map { it.withoutAlias.version }
+            val usedVersions = listOf(
+                plugins,
+                libraries,
+            )
+                .flatten()
+                .map { it.withoutAlias.version }
 
             usedVersions.forEach { version ->
                 catalog.version(
@@ -126,7 +126,8 @@ class HnauSettingsPlugin : Plugin<Settings> {
                 val (libraryIdWithVersion, alias) = aliasedVersionedLibraryId
                 val (libraryId, version) = libraryIdWithVersion
                 val (groupId, artifactId) = libraryId
-                catalog.library(alias.alias, groupId.groupId, artifactId.artifactId).versionRef(version.alias.alias)
+                catalog.library(alias.alias, groupId.groupId, artifactId.artifactId)
+                    .versionRef(version.alias.alias)
             }
         }
     }

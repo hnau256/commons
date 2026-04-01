@@ -13,7 +13,7 @@ internal fun Project.configurePlugins(
 
     configureJvm(
         config = config,
-        addAndroid = false,
+        isAndroidApp = false,
     )
 
     val projectType = ProjectType.Jvm(

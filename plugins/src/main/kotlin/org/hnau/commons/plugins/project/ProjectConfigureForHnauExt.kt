@@ -11,34 +11,26 @@ import org.hnau.commons.plugins.project.utils.toProjectConfig
 import org.hnau.commons.plugins.utils.SharedConfig
 
 internal fun Project.configureForHnau(
-    moduleType: org.hnau.commons.plugins.project.utils.ModuleType,
+    moduleType: ModuleType,
 ) {
+
     val config = SharedConfig
         .extractFromRootProject(project)
         .toProjectConfig(project)
 
     val projectType: ProjectType = when (moduleType) {
-        ModuleType.JVM -> configureJvm(
+
+        is ModuleType.Jvm -> configureJvm(
             config = config,
-            addAndroid = false,
+            isAndroidApp = moduleType.isAndroidApp,
         )
 
-        ModuleType.KMP -> configureKmp(
+        is ModuleType.Kmp -> configureKmp(
             config = config,
-            addCompose = false,
+            level = moduleType.level,
         )
 
-        ModuleType.UI -> configureKmp(
-            config = config,
-            addCompose = true,
-        )
-
-        ModuleType.ANDROID_APP -> configureJvm(
-            config = config,
-            addAndroid = true,
-        )
-
-        ModuleType.PLUGINS -> configurePlugins(
+        ModuleType.Plugins -> configurePlugins(
             config = config,
         )
     }

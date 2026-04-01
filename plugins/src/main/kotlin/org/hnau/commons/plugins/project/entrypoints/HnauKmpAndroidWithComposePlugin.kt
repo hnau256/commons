@@ -5,8 +5,16 @@ import org.gradle.api.Project
 import org.hnau.commons.plugins.project.utils.ModuleType
 import org.hnau.commons.plugins.project.configureForHnau
 
-class HnauAndroidAppPlugin : Plugin<Project> {
+class HnauKmpAndroidWithComposePlugin : Plugin<Project> {
+
     override fun apply(project: Project) {
-        project.configureForHnau(ModuleType.ANDROID_APP)
+
+        project.configureForHnau(
+            moduleType = ModuleType.Kmp(
+                level = ModuleType.Kmp.Level.Android(
+                    withCompose = true,
+                ),
+            )
+        )
     }
 }

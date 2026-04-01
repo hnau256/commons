@@ -58,30 +58,42 @@ gradlePlugin {
             description =
                 "Centralized settings: version catalog, pluginManagement, auto-include modules, allModules defaults"
         }
+
         create("HnauJvm") {
             id = "$prefix.jvm"
             implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauJvmPlugin"
             displayName = "Hnau JVM Plugin"
             description = "Kotlin JVM module configuration with auto-detection"
         }
+
+        create("HnauJvmAndroidApp") {
+            id = "$prefix.jvmAndroidApp"
+            implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauJvmAndroidAppPlugin"
+            displayName = "Hnau Jvm Android App Plugin"
+            description = "JVM Android Application module configuration with auto-detection"
+        }
+
         create("HnauKmp") {
             id = "$prefix.kmp"
             implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauKmpPlugin"
             displayName = "Hnau KMP Plugin"
             description = "Kotlin Multiplatform module configuration with auto-detection"
         }
-        create("HnauUi") {
-            id = "$prefix.ui"
-            implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauUiPlugin"
-            displayName = "Hnau UI Plugin"
-            description = "Compose Multiplatform module configuration with auto-detection"
+
+        create("HnauKmpAndroid") {
+            id = "$prefix.kmpAndroid"
+            implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauKmpAndroidPlugin"
+            displayName = ""
+            description = ""
         }
-        create("HnauAndroidApp") {
-            id = "$prefix.androidapp"
-            implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauAndroidAppPlugin"
-            displayName = "Hnau Android App Plugin"
-            description = "Android Application module configuration with auto-detection"
+
+        create("HnauKmpAndroidWithCompose") {
+            id = "$prefix.kmpAndroidWithCompose"
+            implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauKmpAndroidWithComposePlugin"
+            displayName = ""
+            description = ""
         }
+
         create("HnauPlugins") {
             id = "$prefix.plugins"
             implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauPluginsPlugin"

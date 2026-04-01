@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.project.utils.Constants
+import org.hnau.commons.plugins.project.utils.ModuleType
 import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
 import org.hnau.commons.plugins.project.utils.androidNamespace
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 internal fun Project.configureKmp(
     config: ProjectConfig,
-    addCompose: Boolean,
+    level: ModuleType.Kmp.Level,
 ): ProjectType.Kmp {
     applyPlugin(Versions.Plugins.kotlinMultiplatform.withoutAlias.withoutVersion)
 
@@ -32,11 +33,37 @@ internal fun Project.configureKmp(
         freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
     }
 
-    when (addCompose) {
-        true -> {
+    fun configSourceSets(
+        withCompose: Boolean,
+    ) {
+        with(
+            receiver = projectType.kmpExtension,
+        ) {
+
+            when (withCompose) {
+                true -> jvm(Constants.desktopTargetName) { withSourcesJar() }
+                false -> {
+                    jvm { withSourcesJar() }
+                    linuxX64()
+                }
+            }
+        }
+    }
+
+    when (level) {
+        ModuleType.Kmp.Level.Pure -> {
+            configSourceSets(
+                withCompose = false,
+            )
+        }
+
+        is ModuleType.Kmp.Level.Android -> {
+
+            configSourceSets(
+                withCompose = level.withCompose,
+            )
+
             applyPlugin(Versions.Plugins.androidMultiplatformLibrary.withoutAlias.withoutVersion)
-            applyPlugin(Versions.Plugins.composeMultiplatform.withoutAlias.withoutVersion)
-            applyKotlinComposePlugin()
 
             addAndroidDependencies(
                 projectType = projectType,
@@ -52,33 +79,21 @@ internal fun Project.configureKmp(
                     minSdk = Versions.minSdk
                 }
 
-            projectType
-                .kmpExtension
-                .jvm(Constants.desktopTargetName) {
-                    withSourcesJar()
-                }
+            if (level.withCompose) {
+                applyPlugin(Versions.Plugins.composeMultiplatform.withoutAlias.withoutVersion)
+                applyKotlinComposePlugin()
 
-            dependencies.add(
-                "${Constants.desktopTargetName}MainImplementation",
-                ComposePlugin.Dependencies(project).desktop.currentOs,
-            )
+                dependencies.add(
+                    "${Constants.desktopTargetName}MainImplementation",
+                    ComposePlugin.Dependencies(project).desktop.currentOs,
+                )
 
-            addComposeDependencies(
-                dependencies = Versions.composeMultiplatform,
-                projectType = projectType,
-            )
-        }
+                addComposeDependencies(
+                    dependencies = Versions.composeMultiplatform,
+                    projectType = projectType,
+                )
 
-        false -> {
-            projectType
-                .kmpExtension
-                .jvm {
-                    withSourcesJar()
-                }
-
-            projectType
-                .kmpExtension
-                .linuxX64()
+            }
         }
     }
 

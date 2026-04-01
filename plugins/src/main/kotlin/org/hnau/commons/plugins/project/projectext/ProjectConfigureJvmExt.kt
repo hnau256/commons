@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureJvm(
     config: ProjectConfig,
-    addAndroid: Boolean,
+    isAndroidApp: Boolean,
 ): ProjectType {
 
     val projectType = ProjectType.Jvm(
         isPlugins = false,
     )
 
-    when (addAndroid) {
+    when (isAndroidApp) {
         false -> {
             applyPlugin(Versions.Plugins.kotlinJvm.withoutAlias.withoutVersion)
 
