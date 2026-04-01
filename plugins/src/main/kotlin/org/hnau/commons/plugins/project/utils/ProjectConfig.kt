@@ -27,11 +27,9 @@ internal fun SharedConfig.toProjectConfig(
 ): ProjectConfig {
 
     val artifactId: ArtifactId = listOf(
-        groupId
-            .groupId
-            .split(".")
-            .last()
-            .let { lastGroupPart -> listOf(lastGroupPart) },
+        projectId
+            .projectId
+            .let { projectId -> listOf(projectId) },
         project
             .path
             .split(':')
@@ -44,7 +42,7 @@ internal fun SharedConfig.toProjectConfig(
         .let(::ArtifactId)
 
     return ProjectConfig(
-        groupId = groupId,
+        groupId = GroupId("org.hnau.$projectId"),
         artifactId = artifactId,
         publish = publish?.run {
             ProjectConfig.Publish(

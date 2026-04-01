@@ -1,10 +1,10 @@
 package org.hnau.commons.plugins.utils
 
 import org.gradle.api.Project
-import org.hnau.commons.plugins.utils.versions.GroupId
+import org.hnau.commons.plugins.utils.versions.ProjectId
 
 data class SharedConfig(
-    val groupId: GroupId,
+    val projectId: ProjectId,
     val publish: Publish?,
 ) {
 

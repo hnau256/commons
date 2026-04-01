@@ -4,9 +4,11 @@ import org.gradle.api.Action
 import org.hnau.commons.plugins.utils.SharedConfig
 import org.hnau.commons.plugins.utils.requireNotNull
 import org.hnau.commons.plugins.utils.versions.GroupId
+import org.hnau.commons.plugins.utils.versions.PluginId
+import org.hnau.commons.plugins.utils.versions.ProjectId
 
 open class SharedConfigExtension {
-    var groupId: String? = null
+    var projectId: String? = null
 
     var publish: SharedConfig.Publish? = null
 
@@ -16,11 +18,11 @@ open class SharedConfigExtension {
             .build("${ConfigPath}publish")
     }
 
-    internal val groupIdNotNull: GroupId
+    internal val projectIdNotNull: ProjectId
         get() = requireNotNull(
-            value = groupId,
-            propertyName = "${ConfigPath}groupId",
-        ).let(::GroupId)
+            value = projectId,
+            propertyName = "${ConfigPath}projectId",
+        ).let(::ProjectId)
 
     companion object {
 
