@@ -32,7 +32,7 @@ enum class Version(
     Kermit("2.0.8"),
     Kotlinpoet("2.2.0"),
     OkHttp("5.1.0"),
-    Slf4j("2.0.17"),
+    Slf4j("2.0.17"), //Also update KermitSlf4jServiceProvider
     ;
 
     val alias: Alias = name
