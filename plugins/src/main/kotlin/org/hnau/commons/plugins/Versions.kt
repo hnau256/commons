@@ -92,11 +92,11 @@ internal object Versions {
     object HnauCommons {
         val group = GroupId("org.hnau.commons")
 
-        val kotlin = group withArtifact "kotlin" withVersion Version.HnauCommons
+        val kotlin = group withArtifact "commons-kotlin" withVersion Version.HnauCommons
 
         val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(
-            ArtifactId("app-model") withVersion Version.HnauCommons withAlias "commons-app-model",
-            ArtifactId("app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector"
+            ArtifactId("commons-app-model") withVersion Version.HnauCommons withAlias "commons-app-model",
+            ArtifactId("commons-app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector"
         ).map { aliasedVersionedArtifactId ->
             aliasedVersionedArtifactId.withGroup(group)
         }
@@ -108,7 +108,7 @@ internal object Versions {
                 annotation = "annotations",
                 processor = "processor",
             ).map { suffix ->
-                group withArtifact "gen-$type-$suffix" withVersion Version.HnauCommons
+                group withArtifact "commons-gen-$type-$suffix" withVersion Version.HnauCommons
             }
         }
     }

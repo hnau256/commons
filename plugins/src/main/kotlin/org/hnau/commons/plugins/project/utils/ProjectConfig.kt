@@ -26,10 +26,21 @@ internal fun SharedConfig.toProjectConfig(
     project: Project,
 ): ProjectConfig {
 
-    val artifactId = project
-        .path
-        .drop(1)
-        .replace(':', '-')
+    val artifactId: ArtifactId = listOf(
+        groupId
+            .groupId
+            .split(".")
+            .last()
+            .let { lastGroupPart -> listOf(lastGroupPart) },
+        project
+            .path
+            .split(':')
+            .filter(String::isNotEmpty)
+    )
+        .flatten()
+        .joinToString(
+            separator = "-",
+        )
         .let(::ArtifactId)
 
     return ProjectConfig(
