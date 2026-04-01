@@ -55,8 +55,7 @@ gradlePlugin {
             id = "$prefix.settings"
             implementationClass = "org.hnau.commons.plugins.settings.HnauSettingsPlugin"
             displayName = "Hnau Settings Plugin"
-            description =
-                "Centralized settings: version catalog, pluginManagement, auto-include modules, allModules defaults"
+            description = "Centralized settings with version catalog, pluginManagement, auto-include modules and allModules defaults"
         }
 
         create("HnauJvm") {
@@ -83,15 +82,15 @@ gradlePlugin {
         create("HnauKmpAndroid") {
             id = "$prefix.kmpAndroid"
             implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauKmpAndroidPlugin"
-            displayName = ""
-            description = ""
+            displayName = "Hnau KMP Android Plugin"
+            description = "Kotlin Multiplatform module with Android target and auto-detection"
         }
 
         create("HnauKmpAndroidWithCompose") {
             id = "$prefix.kmpAndroidWithCompose"
             implementationClass = "org.hnau.commons.plugins.project.entrypoints.HnauKmpAndroidWithComposePlugin"
-            displayName = ""
-            description = ""
+            displayName = "Hnau KMP Android With Compose Plugin"
+            description = "Kotlin Multiplatform module with Android target, Compose and auto-detection"
         }
 
         create("HnauPlugins") {
