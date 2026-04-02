@@ -42,7 +42,7 @@ internal fun SharedConfig.toProjectConfig(
         .let(::ArtifactId)
 
     return ProjectConfig(
-        groupId = GroupId("org.hnau.$projectId"),
+        groupId = GroupId("org.hnau.${projectId.projectId}"),
         artifactId = artifactId,
         publish = publish?.run {
             ProjectConfig.Publish(

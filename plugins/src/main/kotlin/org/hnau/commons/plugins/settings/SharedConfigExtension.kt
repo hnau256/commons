@@ -3,8 +3,6 @@ package org.hnau.commons.plugins.settings
 import org.gradle.api.Action
 import org.hnau.commons.plugins.utils.SharedConfig
 import org.hnau.commons.plugins.utils.requireNotNull
-import org.hnau.commons.plugins.utils.versions.GroupId
-import org.hnau.commons.plugins.utils.versions.PluginId
 import org.hnau.commons.plugins.utils.versions.ProjectId
 
 open class SharedConfigExtension {
