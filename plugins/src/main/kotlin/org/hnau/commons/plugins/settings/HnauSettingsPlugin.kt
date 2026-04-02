@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.initialization.resolve.MutableVersionCatalogContainer
 import org.hnau.commons.plugins.Versions
+import org.hnau.commons.plugins.utils.versions.ProjectId
 import java.io.File
 
 class HnauSettingsPlugin : Plugin<Settings> {
@@ -28,7 +29,12 @@ class HnauSettingsPlugin : Plugin<Settings> {
         settings.gradle.beforeProject { project ->
             if (project == project.rootProject) {
                 extension
-                    .toSharedConfig()
+                    .toSharedConfig(
+                        projectId = project
+                            .name
+                            .lowercase()
+                            .let(::ProjectId)
+                    )
                     .publishToRootProject(project)
             }
         }

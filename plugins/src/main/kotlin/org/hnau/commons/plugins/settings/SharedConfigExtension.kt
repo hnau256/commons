@@ -3,10 +3,8 @@ package org.hnau.commons.plugins.settings
 import org.gradle.api.Action
 import org.hnau.commons.plugins.utils.SharedConfig
 import org.hnau.commons.plugins.utils.requireNotNull
-import org.hnau.commons.plugins.utils.versions.ProjectId
 
 open class SharedConfigExtension {
-    var projectId: String? = null
 
     var publish: SharedConfig.Publish? = null
 
@@ -15,12 +13,6 @@ open class SharedConfigExtension {
             .apply(action::execute)
             .build("${ConfigPath}publish")
     }
-
-    internal val projectIdNotNull: ProjectId
-        get() = requireNotNull(
-            value = projectId,
-            propertyName = "${ConfigPath}projectId",
-        ).let(::ProjectId)
 
     companion object {
 
