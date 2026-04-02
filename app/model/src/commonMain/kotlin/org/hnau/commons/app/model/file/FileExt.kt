@@ -49,3 +49,6 @@ val File.parent: File?
             path = parent,
         )
     }
+
+val File.absolutePath: String
+    get() = fileSystem.resolve(path).toString()

@@ -9,6 +9,7 @@ kotlin {
             dependencies {
                 api(hnau.kotlinx.atomicfu)
                 implementation(hnau.kotlinx.serialization.json)
+                implementation(hnau.kotlinx.serialization.cbor)
             }
         }
 
