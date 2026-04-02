@@ -64,7 +64,7 @@ plugins {
 }
 
 hnau {
-    groupId = "org.hnau.commons"
+    projectId = "commons"
     publish {
         version = settings.extra["parsedProjectVersion"] as String
         gitUrl = "https://github.com/hnau256/commons"
