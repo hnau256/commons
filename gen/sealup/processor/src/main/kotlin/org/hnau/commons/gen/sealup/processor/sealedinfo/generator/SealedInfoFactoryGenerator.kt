@@ -7,8 +7,8 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.companionClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
-import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
+import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue
 
 fun SealedInfo.toFactoriesFuncsSpec(
@@ -33,7 +33,7 @@ private fun SealedInfo.Variant.toFactoriesFuncsSpec(
                 info = info,
                 parentExtension = parentExtension,
                 wrapperClassName = wrapperClassName,
-            )
+            ),
         )
         addAll(
             constructors
@@ -44,7 +44,7 @@ private fun SealedInfo.Variant.toFactoriesFuncsSpec(
                         wrapperClassName = wrapperClassName,
                         constructor = constructor,
                     )
-                }
+                },
         )
     }
 }
@@ -61,13 +61,20 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
         receiver(parentExtension.companionClassName)
         returns(wrapperClassName)
 
-        addParameter(
-            identifier,
-            wrappedClassName,
-        )
+        isObject.ifFalse {
+            addParameter(
+                name = identifier,
+                type = wrappedClassName,
+            )
+        }
     }
     .addCode(
-        "return %T($wrappedValuePropertyName = $identifier)",
+        isObject
+            .ifFalse { "($wrappedIdentifier = $identifier)" }
+            .orEmpty()
+            .let { constructorCall ->
+                "return %T$constructorCall"
+            },
         wrapperClassName,
     )
     .build()
@@ -100,7 +107,6 @@ private fun SealedInfo.Variant.toConstructorFactoryFuncSpec(
                         type.toTypeName(),
                     )
                 }
-
         }
         .addCode(
             Pair(

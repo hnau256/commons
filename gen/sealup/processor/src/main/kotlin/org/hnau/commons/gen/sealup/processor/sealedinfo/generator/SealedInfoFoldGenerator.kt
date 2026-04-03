@@ -8,8 +8,8 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
-import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
+import org.hnau.commons.kotlin.ifFalse
 
 fun SealedInfo.toFoldFuncSpec(): FunSpec {
     val resultType = TypeVariableName("R")
@@ -28,9 +28,13 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                 addParameter(
                     "if${variant.uppercasedIdentifier}",
                     LambdaTypeName.get(
-                        parameters = listOf(variant.wrappedClassName).toTypedArray(),
-                        returnType = resultType
-                    )
+                        parameters = listOfNotNull(
+                            variant
+                                .isObject
+                                .ifFalse { variant.wrappedClassName }
+                        ).toTypedArray(),
+                        returnType = resultType,
+                    ),
                 )
             }
         }
@@ -40,7 +44,12 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                 postfix = "\n\t}",
                 separator = "\n",
             ) { variant ->
-                "\t\tis %T -> if${variant.uppercasedIdentifier}(${variant.wrappedValuePropertyName})"
+                val argument = variant
+                    .isObject
+                    .ifFalse { variant.wrappedIdentifier }
+                    .orEmpty()
+                    .let { "($it)" }
+                "\t\tis %T -> if${variant.uppercasedIdentifier}$argument"
             },
             args = variants
                 .map { it.wrapperClassName(this@toFoldFuncSpec) }

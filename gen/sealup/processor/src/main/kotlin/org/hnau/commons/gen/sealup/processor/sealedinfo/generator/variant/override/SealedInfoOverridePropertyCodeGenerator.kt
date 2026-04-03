@@ -24,8 +24,7 @@ fun SealedInfo.Override.createPropertySpec(
         .builder(
             name = name,
             type = typeName,
-        )
-        .apply {
+        ).apply {
             modifiers += KModifier.OVERRIDE
             visibility.toKModifier()?.let { modifiers += it }
             this.typeVariables.addAll(typeVariables)
@@ -41,11 +40,10 @@ fun SealedInfo.Override.createPropertySpec(
                     .getterBuilder()
                     .addStatement(
                         receiver.foldNullable(
-                            ifNull = { "return ${variant.wrappedValuePropertyName}.$name" },
-                            ifNotNull = { "return with(${variant.wrappedValuePropertyName}) { $name }" }
-                        )
-                    )
-                    .build()
+                            ifNull = { "return ${variant.wrappedIdentifier}.$name" },
+                            ifNotNull = { "return with(${variant.wrappedIdentifier}) { $name }" },
+                        ),
+                    ).build(),
             )
 
             if (type.mutable) {
@@ -55,14 +53,11 @@ fun SealedInfo.Override.createPropertySpec(
                         .addParameter("newValue", typeName)
                         .addStatement(
                             receiver.foldNullable(
-                                ifNull = { "${variant.wrappedValuePropertyName}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
-                                ifNotNull = { "with(${variant.wrappedValuePropertyName}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" }
-                            )
-                        )
-                        .build()
+                                ifNull = { "${variant.wrappedIdentifier}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
+                                ifNotNull = { "with(${variant.wrappedIdentifier}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
+                            ),
+                        ).build(),
                 )
             }
-
-        }
-        .build()
+        }.build()
 }

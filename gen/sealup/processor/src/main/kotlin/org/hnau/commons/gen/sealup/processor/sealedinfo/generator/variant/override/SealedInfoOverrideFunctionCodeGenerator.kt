@@ -15,7 +15,7 @@ fun SealedInfo.Override.createFunSpec(
     variant: SealedInfo.Variant,
     type: SealedInfo.Override.Type.Function,
     typeParamResolver: TypeParameterResolver,
-    typeVariables: List<TypeVariableName>
+    typeVariables: List<TypeVariableName>,
 ): FunSpec = FunSpec
     .builder(name)
     .apply {
@@ -39,20 +39,18 @@ fun SealedInfo.Override.createFunSpec(
             }
 
         addStatement(
-            receiver.foldNullable(
-                ifNull = {
-                    "return ${variant.wrappedValuePropertyName}.$name(" to ")"
-                },
-                ifNotNull = {
-                    "return with(${variant.wrappedValuePropertyName}) { $name(" to ") }"
-                }
-            ).let { (prefix, postfix) ->
-                type.arguments.joinToString(
-                    prefix = prefix,
-                    postfix = postfix,
-                    transform = { argument -> argument.name },
+            receiver
+                .foldNullable(
+                    ifNull = { "return ${variant.wrappedIdentifier}.$name(" to ")" },
+                    ifNotNull = { "return with(${variant.wrappedIdentifier}) { $name(" to ") }" },
                 )
-            }
+                .let { (prefix, postfix) ->
+                    type.arguments.joinToString(
+                        prefix = prefix,
+                        postfix = postfix,
+                        transform = { argument -> argument.name },
+                    )
+                },
         )
     }
     .build()

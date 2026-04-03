@@ -9,14 +9,18 @@ import com.squareup.kotlinpoet.TypeSpec
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.SealInfoCodeGeneratorConstants
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
-import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.variant.override.createSpec
+import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifFalse
 
 fun SealedInfo.Variant.toTypeSpec(
     index: Int,
     info: SealedInfo,
-): TypeSpec = TypeSpec
-    .classBuilder(wrapperClass)
+): TypeSpec = isObject
+    .foldBoolean(
+        ifTrue = { TypeSpec.objectBuilder(wrapperClass) },
+        ifFalse = { TypeSpec.classBuilder(wrapperClass) },
+    )
     .apply {
         modifiers += KModifier.DATA
         addSuperinterface(info.className)
@@ -42,7 +46,7 @@ fun SealedInfo.Variant.toTypeSpec(
                     FunSpec
                         .getterBuilder()
                         .addStatement("return $index")
-                        .build()
+                        .build(),
                 )
                 .build()
         }
@@ -58,32 +62,35 @@ fun SealedInfo.Variant.toTypeSpec(
                     FunSpec
                         .getterBuilder()
                         .addStatement("return \"$identifier\"")
-                        .build()
+                        .build(),
                 )
                 .build()
         }
 
-        primaryConstructor(
-            FunSpec
-                .constructorBuilder()
-                .addParameter(
-                    ParameterSpec
-                        .builder(
-                            name = wrappedValuePropertyName,
-                            type = wrappedClassName,
-                        )
-                        .build()
-                )
-                .build()
-        )
+        isObject.ifFalse {
 
-        propertySpecs += PropertySpec
-            .builder(
-                name = wrappedValuePropertyName,
-                type = wrappedClassName,
+            primaryConstructor(
+                FunSpec
+                    .constructorBuilder()
+                    .addParameter(
+                        ParameterSpec
+                            .builder(
+                                name = wrappedIdentifier,
+                                type = wrappedClassName,
+                            )
+                            .build(),
+                    )
+                    .build(),
             )
-            .initializer(wrappedValuePropertyName)
-            .build()
+
+            propertySpecs += PropertySpec
+                .builder(
+                    name = wrappedIdentifier,
+                    type = wrappedClassName,
+                )
+                .initializer(wrappedIdentifier)
+                .build()
+        }
 
         info
             .overrides
@@ -99,6 +106,3 @@ fun SealedInfo.Variant.toTypeSpec(
             }
     }
     .build()
-
-
-

@@ -22,9 +22,6 @@ val SealedInfo.parentClassName: ClassName
 val SealedInfo.ParentExtension.companionClassName: ClassName
     get() = companion.toClassName()
 
-val SealedInfo.Variant.wrappedClassName: ClassName
-    get() = wrappedType.toClassName()
-
 fun SealedInfo.Variant.wrapperClassName(
     sealedInfo: SealedInfo,
 ): ClassName = sealedInfo
