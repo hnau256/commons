@@ -1,7 +1,6 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils
 
 import com.google.devtools.ksp.getVisibility
-import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -33,20 +32,6 @@ fun SealedInfo.Variant.wrapperClassName(
             simpleNames = sealedClassName.simpleNames + wrapperClass,
         )
     }
-
-fun SealedInfo.Variant.wrappedIdentifierOrError(
-    logger: KSPLogger,
-) = when (wrapped) {
-    SealedInfo.Variant.Wrapped.None -> {
-        logger.error("Variant '$identifier' has no wrapped class")
-        null
-    }
-
-    is SealedInfo.Variant.Wrapped.Some -> when (val mode = wrapped.mode) {
-        is SealedInfo.Variant.Wrapped.Some.Mode.Class -> mode.identifier
-        is SealedInfo.Variant.Wrapped.Some.Mode.Object -> mode.identifier
-    }
-}
 
 val SealedInfo.Variant.uppercasedIdentifier: String
     get() = identifier.replaceFirstChar(Char::uppercase)

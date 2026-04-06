@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.Visibility
+import com.squareup.kotlinpoet.ClassName
 
 sealed interface CreateResult<out T> {
     data class Success<T>(
@@ -33,43 +34,22 @@ data class SealedInfo(
     )
 
     data class Variant(
-        val wrapped: Wrapped,
+        val wrappedType: KSType,
         val wrapperClass: String,
+        val wrappedClassName: ClassName,
         val identifier: String,
         val serialName: String,
+        val wrappedIdentifier: String,
+        val constructors: List<Constructor>,
+        val isObject: Boolean,
     ) {
-
-        sealed interface Wrapped {
-
-            data object None : Wrapped
-
-            data class Some(
+        data class Constructor(
+            val parameters: List<Parameter>,
+        ) {
+            data class Parameter(
+                val name: String?,
                 val type: KSType,
-                val mode: Mode,
-            ) : Wrapped {
-
-                sealed interface Mode {
-
-                    data class Object(
-                        val identifier: KSClassDeclaration,
-                    ) : Mode
-
-                    data class Class(
-                        val identifier: String,
-                        val constructors: List<Constructor>,
-                    ) : Mode {
-
-                        data class Constructor(
-                            val parameters: List<Parameter>,
-                        ) {
-                            data class Parameter(
-                                val name: String?,
-                                val type: KSType,
-                            )
-                        }
-                    }
-                }
-            }
+            )
         }
 
         companion object

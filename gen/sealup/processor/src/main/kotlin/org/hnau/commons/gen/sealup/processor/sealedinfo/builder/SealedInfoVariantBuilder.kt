@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.ksp.toClassName
 import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.gen.kotlin.resolve
 import org.hnau.commons.gen.kotlin.stickedName
@@ -32,93 +33,8 @@ fun SealedInfo.Variant.Companion.create(
         return CreateResult.Deferred
     }
 
-    val declaration = type
+    val stickedName = type
         .declaration
-        .ifNull {
-            logger.error("Type '$type' has no declaration")
-            return CreateResult.Error
-        }
-
-    val classDeclaration = declaration
-        .castOrNull<KSClassDeclaration>()
-        .ifNull {
-            logger.error("Class expected", declaration)
-            return CreateResult.Error
-        }
-
-    val wrapped = classDeclaration
-        .qualifiedName
-        ?.asString()
-        .equals("kotlin.Nothing")
-        .foldBoolean(
-            ifTrue = { SealedInfo.Variant.Wrapped.None },
-            ifFalse = {
-
-                val mode: SealedInfo.Variant.Wrapped.Some.Mode = classDeclaration
-                    .classKind
-                    .let { it == ClassKind.OBJECT }
-                    .foldBoolean(
-                        ifTrue = {
-                            SealedInfo.Variant.Wrapped.Some.Mode.Object(
-                                identifier = classDeclaration,
-                            )
-                        },
-                        ifFalse = {
-                            SealedInfo.Variant.Wrapped.Some.Mode.Class(
-                                identifier = arguments
-                                    .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
-                                    .ifNull { return CreateResult.Error },
-                                constructors = classDeclaration
-                                    .takeIf { collectConstructors }
-                                    ?.getConstructors()
-                                    ?.toList()
-                                    .orEmpty()
-                                    .flatMap { constructor ->
-                                        val parameters = constructor
-                                            .parameters
-                                            .map { ksParameter ->
-                                                val paramType = ksParameter
-                                                    .type
-                                                    .resolve(logger)
-                                                    .ifNull { return CreateResult.Error }
-
-                                                // Check if parameter type contains error types
-                                                if (paramType.containsErrorType()) {
-                                                    return CreateResult.Deferred
-                                                }
-
-                                                val parameter =
-                                                    SealedInfo.Variant.Wrapped.Some.Mode.Class.Constructor.Parameter(
-                                                        name = ksParameter.name?.asString(),
-                                                        type = paramType,
-                                                    )
-                                                parameter to ksParameter.hasDefault
-                                            }
-
-                                        listOf(false, true)
-                                            .map { skipWithDefaults ->
-                                                parameters.mapNotNull { (parameter, hasDefault) ->
-                                                    if (hasDefault && skipWithDefaults) {
-                                                        return@mapNotNull null
-                                                    }
-                                                    parameter
-                                                }
-                                            }
-                                            .distinct()
-                                            .map(SealedInfo.Variant.Wrapped.Some.Mode.Class::Constructor)
-                                    }
-                            )
-                        }
-                    )
-
-                SealedInfo.Variant.Wrapped.Some(
-                    type = type,
-                    mode = mode,
-                )
-            }
-        )
-
-    val stickedName = classDeclaration
         .stickedName(logger)
         ?: return CreateResult.Error
 
@@ -126,16 +42,77 @@ fun SealedInfo.Variant.Companion.create(
         .get<String>("identifier") { stickedName.replaceFirstChar(Char::lowercase) }
         .ifNull { return CreateResult.Error }
 
+    val classDeclaration = type
+        .declaration
+        .castOrNull<KSClassDeclaration>()
+
+    val isObject = classDeclaration?.classKind == ClassKind.OBJECT
+
+    val constructors = classDeclaration
+        ?.takeIf { collectConstructors }
+        ?.takeIf { !isObject }
+        ?.getConstructors()
+        ?.toList()
+        ?.flatMap { constructor ->
+            val parameters = constructor
+                .parameters
+                .map { ksParameter ->
+                    val paramType = ksParameter
+                        .type
+                        .resolve(logger)
+                        .ifNull { return CreateResult.Error }
+
+                    // Check if parameter type contains error types
+                    if (paramType.containsErrorType()) {
+                        return CreateResult.Deferred
+                    }
+
+                    val parameter = SealedInfo.Variant.Constructor.Parameter(
+                        name = ksParameter.name?.asString(),
+                        type = paramType,
+                    )
+                    parameter to ksParameter.hasDefault
+                }
+
+            listOf(false, true)
+                .map { skipWithDefaults ->
+                    parameters.mapNotNull { (parameter, hasDefault) ->
+                        if (hasDefault && skipWithDefaults) {
+                            return@mapNotNull null
+                        }
+                        parameter
+                    }
+                }
+                .distinct()
+                .map(SealedInfo.Variant::Constructor)
+        }
+        .orEmpty()
+
+    val wrappedClassName = type.toClassName()
+
     return CreateResult.Success(
         SealedInfo.Variant(
-            wrapped = wrapped,
+            wrappedType = type,
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { identifier.replaceFirstChar(Char::uppercase) }
                 .ifNull { return CreateResult.Error },
+            wrappedClassName = wrappedClassName,
             identifier = identifier,
             serialName = arguments
                 .get<String>("serialName") { identifier }
                 .ifNull { return CreateResult.Error },
+            wrappedIdentifier = isObject.foldBoolean(
+                ifFalse = {
+                    arguments
+                        .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
+                        .ifNull { return CreateResult.Error }
+                },
+                ifTrue = {
+                    wrappedClassName.simpleNames.joinToString(".")
+                }
+            ),
+            constructors = constructors,
+            isObject = isObject,
         ),
     )
 }
