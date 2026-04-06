@@ -1,6 +1,6 @@
 package org.hnau.commons.kotlin.tokenize
 
-internal fun <I, T> Tokenizer.Companion.alreadyCompleted(
+fun <I, T> Tokenizer.Companion.alreadyCompleted(
     value: T,
 ): Tokenizer<I, T> = object : Tokenizer<I, T> {
 

@@ -3,7 +3,7 @@ package org.hnau.commons.kotlin.tokenize
 import arrow.core.None
 import arrow.core.Some
 
-internal fun <I, T> Sequence<I>.tokenize(
+fun <I, T> Sequence<I>.tokenize(
     tokenizerFactory: Tokenizer.Factory<I, T>,
 ): Sequence<T> = object : Sequence<T> {
 

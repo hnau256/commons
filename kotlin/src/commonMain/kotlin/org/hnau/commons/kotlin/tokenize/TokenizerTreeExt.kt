@@ -5,7 +5,7 @@ import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrNull
 import org.hnau.commons.kotlin.ifNull
 
-internal fun <T> Tokenizer.OptionFactory.Companion.stringsTree(
+fun <T> Tokenizer.OptionFactory.Companion.stringsTree(
     variants: NonEmptyList<Pair<String, T>>,
 ): Tokenizer.OptionFactory<Char, T> = tree(
     variants = variants.map { (key, value) ->
@@ -17,7 +17,7 @@ internal fun <T> Tokenizer.OptionFactory.Companion.stringsTree(
     }
 )
 
-internal fun <I, T> Tokenizer.OptionFactory.Companion.tree(
+fun <I, T> Tokenizer.OptionFactory.Companion.tree(
     variants: NonEmptyList<Pair<NonEmptyList<I>, T>>,
 ): Tokenizer.OptionFactory<I, T> {
     val tree = TreeItem.create(variants)

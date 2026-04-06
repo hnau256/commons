@@ -3,7 +3,7 @@ package org.hnau.commons.kotlin.tokenize
 import arrow.core.NonEmptyList
 
 
-internal fun <I, T> Tokenizer.Factory.Companion.choose(
+fun <I, T> Tokenizer.Factory.Companion.choose(
     firstOptionFactory: Tokenizer.OptionFactory<I, T>,
     vararg otherOptionFactories: Tokenizer.OptionFactory<I, T>,
 ): Tokenizer.Factory<I, T> = choose(
@@ -13,7 +13,7 @@ internal fun <I, T> Tokenizer.Factory.Companion.choose(
     ),
 )
 
-internal fun <I, T> Tokenizer.Factory.Companion.choose(
+fun <I, T> Tokenizer.Factory.Companion.choose(
     optionFactories: NonEmptyList<Tokenizer.OptionFactory<I, T>>,
 ): Tokenizer.Factory<I, T> = Tokenizer.Factory { firstItem ->
 

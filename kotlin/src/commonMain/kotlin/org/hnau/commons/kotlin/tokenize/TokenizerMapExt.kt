@@ -2,7 +2,7 @@ package org.hnau.commons.kotlin.tokenize
 
 import arrow.core.Either
 
-internal fun <I, TI, TO> Tokenizer<I, TI>.map(
+fun <I, TI, TO> Tokenizer<I, TI>.map(
     transform: (TI) -> TO,
 ): Tokenizer<I, TO> = object : Tokenizer<I, TO> {
 
@@ -21,7 +21,7 @@ internal fun <I, TI, TO> Tokenizer<I, TI>.map(
         ?.map(transform)
 }
 
-internal fun <I, TI, TO> Tokenizer.OptionFactory<I, TI>.map(
+fun <I, TI, TO> Tokenizer.OptionFactory<I, TI>.map(
     transform: (TI) -> TO,
 ): Tokenizer.OptionFactory<I, TO> = Tokenizer.OptionFactory { firstItem ->
     tryCreateTokenizer(firstItem)?.map(transform)

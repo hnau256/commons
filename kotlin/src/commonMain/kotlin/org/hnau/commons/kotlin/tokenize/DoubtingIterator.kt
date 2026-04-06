@@ -4,7 +4,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 
-internal interface DoubtingIterator<T> {
+interface DoubtingIterator<T> {
 
     val current: Option<T>
 

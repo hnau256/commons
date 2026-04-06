@@ -23,5 +23,5 @@ private class FloatTokenizer(
         ?.let { FloatTokenizer(collectedChars = collectedChars + it) }
 }
 
-internal val Tokenizer.OptionFactory.Companion.float: Tokenizer.OptionFactory<Char, Float>
+val Tokenizer.OptionFactory.Companion.float: Tokenizer.OptionFactory<Char, Float>
     get() = floatTokenizerOptionFactory

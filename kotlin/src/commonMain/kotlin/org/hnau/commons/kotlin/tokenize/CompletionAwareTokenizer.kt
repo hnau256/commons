@@ -2,7 +2,7 @@ package org.hnau.commons.kotlin.tokenize
 
 import arrow.core.Either
 
-internal abstract class CompletionAwareTokenizer<I, T> : Tokenizer<I, T> {
+abstract class CompletionAwareTokenizer<I, T> : Tokenizer<I, T> {
 
     protected abstract fun consumeOrCollect(
         nextItem: I,
@@ -21,7 +21,7 @@ internal abstract class CompletionAwareTokenizer<I, T> : Tokenizer<I, T> {
 }
 
 @Suppress("FunctionName")
-internal inline fun <I, T> CompletionAwareTokenizer(
+inline fun <I, T> CompletionAwareTokenizer(
     crossinline consumeOrCollect: (item: I) -> Either<T, Tokenizer<I, T>>,
 ): Tokenizer<I, T> = object : CompletionAwareTokenizer<I, T>() {
 

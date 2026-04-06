@@ -1,6 +1,6 @@
 package org.hnau.commons.kotlin.tokenize
 
-internal interface Tokenizer<I, out T> {
+interface Tokenizer<I, out T> {
 
     fun collect(): T
 
