@@ -67,16 +67,16 @@ fun SealedInfo.Variant.toTypeSpec(
                 .build()
         }
 
-        when (val pointer = wrapped.pointer) {
-            SealedInfo.Variant.Wrapped.Pointer.Object -> Unit
-            is SealedInfo.Variant.Wrapped.Pointer.Class -> {
+        wrapped.pointer.fold(
+            ifObject = { },
+            ifClass = { property ->
                 primaryConstructor(
                     FunSpec
                         .constructorBuilder()
                         .addParameter(
                             ParameterSpec
                                 .builder(
-                                    name = pointer.property,
+                                    name = property,
                                     type = wrapped.className,
                                 )
                                 .build(),
@@ -86,13 +86,13 @@ fun SealedInfo.Variant.toTypeSpec(
 
                 propertySpecs += PropertySpec
                     .builder(
-                        name = pointer.property,
+                        name = property,
                         type = wrapped.className,
                     )
-                    .initializer(pointer.property)
+                    .initializer(property)
                     .build()
             }
-        }
+        )
 
         info
             .overrides

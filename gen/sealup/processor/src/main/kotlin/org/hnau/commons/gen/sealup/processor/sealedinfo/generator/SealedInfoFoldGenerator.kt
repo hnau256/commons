@@ -13,6 +13,7 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercas
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
 import org.hnau.commons.kotlin.ifFalse
+import org.hnau.commons.kotlin.it
 
 fun SealedInfo.toFoldFuncSpec(): FunSpec {
     val resultType = TypeVariableName("R")
@@ -64,10 +65,10 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                     val wrapper = variant.wrapperClassName(this@toFoldFuncSpec)
                     val left = "is ${use(wrapper)}"
 
-                    val argument = when (val pointer = variant.wrapped.pointer) {
-                        is SealedInfo.Variant.Wrapped.Pointer.Class -> pointer.property
-                        SealedInfo.Variant.Wrapped.Pointer.Object -> ""
-                    }
+                    val argument = variant.wrapped.pointer.fold(
+                        ifClass = ::it,
+                        ifObject = { "" }
+                    )
                     val right = "if${variant.uppercasedIdentifier}($argument)"
 
                     "\t\t$left -> $right"

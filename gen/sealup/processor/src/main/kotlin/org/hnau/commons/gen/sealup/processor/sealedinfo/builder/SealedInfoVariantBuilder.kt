@@ -100,13 +100,7 @@ fun SealedInfo.Variant.Companion.create(
                                 .ifNull { return CreateResult.Error }
                         )
                     },
-                    ifTrue = {
-                        SealedInfo.Variant.Wrapped.Pointer.Object
-//                        type
-//                            .toClassName()
-//                            .simpleNames
-//                            .joinToString(".")
-                    }
+                    ifTrue = { SealedInfo.Variant.Wrapped.Pointer.Object }
                 ),
             ),
             wrapperClass = arguments

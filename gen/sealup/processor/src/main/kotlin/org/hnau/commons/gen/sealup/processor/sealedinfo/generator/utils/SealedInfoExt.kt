@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toKModifier
 import org.hnau.commons.gen.kotlin.CodeBlockBuilderContext
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
+import org.hnau.commons.kotlin.it
 
 val SealedInfo.packageName: String
     get() = parent.packageName.asString()
@@ -42,10 +43,10 @@ val SealedInfo.Variant.Wrapped.className: ClassName
 
 fun CodeBlockBuilderContext.use(
     wrapped: SealedInfo.Variant.Wrapped,
-): String = when (val pointer = wrapped.pointer) {
-    SealedInfo.Variant.Wrapped.Pointer.Object -> use(wrapped.className)
-    is SealedInfo.Variant.Wrapped.Pointer.Class -> pointer.property
-}
+): String = wrapped.pointer.fold(
+    ifClass = ::it,
+    ifObject = { use(wrapped.className) }
+)
 
 inline fun <R> SealedInfo.Variant.Wrapped.Pointer.fold(
     ifClass: (String) -> R,
