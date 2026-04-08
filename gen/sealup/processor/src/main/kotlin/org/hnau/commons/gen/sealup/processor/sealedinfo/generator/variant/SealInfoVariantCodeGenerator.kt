@@ -61,7 +61,7 @@ fun SealedInfo.Variant.toTypeSpec(
                 .getter(
                     FunSpec
                         .getterBuilder()
-                        .addStatement("return \"$identifier\"")
+                        .addStatement("return \"$wrapperIdentifier\"")
                         .build(),
                 )
                 .build()

@@ -35,7 +35,7 @@ data class SealedInfo(
     data class Variant(
         val wrapped: Wrapped,
         val wrapperClass: String,
-        val identifier: String,
+        val wrapperIdentifier: String,
         val serialName: String,
         val constructors: List<Constructor>,
     ) {

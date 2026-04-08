@@ -6,7 +6,6 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import com.squareup.kotlinpoet.ksp.toClassName
 import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.gen.kotlin.resolve
 import org.hnau.commons.gen.kotlin.stickedName
@@ -38,7 +37,7 @@ fun SealedInfo.Variant.Companion.create(
         .stickedName(logger)
         ?: return CreateResult.Error
 
-    val identifier = arguments
+    val wrapperIdentifier = arguments
         .get<String>("identifier") { stickedName.replaceFirstChar(Char::lowercase) }
         .ifNull { return CreateResult.Error }
 
@@ -104,11 +103,11 @@ fun SealedInfo.Variant.Companion.create(
                 ),
             ),
             wrapperClass = arguments
-                .get<String>("wrapperClassName") { identifier.replaceFirstChar(Char::uppercase) }
+                .get<String>("wrapperClassName") { wrapperIdentifier.replaceFirstChar(Char::uppercase) }
                 .ifNull { return CreateResult.Error },
-            identifier = identifier,
+            wrapperIdentifier = wrapperIdentifier,
             serialName = arguments
-                .get<String>("serialName") { identifier }
+                .get<String>("serialName") { wrapperIdentifier }
                 .ifNull { return CreateResult.Error },
             constructors = constructors,
         ),

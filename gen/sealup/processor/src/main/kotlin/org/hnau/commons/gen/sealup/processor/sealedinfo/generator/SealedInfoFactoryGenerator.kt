@@ -14,7 +14,6 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.companio
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.fold
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
-import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue
 
 fun SealedInfo.toFactoriesSpec(
@@ -72,7 +71,7 @@ private fun SealedInfo.Variant.toFactoryPropertySpec(
     parentExtension: SealedInfo.ParentExtension,
     wrapperClassName: ClassName,
 ): PropertySpec = PropertySpec
-    .builder(identifier, wrapperClassName)
+    .builder(wrapperIdentifier, wrapperClassName)
     .receiver(parentExtension.companionClassName)
     .getter(
         FunSpec
@@ -88,7 +87,7 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
     wrapperClassName: ClassName,
     wrappedIdentifier: String,
 ): FunSpec = FunSpec
-    .builder(identifier)
+    .builder(wrapperIdentifier)
     .apply {
         info.visibility?.let { modifiers += it }
 
@@ -96,12 +95,12 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
         returns(wrapperClassName)
 
         addParameter(
-            name = identifier,
+            name = wrapperIdentifier,
             type = wrapped.className,
         )
     }
     .addCode(
-        "return %T($wrappedIdentifier = $identifier)",
+        "return %T($wrappedIdentifier = $wrapperIdentifier)",
         wrapperClassName,
     )
     .build()
@@ -118,7 +117,7 @@ private fun SealedInfo.Variant.toConstructorFactoryFuncSpec(
         .all { (name) -> name != null }
 
     return FunSpec
-        .builder(identifier)
+        .builder(wrapperIdentifier)
         .apply {
             info.visibility?.let { modifiers += it }
 
@@ -137,7 +136,7 @@ private fun SealedInfo.Variant.toConstructorFactoryFuncSpec(
         }
         .addCode(
             Pair(
-                "return $identifier(\n\t$identifier = %T(",
+                "return $wrapperIdentifier(\n\t$wrapperIdentifier = %T(",
                 ")\n)",
             ).let { (prefix, postfix) ->
                 constructor
