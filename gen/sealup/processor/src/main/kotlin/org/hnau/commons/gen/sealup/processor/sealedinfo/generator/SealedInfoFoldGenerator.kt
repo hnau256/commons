@@ -52,7 +52,15 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                 ) { variant ->
 
                     val wrapper = variant.wrapperClassName(this@toFoldFuncSpec)
-                    val left = "is ${use(wrapper)}"
+                    val prefix = variant
+                        .wrapped
+                        ?.pointer
+                        ?.fold(
+                            ifClass = { "is " },
+                            ifObject = { null }
+                        )
+                        .orEmpty()
+                    val left = "$prefix${use(wrapper)}"
 
                     val argument = variant
                         .wrapped
