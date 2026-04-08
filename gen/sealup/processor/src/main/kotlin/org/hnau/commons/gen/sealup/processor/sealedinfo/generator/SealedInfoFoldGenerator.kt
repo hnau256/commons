@@ -8,6 +8,7 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
 import org.hnau.commons.kotlin.ifFalse
 

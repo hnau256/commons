@@ -88,15 +88,12 @@ fun SealedInfo.Variant.Companion.create(
         }
         .orEmpty()
 
-    val wrappedClassName = type.toClassName()
-
     return CreateResult.Success(
         SealedInfo.Variant(
             wrappedType = type,
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { identifier.replaceFirstChar(Char::uppercase) }
                 .ifNull { return CreateResult.Error },
-            wrappedClassName = wrappedClassName,
             identifier = identifier,
             serialName = arguments
                 .get<String>("serialName") { identifier }
@@ -108,7 +105,10 @@ fun SealedInfo.Variant.Companion.create(
                         .ifNull { return CreateResult.Error }
                 },
                 ifTrue = {
-                    wrappedClassName.simpleNames.joinToString(".")
+                    type
+                        .toClassName()
+                        .simpleNames
+                        .joinToString(".")
                 }
             ),
             constructors = constructors,

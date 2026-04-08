@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.companionClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
 import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue

@@ -36,7 +36,6 @@ data class SealedInfo(
     data class Variant(
         val wrappedType: KSType,
         val wrapperClass: String,
-        val wrappedClassName: ClassName,
         val identifier: String,
         val serialName: String,
         val wrappedIdentifier: String,

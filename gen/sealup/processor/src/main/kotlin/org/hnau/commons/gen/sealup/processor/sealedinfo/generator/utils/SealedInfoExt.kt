@@ -35,3 +35,6 @@ fun SealedInfo.Variant.wrapperClassName(
 
 val SealedInfo.Variant.uppercasedIdentifier: String
     get() = identifier.replaceFirstChar(Char::uppercase)
+
+val SealedInfo.Variant.wrappedClassName: ClassName
+    get() = wrappedType.toClassName()
