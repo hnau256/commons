@@ -90,7 +90,22 @@ fun SealedInfo.Variant.Companion.create(
 
     return CreateResult.Success(
         SealedInfo.Variant(
-            wrappedType = type,
+            wrapped = SealedInfo.Variant.Wrapped(
+                type = type,
+                identifier = isObject.foldBoolean(
+                    ifFalse = {
+                        arguments
+                            .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
+                            .ifNull { return CreateResult.Error }
+                    },
+                    ifTrue = {
+                        type
+                            .toClassName()
+                            .simpleNames
+                            .joinToString(".")
+                    }
+                )
+            ),
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { identifier.replaceFirstChar(Char::uppercase) }
                 .ifNull { return CreateResult.Error },
@@ -98,19 +113,6 @@ fun SealedInfo.Variant.Companion.create(
             serialName = arguments
                 .get<String>("serialName") { identifier }
                 .ifNull { return CreateResult.Error },
-            wrappedIdentifier = isObject.foldBoolean(
-                ifFalse = {
-                    arguments
-                        .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
-                        .ifNull { return CreateResult.Error }
-                },
-                ifTrue = {
-                    type
-                        .toClassName()
-                        .simpleNames
-                        .joinToString(".")
-                }
-            ),
             constructors = constructors,
             isObject = isObject,
         ),

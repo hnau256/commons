@@ -8,7 +8,6 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
-import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
 import org.hnau.commons.kotlin.ifFalse
 
@@ -32,7 +31,7 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                         parameters = listOfNotNull(
                             variant
                                 .isObject
-                                .ifFalse { variant.wrappedClassName }
+                                .ifFalse { variant.wrapped.className }
                         ).toTypedArray(),
                         returnType = resultType,
                     ),
@@ -47,7 +46,7 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
             ) { variant ->
                 val argument = variant
                     .isObject
-                    .ifFalse { variant.wrappedIdentifier }
+                    .ifFalse { variant.wrapped.identifier }
                     .orEmpty()
                     .let { "($it)" }
                 "\t\tis %T -> if${variant.uppercasedIdentifier}$argument"

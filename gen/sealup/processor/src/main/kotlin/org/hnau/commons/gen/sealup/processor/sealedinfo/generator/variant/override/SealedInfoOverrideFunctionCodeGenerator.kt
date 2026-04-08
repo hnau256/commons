@@ -41,8 +41,8 @@ fun SealedInfo.Override.createFunSpec(
         addStatement(
             receiver
                 .foldNullable(
-                    ifNull = { "return ${variant.wrappedIdentifier}.$name(" to ")" },
-                    ifNotNull = { "return with(${variant.wrappedIdentifier}) { $name(" to ") }" },
+                    ifNull = { "return ${variant.wrapped.identifier}.$name(" to ")" },
+                    ifNotNull = { "return with(${variant.wrapped.identifier}) { $name(" to ") }" },
                 )
                 .let { (prefix, postfix) ->
                     type.arguments.joinToString(

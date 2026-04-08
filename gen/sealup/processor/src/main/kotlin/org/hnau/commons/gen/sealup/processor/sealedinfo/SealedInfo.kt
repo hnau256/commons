@@ -34,14 +34,19 @@ data class SealedInfo(
     )
 
     data class Variant(
-        val wrappedType: KSType,
+        val wrapped: Wrapped,
         val wrapperClass: String,
         val identifier: String,
         val serialName: String,
-        val wrappedIdentifier: String,
         val constructors: List<Constructor>,
         val isObject: Boolean,
     ) {
+
+        data class Wrapped(
+            val type: KSType,
+            val identifier: String,
+        )
+
         data class Constructor(
             val parameters: List<Parameter>,
         ) {

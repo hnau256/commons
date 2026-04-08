@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.TypeSpec
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.SealInfoCodeGeneratorConstants
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
-import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrappedClassName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.variant.override.createSpec
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifFalse
@@ -76,8 +75,8 @@ fun SealedInfo.Variant.toTypeSpec(
                     .addParameter(
                         ParameterSpec
                             .builder(
-                                name = wrappedIdentifier,
-                                type = wrappedClassName,
+                                name = wrapped.identifier,
+                                type = wrapped.className,
                             )
                             .build(),
                     )
@@ -86,10 +85,10 @@ fun SealedInfo.Variant.toTypeSpec(
 
             propertySpecs += PropertySpec
                 .builder(
-                    name = wrappedIdentifier,
-                    type = wrappedClassName,
+                    name = wrapped.identifier,
+                    type = wrapped.className,
                 )
-                .initializer(wrappedIdentifier)
+                .initializer(wrapped.identifier)
                 .build()
         }
 

@@ -39,7 +39,7 @@ fun SealedInfo.generateCode(
                     add(parent.containingFile)
                     addAll(
                         variants.map { variant ->
-                            variant.wrappedType.declaration.containingFile
+                            variant.wrapped.type.declaration.containingFile
                         }
                     )
                 }

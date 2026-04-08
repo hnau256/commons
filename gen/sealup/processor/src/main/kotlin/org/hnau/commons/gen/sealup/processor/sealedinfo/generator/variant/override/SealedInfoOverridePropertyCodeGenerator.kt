@@ -40,8 +40,8 @@ fun SealedInfo.Override.createPropertySpec(
                     .getterBuilder()
                     .addStatement(
                         receiver.foldNullable(
-                            ifNull = { "return ${variant.wrappedIdentifier}.$name" },
-                            ifNotNull = { "return with(${variant.wrappedIdentifier}) { $name }" },
+                            ifNull = { "return ${variant.wrapped.identifier}.$name" },
+                            ifNotNull = { "return with(${variant.wrapped.identifier}) { $name }" },
                         ),
                     ).build(),
             )
@@ -53,8 +53,8 @@ fun SealedInfo.Override.createPropertySpec(
                         .addParameter("newValue", typeName)
                         .addStatement(
                             receiver.foldNullable(
-                                ifNull = { "${variant.wrappedIdentifier}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
-                                ifNotNull = { "with(${variant.wrappedIdentifier}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
+                                ifNull = { "${variant.wrapped.identifier}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
+                                ifNotNull = { "with(${variant.wrapped.identifier}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
                             ),
                         ).build(),
                 )
