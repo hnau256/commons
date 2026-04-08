@@ -29,7 +29,7 @@ fun SealedInfo.Variant.Companion.create(
         .apply {
             logger.info("Type qualified name: ${declaration.qualifiedName?.asString()}")
         }
-        .takeIf { it.declaration.qualifiedName?.asString() != "kotlin.Nothing" }
+        .takeIf { it.declaration.qualifiedName?.asString() !in noWrappedMarkerClasses }
         ?.let { type ->
 
             if (type.containsErrorType()) {
@@ -136,3 +136,10 @@ private fun KSType.containsErrorType(): Boolean {
         arg.type?.resolve()?.containsErrorType() == true
     }
 }
+
+private val noWrappedMarkerClasses: Set<String> = listOf(
+    Unit::class,
+    Nothing::class,
+)
+    .map { it.qualifiedName!! }
+    .toSet()
