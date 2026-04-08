@@ -69,14 +69,14 @@ fun SealedInfo.Variant.toTypeSpec(
 
         wrapped.pointer.fold(
             ifObject = { },
-            ifClass = { property ->
+            ifClass = { classPointer ->
                 primaryConstructor(
                     FunSpec
                         .constructorBuilder()
                         .addParameter(
                             ParameterSpec
                                 .builder(
-                                    name = property,
+                                    name = classPointer.property,
                                     type = wrapped.className,
                                 )
                                 .build(),
@@ -86,10 +86,10 @@ fun SealedInfo.Variant.toTypeSpec(
 
                 propertySpecs += PropertySpec
                     .builder(
-                        name = property,
+                        name = classPointer.property,
                         type = wrapped.className,
                     )
-                    .initializer(property)
+                    .initializer(classPointer.property)
                     .build()
             }
         )

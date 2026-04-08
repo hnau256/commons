@@ -41,18 +41,19 @@ private fun SealedInfo.Variant.toFactoriesSpec(
                 ).left()
             )
         },
-        ifClass = { wrappedIdentifier ->
+        ifClass = { classPointer ->
             buildList {
                 add(
                     toFactoryFuncSpec(
                         info = info,
                         parentExtension = parentExtension,
                         wrapperClassName = wrapperClassName,
-                        wrappedIdentifier = wrappedIdentifier,
+                        wrappedIdentifier = classPointer.property,
                     ).right(),
                 )
                 addAll(
-                    constructors
+                    classPointer
+                        .constructors
                         .map { constructor ->
                             toConstructorFactoryFuncSpec(
                                 info = info,

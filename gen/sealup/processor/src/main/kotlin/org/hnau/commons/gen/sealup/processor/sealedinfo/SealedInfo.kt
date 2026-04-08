@@ -37,7 +37,6 @@ data class SealedInfo(
         val wrapperClass: String,
         val wrapperIdentifier: String,
         val serialName: String,
-        val constructors: List<Constructor>,
     ) {
 
         data class Wrapped(
@@ -49,6 +48,7 @@ data class SealedInfo(
 
                 data class Class(
                     val property: String,
+                    val constructors: List<Constructor>,
                 ): Pointer
 
                 data object Object: Pointer

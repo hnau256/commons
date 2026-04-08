@@ -47,14 +47,6 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
             }
         }
         .addCode(
-            CodeBlock
-                .builder()
-                .apply {
-
-                }
-                .build()
-        )
-        .addCode(
             codeBlock {
                 variants.joinToString(
                     prefix = "return when (this) {\n",
@@ -66,7 +58,7 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                     val left = "is ${use(wrapper)}"
 
                     val argument = variant.wrapped.pointer.fold(
-                        ifClass = ::it,
+                        ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
                         ifObject = { "" }
                     )
                     val right = "if${variant.uppercasedIdentifier}($argument)"

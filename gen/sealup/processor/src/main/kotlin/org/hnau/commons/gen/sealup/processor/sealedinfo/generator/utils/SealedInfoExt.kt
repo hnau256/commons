@@ -44,14 +44,14 @@ val SealedInfo.Variant.Wrapped.className: ClassName
 fun CodeBlockBuilderContext.use(
     wrapped: SealedInfo.Variant.Wrapped,
 ): String = wrapped.pointer.fold(
-    ifClass = ::it,
+    ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
     ifObject = { use(wrapped.className) }
 )
 
 inline fun <R> SealedInfo.Variant.Wrapped.Pointer.fold(
-    ifClass: (String) -> R,
+    ifClass: (SealedInfo.Variant.Wrapped.Pointer.Class) -> R,
     ifObject: () -> R,
 ): R = when (this) {
-    is SealedInfo.Variant.Wrapped.Pointer.Class -> ifClass(property)
+    is SealedInfo.Variant.Wrapped.Pointer.Class -> ifClass(this)
     SealedInfo.Variant.Wrapped.Pointer.Object -> ifObject()
 }

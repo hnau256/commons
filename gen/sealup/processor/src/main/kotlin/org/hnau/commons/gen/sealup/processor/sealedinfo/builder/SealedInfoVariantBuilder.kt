@@ -12,7 +12,6 @@ import org.hnau.commons.gen.kotlin.stickedName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.CreateResult
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.kotlin.castOrNull
-import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
 
 fun SealedInfo.Variant.Companion.create(
@@ -41,66 +40,69 @@ fun SealedInfo.Variant.Companion.create(
         .get<String>("identifier") { stickedName.replaceFirstChar(Char::lowercase) }
         .ifNull { return CreateResult.Error }
 
-    val classDeclaration = type
-        .declaration
+    val declaration = type.declaration
+
+    val classDeclaration = declaration
         .castOrNull<KSClassDeclaration>()
-
-    val isObject = classDeclaration?.classKind == ClassKind.OBJECT
-
-    val constructors = classDeclaration
-        ?.takeIf { collectConstructors }
-        ?.takeIf { !isObject }
-        ?.getConstructors()
-        ?.toList()
-        ?.flatMap { constructor ->
-            val parameters = constructor
-                .parameters
-                .map { ksParameter ->
-                    val paramType = ksParameter
-                        .type
-                        .resolve(logger)
-                        .ifNull { return CreateResult.Error }
-
-                    // Check if parameter type contains error types
-                    if (paramType.containsErrorType()) {
-                        return CreateResult.Deferred
-                    }
-
-                    val parameter = SealedInfo.Variant.Constructor.Parameter(
-                        name = ksParameter.name?.asString(),
-                        type = paramType,
-                    )
-                    parameter to ksParameter.hasDefault
-                }
-
-            listOf(false, true)
-                .map { skipWithDefaults ->
-                    parameters.mapNotNull { (parameter, hasDefault) ->
-                        if (hasDefault && skipWithDefaults) {
-                            return@mapNotNull null
-                        }
-                        parameter
-                    }
-                }
-                .distinct()
-                .map(SealedInfo.Variant::Constructor)
+        .ifNull {
+            logger.error("Class expected", declaration)
+            return CreateResult.Error
         }
-        .orEmpty()
 
     return CreateResult.Success(
         SealedInfo.Variant(
             wrapped = SealedInfo.Variant.Wrapped(
                 type = type,
-                pointer = isObject.foldBoolean(
-                    ifFalse = {
-                        SealedInfo.Variant.Wrapped.Pointer.Class(
-                            property = arguments
-                                .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
-                                .ifNull { return CreateResult.Error }
-                        )
-                    },
-                    ifTrue = { SealedInfo.Variant.Wrapped.Pointer.Object }
-                ),
+                pointer = when (val classKind = classDeclaration.classKind) {
+                    ClassKind.OBJECT -> SealedInfo.Variant.Wrapped.Pointer.Object
+                    ClassKind.CLASS -> SealedInfo.Variant.Wrapped.Pointer.Class(
+                        property = arguments
+                            .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
+                            .ifNull { return CreateResult.Error },
+                        constructors = classDeclaration
+                            .takeIf { collectConstructors }
+                            ?.getConstructors()
+                            ?.toList()
+                            ?.flatMap { constructor ->
+                                val parameters = constructor
+                                    .parameters
+                                    .map { ksParameter ->
+                                        val paramType = ksParameter
+                                            .type
+                                            .resolve(logger)
+                                            .ifNull { return CreateResult.Error }
+
+                                        // Check if parameter type contains error types
+                                        if (paramType.containsErrorType()) {
+                                            return CreateResult.Deferred
+                                        }
+
+                                        val parameter = SealedInfo.Variant.Constructor.Parameter(
+                                            name = ksParameter.name?.asString(),
+                                            type = paramType,
+                                        )
+                                        parameter to ksParameter.hasDefault
+                                    }
+
+                                listOf(false, true)
+                                    .map { skipWithDefaults ->
+                                        parameters.mapNotNull { (parameter, hasDefault) ->
+                                            if (hasDefault && skipWithDefaults) {
+                                                return@mapNotNull null
+                                            }
+                                            parameter
+                                        }
+                                    }
+                                    .distinct()
+                                    .map(SealedInfo.Variant::Constructor)
+                            }
+                            .orEmpty()
+                    )
+                    else -> {
+                        logger.error("Unsupported class kind $classKind", classDeclaration)
+                        return CreateResult.Error
+                    }
+                },
             ),
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { wrapperIdentifier.replaceFirstChar(Char::uppercase) }
@@ -109,7 +111,6 @@ fun SealedInfo.Variant.Companion.create(
             serialName = arguments
                 .get<String>("serialName") { wrapperIdentifier }
                 .ifNull { return CreateResult.Error },
-            constructors = constructors,
         ),
     )
 }
