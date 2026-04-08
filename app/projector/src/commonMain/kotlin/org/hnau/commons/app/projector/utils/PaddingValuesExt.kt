@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
-import arrow.core.left
 
 @Composable
 inline fun PaddingValues.map(

@@ -1,7 +1,7 @@
 package org.hnau.commons.app.model.color
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.serialization.Serializable
+import org.hnau.commons.kotlin.mapper.Mapper
 
 @Serializable
 data class HSLFloats(

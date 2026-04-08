@@ -1,7 +1,7 @@
 package org.hnau.commons.app.projector.utils
 
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 
 
 inline fun <T, R> State<T>.map(

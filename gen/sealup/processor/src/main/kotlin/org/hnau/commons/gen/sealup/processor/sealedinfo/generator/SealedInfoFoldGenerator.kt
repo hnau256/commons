@@ -1,6 +1,5 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.generator
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LambdaTypeName
@@ -12,8 +11,6 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.fold
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
-import org.hnau.commons.kotlin.ifFalse
-import org.hnau.commons.kotlin.it
 
 fun SealedInfo.toFoldFuncSpec(): FunSpec {
     val resultType = TypeVariableName("R")

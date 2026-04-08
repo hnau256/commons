@@ -1,8 +1,8 @@
 package org.hnau.commons.kotlin.serialization
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import org.hnau.commons.kotlin.mapper.Mapper
 
 class ClosedRangeSerializer<T : Comparable<T>>(
     itemSerializer: KSerializer<T>,

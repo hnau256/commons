@@ -1,10 +1,10 @@
 package org.hnau.commons.kotlin.coroutines.flow.state
 
 import arrow.core.NonEmptyList
-import org.hnau.commons.kotlin.coroutines.createChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.kotlin.coroutines.createChild
 
 interface ReusableStateScope<in K, ITEM> {
 

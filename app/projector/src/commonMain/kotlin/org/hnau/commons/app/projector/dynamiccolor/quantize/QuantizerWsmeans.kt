@@ -15,7 +15,6 @@
  */
 package org.hnau.commons.app.projector.dynamiccolor.quantize
 
-import kotlin.collections.LinkedHashMap
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sqrt

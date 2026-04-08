@@ -1,9 +1,9 @@
 package org.hnau.commons.app.model
 
-import org.hnau.commons.kotlin.mapper.Mapper
-import org.hnau.commons.kotlin.serialization.MappingKSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+import org.hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.serialization.MappingKSerializer
 
 @Serializable(EditingString.Serializer::class)
 data class EditingString(

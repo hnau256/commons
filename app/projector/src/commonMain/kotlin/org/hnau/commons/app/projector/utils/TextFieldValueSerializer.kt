@@ -2,9 +2,9 @@ package org.hnau.commons.app.projector.utils
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.serialization.Serializable
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.serialization.MappingKSerializer
-import kotlinx.serialization.Serializable
 
 object TextFieldValueSerializer :
     MappingKSerializer<TextFieldValueSerializer.Surrogate, TextFieldValue>(

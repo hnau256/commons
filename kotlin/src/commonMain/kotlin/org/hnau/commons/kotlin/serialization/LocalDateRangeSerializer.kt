@@ -1,8 +1,8 @@
 package org.hnau.commons.kotlin.serialization
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateRange
+import org.hnau.commons.kotlin.mapper.Mapper
 
 data object LocalDateRangeSerializer : MappingKSerializer<ClosedRange<LocalDate>, LocalDateRange>(
     base = ClosedRangeSerializer(LocalDate.serializer()),

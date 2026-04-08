@@ -1,9 +1,9 @@
 package org.hnau.commons.kotlin.serialization
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+import org.hnau.commons.kotlin.mapper.Mapper
 
 sealed class ClosedFloatingPointRangeSerializer<T : Comparable<T>>(
     itemSerializer: KSerializer<T>,

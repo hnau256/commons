@@ -1,12 +1,12 @@
 package org.hnau.commons.kotlin.coroutines
 
-import org.hnau.commons.kotlin.coroutines.flow.state.mapState
-import org.hnau.commons.kotlin.foldNullable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.foldNullable
 
 
 sealed interface OperationOrCancel<I> {

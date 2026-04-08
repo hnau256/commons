@@ -1,10 +1,10 @@
 package org.hnau.commons.kotlin.serialization
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.hnau.commons.kotlin.mapper.Mapper
 
 open class MappingKSerializer<I, O>(
     private val base: KSerializer<I>,

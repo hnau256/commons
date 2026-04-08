@@ -1,10 +1,10 @@
 package org.hnau.commons.plugins
 
 import org.hnau.commons.plugins.utils.versions.Aliased
-import org.hnau.commons.plugins.utils.versions.ComposeDependencyTypeValues
-import org.hnau.commons.plugins.utils.versions.GroupId
 import org.hnau.commons.plugins.utils.versions.AnnotationWithProcessor
 import org.hnau.commons.plugins.utils.versions.ArtifactId
+import org.hnau.commons.plugins.utils.versions.ComposeDependencyTypeValues
+import org.hnau.commons.plugins.utils.versions.GroupId
 import org.hnau.commons.plugins.utils.versions.LibraryId
 import org.hnau.commons.plugins.utils.versions.PluginId
 import org.hnau.commons.plugins.utils.versions.Version

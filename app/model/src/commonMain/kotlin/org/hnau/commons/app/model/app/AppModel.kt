@@ -1,12 +1,11 @@
 package org.hnau.commons.app.model.app
 
-import org.hnau.commons.kotlin.mapper.Mapper
-import org.hnau.commons.kotlin.mapper.toMapper
-import org.hnau.commons.app.model.app.utils.AppContext
-import org.hnau.commons.app.model.goback.GoBackHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import org.hnau.commons.app.model.app.utils.AppContext
+import org.hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.toMapper
 
 class AppModel<M, S>(
     scope: CoroutineScope,

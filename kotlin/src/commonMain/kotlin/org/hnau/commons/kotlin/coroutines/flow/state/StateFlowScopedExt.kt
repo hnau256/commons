@@ -1,11 +1,11 @@
 package org.hnau.commons.kotlin.coroutines.flow.state
 
-import org.hnau.commons.kotlin.coroutines.createChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.kotlin.coroutines.createChild
 
 fun <T> StateFlow<T>.scopedInState(
     parentScope: CoroutineScope,

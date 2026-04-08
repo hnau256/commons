@@ -16,7 +16,6 @@
 package org.hnau.commons.app.projector.dynamiccolor.quantize
 
 import org.hnau.commons.app.projector.dynamiccolor.utils.ColorUtils
-import kotlin.collections.LinkedHashMap
 
 /**
  * An image quantizer that divides the image's pixels into clusters by recursively cutting an RGB

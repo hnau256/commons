@@ -1,8 +1,8 @@
 package org.hnau.commons.app.model.color
 
-import org.hnau.commons.kotlin.serialization.MappingKSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+import org.hnau.commons.kotlin.serialization.MappingKSerializer
 import kotlin.jvm.JvmInline
 
 @Serializable(RGBABytes.Serializer::class)

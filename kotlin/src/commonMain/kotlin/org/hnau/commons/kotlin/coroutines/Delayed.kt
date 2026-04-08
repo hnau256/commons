@@ -1,15 +1,15 @@
 package org.hnau.commons.kotlin.coroutines
 
-import org.hnau.commons.kotlin.Loadable
-import org.hnau.commons.kotlin.Loading
-import org.hnau.commons.kotlin.Ready
-import org.hnau.commons.kotlin.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.hnau.commons.kotlin.Loadable
+import org.hnau.commons.kotlin.Loading
+import org.hnau.commons.kotlin.Ready
+import org.hnau.commons.kotlin.map
 
 data class Delayed<out T>(
     val isInProgress: Boolean,

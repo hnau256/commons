@@ -5,12 +5,12 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
 import arrow.core.toOption
-import org.hnau.commons.kotlin.coroutines.createChild
-import org.hnau.commons.kotlin.foldNullable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.kotlin.coroutines.createChild
+import org.hnau.commons.kotlin.foldNullable
 
 fun <I, R, S : Stickable<I, R>> StateFlow<I>.stick(
     scope: CoroutineScope,

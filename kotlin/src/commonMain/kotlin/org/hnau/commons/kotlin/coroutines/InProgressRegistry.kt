@@ -1,10 +1,10 @@
 package org.hnau.commons.kotlin.coroutines
 
-import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 
 class InProgressRegistry(
     scope: CoroutineScope,

@@ -4,15 +4,15 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
-import org.hnau.commons.kotlin.Loadable
-import org.hnau.commons.kotlin.Loading
-import org.hnau.commons.kotlin.Ready
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import org.hnau.commons.kotlin.Loadable
+import org.hnau.commons.kotlin.Loading
+import org.hnau.commons.kotlin.Ready
 
 inline fun <T, R> Deferred<T>.toStateFlow(
     scope: CoroutineScope,

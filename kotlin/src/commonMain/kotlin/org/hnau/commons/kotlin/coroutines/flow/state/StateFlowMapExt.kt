@@ -1,13 +1,11 @@
 package org.hnau.commons.kotlin.coroutines.flow.state
 
-import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
 
 fun <I, O> StateFlow<I>.mapState(
   scope: CoroutineScope,

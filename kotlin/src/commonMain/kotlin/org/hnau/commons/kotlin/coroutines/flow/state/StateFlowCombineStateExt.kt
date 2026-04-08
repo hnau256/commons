@@ -1,12 +1,12 @@
 package org.hnau.commons.kotlin.coroutines.flow.state
 
-import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
 
 fun <I1, I2, R> combineState(
     scope: CoroutineScope,

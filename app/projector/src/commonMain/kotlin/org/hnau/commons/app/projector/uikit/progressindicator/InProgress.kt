@@ -5,10 +5,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.uikit.state.BooleanStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.kotlin.foldBoolean
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun InProgress(

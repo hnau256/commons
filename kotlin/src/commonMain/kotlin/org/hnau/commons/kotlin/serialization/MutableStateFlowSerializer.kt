@@ -1,8 +1,8 @@
 package org.hnau.commons.kotlin.serialization
 
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.KSerializer
+import org.hnau.commons.kotlin.mapper.Mapper
 
 class MutableStateFlowSerializer<T>(
     valueSerializer: KSerializer<T>,

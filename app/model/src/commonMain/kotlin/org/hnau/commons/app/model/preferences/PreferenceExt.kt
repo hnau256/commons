@@ -3,9 +3,9 @@ package org.hnau.commons.app.model.preferences
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.mapper.Mapper
-import kotlinx.coroutines.CoroutineScope
 
 fun <I, O> Preference<Option<I>>.map(
     scope: CoroutineScope,

@@ -6,10 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.hnau.commons.kotlin.MutableAccessor
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.equality
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun <I, O> MutableStateFlow<I>.collectAsMutableAccessor(

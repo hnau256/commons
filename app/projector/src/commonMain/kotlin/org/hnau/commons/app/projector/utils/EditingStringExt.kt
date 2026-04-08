@@ -3,10 +3,10 @@ package org.hnau.commons.app.projector.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.hnau.commons.app.model.EditingString
 import org.hnau.commons.kotlin.MutableAccessor
 import org.hnau.commons.kotlin.mapper.Mapper
-import kotlinx.coroutines.flow.MutableStateFlow
 
 
 private val editingStringTextFieldValueMapper = Mapper<EditingString, TextFieldValue>(

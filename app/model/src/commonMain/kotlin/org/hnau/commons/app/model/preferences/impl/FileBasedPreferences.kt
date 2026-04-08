@@ -2,20 +2,6 @@ package org.hnau.commons.app.model.preferences.impl
 
 import arrow.core.Option
 import arrow.core.toOption
-import org.hnau.commons.kotlin.coroutines.flow.state.mapState
-import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
-import org.hnau.commons.kotlin.ifNull
-import org.hnau.commons.kotlin.mapper.Mapper
-import org.hnau.commons.kotlin.mapper.plus
-import org.hnau.commons.kotlin.mapper.stringToStringsBySeparator
-import org.hnau.commons.app.model.file.File
-import org.hnau.commons.app.model.file.exists
-import org.hnau.commons.app.model.file.mkDirs
-import org.hnau.commons.app.model.file.parent
-import org.hnau.commons.app.model.file.sink
-import org.hnau.commons.app.model.file.source
-import org.hnau.commons.app.model.preferences.Preference
-import org.hnau.commons.app.model.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -26,6 +12,20 @@ import kotlinx.coroutines.withContext
 import kotlinx.io.buffered
 import kotlinx.io.readString
 import kotlinx.io.writeString
+import org.hnau.commons.app.model.file.File
+import org.hnau.commons.app.model.file.exists
+import org.hnau.commons.app.model.file.mkDirs
+import org.hnau.commons.app.model.file.parent
+import org.hnau.commons.app.model.file.sink
+import org.hnau.commons.app.model.file.source
+import org.hnau.commons.app.model.preferences.Preference
+import org.hnau.commons.app.model.preferences.Preferences
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
+import org.hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.plus
+import org.hnau.commons.kotlin.mapper.stringToStringsBySeparator
 
 class FileBasedPreferences(
     private val scope: CoroutineScope,

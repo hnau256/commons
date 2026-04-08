@@ -15,8 +15,6 @@
  */
 package org.hnau.commons.app.projector.dynamiccolor.quantize
 
-import kotlin.collections.LinkedHashMap
-
 /** Creates a dictionary with keys of colors, and values of count of the color */
 class QuantizerMap : Quantizer {
     var colorToCount: MutableMap<Int, Int>? = null

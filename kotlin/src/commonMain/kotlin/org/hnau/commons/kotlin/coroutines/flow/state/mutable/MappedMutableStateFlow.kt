@@ -1,13 +1,13 @@
 package org.hnau.commons.kotlin.coroutines.flow.state.mutable
 
-import org.hnau.commons.kotlin.coroutines.flow.state.mapState
-import org.hnau.commons.kotlin.mapper.Mapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.mapper.Mapper
 
 fun <I, O> MutableStateFlow<I>.mapMutableState(
     scope: CoroutineScope,

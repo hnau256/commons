@@ -2,6 +2,7 @@ package org.hnau.commons.app.model.app.utils
 
 import arrow.core.getOrElse
 import arrow.core.toOption
+import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppContext
 import org.hnau.commons.app.model.file.File
 import org.hnau.commons.app.model.file.plus
@@ -9,16 +10,14 @@ import org.hnau.commons.app.model.preferences.impl.FileBasedPreferences
 import org.hnau.commons.app.model.preferences.map
 import org.hnau.commons.app.model.preferences.mapOption
 import org.hnau.commons.app.model.preferences.withDefault
-import org.hnau.commons.app.model.utils.Hue
 import org.hnau.commons.app.model.theme.ThemeBrightness
+import org.hnau.commons.app.model.utils.Hue
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.nameToEnum
 import org.hnau.commons.kotlin.mapper.nullable
 import org.hnau.commons.kotlin.mapper.plus
 import org.hnau.commons.kotlin.mapper.stringToBoolean
-import org.hnau.commons.kotlin.mapper.stringToDouble
 import org.hnau.commons.kotlin.mapper.stringToInt
-import kotlinx.coroutines.CoroutineScope
 
 internal suspend fun AppContext(
     scope: CoroutineScope,

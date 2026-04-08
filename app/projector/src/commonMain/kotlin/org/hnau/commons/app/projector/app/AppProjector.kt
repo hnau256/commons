@@ -10,16 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import org.hnau.commons.kotlin.ifNull
-import org.hnau.commons.kotlin.ifTrue
-import org.hnau.commons.app.model.theme.ThemeBrightness
+import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
+import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.projector.utils.theme.DynamicColorsGenerator
+import org.hnau.commons.app.projector.utils.theme.DynamicSchemeConfig
 import org.hnau.commons.app.projector.utils.theme.buildColorScheme
 import org.hnau.commons.app.projector.utils.theme.provideDynamicColorsGenerator
 import org.hnau.commons.app.projector.utils.theme.system
-import org.hnau.commons.app.projector.utils.theme.DynamicSchemeConfig
-import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.kotlin.ifNull
+import org.hnau.commons.kotlin.ifTrue
 
 class AppProjector<M, S, P>(
     scope: CoroutineScope,

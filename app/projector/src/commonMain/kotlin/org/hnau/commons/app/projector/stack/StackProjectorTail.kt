@@ -1,12 +1,12 @@
 package org.hnau.commons.app.projector.stack
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.stack.NonEmptyStack
 import org.hnau.commons.kotlin.coroutines.createChild
 import org.hnau.commons.kotlin.coroutines.flow.state.mapStateLite
 import org.hnau.commons.kotlin.coroutines.flow.state.runningFoldState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.StateFlow
 
 data class StackProjectorTail<K, P>(
     val projector: P,

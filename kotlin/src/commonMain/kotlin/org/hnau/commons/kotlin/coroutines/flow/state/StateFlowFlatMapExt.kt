@@ -1,7 +1,5 @@
 package org.hnau.commons.kotlin.coroutines.flow.state
 
-import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
-import org.hnau.commons.kotlin.ifNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
+import org.hnau.commons.kotlin.ifNull
 
 fun <I, O> StateFlow<I>.flatMapState(
     scope: CoroutineScope,

@@ -7,7 +7,6 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toKModifier
 import org.hnau.commons.gen.kotlin.CodeBlockBuilderContext
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
-import org.hnau.commons.kotlin.it
 
 val SealedInfo.packageName: String
     get() = parent.packageName.asString()

@@ -5,13 +5,13 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSName
-import org.hnau.commons.kotlin.ifNull
 import org.hnau.commons.gen.pipe.processor.data.Argument
 import org.hnau.commons.gen.pipe.processor.ext.argumants
 import org.hnau.commons.gen.pipe.processor.ext.implementationName
 import org.hnau.commons.gen.pipe.processor.ext.log
 import org.hnau.commons.gen.pipe.processor.ext.packageName
 import org.hnau.commons.gen.pipe.processor.ext.qualifiedNameOrThrow
+import org.hnau.commons.kotlin.ifNull
 
 internal data class ForeignDependentImplementation(
     override val impl: KSName,
