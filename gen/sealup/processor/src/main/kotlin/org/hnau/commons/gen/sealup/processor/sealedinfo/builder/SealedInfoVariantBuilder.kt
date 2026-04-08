@@ -15,6 +15,7 @@ import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.ifNull
 
 fun SealedInfo.Variant.Companion.create(
+    index: Int,
     logger: KSPLogger,
     annotation: KSAnnotation,
     wrappedValuePropertyName: String,
@@ -22,36 +23,31 @@ fun SealedInfo.Variant.Companion.create(
 ): CreateResult<SealedInfo.Variant> {
     val arguments = annotation.arguments(logger)
 
-    val type = arguments
+    val wrapped = arguments
         .get<KSType>("type")
         .ifNull { return CreateResult.Error }
-
-    // Check if the variant type itself contains error types
-    if (type.containsErrorType()) {
-        return CreateResult.Deferred
-    }
-
-    val stickedName = type
-        .declaration
-        .stickedName(logger)
-        ?: return CreateResult.Error
-
-    val wrapperIdentifier = arguments
-        .get<String>("identifier") { stickedName.replaceFirstChar(Char::lowercase) }
-        .ifNull { return CreateResult.Error }
-
-    val declaration = type.declaration
-
-    val classDeclaration = declaration
-        .castOrNull<KSClassDeclaration>()
-        .ifNull {
-            logger.error("Class expected", declaration)
-            return CreateResult.Error
+        .apply {
+            logger.info("Type qualified name: ${declaration.qualifiedName?.asString()}")
         }
+        .takeIf { it.declaration.qualifiedName?.asString() != "kotlin.Nothing" }
+        ?.let { type ->
 
-    return CreateResult.Success(
-        SealedInfo.Variant(
-            wrapped = SealedInfo.Variant.Wrapped(
+            if (type.containsErrorType()) {
+                return CreateResult.Deferred
+            }
+
+            val classDeclaration = type
+                .declaration
+                .let { declaration ->
+                    declaration
+                        .castOrNull<KSClassDeclaration>()
+                        .ifNull {
+                            logger.error("Class expected", declaration)
+                            return CreateResult.Error
+                        }
+                }
+
+            SealedInfo.Variant.Wrapped(
                 type = type,
                 pointer = when (val classKind = classDeclaration.classKind) {
                     ClassKind.OBJECT -> SealedInfo.Variant.Wrapped.Pointer.Object
@@ -72,7 +68,6 @@ fun SealedInfo.Variant.Companion.create(
                                             .resolve(logger)
                                             .ifNull { return CreateResult.Error }
 
-                                        // Check if parameter type contains error types
                                         if (paramType.containsErrorType()) {
                                             return CreateResult.Deferred
                                         }
@@ -96,14 +91,31 @@ fun SealedInfo.Variant.Companion.create(
                                     .distinct()
                                     .map(SealedInfo.Variant::Constructor)
                             }
-                            .orEmpty()
+                            .orEmpty(),
                     )
+
                     else -> {
                         logger.error("Unsupported class kind $classKind", classDeclaration)
                         return CreateResult.Error
                     }
                 },
-            ),
+            )
+        }
+
+    val wrapperIdentifier = arguments
+        .get<String>("identifier") {
+            wrapped
+                ?.type
+                ?.declaration
+                ?.stickedName(logger)
+                ?.replaceFirstChar(Char::lowercase)
+                ?: "variant$index"
+        }
+        .ifNull { return CreateResult.Error }
+
+    return CreateResult.Success(
+        SealedInfo.Variant(
+            wrapped = wrapped,
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { wrapperIdentifier.replaceFirstChar(Char::uppercase) }
                 .ifNull { return CreateResult.Error },

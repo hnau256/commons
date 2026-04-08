@@ -14,7 +14,7 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.use
 import org.hnau.commons.kotlin.foldNullable
 
 fun SealedInfo.Override.createFunSpec(
-    variant: SealedInfo.Variant,
+    wrapped: SealedInfo.Variant.Wrapped,
     type: SealedInfo.Override.Type.Function,
     typeParamResolver: TypeParameterResolver,
     typeVariables: List<TypeVariableName>,
@@ -44,8 +44,8 @@ fun SealedInfo.Override.createFunSpec(
             codeBlock {
                 receiver
                     .foldNullable(
-                        ifNull = { "return ${use(variant.wrapped)}.$name(" to ")" },
-                        ifNotNull = { "return with(${use(variant.wrapped)}) { $name(" to ") }" },
+                        ifNull = { "return ${use(wrapped)}.$name(" to ")" },
+                        ifNotNull = { "return with(${use(wrapped)}) { $name(" to ") }" },
                     )
                     .let { (prefix, postfix) ->
                         type.arguments.joinToString(

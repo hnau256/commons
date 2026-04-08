@@ -13,7 +13,7 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 
 
 fun SealedInfo.Override.createSpec(
-    variant: SealedInfo.Variant,
+    wrapped: SealedInfo.Variant.Wrapped,
 ): Either<FunSpec, PropertySpec> {
 
     val typeParamResolver: TypeParameterResolver = typeParameters.toTypeParameterResolver()
@@ -23,14 +23,14 @@ fun SealedInfo.Override.createSpec(
 
     return when (type) {
         is SealedInfo.Override.Type.Function -> createFunSpec(
-            variant = variant,
+            wrapped = wrapped,
             type = type,
             typeParamResolver = typeParamResolver,
             typeVariables = typeVariables,
         ).left()
 
         is SealedInfo.Override.Type.Property -> createPropertySpec(
-            variant = variant,
+            wrapped = wrapped,
             type = type,
             typeParamResolver = typeParamResolver,
             typeVariables = typeVariables,

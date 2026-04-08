@@ -32,40 +32,43 @@ private fun SealedInfo.Variant.toFactoriesSpec(
     parentExtension: SealedInfo.ParentExtension,
 ): List<Either<PropertySpec, FunSpec>> {
     val wrapperClassName = wrapperClassName(info)
-    return wrapped.pointer.fold(
-        ifObject = {
-            listOf(
-                toFactoryPropertySpec(
-                    parentExtension = parentExtension,
-                    wrapperClassName = wrapperClassName,
-                ).left()
-            )
-        },
-        ifClass = { classPointer ->
-            buildList {
-                add(
-                    toFactoryFuncSpec(
-                        info = info,
-                        parentExtension = parentExtension,
-                        wrapperClassName = wrapperClassName,
-                        wrappedIdentifier = classPointer.property,
-                    ).right(),
-                )
-                addAll(
-                    classPointer
-                        .constructors
-                        .map { constructor ->
-                            toConstructorFactoryFuncSpec(
-                                info = info,
-                                parentExtension = parentExtension,
-                                wrapperClassName = wrapperClassName,
-                                constructor = constructor,
-                            ).right()
-                        },
-                )
+    return wrapped
+        ?.pointer
+        ?.fold(
+            ifObject = { null },
+            ifClass = { classPointer ->
+                buildList {
+                    add(
+                        toFactoryFuncSpec(
+                            info = info,
+                            parentExtension = parentExtension,
+                            wrapperClassName = wrapperClassName,
+                            wrappedIdentifier = classPointer.property,
+                            wrapped = wrapped,
+                        ).right(),
+                    )
+                    addAll(
+                        classPointer
+                            .constructors
+                            .map { constructor ->
+                                toConstructorFactoryFuncSpec(
+                                    info = info,
+                                    parentExtension = parentExtension,
+                                    wrapperClassName = wrapperClassName,
+                                    constructor = constructor,
+                                    wrapped = wrapped,
+                                ).right()
+                            },
+                    )
+                }
             }
-        }
-    )
+        )
+        ?: listOf(
+            toFactoryPropertySpec(
+                parentExtension = parentExtension,
+                wrapperClassName = wrapperClassName,
+            ).left()
+        )
 }
 
 private fun SealedInfo.Variant.toFactoryPropertySpec(
@@ -87,6 +90,7 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
     parentExtension: SealedInfo.ParentExtension,
     wrapperClassName: ClassName,
     wrappedIdentifier: String,
+    wrapped: SealedInfo.Variant.Wrapped,
 ): FunSpec = FunSpec
     .builder(wrapperIdentifier)
     .apply {
@@ -110,6 +114,7 @@ private fun SealedInfo.Variant.toConstructorFactoryFuncSpec(
     info: SealedInfo,
     parentExtension: SealedInfo.ParentExtension,
     wrapperClassName: ClassName,
+    wrapped: SealedInfo.Variant.Wrapped,
     constructor: SealedInfo.Variant.Constructor,
 ): FunSpec {
 

@@ -33,27 +33,23 @@ data class SealedInfo(
     )
 
     data class Variant(
-        val wrapped: Wrapped,
+        val wrapped: Wrapped?,
         val wrapperClass: String,
         val wrapperIdentifier: String,
         val serialName: String,
     ) {
-
         data class Wrapped(
             val type: KSType,
             val pointer: Pointer,
         ) {
-
             sealed interface Pointer {
-
                 data class Class(
                     val property: String,
                     val constructors: List<Constructor>,
-                ): Pointer
+                ) : Pointer
 
-                data object Object: Pointer
+                data object Object : Pointer
             }
-
         }
 
         data class Constructor(

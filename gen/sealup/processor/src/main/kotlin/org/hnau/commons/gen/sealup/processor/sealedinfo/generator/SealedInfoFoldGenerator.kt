@@ -32,8 +32,8 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                         parameters = listOfNotNull(
                             variant
                                 .wrapped
-                                .pointer
-                                .fold(
+                                ?.pointer
+                                ?.fold(
                                     ifClass = { variant.wrapped.className },
                                     ifObject = { null },
                                 ),
@@ -54,10 +54,14 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                     val wrapper = variant.wrapperClassName(this@toFoldFuncSpec)
                     val left = "is ${use(wrapper)}"
 
-                    val argument = variant.wrapped.pointer.fold(
-                        ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
-                        ifObject = { "" }
-                    )
+                    val argument = variant
+                        .wrapped
+                        ?.pointer
+                        ?.fold(
+                            ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
+                            ifObject = { null }
+                        )
+                        .orEmpty()
                     val right = "if${variant.uppercasedIdentifier}($argument)"
 
                     "\t\t$left -> $right"

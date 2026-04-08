@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.SOURCE)
 annotation class Variant(
-    val type: KClass<*>,
+    val type: KClass<*> = Nothing::class,
     val wrapperClassName: String = "",
     val identifier: String = "",
     val serialName: String = "",

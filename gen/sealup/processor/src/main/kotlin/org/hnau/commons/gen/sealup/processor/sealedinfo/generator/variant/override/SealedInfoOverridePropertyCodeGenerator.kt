@@ -16,7 +16,7 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.use
 import org.hnau.commons.kotlin.foldNullable
 
 fun SealedInfo.Override.createPropertySpec(
-    variant: SealedInfo.Variant,
+    wrapped: SealedInfo.Variant.Wrapped,
     type: SealedInfo.Override.Type.Property,
     typeParamResolver: TypeParameterResolver,
     typeVariables: List<TypeVariableName>,
@@ -43,8 +43,8 @@ fun SealedInfo.Override.createPropertySpec(
                     .addCode(
                         codeBlock {
                             receiver.foldNullable(
-                                ifNull = { "return ${use(variant.wrapped)}.$name" },
-                                ifNotNull = { "return with(${use(variant.wrapped)}) { $name }" },
+                                ifNull = { "return ${use(wrapped)}.$name" },
+                                ifNotNull = { "return with(${use(wrapped)}) { $name }" },
                             )
                         }
                     )
@@ -59,8 +59,8 @@ fun SealedInfo.Override.createPropertySpec(
                         .addCode(
                          codeBlock {
                              receiver.foldNullable(
-                                 ifNull = { "${use(variant.wrapped)}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
-                                 ifNotNull = { "with(${use(variant.wrapped)}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
+                                 ifNull = { "${use(wrapped)}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
+                                 ifNotNull = { "with(${use(wrapped)}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
                              )
                          }
                         ).build(),

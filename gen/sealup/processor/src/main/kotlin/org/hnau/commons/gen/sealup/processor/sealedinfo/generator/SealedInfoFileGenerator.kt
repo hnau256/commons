@@ -41,8 +41,8 @@ fun SealedInfo.generateCode(
                 sources = buildList {
                     add(parent.containingFile)
                     addAll(
-                        variants.map { variant ->
-                            variant.wrapped.type.declaration.containingFile
+                        variants.mapNotNull { variant ->
+                            variant.wrapped?.type?.declaration?.containingFile
                         }
                     )
                 }

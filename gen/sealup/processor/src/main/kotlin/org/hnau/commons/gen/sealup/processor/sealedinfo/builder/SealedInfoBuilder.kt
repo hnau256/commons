@@ -96,9 +96,10 @@ fun SealedInfo.Companion.create(
             logger.error("Expected at least one variant", sealUpAnnotation)
             return CreateResult.Error
         }
-        .map { annotation ->
+        .mapIndexed { i, annotation ->
             when (
                 val result = SealedInfo.Variant.create(
+                    index = i,
                     logger = logger,
                     annotation = annotation,
                     wrappedValuePropertyName = wrappedValuePropertyName,
