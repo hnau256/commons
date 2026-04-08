@@ -1,6 +1,7 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.generator
 
 import arrow.core.Either
+import arrow.core.left
 import arrow.core.right
 import arrow.core.toNonEmptyListOrNull
 import com.squareup.kotlinpoet.ClassName
@@ -32,32 +33,60 @@ private fun SealedInfo.Variant.toFactoriesSpec(
     parentExtension: SealedInfo.ParentExtension,
 ): List<Either<PropertySpec, FunSpec>> {
     val wrapperClassName = wrapperClassName(info)
-    return buildList {
-        add(
-            toFactoryFuncSpec(
-                info = info,
-                parentExtension = parentExtension,
-                wrapperClassName = wrapperClassName,
-            ).right(),
-        )
-        addAll(
-            constructors
-                .map { constructor ->
-                    toConstructorFactoryFuncSpec(
+    return wrapped.pointer.fold(
+        ifObject = {
+            listOf(
+                toFactoryPropertySpec(
+                    parentExtension = parentExtension,
+                    wrapperClassName = wrapperClassName,
+                ).left()
+            )
+        },
+        ifClass = { wrappedIdentifier ->
+            buildList {
+                add(
+                    toFactoryFuncSpec(
                         info = info,
                         parentExtension = parentExtension,
                         wrapperClassName = wrapperClassName,
-                        constructor = constructor,
-                    ).right()
-                },
-        )
-    }
+                        wrappedIdentifier = wrappedIdentifier,
+                    ).right(),
+                )
+                addAll(
+                    constructors
+                        .map { constructor ->
+                            toConstructorFactoryFuncSpec(
+                                info = info,
+                                parentExtension = parentExtension,
+                                wrapperClassName = wrapperClassName,
+                                constructor = constructor,
+                            ).right()
+                        },
+                )
+            }
+        }
+    )
 }
+
+private fun SealedInfo.Variant.toFactoryPropertySpec(
+    parentExtension: SealedInfo.ParentExtension,
+    wrapperClassName: ClassName,
+): PropertySpec = PropertySpec
+    .builder(identifier, wrapperClassName)
+    .receiver(parentExtension.companionClassName)
+    .getter(
+        FunSpec
+            .getterBuilder()
+            .addStatement("return %T", wrapperClassName)
+            .build()
+    )
+    .build()
 
 private fun SealedInfo.Variant.toFactoryFuncSpec(
     info: SealedInfo,
     parentExtension: SealedInfo.ParentExtension,
     wrapperClassName: ClassName,
+    wrappedIdentifier: String,
 ): FunSpec = FunSpec
     .builder(identifier)
     .apply {
@@ -66,23 +95,13 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
         receiver(parentExtension.companionClassName)
         returns(wrapperClassName)
 
-        isObject.ifFalse {
-            addParameter(
-                name = identifier,
-                type = wrapped.className,
-            )
-        }
+        addParameter(
+            name = identifier,
+            type = wrapped.className,
+        )
     }
     .addCode(
-        wrapped
-            .pointer
-            .fold(
-                ifClass = { wrappedIdentifier -> "($wrappedIdentifier = $identifier)" },
-                ifObject = { "" },
-            )
-            .let { constructorCall ->
-                "return %T$constructorCall"
-            },
+        "return %T($wrappedIdentifier = $identifier)",
         wrapperClassName,
     )
     .build()
