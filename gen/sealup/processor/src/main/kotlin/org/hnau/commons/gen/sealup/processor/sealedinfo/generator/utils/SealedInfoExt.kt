@@ -46,3 +46,11 @@ fun CodeBlockBuilderContext.use(
     SealedInfo.Variant.Wrapped.Pointer.Object -> use(wrapped.className)
     is SealedInfo.Variant.Wrapped.Pointer.Class -> pointer.property
 }
+
+inline fun <R> SealedInfo.Variant.Wrapped.Pointer.fold(
+    ifClass: (String) -> R,
+    ifObject: () -> R,
+): R = when (this) {
+    is SealedInfo.Variant.Wrapped.Pointer.Class -> ifClass(property)
+    SealedInfo.Variant.Wrapped.Pointer.Object -> ifObject()
+}

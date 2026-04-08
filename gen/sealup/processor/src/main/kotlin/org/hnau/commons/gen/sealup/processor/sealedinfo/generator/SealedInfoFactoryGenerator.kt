@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.companionClassName
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.fold
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
 import org.hnau.commons.kotlin.ifFalse
@@ -70,9 +71,12 @@ private fun SealedInfo.Variant.toFactoryFuncSpec(
         }
     }
     .addCode(
-        isObject
-            .ifFalse { "($wrapped.identifier = $identifier)" }
-            .orEmpty()
+        wrapped
+            .pointer
+            .fold(
+                ifClass = { wrappedIdentifier -> "($wrappedIdentifier = $identifier)" },
+                ifObject = { "" },
+            )
             .let { constructorCall ->
                 "return %T$constructorCall"
             },
