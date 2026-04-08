@@ -1,8 +1,11 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.generator
 
+import arrow.core.Either
+import arrow.core.right
 import arrow.core.toNonEmptyListOrNull
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
@@ -13,21 +16,21 @@ import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperC
 import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue
 
-fun SealedInfo.toFactoriesFuncsSpec(
+fun SealedInfo.toFactoriesSpec(
     parentExtension: SealedInfo.ParentExtension,
-): List<FunSpec> = variants
+): List<Either<PropertySpec, FunSpec>> = variants
     .toList()
     .flatMap { variant ->
-        variant.toFactoriesFuncsSpec(
+        variant.toFactoriesSpec(
             info = this,
             parentExtension = parentExtension,
         )
     }
 
-private fun SealedInfo.Variant.toFactoriesFuncsSpec(
+private fun SealedInfo.Variant.toFactoriesSpec(
     info: SealedInfo,
     parentExtension: SealedInfo.ParentExtension,
-): List<FunSpec> {
+): List<Either<PropertySpec, FunSpec>> {
     val wrapperClassName = wrapperClassName(info)
     return buildList {
         add(
@@ -35,7 +38,7 @@ private fun SealedInfo.Variant.toFactoriesFuncsSpec(
                 info = info,
                 parentExtension = parentExtension,
                 wrapperClassName = wrapperClassName,
-            ),
+            ).right(),
         )
         addAll(
             constructors
@@ -45,7 +48,7 @@ private fun SealedInfo.Variant.toFactoriesFuncsSpec(
                         parentExtension = parentExtension,
                         wrapperClassName = wrapperClassName,
                         constructor = constructor,
-                    )
+                    ).right()
                 },
         )
     }
