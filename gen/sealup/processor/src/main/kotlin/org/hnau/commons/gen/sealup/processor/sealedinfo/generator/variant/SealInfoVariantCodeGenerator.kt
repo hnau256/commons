@@ -9,17 +9,17 @@ import com.squareup.kotlinpoet.TypeSpec
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.SealInfoCodeGeneratorConstants
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.fold
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.variant.override.createSpec
-import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.ifFalse
 
 fun SealedInfo.Variant.toTypeSpec(
     index: Int,
     info: SealedInfo,
-): TypeSpec = isObject
-    .foldBoolean(
-        ifTrue = { TypeSpec.objectBuilder(wrapperClass) },
-        ifFalse = { TypeSpec.classBuilder(wrapperClass) },
+): TypeSpec = wrapped
+    .pointer
+    .fold(
+        ifClass = { TypeSpec.classBuilder(wrapperClass) },
+        ifObject = { TypeSpec.objectBuilder(wrapperClass) },
     )
     .apply {
         modifiers += KModifier.DATA

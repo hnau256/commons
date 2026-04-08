@@ -117,7 +117,6 @@ fun SealedInfo.Variant.Companion.create(
                 .get<String>("serialName") { identifier }
                 .ifNull { return CreateResult.Error },
             constructors = constructors,
-            isObject = isObject,
         ),
     )
 }

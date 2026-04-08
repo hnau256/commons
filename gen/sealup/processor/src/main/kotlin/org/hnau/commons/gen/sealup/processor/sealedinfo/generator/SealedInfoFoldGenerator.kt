@@ -8,6 +8,7 @@ import com.squareup.kotlinpoet.TypeVariableName
 import org.hnau.commons.gen.kotlin.codeBlock
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.className
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.fold
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.visibility
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.wrapperClassName
@@ -32,8 +33,12 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                     LambdaTypeName.get(
                         parameters = listOfNotNull(
                             variant
-                                .isObject
-                                .ifFalse { variant.wrapped.className }
+                                .wrapped
+                                .pointer
+                                .fold(
+                                    ifClass = { variant.wrapped.className },
+                                    ifObject = { null },
+                                ),
                         ).toTypedArray(),
                         returnType = resultType,
                     ),

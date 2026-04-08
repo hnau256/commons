@@ -6,7 +6,6 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.Visibility
-import com.squareup.kotlinpoet.ClassName
 
 sealed interface CreateResult<out T> {
     data class Success<T>(
@@ -39,7 +38,6 @@ data class SealedInfo(
         val identifier: String,
         val serialName: String,
         val constructors: List<Constructor>,
-        val isObject: Boolean,
     ) {
 
         data class Wrapped(
