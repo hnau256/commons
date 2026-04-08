@@ -8,7 +8,9 @@ import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
+import org.hnau.commons.gen.kotlin.codeBlock
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.use
 import org.hnau.commons.kotlin.foldNullable
 
 fun SealedInfo.Override.createFunSpec(
@@ -38,19 +40,21 @@ fun SealedInfo.Override.createFunSpec(
                 )
             }
 
-        addStatement(
-            receiver
-                .foldNullable(
-                    ifNull = { "return ${variant.wrapped.identifier}.$name(" to ")" },
-                    ifNotNull = { "return with(${variant.wrapped.identifier}) { $name(" to ") }" },
-                )
-                .let { (prefix, postfix) ->
-                    type.arguments.joinToString(
-                        prefix = prefix,
-                        postfix = postfix,
-                        transform = { argument -> argument.name },
+        addCode(
+            codeBlock {
+                receiver
+                    .foldNullable(
+                        ifNull = { "return ${use(variant.wrapped)}.$name(" to ")" },
+                        ifNotNull = { "return with(${use(variant.wrapped)}) { $name(" to ") }" },
                     )
-                },
+                    .let { (prefix, postfix) ->
+                        type.arguments.joinToString(
+                            prefix = prefix,
+                            postfix = postfix,
+                            transform = { argument -> argument.name },
+                        )
+                    }
+            }
         )
     }
     .build()

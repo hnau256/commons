@@ -44,8 +44,19 @@ data class SealedInfo(
 
         data class Wrapped(
             val type: KSType,
-            val identifier: String,
-        )
+            val pointer: Pointer,
+        ) {
+
+            sealed interface Pointer {
+
+                data class Class(
+                    val property: String,
+                ): Pointer
+
+                data object Object: Pointer
+            }
+
+        }
 
         data class Constructor(
             val parameters: List<Parameter>,

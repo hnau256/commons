@@ -67,29 +67,31 @@ fun SealedInfo.Variant.toTypeSpec(
                 .build()
         }
 
-        isObject.ifFalse {
-
-            primaryConstructor(
-                FunSpec
-                    .constructorBuilder()
-                    .addParameter(
-                        ParameterSpec
-                            .builder(
-                                name = wrapped.identifier,
-                                type = wrapped.className,
-                            )
-                            .build(),
-                    )
-                    .build(),
-            )
-
-            propertySpecs += PropertySpec
-                .builder(
-                    name = wrapped.identifier,
-                    type = wrapped.className,
+        when (val pointer = wrapped.pointer) {
+            SealedInfo.Variant.Wrapped.Pointer.Object -> Unit
+            is SealedInfo.Variant.Wrapped.Pointer.Class -> {
+                primaryConstructor(
+                    FunSpec
+                        .constructorBuilder()
+                        .addParameter(
+                            ParameterSpec
+                                .builder(
+                                    name = pointer.property,
+                                    type = wrapped.className,
+                                )
+                                .build(),
+                        )
+                        .build(),
                 )
-                .initializer(wrapped.identifier)
-                .build()
+
+                propertySpecs += PropertySpec
+                    .builder(
+                        name = pointer.property,
+                        type = wrapped.className,
+                    )
+                    .initializer(pointer.property)
+                    .build()
+            }
         }
 
         info

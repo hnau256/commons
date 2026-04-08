@@ -9,8 +9,10 @@ import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
+import org.hnau.commons.gen.kotlin.codeBlock
 import org.hnau.commons.gen.sealup.processor.sealedinfo.SealedInfo
 import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.SealInfoCodeGeneratorConstants
+import org.hnau.commons.gen.sealup.processor.sealedinfo.generator.utils.use
 import org.hnau.commons.kotlin.foldNullable
 
 fun SealedInfo.Override.createPropertySpec(
@@ -38,12 +40,15 @@ fun SealedInfo.Override.createPropertySpec(
             getter(
                 FunSpec
                     .getterBuilder()
-                    .addStatement(
-                        receiver.foldNullable(
-                            ifNull = { "return ${variant.wrapped.identifier}.$name" },
-                            ifNotNull = { "return with(${variant.wrapped.identifier}) { $name }" },
-                        ),
-                    ).build(),
+                    .addCode(
+                        codeBlock {
+                            receiver.foldNullable(
+                                ifNull = { "return ${use(variant.wrapped)}.$name" },
+                                ifNotNull = { "return with(${use(variant.wrapped)}) { $name }" },
+                            )
+                        }
+                    )
+                    .build()
             )
 
             if (type.mutable) {
@@ -51,11 +56,13 @@ fun SealedInfo.Override.createPropertySpec(
                     FunSpec
                         .setterBuilder()
                         .addParameter("newValue", typeName)
-                        .addStatement(
-                            receiver.foldNullable(
-                                ifNull = { "${variant.wrapped.identifier}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
-                                ifNotNull = { "with(${variant.wrapped.identifier}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
-                            ),
+                        .addCode(
+                         codeBlock {
+                             receiver.foldNullable(
+                                 ifNull = { "${use(variant.wrapped)}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
+                                 ifNotNull = { "with(${use(variant.wrapped)}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
+                             )
+                         }
                         ).build(),
                 )
             }

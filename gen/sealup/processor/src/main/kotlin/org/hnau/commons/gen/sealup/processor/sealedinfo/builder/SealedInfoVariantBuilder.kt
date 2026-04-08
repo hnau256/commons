@@ -92,19 +92,22 @@ fun SealedInfo.Variant.Companion.create(
         SealedInfo.Variant(
             wrapped = SealedInfo.Variant.Wrapped(
                 type = type,
-                identifier = isObject.foldBoolean(
+                pointer = isObject.foldBoolean(
                     ifFalse = {
-                        arguments
-                            .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
-                            .ifNull { return CreateResult.Error }
+                        SealedInfo.Variant.Wrapped.Pointer.Class(
+                            property = arguments
+                                .get<String>("wrappedValuePropertyName") { wrappedValuePropertyName }
+                                .ifNull { return CreateResult.Error }
+                        )
                     },
                     ifTrue = {
-                        type
-                            .toClassName()
-                            .simpleNames
-                            .joinToString(".")
+                        SealedInfo.Variant.Wrapped.Pointer.Object
+//                        type
+//                            .toClassName()
+//                            .simpleNames
+//                            .joinToString(".")
                     }
-                )
+                ),
             ),
             wrapperClass = arguments
                 .get<String>("wrapperClassName") { identifier.replaceFirstChar(Char::uppercase) }
