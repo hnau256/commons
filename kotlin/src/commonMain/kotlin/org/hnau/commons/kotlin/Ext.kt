@@ -11,6 +11,8 @@ inline fun <reified O> Any?.castOrElse(
     else -> elseAction()
 }
 
+operator fun <R> ((Unit) -> R).invoke(): R = invoke(Unit)
+
 inline fun <reified O> Any?.castOrNull(): O? = this as? O
 
 inline fun <reified O> Any?.castOrThrow(): O = this as O

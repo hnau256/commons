@@ -2,14 +2,18 @@ package org.hnau.commons.kotlin
 
 fun String.removePrefixOrNull(
     prefix: String,
-): String? = when (val nonEmptyPrefix = prefix.takeIf(String::isNotEmpty)) {
-    null -> this
-    else -> removePrefix(nonEmptyPrefix).takeIf { it != this }
+): String? {
+    if (prefix.isEmpty()) {
+        return this
+    }
+    return startsWith(prefix).ifTrue { substring(prefix.length) }
 }
 
 fun String.removeSuffixOrNull(
     suffix: String,
-): String? = when (val nonEmptySuffix = suffix.takeIf(String::isNotEmpty)) {
-    null -> this
-    else -> removeSuffix(nonEmptySuffix).takeIf { it != this }
+): String? {
+    if (suffix.isEmpty()) {
+        return this
+    }
+    return endsWith(suffix).ifTrue { substring(0, length - suffix.length) }
 }
