@@ -69,10 +69,16 @@ internal object Versions {
         val javaGradlePlugin: PluginId =
             PluginId("java-gradle-plugin")
 
-        val hnauProject: List<Aliased<Versioned<PluginId>>> =
-            listOf("jvm", "jvmAndroidApp", "kmp", "kmpAndroid", "kmpAndroidWithCompose", "plugins").map { suffix ->
-                PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
-            }
+        val hnauProject: List<Aliased<Versioned<PluginId>>> = listOf(
+            "jvm",
+            "jvmAndroidApp",
+            "kmp",
+            "kmpAndroid",
+            "kmpAndroidWithCompose",
+            "plugins"
+        ).map { suffix ->
+            PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
+        }
     }
 
     val pluginsAsLibraries: List<Versioned<LibraryId>> = listOf(
@@ -146,7 +152,8 @@ internal object Versions {
 
         private fun buildArrowDependency(
             suffix: String,
-        ): Versioned<LibraryId> = "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
+        ): Versioned<LibraryId> =
+            "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
 
         val unconditioned: List<Versioned<LibraryId>> =
             listOf("core", "core-serialization", "fx-coroutines").map(::buildArrowDependency)
@@ -155,14 +162,27 @@ internal object Versions {
             buildArrowDependency("optics")
     }
 
-    val composeMultiplatform: ComposeDependencyTypeValues<Versioned<LibraryId>> = ComposeDependencyTypeValues(
-        runtime = "org.jetbrains.compose.runtime" withArtifact "runtime" withVersion Version.ComposeMultiplatform,
-        foundation = "org.jetbrains.compose.foundation" withArtifact "foundation" withVersion Version.ComposeMultiplatform,
-        ui = "org.jetbrains.compose.ui" withArtifact "ui" withVersion Version.ComposeMultiplatform,
-        material3 = "org.jetbrains.compose.material3" withArtifact "material3" withVersion Version.ComposeMultiplatformMaterial3,
-        iconsCore = "org.jetbrains.compose.material" withArtifact "material-icons-core" withVersion Version.CommposeMultiplatformIcons,
-        iconsExtended = "org.jetbrains.compose.material" withArtifact "material-icons-extended" withVersion Version.CommposeMultiplatformIcons,
-    )
+    object ComposeMultiplatform {
+
+        private val materialGroupId = GroupId("org.jetbrains.compose.material")
+        private val uiGroupId = GroupId("org.jetbrains.compose.ui")
+
+        val dependencies: ComposeDependencyTypeValues<Versioned<LibraryId>> =
+            ComposeDependencyTypeValues(
+                runtime = "org.jetbrains.compose.runtime" withArtifact "runtime" withVersion Version.ComposeMultiplatform,
+                foundation = "org.jetbrains.compose.foundation" withArtifact "foundation" withVersion Version.ComposeMultiplatform,
+                ui = uiGroupId withArtifact "ui" withVersion Version.ComposeMultiplatform,
+                material3 = "org.jetbrains.compose.material3" withArtifact "material3" withVersion Version.ComposeMultiplatformMaterial3,
+                iconsCore = materialGroupId withArtifact "material-icons-core" withVersion Version.CommposeMultiplatformIcons,
+                iconsExtended = materialGroupId withArtifact "material-icons-extended" withVersion Version.CommposeMultiplatformIcons,
+            )
+
+        val uiTooling: Versioned<LibraryId> =
+            uiGroupId withArtifact "ui-tooling" withVersion Version.ComposeMultiplatform
+
+        val uiToolingPreview: Versioned<LibraryId> =
+            uiGroupId withArtifact "ui-tooling-preview" withVersion Version.ComposeMultiplatform
+    }
 
     object Android {
 
@@ -176,16 +196,18 @@ internal object Versions {
         )
     }
 
-    val jetpackCompose: ComposeDependencyTypeValues<Versioned<LibraryId>> = ComposeDependencyTypeValues(
-        runtime = "androidx.compose.runtime" withArtifact "runtime" withVersion Version.JetpackCompose,
-        foundation = "androidx.compose.foundation" withArtifact "foundation" withVersion Version.JetpackCompose,
-        material3 = "androidx.compose.material3" withArtifact "material3" withVersion Version.JetpackComposeMaterial3,
-        ui = "androidx.compose.ui" withArtifact "ui" withVersion Version.JetpackCompose,
-        iconsCore = "androidx.compose.material" withArtifact "material-icons-core" withVersion Version.JetpackComposeIcons,
-        iconsExtended = "androidx.compose.material" withArtifact "material-icons-extended" withVersion Version.JetpackComposeIcons,
-    )
+    val jetpackCompose: ComposeDependencyTypeValues<Versioned<LibraryId>> =
+        ComposeDependencyTypeValues(
+            runtime = "androidx.compose.runtime" withArtifact "runtime" withVersion Version.JetpackCompose,
+            foundation = "androidx.compose.foundation" withArtifact "foundation" withVersion Version.JetpackCompose,
+            material3 = "androidx.compose.material3" withArtifact "material3" withVersion Version.JetpackComposeMaterial3,
+            ui = "androidx.compose.ui" withArtifact "ui" withVersion Version.JetpackCompose,
+            iconsCore = "androidx.compose.material" withArtifact "material-icons-core" withVersion Version.JetpackComposeIcons,
+            iconsExtended = "androidx.compose.material" withArtifact "material-icons-extended" withVersion Version.JetpackComposeIcons,
+        )
 
-    val kotlinTest: Versioned<LibraryId> = "org.jetbrains.kotlin" withArtifact "kotlin-test" withVersion Version.Kotlin
+    val kotlinTest: Versioned<LibraryId> =
+        "org.jetbrains.kotlin" withArtifact "kotlin-test" withVersion Version.Kotlin
 
     object Standalone {
 

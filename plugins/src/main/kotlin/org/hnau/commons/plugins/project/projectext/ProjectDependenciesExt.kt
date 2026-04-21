@@ -97,7 +97,7 @@ internal fun Project.addAndroidDependencies(
     }
 }
 
-private val Versioned<LibraryId>.asDependency: String
+internal val Versioned<LibraryId>.asDependency: String
     get() = listOf(
         withoutVersion.groupId.groupId,
         withoutVersion.artifactId.artifactId,

@@ -88,8 +88,18 @@ internal fun Project.configureKmp(
                     ComposePlugin.Dependencies(project).desktop.currentOs,
                 )
 
+                dependencies.add(
+                    "androidRuntimeClasspath",
+                    Versions.ComposeMultiplatform.uiToolingPreview.asDependency,
+                )
+
+                addDependency(
+                    type = projectType,
+                    dependency = Versions.ComposeMultiplatform.uiTooling,
+                )
+
                 addComposeDependencies(
-                    dependencies = Versions.composeMultiplatform,
+                    dependencies = Versions.ComposeMultiplatform.dependencies,
                     projectType = projectType,
                 )
 
