@@ -20,3 +20,13 @@ fun FractalColorsProvider.getComponentColors(
         importance = importance,
     )
 )
+
+@Composable
+fun FractalColorsProvider.getOutlineComponentColors(
+    importance: Importance,
+): OutlineComponentValues<Color> = getOutlineComponentColors(
+    distanceWithImportance = DistanceWithImportance(
+        distance = Distance.local,
+        importance = importance,
+    )
+)

@@ -35,6 +35,7 @@ import org.hnau.commons.app.projector.fractal.utils.localIconSize
 import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
 import org.hnau.commons.app.projector.fractal.utils.localShape
 import org.hnau.commons.app.projector.fractal.utils.localTextStyle
+import org.hnau.commons.app.projector.fractal.utils.marchingAntsRoundRectBorder
 import org.hnau.commons.app.projector.fractal.utils.padding
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
@@ -45,7 +46,6 @@ import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
-import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.rightOrNull
 import kotlin.time.Duration.Companion.seconds
@@ -73,26 +73,31 @@ fun <E : CancelOrInProgress> FButton(
         distanceWithImportance = distanceWithImportance,
     )
     val onClick = actionOrElseOrDisabled?.onClick
+
+    val isInProgress = when (actionOrElseOrDisabled) {
+        is ActionOrElse.Else -> true
+        is ActionOrElse.Action, null -> false
+    }
+
     Row(
         modifier = modifier
-            .then(
-                isSelected.foldBoolean(
-                    ifFalse = { Modifier},
-                    ifTrue = {
-                        Modifier.border(
-                            width = localBorderWidth,
-                            color = colors.content,
-                            shape = localShape,
-                        )
-                    }
-                )
-            )
             .clip(localShape)
             .clickable(
                 enabled = onClick != null,
                 onClick = onClick.orNoAction,
             )
             .background(colors.container)
+            .then(
+                when {
+                    isInProgress -> Modifier.marchingAntsRoundRectBorder(colors.content)
+                    isSelected -> Modifier.border(
+                        width = localBorderWidth,
+                        color = colors.content,
+                        shape = localShape,
+                    )
+                    else -> Modifier
+                }
+            )
             .padding(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -144,7 +149,7 @@ fun FButtonPreview() {
                 actionOrCancelIfExecuting(
                     scope = coroutineScope,
                 ) {
-                    delay(5.seconds)
+                    delay(50.seconds)
                 }
 
             }
