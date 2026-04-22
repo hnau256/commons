@@ -18,21 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import arrow.core.Ior
-import arrow.core.left
-import arrow.core.right
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.color.ComponentValues
 import org.hnau.commons.app.projector.fractal.utils.color.DistanceWithImportance
 import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProvider
-import org.hnau.commons.app.projector.fractal.utils.color.OutlineComponentValues
 import org.hnau.commons.app.projector.fractal.utils.color.local
 import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.fractal.utils.localBorderWidth
@@ -50,6 +45,7 @@ import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
+import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.rightOrNull
 import kotlin.time.Duration.Companion.seconds
@@ -59,6 +55,7 @@ fun <E : CancelOrInProgress> FButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
     importance: Importance = Importance.default,
 ) {
     val distanceWithImportance = DistanceWithImportance(
@@ -66,44 +63,11 @@ fun <E : CancelOrInProgress> FButton(
         importance = importance,
     )
 
-    val distanceByImportance = distanceWithImportance.distanceByImportance.distance
-    val style = when {
-        distanceByImportance <= 1 -> ButtonStyle.Fill
-        distanceByImportance <= 2 -> ButtonStyle.Outline
-        else -> ButtonStyle.Transparent
-    }
-
     val colorsProvider = FractalColorsProvider.local
-    val colors = remember(style, colorsProvider) {
-        when (style) {
-            ButtonStyle.Fill -> colorsProvider
-                .getComponentColors(
-                    distanceWithImportance = distanceWithImportance,
-                )
-                .left()
-
-            ButtonStyle.Outline, ButtonStyle.Transparent -> colorsProvider
-                .getOutlineComponentColors(
-                    distanceWithImportance = distanceWithImportance,
-                )
-                .right()
-        }
-    }
-
-    val contentColor = colors.fold(
-        ifLeft = ComponentValues<Color>::content,
-        ifRight = OutlineComponentValues<Color>::content
-    )
-
-    val fillColor = colors.fold(
-        ifLeft = ComponentValues<Color>::container,
-        ifRight = { null },
-    )
-
-    val outlineColor = colors.fold(
-        ifLeft = { null },
-        ifRight = OutlineComponentValues<Color>::outline
-    ).takeIf { style != ButtonStyle.Transparent }
+    val colors = colorsProvider
+        .getComponentColors(
+            distanceWithImportance = distanceWithImportance,
+        )
 
     FractalColorsProvider.local.getComponentColors(
         distanceWithImportance = distanceWithImportance,
@@ -112,12 +76,12 @@ fun <E : CancelOrInProgress> FButton(
     Row(
         modifier = modifier
             .then(
-                outlineColor.foldNullable(
-                    ifNull = { Modifier },
-                    ifNotNull = { outlineColor ->
+                isSelected.foldBoolean(
+                    ifFalse = { Modifier},
+                    ifTrue = {
                         Modifier.border(
                             width = localBorderWidth,
-                            color = outlineColor,
+                            color = colors.content,
                             shape = localShape,
                         )
                     }
@@ -128,12 +92,7 @@ fun <E : CancelOrInProgress> FButton(
                 enabled = onClick != null,
                 onClick = onClick.orNoAction,
             )
-            .then(
-                fillColor.foldNullable(
-                    ifNull = { Modifier },
-                    ifNotNull = { Modifier.background(it) },
-                )
-            )
+            .background(colors.container)
             .padding(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -146,7 +105,7 @@ fun <E : CancelOrInProgress> FButton(
                     Box(
                         modifier = Modifier.paint(
                             painter = rememberVectorPainter(icon),
-                            colorFilter = ColorFilter.tint(contentColor),
+                            colorFilter = ColorFilter.tint(colors.content),
                         )
                     )
                 }
@@ -164,14 +123,12 @@ fun <E : CancelOrInProgress> FButton(
             Text(
                 text = title,
                 style = localTextStyle,
-                color = contentColor,
+                color = colors.content,
                 maxLines = 1,
             )
         }
     }
 }
-
-private enum class ButtonStyle { Fill, Outline, Transparent }
 
 @Preview
 @Composable
@@ -196,6 +153,7 @@ fun FButtonPreview() {
             FButton(
                 importance = Importance.medium,
                 actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                isSelected = true,
                 titleOrIcon = Ior.Right(
                     value = Icons.Default.Delete
                 )
