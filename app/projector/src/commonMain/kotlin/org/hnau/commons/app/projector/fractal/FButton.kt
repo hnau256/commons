@@ -1,0 +1,214 @@
+package org.hnau.commons.app.projector.fractal
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.tooling.preview.Preview
+import arrow.core.Ior
+import arrow.core.left
+import arrow.core.right
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.color.ComponentValues
+import org.hnau.commons.app.projector.fractal.utils.color.DistanceWithImportance
+import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.color.OutlineComponentValues
+import org.hnau.commons.app.projector.fractal.utils.color.local
+import org.hnau.commons.app.projector.fractal.utils.local
+import org.hnau.commons.app.projector.fractal.utils.localBorderWidth
+import org.hnau.commons.app.projector.fractal.utils.localIconSize
+import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
+import org.hnau.commons.app.projector.fractal.utils.localShape
+import org.hnau.commons.app.projector.fractal.utils.localTextStyle
+import org.hnau.commons.app.projector.fractal.utils.padding
+import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
+import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
+import org.hnau.commons.app.projector.uikit.onClick
+import org.hnau.commons.app.projector.utils.PaddingValuesZero
+import org.hnau.commons.app.projector.utils.TitleOrIcon
+import org.hnau.commons.app.projector.utils.orNoAction
+import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
+import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
+import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.rightOrNull
+import kotlin.time.Duration.Companion.seconds
+
+@Composable
+fun <E : CancelOrInProgress> FButton(
+    actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
+    titleOrIcon: TitleOrIcon,
+    modifier: Modifier = Modifier,
+    importance: Importance = Importance.default,
+) {
+    val distanceWithImportance = DistanceWithImportance(
+        distance = Distance.local,
+        importance = importance,
+    )
+
+    val distanceByImportance = distanceWithImportance.distanceByImportance.distance
+    val style = when {
+        distanceByImportance <= 1 -> ButtonStyle.Fill
+        distanceByImportance <= 2 -> ButtonStyle.Outline
+        else -> ButtonStyle.Transparent
+    }
+
+    val colorsProvider = FractalColorsProvider.local
+    val colors = remember(style, colorsProvider) {
+        when (style) {
+            ButtonStyle.Fill -> colorsProvider
+                .getComponentColors(
+                    distanceWithImportance = distanceWithImportance,
+                )
+                .left()
+
+            ButtonStyle.Outline, ButtonStyle.Transparent -> colorsProvider
+                .getOutlineComponentColors(
+                    distanceWithImportance = distanceWithImportance,
+                )
+                .right()
+        }
+    }
+
+    val contentColor = colors.fold(
+        ifLeft = ComponentValues<Color>::content,
+        ifRight = OutlineComponentValues<Color>::content
+    )
+
+    val fillColor = colors.fold(
+        ifLeft = ComponentValues<Color>::container,
+        ifRight = { null },
+    )
+
+    val outlineColor = colors.fold(
+        ifLeft = { null },
+        ifRight = OutlineComponentValues<Color>::outline
+    ).takeIf { style != ButtonStyle.Transparent }
+
+    FractalColorsProvider.local.getComponentColors(
+        distanceWithImportance = distanceWithImportance,
+    )
+    val onClick = actionOrElseOrDisabled?.onClick
+    Row(
+        modifier = modifier
+            .then(
+                outlineColor.foldNullable(
+                    ifNull = { Modifier },
+                    ifNotNull = { outlineColor ->
+                        Modifier.border(
+                            width = localBorderWidth,
+                            color = outlineColor,
+                            shape = localShape,
+                        )
+                    }
+                )
+            )
+            .clip(localShape)
+            .clickable(
+                enabled = onClick != null,
+                onClick = onClick.orNoAction,
+            )
+            .then(
+                fillColor.foldNullable(
+                    ifNull = { Modifier },
+                    ifNotNull = { Modifier.background(it) },
+                )
+            )
+            .padding(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val titleOrNull = titleOrIcon.leftOrNull()
+        ActionOrElseIcon(
+            size = localIconSize,
+            actionOrElseOrDisabled = actionOrElseOrDisabled,
+            actionIcon = titleOrIcon.rightOrNull()?.let { icon ->
+                {
+                    Box(
+                        modifier = Modifier.paint(
+                            painter = rememberVectorPainter(icon),
+                            colorFilter = ColorFilter.tint(contentColor),
+                        )
+                    )
+                }
+            },
+            contentPadding = titleOrNull.foldNullable(
+                ifNull = { PaddingValuesZero },
+                ifNotNull = {
+                    PaddingValues(
+                        end = localPaddingHorizontal / 2,
+                    )
+                }
+            ),
+        )
+        titleOrNull?.let { title ->
+            Text(
+                text = title,
+                style = localTextStyle,
+                color = contentColor,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+private enum class ButtonStyle { Fill, Outline, Transparent }
+
+@Preview
+@Composable
+fun FButtonPreview() {
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val createActionOrCancel: @Composable () -> StateFlow<ActionOrElse<Unit, CancelOrInProgress.Cancel>> =
+        {
+            remember(coroutineScope) {
+                actionOrCancelIfExecuting(
+                    scope = coroutineScope,
+                ) {
+                    delay(5.seconds)
+                }
+
+            }
+        }
+
+    FractalPreview {
+        FRow {
+            FButton(
+                importance = Importance.medium,
+                actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                titleOrIcon = Ior.Right(
+                    value = Icons.Default.Delete
+                )
+            )
+            FButton(
+                actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                titleOrIcon = Ior.Both(
+                    leftValue = "Settings",
+                    rightValue = Icons.Default.Settings
+                )
+            )
+        }
+    }
+}
+
+
