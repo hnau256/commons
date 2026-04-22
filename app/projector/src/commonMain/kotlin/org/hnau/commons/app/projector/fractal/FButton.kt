@@ -130,7 +130,9 @@ fun <E : CancelOrInProgress> FButton(
     }
 }
 
-@Preview
+@Preview(
+    widthDp = 480
+)
 @Composable
 fun FButtonPreview() {
 

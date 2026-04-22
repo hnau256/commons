@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
+import org.hnau.commons.app.projector.fractal.utils.localPaddingVertical
 
 @Composable
 fun FRow(
@@ -28,7 +29,7 @@ fun FColumn(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(localPaddingHorizontal),
+        verticalArrangement = Arrangement.spacedBy(localPaddingVertical),
         content = content
     )
 }
