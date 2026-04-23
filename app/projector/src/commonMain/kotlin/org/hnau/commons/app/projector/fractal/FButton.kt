@@ -29,13 +29,14 @@ import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.color.DistanceWithImportance
 import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.local
+import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.local
+import org.hnau.commons.app.projector.fractal.utils.localBorderShape
 import org.hnau.commons.app.projector.fractal.utils.localBorderWidth
 import org.hnau.commons.app.projector.fractal.utils.localIconSize
 import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
 import org.hnau.commons.app.projector.fractal.utils.localShape
 import org.hnau.commons.app.projector.fractal.utils.localTextStyle
-import org.hnau.commons.app.projector.fractal.utils.marchingAntsRoundRectBorder
 import org.hnau.commons.app.projector.fractal.utils.padding
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
@@ -89,12 +90,17 @@ fun <E : CancelOrInProgress> FButton(
             .background(colors.container)
             .then(
                 when {
-                    isInProgress -> Modifier.marchingAntsRoundRectBorder(colors.content)
+                    isInProgress -> Modifier.fractalDashBorder(
+                        color = colors.content,
+                        shape = localBorderShape,
+                    )
+
                     isSelected -> Modifier.border(
                         width = localBorderWidth,
                         color = colors.content,
-                        shape = localShape,
+                        shape = localBorderShape,
                     )
+
                     else -> Modifier
                 }
             )

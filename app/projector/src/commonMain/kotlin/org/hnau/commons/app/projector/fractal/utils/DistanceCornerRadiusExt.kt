@@ -1,13 +1,15 @@
 package org.hnau.commons.app.projector.fractal.utils
 
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 
 val Distance.cornerRadius: Dp
-    get() = 8.dp.scale(spaceScale)
+    get() = 12.dp.scale(spaceScale)
 
 
 val localCornerRadius: Dp
@@ -19,4 +21,14 @@ val Distance.shape: Shape
 
 val localShape: Shape
     @Composable
-    get() = RoundedCornerShape(size = localCornerRadius)
+    get() = Distance.local.shape
+
+val Distance.borderShape: Shape
+    get() = DeflatedRoundedCornerShape(
+        topStart = CornerSize(cornerRadius),
+        deflation = borderWidth / 2,
+    )
+
+val localBorderShape: Shape
+    @Composable
+    get() = Distance.local.borderShape

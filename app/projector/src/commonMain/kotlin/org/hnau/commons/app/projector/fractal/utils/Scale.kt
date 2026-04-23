@@ -23,7 +23,7 @@ enum class ScalableType { Space, Content }
 
 private val scalableBaseWithDecays: ScalableTypeValues<BaseWithDecay<Scale>> = ScalableTypeValues(
     space = 0.5,
-    content = 0.7,
+    content = 0.75,
 ).map { decay ->
     BaseWithDecay(
         base = Scale.single,
