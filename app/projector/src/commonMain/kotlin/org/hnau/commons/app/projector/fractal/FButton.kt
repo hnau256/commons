@@ -161,7 +161,7 @@ fun FButtonPreview() {
             FButton(
                 palette = PaletteType.Primary,
                 actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                //isSelected = true,
+                isSelected = true,
                 titleOrIcon = Ior.Both(
                     leftValue = "Settings",
                     rightValue = Icons.Default.Settings
