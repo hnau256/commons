@@ -8,6 +8,7 @@ import org.hnau.commons.app.model.utils.Hue
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel
+import org.hnau.commons.app.projector.fractal.utils.FractalUnits
 import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProviderByMainColor
 
 @Composable

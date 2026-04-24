@@ -1,12 +1,15 @@
 package org.hnau.commons.app.projector.fractal.utils
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
@@ -26,59 +29,57 @@ class FractalUnits private constructor(
 
         private val cache = HashMap<Int, FractalUnits>()
 
-        private val spaceScaleDecay = BaseWithDecay.float(
-            base = 1f,
+        private val spaceScaleDecay: BaseWithDecay<Float> = BaseWithDecay.float(
+            initial = 1f,
             decay = 0.5,
         )
 
-        private val contentScaleDecay = BaseWithDecay.float(
-            base = 1f,
+        private val contentScaleDecay: BaseWithDecay<Float> = BaseWithDecay.float(
+            initial = 1f,
             decay = 0.75,
         )
 
-        private val weightDecay = BaseWithDecay(
-            base = FontWeight.Normal,
+        private val weightDecay: BaseWithDecay<FontWeight> = BaseWithDecay.int(
+            initial = FontWeight.Normal.weight,
+            baseline = 0,
             decay = 1.3,
-            times = { value, factor ->
-                value
-                    .weight
-                    .times(factor)
-                    .toInt()
-                    .let(::FontWeight)
-            },
-        )
+        ).map { weight ->
+            weight
+                .coerceIn(FontWeight.Thin.weight, FontWeight.Black.weight)
+                .let(::FontWeight)
+        }
 
-        private val letterSpacingDecay = BaseWithDecay.textUnit(
-            base = 0.5.sp,
+        private val letterSpacingDecay: BaseWithDecay<TextUnit> = BaseWithDecay.textUnit(
+            initial = 0.5.sp,
             decay = 1.4,
-            baseline = 0.sp,
         )
 
-        operator fun get(distance: Distance): FractalUnits =
-            cache.getOrPut(distance.distance) {
-                val spaceScale = spaceScaleDecay[distance]
-                val contentScale = contentScaleDecay[distance]
-                val weight = weightDecay[distance].coerceIn(FontWeight.Thin, FontWeight.Black)
-                val letterSpacing = letterSpacingDecay[distance]
-                val cornerRadius = scale(8.dp, spaceScale)
-                val borderWidth = scale(1.5.dp, contentScale, 0.25.dp)
-                FractalUnits(
-                    paddingHorizontal = scale(16.dp, spaceScale),
-                    paddingVertical = scale(8.dp, spaceScale),
-                    shape = RoundedCornerShape(size = cornerRadius),
-                    borderShape = DeflatedRoundedCornerShape(
-                        topStart = CornerSize(cornerRadius),
-                        deflation = borderWidth / 2,
-                    ),
-                    borderWidth = borderWidth,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp * contentScale,
-                        fontWeight = weight,
-                        letterSpacing = letterSpacing,
-                    ),
-                    iconSize = scale(24.dp, contentScale),
-                )
-            }
+        operator fun get(
+            distance: Distance,
+        ): FractalUnits = cache.getOrPut(
+            key = distance.distance,
+        ) {
+            val spaceScale = spaceScaleDecay[distance]
+            val contentScale = contentScaleDecay[distance]
+            val cornerRadius = scale(8.dp, spaceScale)
+            val borderWidth = scale(1.5.dp, contentScale, 0.25.dp)
+            FractalUnits(
+                paddingHorizontal = scale(16.dp, spaceScale),
+                paddingVertical = scale(8.dp, spaceScale),
+                shape = RoundedCornerShape(size = cornerRadius),
+                borderShape = DeflatedRoundedCornerShape(
+                    topStart = CornerSize(cornerRadius),
+                    deflation = borderWidth / 2,
+                ),
+                borderWidth = borderWidth,
+                textStyle = TextStyle(
+                    fontSize = 20.sp * contentScale,
+                    fontWeight = weightDecay[distance].coerceIn(FontWeight.Thin, FontWeight.Black),
+                    letterSpacing = letterSpacingDecay[distance],
+                ),
+                iconSize = scale(24.dp, contentScale),
+            )
+        }
 
         private fun scale(
             value: Dp,
@@ -100,3 +101,9 @@ val Distance.units: FractalUnits
 val localUnits: FractalUnits
     @Composable
     get() = Distance.local.units
+
+@Composable
+fun Modifier.fractalPadding(): Modifier = padding(
+    horizontal = localUnits.paddingHorizontal,
+    vertical = localUnits.paddingVertical,
+)

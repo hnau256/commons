@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding as foundationPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
@@ -30,6 +29,7 @@ import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.getComponentColors
 import org.hnau.commons.app.projector.fractal.utils.color.local
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
+import org.hnau.commons.app.projector.fractal.utils.fractalPadding
 import org.hnau.commons.app.projector.fractal.utils.localUnits
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
@@ -89,10 +89,7 @@ fun <E : CancelOrInProgress> FButton(
                     else -> Modifier
                 }
             )
-            .foundationPadding(
-                horizontal = units.paddingHorizontal,
-                vertical = units.paddingVertical,
-            ),
+            .fractalPadding(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val titleOrNull = titleOrIcon.leftOrNull()

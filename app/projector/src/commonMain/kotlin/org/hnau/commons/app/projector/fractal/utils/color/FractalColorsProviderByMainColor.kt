@@ -13,6 +13,7 @@ import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.utils.double
 
 class FractalColorsProviderByMainColor(
     private val mainHct: Hct,
@@ -167,7 +168,7 @@ class FractalColorsProviderByMainColor(
             contrast: Double,
             decay: Double,
         ): BaseWithDecay<Double> = BaseWithDecay.double(
-            base = contrast,
+            initial = contrast,
             decay = decay,
             baseline = 1.0,
         )
