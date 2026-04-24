@@ -32,11 +32,6 @@ class FractalColorsProviderByMainColor(
         )
         .toColor()
 
-    private data class ComponentInfo(
-        val palette: TonalPalette,
-        val distance: Distance,
-    )
-
     override fun getComponentColors(
         distance: Distance,
         palette: PaletteType,
@@ -46,8 +41,8 @@ class FractalColorsProviderByMainColor(
             type = palette,
         )
 
-        val contrasts: ComponentValues<Double> = contrastBaseAndDecayForComponent
-            .map { contrastBaseAndDecay -> contrastBaseAndDecay[distance] + 1.0 }
+        val contrasts: ComponentValues<Double> = contrastForComponent
+            .map { it[distance] }
 
         val containerTone = Contrast.lighterOrDarker(
             tone = getBackgroundTone(
@@ -88,8 +83,8 @@ class FractalColorsProviderByMainColor(
             distance = distance,
         )
 
-        val contrasts: OutlineComponentValues<Double> = contrastBaseAndDecayForOutlineComponent
-            .map { contrastBaseAndDecay -> contrastBaseAndDecay[distance] + 1.0 }
+        val contrasts: OutlineComponentValues<Double> = contrastForOutlineComponent
+            .map { it[distance] }
 
         return OutlineComponentValues(
             outline = Contrast.lighterOrDarker(
@@ -168,26 +163,34 @@ class FractalColorsProviderByMainColor(
 
         private val colorSpec: ColorSpec = ColorSpec2026()
 
-        private val contrastBaseAndDecayForComponent: ComponentValues<BaseWithDecay<Double>> =
-            ComponentValues(
-                container = BaseWithDecay.double(
-                    base = 1.0,
-                    decay = 0.5,
-                ),
-                content = BaseWithDecay.double(
-                    base = 6.0,
-                    decay = 0.75,
-                ),
-            )
+        private fun contrastDecay(
+            contrast: Double,
+            decay: Double,
+        ): BaseWithDecay<Double> = BaseWithDecay.double(
+            base = contrast,
+            decay = decay,
+            baseline = 1.0,
+        )
 
-        private val contrastBaseAndDecayForOutlineComponent: OutlineComponentValues<BaseWithDecay<Double>> =
+        private val contrastForComponent: ComponentValues<BaseWithDecay<Double>> = ComponentValues(
+            container = contrastDecay(
+                contrast = 2.0,
+                decay = 0.5,
+            ),
+            content = contrastDecay(
+                contrast = 7.0,
+                decay = 0.75,
+            ),
+        )
+
+        private val contrastForOutlineComponent: OutlineComponentValues<BaseWithDecay<Double>> =
             OutlineComponentValues(
-                outline = BaseWithDecay.double(
-                    base = 2.0,
+                outline = contrastDecay(
+                    contrast = 3.0,
                     decay = 0.6,
                 ),
-                content = BaseWithDecay.double(
-                    base = 6.0,
+                content = contrastDecay(
+                    contrast = 7.0,
                     decay = 0.75,
                 ),
             )

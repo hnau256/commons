@@ -24,50 +24,48 @@ data class BaseWithDecay<out T>(
         fun double(
             base: Double,
             decay: Double,
+            baseline: Double = 0.0,
         ): BaseWithDecay<Double> = BaseWithDecay(
             base = base,
             decay = decay,
-            times = Double::times,
+            times = { value, factor ->
+                baseline + (value - baseline) * factor
+            },
         )
 
         fun float(
             base: Float,
             decay: Double,
+            baseline: Float = 0.0f,
         ): BaseWithDecay<Float> = BaseWithDecay(
             base = base,
             decay = decay,
             times = { value, factor ->
-                value
-                    .times(factor)
-                    .toFloat()
+                (baseline + (value - baseline) * factor).toFloat()
             },
         )
 
         fun dp(
             base: Dp,
             decay: Double,
+            baseline: Dp = 0.dp,
         ): BaseWithDecay<Dp> = BaseWithDecay(
             base = base,
             decay = decay,
             times = { value, factor ->
-                value
-                    .value
-                    .times(factor)
-                    .dp
+                (baseline.value + (value.value - baseline.value) * factor).dp
             },
         )
 
         fun textUnit(
             base: TextUnit,
             decay: Double,
+            baseline: TextUnit = 0.sp,
         ): BaseWithDecay<TextUnit> = BaseWithDecay(
             base = base,
             decay = decay,
             times = { value, factor ->
-                value
-                    .value
-                    .times(factor)
-                    .sp
+                (baseline.value + (value.value - baseline.value) * factor).sp
             },
         )
     }
