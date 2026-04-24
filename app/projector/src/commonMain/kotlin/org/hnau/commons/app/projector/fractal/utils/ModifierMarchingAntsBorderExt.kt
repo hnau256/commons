@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal.utils
 
-
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -27,9 +26,9 @@ import kotlin.time.Duration.Companion.seconds
 fun Modifier.fractalDashBorder(
     color: Color,
     shape: Shape,
-    strokeWidth: Dp = localBorderWidth,
-    dashLength: Dp = 12.dp.scale(localContentScale, 1.dp),
-    gapLength: Dp = 8.dp.scale(localContentScale, 1.dp),
+    strokeWidth: Dp = localUnits.borderWidth,
+    dashLength: Dp = localUnits.iconSize / 2,
+    gapLength: Dp = localUnits.iconSize / 3,
 ): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "DashTransition")
     val progress by infiniteTransition.animateFloat(

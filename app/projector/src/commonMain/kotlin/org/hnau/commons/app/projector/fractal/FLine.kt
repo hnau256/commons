@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
-import org.hnau.commons.app.projector.fractal.utils.localPaddingVertical
+import org.hnau.commons.app.projector.fractal.utils.localUnits
 
 @Composable
 fun FRow(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val units = localUnits
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(localPaddingHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(units.paddingHorizontal),
         content = content
     )
 }
@@ -27,9 +27,10 @@ fun FColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val units = localUnits
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(localPaddingVertical),
+        verticalArrangement = Arrangement.spacedBy(units.paddingVertical),
         content = content
     )
 }

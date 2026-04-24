@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding as foundationPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
@@ -29,13 +30,7 @@ import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.getComponentColors
 import org.hnau.commons.app.projector.fractal.utils.color.local
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
-import org.hnau.commons.app.projector.fractal.utils.localBorderShape
-import org.hnau.commons.app.projector.fractal.utils.localBorderWidth
-import org.hnau.commons.app.projector.fractal.utils.localIconSize
-import org.hnau.commons.app.projector.fractal.utils.localPaddingHorizontal
-import org.hnau.commons.app.projector.fractal.utils.localShape
-import org.hnau.commons.app.projector.fractal.utils.localTextStyle
-import org.hnau.commons.app.projector.fractal.utils.padding
+import org.hnau.commons.app.projector.fractal.utils.localUnits
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
 import org.hnau.commons.app.projector.uikit.onClick
@@ -63,6 +58,7 @@ fun <E : CancelOrInProgress> FButton(
         palette = palette,
     )
     val onClick = actionOrElseOrDisabled?.onClick
+    val units = localUnits
 
     val isInProgress = when (actionOrElseOrDisabled) {
         is ActionOrElse.Else -> true
@@ -71,7 +67,7 @@ fun <E : CancelOrInProgress> FButton(
 
     Row(
         modifier = modifier
-            .clip(localShape)
+            .clip(units.shape)
             .clickable(
                 enabled = onClick != null,
                 onClick = onClick.orNoAction,
@@ -81,24 +77,27 @@ fun <E : CancelOrInProgress> FButton(
                 when {
                     isInProgress -> Modifier.fractalDashBorder(
                         color = colors.content,
-                        shape = localBorderShape,
+                        shape = units.borderShape,
                     )
 
                     isSelected -> Modifier.border(
-                        width = localBorderWidth,
+                        width = units.borderWidth,
                         color = colors.content,
-                        shape = localBorderShape,
+                        shape = units.borderShape,
                     )
 
                     else -> Modifier
                 }
             )
-            .padding(),
+            .foundationPadding(
+                horizontal = units.paddingHorizontal,
+                vertical = units.paddingVertical,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val titleOrNull = titleOrIcon.leftOrNull()
         ActionOrElseIcon(
-            size = localIconSize,
+            size = units.iconSize,
             actionOrElseOrDisabled = actionOrElseOrDisabled,
             actionIcon = titleOrIcon.rightOrNull()?.let { icon ->
                 {
@@ -114,7 +113,7 @@ fun <E : CancelOrInProgress> FButton(
                 ifNull = { PaddingValuesZero },
                 ifNotNull = {
                     PaddingValues(
-                        end = localPaddingHorizontal / 2,
+                        end = units.paddingHorizontal / 2,
                     )
                 }
             ),
@@ -122,7 +121,7 @@ fun <E : CancelOrInProgress> FButton(
         titleOrNull?.let { title ->
             Text(
                 text = title,
-                style = localTextStyle,
+                style = units.textStyle,
                 color = colors.content,
                 maxLines = 1,
             )
