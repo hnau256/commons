@@ -4,6 +4,7 @@ import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 
 fun ColorSpec.getPalette(
     mainHtc: Hct,

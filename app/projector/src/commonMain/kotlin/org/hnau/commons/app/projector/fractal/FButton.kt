@@ -18,16 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import arrow.core.Ior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.SwitchBackgroundToneToContainer
+import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
-import org.hnau.commons.app.projector.fractal.utils.color.getComponentColors
-import org.hnau.commons.app.projector.fractal.utils.color.local
+import org.hnau.commons.app.projector.fractal.utils.color.localBackground
+import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.fractalPadding
 import org.hnau.commons.app.projector.fractal.utils.localUnits
@@ -52,76 +54,77 @@ fun <E : CancelOrInProgress> FButton(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
 ) {
-
-    val colorsProvider = FractalColorsProvider.local
-    val colors = colorsProvider.getComponentColors(
-        palette = palette,
-    )
-    val onClick = actionOrElseOrDisabled?.onClick
-    val units = localUnits
-
-    val isInProgress = when (actionOrElseOrDisabled) {
-        is ActionOrElse.Else -> true
-        is ActionOrElse.Action, null -> false
-    }
-
-    Row(
-        modifier = modifier
-            .clip(units.shape)
-            .clickable(
-                enabled = onClick != null,
-                onClick = onClick.orNoAction,
-            )
-            .background(colors.container)
-            .then(
-                when {
-                    isInProgress -> Modifier.fractalDashBorder(
-                        color = colors.content,
-                        shape = units.borderShape,
-                    )
-
-                    isSelected -> Modifier.border(
-                        width = units.borderWidth,
-                        color = colors.content,
-                        shape = units.borderShape,
-                    )
-
-                    else -> Modifier
-                }
-            )
-            .fractalPadding(),
-        verticalAlignment = Alignment.CenterVertically,
+    SwitchPalette(
+        newPalette = palette,
     ) {
-        val titleOrNull = titleOrIcon.leftOrNull()
-        ActionOrElseIcon(
-            size = units.iconSize,
-            actionOrElseOrDisabled = actionOrElseOrDisabled,
-            actionIcon = titleOrIcon.rightOrNull()?.let { icon ->
-                {
-                    Box(
-                        modifier = Modifier.paint(
-                            painter = rememberVectorPainter(icon),
-                            colorFilter = ColorFilter.tint(colors.content),
-                        )
+        SwitchBackgroundToneToContainer {
+            val onClick = actionOrElseOrDisabled?.onClick
+            val units = localUnits
+
+            val isInProgress = when (actionOrElseOrDisabled) {
+                is ActionOrElse.Else -> true
+                is ActionOrElse.Action, null -> false
+            }
+
+            Row(
+                modifier = modifier
+                    .clip(units.shape)
+                    .clickable(
+                        enabled = onClick != null,
+                        onClick = onClick.orNoAction,
+                    )
+                    .background(Color.localBackground)
+                    .then(
+                        when {
+                            isInProgress -> Modifier.fractalDashBorder(
+                                color = Color.localContent,
+                                shape = units.borderShape,
+                            )
+
+                            isSelected -> Modifier.border(
+                                width = units.borderWidth,
+                                color = Color.localContent,
+                                shape = units.borderShape,
+                            )
+
+                            else -> Modifier
+                        }
+                    )
+                    .fractalPadding(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val titleOrNull = titleOrIcon.leftOrNull()
+                ActionOrElseIcon(
+                    size = units.iconSize,
+                    actionOrElseOrDisabled = actionOrElseOrDisabled,
+                    actionIcon = titleOrIcon.rightOrNull()?.let { icon ->
+                        {
+                            Box(
+                                modifier = Modifier.paint(
+                                    painter = rememberVectorPainter(icon),
+                                    colorFilter = ColorFilter.tint(Color.localContent),
+                                )
+                            )
+                        }
+                    },
+                    contentPadding = titleOrNull.foldNullable(
+                        ifNull = { PaddingValuesZero },
+                        ifNotNull = {
+                            PaddingValues(
+                                end = units.paddingHorizontal / 2,
+                            )
+                        }
+                    ),
+                )
+                titleOrNull?.let { title ->
+                    Text(
+                        text = title,
+                        style = units.textStyle,
+                        color = Color.localContent,
+                        maxLines = 1,
                     )
                 }
-            },
-            contentPadding = titleOrNull.foldNullable(
-                ifNull = { PaddingValuesZero },
-                ifNotNull = {
-                    PaddingValues(
-                        end = units.paddingHorizontal / 2,
-                    )
-                }
-            ),
-        )
-        titleOrNull?.let { title ->
-            Text(
-                text = title,
-                style = units.textStyle,
-                color = colors.content,
-                maxLines = 1,
-            )
+            }
         }
     }
 }
@@ -158,7 +161,7 @@ fun FButtonPreview() {
             FButton(
                 palette = PaletteType.Primary,
                 actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                isSelected = true,
+                //isSelected = true,
                 titleOrIcon = Ior.Both(
                     leftValue = "Settings",
                     rightValue = Icons.Default.Settings

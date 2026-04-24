@@ -1,23 +1,21 @@
-package org.hnau.commons.app.projector.fractal.utils.color
+package org.hnau.commons.app.projector.fractal.utils
 
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.fold
-import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.hct.HctSolver
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
+import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast as ContrastUtils
 
-fun Contrast.lighterOrDarker(
-    tone: Double,
+fun Tone.findContrasted(
     palette: TonalPalette,
     themeBrightness: ThemeBrightness,
-    ratio: Double,
-): Double {
+    ratio: Contrast,
+): Tone {
 
     val baseResult = lighterOrDarkerWithError(
-        tone = tone,
         lighter = themeBrightness.fold(
             ifLight = { false },
             ifDark = { true },
@@ -31,7 +29,6 @@ fun Contrast.lighterOrDarker(
     }
 
     val oppositeResult = lighterOrDarkerWithError(
-        tone = tone,
         lighter = themeBrightness.fold(
             ifLight = { true },
             ifDark = { false },
@@ -50,30 +47,33 @@ fun Contrast.lighterOrDarker(
 
         oppositeResult != null -> oppositeResult.tone
 
-        else -> (tone > 50.0).foldBoolean(
-            ifTrue = { 0.0 },
-            ifFalse = { 100.0 },
+        else -> (this > averageTone).foldBoolean(
+            ifTrue = { Tone.min },
+            ifFalse = { Tone.max },
         )
     }
 }
 
-private fun Contrast.lighterOrDarkerWithError(
-    tone: Double,
+private val averageTone: Tone = (Tone.min + Tone.max) / 2
+
+private fun Tone.lighterOrDarkerWithError(
     lighter: Boolean,
     palette: TonalPalette,
-    ratio: Double,
+    ratio: Contrast,
 ): ToneWithError? = lighter
     .foldBoolean(
-        ifTrue = { lighter(tone, ratio) },
-        ifFalse = { darker(tone, ratio) }
+        ifTrue = { ContrastUtils.lighter(raw, ratio.contrast) },
+        ifFalse = { ContrastUtils.darker(raw, ratio.contrast) }
     )
+    ?.let(Tone::create)
     ?.let { tone ->
+        val rawTone = tone.raw
         ToneWithError(
             tone = tone,
             error = run {
-                val argb = HctSolver.solveToInt(palette.hue, palette.chroma, tone)
+                val argb = HctSolver.solveToInt(palette.hue, palette.chroma, rawTone)
                 val actualHct = Hct.fromInt(argb)
-                val toneError = (tone - actualHct.tone).absoluteValue
+                val toneError = (rawTone - actualHct.tone).absoluteValue
                 val chromaError = (palette.chroma - actualHct.chroma).absoluteValue
                 toneError * 10.0 + chromaError
             }
@@ -81,6 +81,6 @@ private fun Contrast.lighterOrDarkerWithError(
     }
 
 private data class ToneWithError(
-    val tone: Double,
+    val tone: Tone,
     val error: Double,
 )

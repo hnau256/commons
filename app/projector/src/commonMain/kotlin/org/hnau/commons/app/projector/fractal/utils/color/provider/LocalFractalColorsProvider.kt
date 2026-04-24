@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils.color
+package org.hnau.commons.app.projector.fractal.utils.color.provider
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
