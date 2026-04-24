@@ -7,7 +7,7 @@ import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
 
 fun ColorSpec.getPalette(
     mainHtc: Hct,
-    paletteType: PaletteType,
+    type: PaletteType,
     config: PaletteConfig,
     brightness: ThemeBrightness,
 ): TonalPalette {
@@ -17,7 +17,7 @@ fun ColorSpec.getPalette(
         ThemeBrightness.Dark -> true
     }
 
-    return when (paletteType) {
+    return when (type) {
         PaletteType.Primary -> getPrimaryPalette(
             /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
@@ -34,7 +34,7 @@ fun ColorSpec.getPalette(
             /* contrastLevel = */ config.contrastLevel
         )
 
-        PaletteType.Tertiarty -> getTertiaryPalette(
+        PaletteType.Tertiary -> getTertiaryPalette(
             /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,

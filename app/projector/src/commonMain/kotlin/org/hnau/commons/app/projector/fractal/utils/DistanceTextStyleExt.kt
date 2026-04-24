@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.sp
 
 private val weight: BaseWithDecay<FontWeight> = BaseWithDecay(
     base = FontWeight.Normal,
-    decay = 1.0,
+    decay = 1.3,
     times = { value, factor ->
         value
             .weight
@@ -20,13 +20,13 @@ private val weight: BaseWithDecay<FontWeight> = BaseWithDecay(
 
 private val letterSpacing: BaseWithDecay<TextUnit> = BaseWithDecay.textUnit(
     base = 0.5.sp,
-    decay = 1.02,
+    decay = 1.4,
 )
 
 val Distance.textStyle: TextStyle
     get() = TextStyle(
         fontSize = 20.sp * contentScale.scale,
-        fontWeight = weight[this],
+        fontWeight = weight[this].coerceIn(FontWeight.Thin, FontWeight.Black),
         letterSpacing = letterSpacing[this],
     )
 

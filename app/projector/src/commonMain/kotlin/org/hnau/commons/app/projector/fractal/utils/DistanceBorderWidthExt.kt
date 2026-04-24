@@ -5,9 +5,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 val Distance.borderWidth: Dp
-    get() = 2.dp.scale(
+    get() = 1.5.dp.scale(
         scale = contentScale,
-        step = 1.dp,
+        step = 0.25.dp,
     )
 
 

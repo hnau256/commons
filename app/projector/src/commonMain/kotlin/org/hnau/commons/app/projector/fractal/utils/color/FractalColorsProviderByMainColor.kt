@@ -37,48 +37,30 @@ class FractalColorsProviderByMainColor(
         val distance: Distance,
     )
 
-    private fun getComponentInfo(
-        distanceWithImportance: DistanceWithImportance,
-    ): ComponentInfo {
-        val distance = distanceWithImportance.distanceByImportance
-        return ComponentInfo(
-            distance = distance,
-            palette = getPalette(
-                type = when (distance.distance) {
-                    0 -> PaletteType.Primary
-                    1 -> PaletteType.Secondary
-                    2 -> PaletteType.Tertiarty
-                    else -> PaletteType.Neutral
-                }
-            )
-        )
-    }
-
     override fun getComponentColors(
-        distanceWithImportance: DistanceWithImportance,
+        distance: Distance,
+        palette: PaletteType,
     ): ComponentValues<Color> {
 
-        val (palette, distance) = getComponentInfo(
-            distanceWithImportance = distanceWithImportance,
-        )
-
-        val backgroundTone = getBackgroundTone(
-            distance = distanceWithImportance.distance,
+        val tonalPalette = getPalette(
+            type = palette,
         )
 
         val contrasts: ComponentValues<Double> = contrastBaseAndDecayForComponent
             .map { contrastBaseAndDecay -> contrastBaseAndDecay[distance] + 1.0 }
 
         val containerTone = Contrast.lighterOrDarker(
-            tone = backgroundTone,
-            palette = palette,
+            tone = getBackgroundTone(
+                distance = distance,
+            ),
+            palette = tonalPalette,
             themeBrightness = themeBrightness,
             ratio = contrasts[ComponentLayer.Container],
         )
 
         val contentTone = Contrast.lighterOrDarker(
             tone = containerTone,
-            palette = palette,
+            palette = tonalPalette,
             themeBrightness = themeBrightness,
             ratio = contrasts[ComponentLayer.Content],
         )
@@ -87,21 +69,23 @@ class FractalColorsProviderByMainColor(
             container = containerTone,
             content = contentTone
         ).map { tone ->
-            palette
+            tonalPalette
                 .getHct(tone)
                 .toColor()
         }
     }
 
     override fun getOutlineComponentColors(
-        distanceWithImportance: DistanceWithImportance,
+        distance: Distance,
+        palette: PaletteType,
     ): OutlineComponentValues<Color> {
-        val (palette, distance) = getComponentInfo(
-            distanceWithImportance = distanceWithImportance,
+
+        val tonalPalette = getPalette(
+            type = palette,
         )
 
         val backgroundTone = getBackgroundTone(
-            distance = distanceWithImportance.distance,
+            distance = distance,
         )
 
         val contrasts: OutlineComponentValues<Double> = contrastBaseAndDecayForOutlineComponent
@@ -110,18 +94,18 @@ class FractalColorsProviderByMainColor(
         return OutlineComponentValues(
             outline = Contrast.lighterOrDarker(
                 tone = backgroundTone,
-                palette = palette,
+                palette = tonalPalette,
                 themeBrightness = themeBrightness,
                 ratio = contrasts[OutlineComponentLayer.Outline],
             ),
             content = Contrast.lighterOrDarker(
                 tone = backgroundTone,
-                palette = palette,
+                palette = tonalPalette,
                 themeBrightness = themeBrightness,
                 ratio = contrasts[OutlineComponentLayer.Content],
             )
         ).map { tone ->
-            palette
+            tonalPalette
                 .getHct(tone)
                 .toColor()
         }
@@ -136,7 +120,7 @@ class FractalColorsProviderByMainColor(
     ) {
         colorSpec.getPalette(
             mainHtc = mainHct,
-            paletteType = type,
+            type = type,
             config = PaletteConfig.default,
             brightness = themeBrightness,
         )
@@ -147,7 +131,7 @@ class FractalColorsProviderByMainColor(
     ): Double {
 
         val (start, step) = themeBrightness.fold(
-            ifLight = { 98.0 to -4.0 },
+            ifLight = { 98.0 to -6.0 },
             ifDark = { 6.0 to 8.0 },
         )
 
@@ -188,11 +172,11 @@ class FractalColorsProviderByMainColor(
             ComponentValues(
                 container = BaseWithDecay.double(
                     base = 1.0,
-                    decay = 0.8,
+                    decay = 0.5,
                 ),
                 content = BaseWithDecay.double(
                     base = 6.0,
-                    decay = 0.9,
+                    decay = 0.75,
                 ),
             )
 
@@ -200,11 +184,11 @@ class FractalColorsProviderByMainColor(
             OutlineComponentValues(
                 outline = BaseWithDecay.double(
                     base = 2.0,
-                    decay = 0.8,
+                    decay = 0.6,
                 ),
                 content = BaseWithDecay.double(
                     base = 6.0,
-                    decay = 0.9,
+                    decay = 0.75,
                 ),
             )
     }

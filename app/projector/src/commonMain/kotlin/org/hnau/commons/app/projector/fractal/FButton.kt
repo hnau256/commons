@@ -24,13 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import arrow.core.Ior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.color.DistanceWithImportance
 import org.hnau.commons.app.projector.fractal.utils.color.FractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
+import org.hnau.commons.app.projector.fractal.utils.color.getComponentColors
 import org.hnau.commons.app.projector.fractal.utils.color.local
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
-import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.fractal.utils.localBorderShape
 import org.hnau.commons.app.projector.fractal.utils.localBorderWidth
 import org.hnau.commons.app.projector.fractal.utils.localIconSize
@@ -55,23 +53,14 @@ import kotlin.time.Duration.Companion.seconds
 fun <E : CancelOrInProgress> FButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
+    palette: PaletteType,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    importance: Importance = Importance.default,
 ) {
-    val distanceWithImportance = DistanceWithImportance(
-        distance = Distance.local,
-        importance = importance,
-    )
 
     val colorsProvider = FractalColorsProvider.local
-    val colors = colorsProvider
-        .getComponentColors(
-            distanceWithImportance = distanceWithImportance,
-        )
-
-    FractalColorsProvider.local.getComponentColors(
-        distanceWithImportance = distanceWithImportance,
+    val colors = colorsProvider.getComponentColors(
+        palette = palette,
     )
     val onClick = actionOrElseOrDisabled?.onClick
 
@@ -164,15 +153,16 @@ fun FButtonPreview() {
     FractalPreview {
         FRow {
             FButton(
-                importance = Importance.medium,
+                palette = PaletteType.Tertiary,
                 actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                isSelected = true,
                 titleOrIcon = Ior.Right(
                     value = Icons.Default.Delete
                 )
             )
             FButton(
+                palette = PaletteType.Primary,
                 actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                isSelected = true,
                 titleOrIcon = Ior.Both(
                     leftValue = "Settings",
                     rightValue = Icons.Default.Settings

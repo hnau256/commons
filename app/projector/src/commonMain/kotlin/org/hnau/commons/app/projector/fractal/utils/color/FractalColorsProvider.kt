@@ -10,11 +10,13 @@ interface FractalColorsProvider {
     ): Color
 
     fun getComponentColors(
-        distanceWithImportance: DistanceWithImportance,
+        distance: Distance,
+        palette: PaletteType,
     ): ComponentValues<Color>
 
     fun getOutlineComponentColors(
-        distanceWithImportance: DistanceWithImportance,
+        distance: Distance,
+        palette: PaletteType,
     ): OutlineComponentValues<Color>
 
     companion object

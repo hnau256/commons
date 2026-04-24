@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 
 val Distance.cornerRadius: Dp
-    get() = 12.dp.scale(spaceScale)
+    get() = 8.dp.scale(spaceScale)
 
 
 val localCornerRadius: Dp

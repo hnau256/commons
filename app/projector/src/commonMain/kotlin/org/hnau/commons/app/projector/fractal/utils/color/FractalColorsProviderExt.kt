@@ -3,7 +3,6 @@ package org.hnau.commons.app.projector.fractal.utils.color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.local
 
 @Composable
@@ -13,20 +12,16 @@ fun FractalColorsProvider.getBackgroundColor(): Color = getBackgroundColor(
 
 @Composable
 fun FractalColorsProvider.getComponentColors(
-    importance: Importance,
+    palette: PaletteType,
 ): ComponentValues<Color> = getComponentColors(
-    distanceWithImportance = DistanceWithImportance(
-        distance = Distance.local,
-        importance = importance,
-    )
+    distance = Distance.local,
+    palette = palette,
 )
 
 @Composable
 fun FractalColorsProvider.getOutlineComponentColors(
-    importance: Importance,
+    palette: PaletteType,
 ): OutlineComponentValues<Color> = getOutlineComponentColors(
-    distanceWithImportance = DistanceWithImportance(
-        distance = Distance.local,
-        importance = importance,
-    )
+    distance = Distance.local,
+    palette = palette,
 )
