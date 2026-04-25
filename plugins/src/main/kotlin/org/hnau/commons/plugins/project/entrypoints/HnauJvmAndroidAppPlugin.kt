@@ -12,7 +12,8 @@ class HnauJvmAndroidAppPlugin : Plugin<Project> {
         project.configureForHnau(
             moduleType = ModuleType.Jvm(
                 isAndroidApp = true,
-            )
+            ),
+            publishable = false,
         )
     }
 }

@@ -6,13 +6,15 @@ import org.gradle.kotlin.dsl.getByType
 import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
+import org.hnau.commons.plugins.project.utils.isCommons
 
 internal fun Project.configureCommon(
     config: ProjectConfig,
     projectType: ProjectType,
+    publishable: Boolean,
 ) {
 
-    if (config.groupId != Versions.HnauCommons.group) {
+    if (!config.isCommons) {
         addDependency(
             type = projectType,
             dependency = Versions.HnauCommons.kotlin,
@@ -48,15 +50,19 @@ internal fun Project.configureCommon(
     if (hasKsp) {
         configureKsp(
             projectType = projectType,
+            config = config,
         )
     }
 
-    config.publish?.let { publish ->
-        configurePublishing(
-            publish = publish,
-            projectConfig = config,
-            projectType = projectType,
-            hasKsp = hasKsp,
-        )
-    }
+    config
+        .publish
+        ?.takeIf { publishable }
+        ?.let { publish ->
+            configurePublishing(
+                publish = publish,
+                projectConfig = config,
+                projectType = projectType,
+                hasKsp = hasKsp,
+            )
+        }
 }

@@ -4,7 +4,9 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.AbstractCopyTask
 import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.project.utils.Constants
+import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
+import org.hnau.commons.plugins.project.utils.isCommons
 import org.hnau.commons.plugins.utils.versions.LibraryId
 import org.hnau.commons.plugins.utils.versions.Versioned
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 internal fun Project.configureKsp(
     projectType: ProjectType,
+    config: ProjectConfig,
 ) {
     fun addProcessor(
         dependency: Versioned<LibraryId>,
@@ -25,12 +28,14 @@ internal fun Project.configureKsp(
         )
     }
 
-    Versions.HnauCommons.gen.forEach { annotationWithProcessor ->
-        addDependency(
-            type = projectType,
-            dependency = annotationWithProcessor.annotation,
-        )
-        addProcessor(annotationWithProcessor.processor)
+    if (!config.isCommons) {
+        Versions.HnauCommons.gen.forEach { annotationWithProcessor ->
+            addDependency(
+                type = projectType,
+                dependency = annotationWithProcessor.annotation,
+            )
+            addProcessor(annotationWithProcessor.processor)
+        }
     }
 
     addProcessor(Versions.Arrow.opticsProcessor)

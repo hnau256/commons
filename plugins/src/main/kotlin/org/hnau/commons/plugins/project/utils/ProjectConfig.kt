@@ -1,6 +1,7 @@
 package org.hnau.commons.plugins.project.utils
 
 import org.gradle.api.Project
+import org.hnau.commons.plugins.Versions
 import org.hnau.commons.plugins.utils.SharedConfig
 import org.hnau.commons.plugins.utils.versions.ArtifactId
 import org.hnau.commons.plugins.utils.versions.GroupId
@@ -21,6 +22,9 @@ data class ProjectConfig(
         val licenseUrl: String,
     )
 }
+
+val ProjectConfig.isCommons: Boolean
+    get() = groupId == Versions.HnauCommons.group
 
 internal fun SharedConfig.toProjectConfig(
     project: Project,

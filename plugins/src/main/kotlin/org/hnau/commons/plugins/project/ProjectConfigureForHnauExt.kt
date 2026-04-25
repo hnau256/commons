@@ -12,6 +12,7 @@ import org.hnau.commons.plugins.utils.SharedConfig
 
 internal fun Project.configureForHnau(
     moduleType: ModuleType,
+    publishable: Boolean = true,
 ) {
 
     val config = SharedConfig
@@ -38,5 +39,6 @@ internal fun Project.configureForHnau(
     configureCommon(
         config = config,
         projectType = projectType,
+        publishable = publishable,
     )
 }
