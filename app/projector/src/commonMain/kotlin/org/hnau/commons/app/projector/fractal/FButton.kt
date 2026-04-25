@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -131,10 +130,8 @@ fun <E : CancelOrInProgress> FButton(
                         }
                     }
                 titleOrNull?.let { title ->
-                    Text(
+                    FText(
                         text = title,
-                        style = units.textStyle.default,
-                        color = Color.localContent,
                         maxLines = 1,
                     )
                 }
