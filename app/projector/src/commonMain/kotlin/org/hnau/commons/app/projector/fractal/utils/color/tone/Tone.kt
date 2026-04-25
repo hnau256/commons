@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils
+package org.hnau.commons.app.projector.fractal.utils.color.tone
 
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette

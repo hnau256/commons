@@ -3,10 +3,11 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
@@ -17,26 +18,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import arrow.core.Ior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.utils.SwitchBackgroundToneToContainer
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
+import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundToneToContainer
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
-import org.hnau.commons.app.projector.fractal.utils.fractalPadding
-import org.hnau.commons.app.projector.fractal.utils.localUnits
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
-import org.hnau.commons.app.projector.uikit.ActionOrElseIcon
-import org.hnau.commons.app.projector.uikit.onClick
-import org.hnau.commons.app.projector.utils.PaddingValuesZero
+import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.uikit.ActionOrCancel
+import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
+import org.hnau.commons.app.projector.uikit.state.StateContent
+import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -58,8 +56,10 @@ fun <E : CancelOrInProgress> FButton(
         newPalette = palette,
     ) {
         SwitchBackgroundToneToContainer {
-            val onClick = actionOrElseOrDisabled?.onClick
-            val units = localUnits
+
+            val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel
+
+            val units = FUnits.local
 
             val isInProgress = when (actionOrElseOrDisabled) {
                 is ActionOrElse.Else -> true
@@ -70,8 +70,8 @@ fun <E : CancelOrInProgress> FButton(
                 modifier = modifier
                     .clip(units.shape)
                     .clickable(
-                        enabled = onClick != null,
-                        onClick = onClick.orNoAction,
+                        enabled = actionOrCancel?.onClick != null,
+                        onClick = actionOrCancel?.onClick.orNoAction,
                     )
                     .background(Color.localBackground)
                     .then(
@@ -90,36 +90,50 @@ fun <E : CancelOrInProgress> FButton(
                             else -> Modifier
                         }
                     )
-                    .fractalPadding(),
+                    .padding(
+                        horizontal = units.horizontal.medium,
+                    )
+                    .height(
+                        units.iconSize + units.vertical.medium * 2,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val titleOrNull = titleOrIcon.leftOrNull()
-                ActionOrElseIcon(
-                    size = units.iconSize,
-                    actionOrElseOrDisabled = actionOrElseOrDisabled,
-                    actionIcon = titleOrIcon.rightOrNull()?.let { icon ->
-                        {
-                            Box(
-                                modifier = Modifier.paint(
-                                    painter = rememberVectorPainter(icon),
-                                    colorFilter = ColorFilter.tint(Color.localContent),
+                val actionIconOrNull = titleOrIcon.rightOrNull()
+                val iconOrNull = remember(actionOrCancel, actionIconOrNull) {
+                    val type = actionOrCancel?.type
+                    when (type) {
+                        ActionOrCancel.Type.Cancel -> Icons.Default.Clear
+                        ActionOrCancel.Type.Action, null -> actionIconOrNull
+                    }
+                }
+                iconOrNull
+                    .StateContent(
+                        label = "iconOrCancel",
+                        contentKey = { it },
+                        transitionSpec = titleOrNull.foldNullable(
+                            ifNull = { TransitionSpec.both() },
+                            ifNotNull = { TransitionSpec.horizontal() }
+                        ),
+                    ) { iconOrNullLocal ->
+                        iconOrNullLocal?.let { icon ->
+                            FIcon(
+                                image = icon,
+                                modifier = titleOrNull.foldNullable(
+                                    ifNull = { Modifier },
+                                    ifNotNull = {
+                                        Modifier.padding(
+                                            end = units.horizontal.extraSmall,
+                                        )
+                                    }
                                 )
                             )
                         }
-                    },
-                    contentPadding = titleOrNull.foldNullable(
-                        ifNull = { PaddingValuesZero },
-                        ifNotNull = {
-                            PaddingValues(
-                                end = units.paddingHorizontal / 2,
-                            )
-                        }
-                    ),
-                )
+                    }
                 titleOrNull?.let { title ->
                     Text(
                         text = title,
-                        style = units.textStyle,
+                        style = units.textStyle.default,
                         color = Color.localContent,
                         maxLines = 1,
                     )
@@ -137,7 +151,7 @@ fun FButtonPreview() {
 
     val coroutineScope = rememberCoroutineScope()
 
-    val createActionOrCancel: @Composable () -> StateFlow<ActionOrElse<Unit, CancelOrInProgress.Cancel>> =
+    val createActionOrCancel: @Composable () -> StateFlow<ActionOrElse<Unit, CancelOrInProgress>> =
         {
             remember(coroutineScope) {
                 actionOrCancelIfExecuting(
@@ -165,7 +179,10 @@ fun FButtonPreview() {
                 titleOrIcon = Ior.Both(
                     leftValue = "Settings",
                     rightValue = Icons.Default.Settings
-                )
+                ),
+                /*titleOrIcon = Ior.Left(
+                    value = "Settings",
+                ),*/
             )
         }
     }

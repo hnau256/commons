@@ -2,13 +2,13 @@ package org.hnau.commons.app.projector.fractal.utils.color.provider
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.hnau.commons.app.projector.fractal.utils.Contrast
+import org.hnau.commons.app.projector.fractal.utils.color.contrast.Contrast
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.Tone
+import org.hnau.commons.app.projector.fractal.utils.color.tone.Tone
 import org.hnau.commons.app.projector.fractal.utils.color.ColorType
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.local
-import org.hnau.commons.app.projector.fractal.utils.localBackground
+import org.hnau.commons.app.projector.fractal.utils.color.tone.localBackground
 import org.hnau.commons.kotlin.foldNullable
 
 fun FractalColorsProvider.getColor(

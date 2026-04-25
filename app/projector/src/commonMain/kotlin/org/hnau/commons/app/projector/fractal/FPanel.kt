@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
-import org.hnau.commons.app.projector.fractal.utils.SwitchBackgroundTone
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
-import org.hnau.commons.app.projector.fractal.utils.fractalPadding
-import org.hnau.commons.app.projector.fractal.utils.localUnits
+import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundTone
+import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.fPadding
 
 @Composable
 fun FPanel(
@@ -25,14 +25,14 @@ fun FPanel(
             offset = 1,
         ) {
             SwitchBackgroundTone {
-                val units = localUnits
+                val units = FUnits.local
                 Box(
                     modifier = modifier
                         .background(
                             color = Color.localBackground,
                             shape = units.shape,
                         )
-                        .fractalPadding(),
+                        .fPadding(),
                 ) {
                     content()
                 }

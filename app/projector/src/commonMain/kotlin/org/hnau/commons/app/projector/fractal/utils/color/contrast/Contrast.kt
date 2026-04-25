@@ -1,5 +1,8 @@
-package org.hnau.commons.app.projector.fractal.utils
+package org.hnau.commons.app.projector.fractal.utils.color.contrast
 
+import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
+import org.hnau.commons.app.projector.fractal.utils.double
+import org.hnau.commons.app.projector.fractal.utils.map
 import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast as ContrastUtils
 
 @JvmInline

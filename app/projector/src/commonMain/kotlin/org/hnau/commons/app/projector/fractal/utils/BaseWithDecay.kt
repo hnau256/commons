@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal.utils
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -111,6 +112,19 @@ fun BaseWithDecay.Companion.textUnit(
     decay = decay,
     baseline = baseline.value,
 ).map(Float::sp)
+
+fun BaseWithDecay.Companion.fontWeight(
+    initial: FontWeight,
+    decay: Double,
+): BaseWithDecay<FontWeight> = int(
+    initial = initial.weight,
+    decay = decay,
+    baseline = 0,
+).map { weight ->
+    weight
+        .coerceIn(FontWeight.Thin.weight, FontWeight.Black.weight)
+        .let(::FontWeight)
+}
 
 inline fun <I, O> BaseWithDecay<I>.map(
     crossinline transform: (I) -> O,

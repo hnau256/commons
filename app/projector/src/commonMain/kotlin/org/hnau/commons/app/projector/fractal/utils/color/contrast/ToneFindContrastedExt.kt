@@ -1,10 +1,11 @@
-package org.hnau.commons.app.projector.fractal.utils
+package org.hnau.commons.app.projector.fractal.utils.color.contrast
 
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.hct.HctSolver
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.app.projector.fractal.utils.color.tone.Tone
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
 import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast as ContrastUtils
@@ -48,13 +49,13 @@ fun Tone.findContrasted(
         oppositeResult != null -> oppositeResult.tone
 
         else -> (this > averageTone).foldBoolean(
-            ifTrue = { Tone.min },
-            ifFalse = { Tone.max },
+            ifTrue = { Tone.Companion.min },
+            ifFalse = { Tone.Companion.max },
         )
     }
 }
 
-private val averageTone: Tone = (Tone.min + Tone.max) / 2
+private val averageTone: Tone = (Tone.Companion.min + Tone.Companion.max) / 2
 
 private fun Tone.lighterOrDarkerWithError(
     lighter: Boolean,
@@ -65,7 +66,7 @@ private fun Tone.lighterOrDarkerWithError(
         ifTrue = { ContrastUtils.lighter(raw, ratio.contrast) },
         ifFalse = { ContrastUtils.darker(raw, ratio.contrast) }
     )
-    ?.let(Tone::create)
+    ?.let(Tone.Companion::create)
     ?.let { tone ->
         val rawTone = tone.raw
         ToneWithError(
