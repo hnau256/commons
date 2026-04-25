@@ -11,14 +11,14 @@ import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec2026
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
 import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.color.contrast.Contrast
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.color.tone.Tone
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteConfig
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
+import org.hnau.commons.app.projector.fractal.utils.color.contrast.Contrast
+import org.hnau.commons.app.projector.fractal.utils.color.contrast.findContrasted
 import org.hnau.commons.app.projector.fractal.utils.color.getPalette
 import org.hnau.commons.app.projector.fractal.utils.color.toColor
-import org.hnau.commons.app.projector.fractal.utils.color.contrast.findContrasted
+import org.hnau.commons.app.projector.fractal.utils.color.tone.Tone
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 
 class FractalColorsProviderByMainColor(

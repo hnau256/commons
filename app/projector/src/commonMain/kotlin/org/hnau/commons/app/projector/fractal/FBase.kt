@@ -9,11 +9,11 @@ import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.LocalPalette
-import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundTone
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundTone
 import org.hnau.commons.app.projector.fractal.utils.size.fPadding
 
 @Composable
