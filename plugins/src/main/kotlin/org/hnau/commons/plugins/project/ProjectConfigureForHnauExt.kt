@@ -38,8 +38,8 @@ internal fun Project.configureForHnau(
     configureCommon(
         config = config,
         projectType = projectType,
-        disablePublicationAfterEvaluate = {
-            moduleType.disablePublicationAfterEvaluate(project)
+        disablePublicationBeforeOrAfterEvaluate = {
+            moduleType.disablePublicationBeforeOrAfterEvaluate(project)
         }
     )
 }

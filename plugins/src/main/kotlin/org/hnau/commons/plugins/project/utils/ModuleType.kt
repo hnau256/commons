@@ -8,7 +8,7 @@ import org.jetbrains.compose.desktop.DesktopExtension
 
 sealed interface ModuleType {
 
-    fun disablePublicationAfterEvaluate(
+    fun disablePublicationBeforeOrAfterEvaluate(
         project: Project,
     ): Boolean = false
 
@@ -16,7 +16,7 @@ sealed interface ModuleType {
         val isAndroidApp: Boolean,
     ) : ModuleType {
 
-        override fun disablePublicationAfterEvaluate(
+        override fun disablePublicationBeforeOrAfterEvaluate(
             project: Project,
         ): Boolean = isAndroidApp
     }
@@ -33,7 +33,7 @@ sealed interface ModuleType {
             ) : Level
         }
 
-        override fun disablePublicationAfterEvaluate(
+        override fun disablePublicationBeforeOrAfterEvaluate(
             project: Project,
         ): Boolean = when (level) {
             Level.Pure -> false
