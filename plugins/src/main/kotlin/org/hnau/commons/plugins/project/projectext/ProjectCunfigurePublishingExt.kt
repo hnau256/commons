@@ -6,6 +6,7 @@ import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.kotlin.dsl.configure
 import org.gradle.plugins.signing.SigningExtension
 import org.hnau.commons.plugins.Versions
@@ -18,6 +19,7 @@ internal fun Project.configurePublishing(
     publish: ProjectConfig.Publish,
     projectConfig: ProjectConfig,
     hasKsp: Boolean,
+    disableAfterEvaluate: () -> Boolean,
 ) {
     applyPlugin(Versions.Plugins.vanniktech.withoutAlias.withoutVersion)
     applyPlugin(Versions.Plugins.dokka.withoutAlias.withoutVersion)
@@ -97,6 +99,24 @@ internal fun Project.configurePublishing(
                 scm.developerConnection.set("scm:git:${publish.gitUrl}")
                 scm.url.set(publish.gitUrl)
             }
+        }
+    }
+
+    afterEvaluate {
+        if (disableAfterEvaluate()) {
+            disablePublishingTasks()
+        }
+    }
+}
+
+private fun Project.disablePublishingTasks() {
+    listOf(
+        tasks.withType(AbstractPublishToMaven::class.java),
+        tasks.matching { it.name.startsWith("publish") },
+        tasks.matching { it.name.contains("dokka", ignoreCase = true) }
+    ).forEach { tasksCollection ->
+        tasksCollection.configureEach { task ->
+            task.enabled = false
         }
     }
 }

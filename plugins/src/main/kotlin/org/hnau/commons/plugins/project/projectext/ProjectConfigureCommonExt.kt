@@ -11,7 +11,7 @@ import org.hnau.commons.plugins.project.utils.isCommons
 internal fun Project.configureCommon(
     config: ProjectConfig,
     projectType: ProjectType,
-    publishable: Boolean,
+    disablePublicationAfterEvaluate: () -> Boolean,
 ) {
 
     if (!config.isCommons) {
@@ -54,15 +54,13 @@ internal fun Project.configureCommon(
         )
     }
 
-    config
-        .publish
-        ?.takeIf { publishable }
-        ?.let { publish ->
-            configurePublishing(
-                publish = publish,
-                projectConfig = config,
-                projectType = projectType,
-                hasKsp = hasKsp,
-            )
-        }
+    config.publish?.let { publish ->
+        configurePublishing(
+            publish = publish,
+            projectConfig = config,
+            projectType = projectType,
+            hasKsp = hasKsp,
+            disableAfterEvaluate = disablePublicationAfterEvaluate,
+        )
+    }
 }

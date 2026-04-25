@@ -13,7 +13,6 @@ class HnauJvmAndroidAppPlugin : Plugin<Project> {
             moduleType = ModuleType.Jvm(
                 isAndroidApp = true,
             ),
-            publishable = false,
         )
     }
 }
