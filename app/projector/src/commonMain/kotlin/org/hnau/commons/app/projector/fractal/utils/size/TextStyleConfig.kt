@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
+import org.hnau.commons.app.projector.fractal.utils.Distance
 
 data class TextStyleConfig(
     val size: TextUnit,
@@ -13,9 +14,9 @@ data class TextStyleConfig(
 ) {
 
     fun toTextStyle(
-        distance: org.hnau.commons.app.projector.fractal.utils.Distance,
+        distance: Distance,
     ): TextStyle = TextStyle(
-        fontSize = 20.sp.scale(distance.scale.content, 1.sp),
+        fontSize = size.scale(distance.scale.content, 1.sp),
         fontWeight = weight[distance].coerceIn(FontWeight.Thin, FontWeight.Black),
         letterSpacing = letterSpacing[distance],
     )
