@@ -1,5 +1,6 @@
 package org.hnau.commons.app.model.theme.color
 
+import org.hnau.commons.kotlin.requireInRange
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -56,9 +57,14 @@ value class Chroma private constructor(
 
         fun create(
             raw: Int
-        ): Chroma = Chroma(
-            raw = raw.coerceIn(minRaw, maxRaw)
-        )
+        ): Chroma {
+            requireInRange(
+                valueLabel = "Chroma",
+                value = raw,
+                range = minRaw..maxRaw,
+            )
+            return Chroma(raw)
+        }
 
         val min: Chroma
             get() = Chroma(minRaw)

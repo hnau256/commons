@@ -24,11 +24,11 @@ class FractalColorsProviderByPalettes(
     ): Tone {
 
         val (start, step) = themeBrightness.fold(
-            ifLight = { Tone.create(98) to Tone.create(-6) },
-            ifDark = { Tone.create(6) to Tone.create(8) },
+            ifLight = { 98 to -12 },
+            ifDark = { 6 to 8 },
         )
 
-        return start + (step * distance.distance)
+        return (start + (step * distance.distance)).let(Tone::create)
     }
 
     override fun getForegroundTone(

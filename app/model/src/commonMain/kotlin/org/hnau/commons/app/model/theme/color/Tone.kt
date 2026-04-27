@@ -1,5 +1,6 @@
 package org.hnau.commons.app.model.theme.color
 
+import org.hnau.commons.kotlin.requireInRange
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -56,9 +57,14 @@ value class Tone private constructor(
 
         fun create(
             raw: Int
-        ): Tone = Tone(
-            raw = raw.coerceIn(minRaw, maxRaw)
-        )
+        ): Tone {
+            requireInRange(
+                valueLabel = "Tone",
+                value = raw,
+                range = minRaw..maxRaw,
+            )
+            return Tone(raw)
+        }
 
         val min: Tone
             get() = Tone(minRaw)
