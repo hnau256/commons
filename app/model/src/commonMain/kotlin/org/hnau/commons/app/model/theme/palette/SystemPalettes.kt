@@ -1,4 +1,4 @@
-package org.hnau.commons.app.model.theme
+package org.hnau.commons.app.model.theme.palette
 
 sealed interface SystemPalettes {
 

@@ -1,6 +1,6 @@
 package org.hnau.commons.app.projector.fractal.utils.color.contrast
 
-import org.hnau.commons.app.model.theme.Contrast
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.double
 import org.hnau.commons.app.projector.fractal.utils.map

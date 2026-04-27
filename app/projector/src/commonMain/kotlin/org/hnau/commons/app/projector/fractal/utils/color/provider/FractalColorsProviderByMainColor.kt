@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.model.theme.fold
-import org.hnau.commons.app.model.theme.Hue
+import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec2026
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
@@ -14,11 +14,11 @@ import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.color.PaletteConfig
 import org.hnau.commons.app.model.theme.PaletteType
-import org.hnau.commons.app.model.theme.Contrast
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.findContrasted
 import org.hnau.commons.app.projector.fractal.utils.color.getPalette
 import org.hnau.commons.app.projector.fractal.utils.color.toColor
-import org.hnau.commons.app.model.theme.Tone
+import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 
 class FractalColorsProviderByMainColor(

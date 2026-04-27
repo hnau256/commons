@@ -1,4 +1,4 @@
-package org.hnau.commons.app.model.theme
+package org.hnau.commons.app.model.theme.color
 
 import kotlin.jvm.JvmInline
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils

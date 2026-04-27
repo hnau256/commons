@@ -1,4 +1,4 @@
-package org.hnau.commons.app.model.theme
+package org.hnau.commons.app.model.theme.color
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer

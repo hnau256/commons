@@ -1,4 +1,4 @@
-package org.hnau.commons.app.model.theme
+package org.hnau.commons.app.model.theme.palette
 
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 

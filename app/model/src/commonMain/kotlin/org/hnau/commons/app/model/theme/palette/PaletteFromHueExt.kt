@@ -1,10 +1,15 @@
-package org.hnau.commons.app.model.theme
+package org.hnau.commons.app.model.theme.palette
 
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec2026
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
+import org.hnau.commons.app.model.theme.ThemeBrightness
+import org.hnau.commons.app.model.theme.color.Chroma
+import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.model.theme.color.Hue
+import org.hnau.commons.app.model.theme.color.Tone
 
 fun Palette.Companion.create(
     hue: Hue,
@@ -106,7 +111,7 @@ fun Palette.Companion.create(
 
     return Palette { tone ->
         tonelPalette.getHct(
-            tone = tone.raw,
+            tone = tone.raw.toDouble(),
         )
     }
 }
