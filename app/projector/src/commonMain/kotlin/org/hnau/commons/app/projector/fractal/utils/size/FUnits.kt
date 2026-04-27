@@ -34,10 +34,10 @@ class FUnits private constructor(
 
         private val textStyleConfigs: TextStyleValues<TextStyleConfig> = TextStyleValues(
             default = TextStyleConfig(
-                size = 20.sp,
+                size = 24.sp,
                 weight = BaseWithDecay.fontWeight(
                     initial = FontWeight.Normal,
-                    decay = 0.95,
+                    decay = 1.1,
                 ),
                 letterSpacing = BaseWithDecay.textUnit(
                     initial = 0.5.sp,
@@ -48,7 +48,7 @@ class FUnits private constructor(
                 size = 32.sp,
                 weight = BaseWithDecay.fontWeight(
                     initial = FontWeight.Normal,
-                    decay = 0.95,
+                    decay = 1.1,
                 ),
                 letterSpacing = BaseWithDecay.textUnit(
                     initial = 0.5.sp,
@@ -62,8 +62,8 @@ class FUnits private constructor(
         ): FUnits = cache.getOrPut(
             key = distance.distance,
         ) {
-            val cornerRadius = 8.dp.scale(distance.scale.space)
-            val borderWidth = 1.5.dp.scale(distance.scale.content, 0.25.dp)
+            val cornerRadius = 12.dp.scale(distance.scale.space)
+            val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
                 horizontal = Spaces(
                     medium = 16.dp.scale(distance.scale.space),
@@ -80,7 +80,7 @@ class FUnits private constructor(
                 textStyle = textStyleConfigs.map { config ->
                     config.toTextStyle(distance)
                 },
-                iconSize = 24.dp.scale(distance.scale.content),
+                iconSize = 32.dp.scale(distance.scale.content),
             )
         }
 

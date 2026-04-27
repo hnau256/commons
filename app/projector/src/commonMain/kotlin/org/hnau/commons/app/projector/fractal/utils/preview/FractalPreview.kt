@@ -31,7 +31,7 @@ fun FractalPreview(
                         ),
                     ) {
                         RecursivePreview(
-                            nextLevels = 2,
+                            nextLevels = 3,
                             content = content,
                         )
                     }

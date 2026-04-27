@@ -23,11 +23,11 @@ value class Scale(
 private val scaleBaseWithDecays: ScaleTypeValues<BaseWithDecay<Scale>> = ScaleTypeValues(
     content = BaseWithDecay.float(
         initial = 1f,
-        decay = 0.75,
+        decay = 0.8,
     ),
     space = BaseWithDecay.float(
         initial = 1f,
-        decay = 0.5,
+        decay = 0.6,
     )
 ).map { floatBaseWithDecay ->
     floatBaseWithDecay.map(::Scale)
