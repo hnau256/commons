@@ -138,10 +138,12 @@ private fun getResourcesByTones(): PaletteTypeValues<List<KeyValue<Tone, Int>>?>
         ),
         error = null,
     ).map { resourcesWithTone1000 ->
-        resourcesWithTone1000?.map { (resource, tone1000) ->
-            val tone = Tone.create(tone1000 / 10)
-            KeyValue(tone, resource)
-        }
+        resourcesWithTone1000
+            ?.asReversed()
+            ?.map { (resource, tone1000) ->
+                val tone = Tone.create(100 - tone1000 / 10)
+                KeyValue(tone, resource)
+            }
     }
 
 private class SystemPalette(

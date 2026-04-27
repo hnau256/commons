@@ -18,7 +18,7 @@ fun createAppProjector(
     scope = scope,
     model = model,
     systemPalettes = systemPalettes,
-    fallbackHue = Hue(270),
+    fallbackHue = Hue(90),
     createProjector = { scope, model ->
         RootProjector(
             scope = scope,
