@@ -1,10 +1,10 @@
 package org.hnau.commons.app.model.theme
 
-import org.hnau.commons.app.model.color.RGBABytes
+import org.hnau.commons.app.model.color.dynamic.hct.Hct
 
 fun interface Palette {
 
     operator fun get(
         tone: Tone,
-    ): RGBABytes
+    ): Hct
 }

@@ -5,7 +5,7 @@ sealed interface SystemPalettes {
     data object None : SystemPalettes
 
     data class Some(
-        val palettes: SystemPalettes,
+        val palettes: PaletteTypeValues<Palette>,
     ) : SystemPalettes
 
     companion object
