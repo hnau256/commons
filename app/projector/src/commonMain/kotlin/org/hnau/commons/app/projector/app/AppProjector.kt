@@ -1,14 +1,10 @@
 package org.hnau.commons.app.projector.app
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
@@ -19,7 +15,6 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
-import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
 import org.hnau.commons.app.projector.utils.theme.createFromSystemOrFallback
 import org.hnau.commons.app.projector.utils.theme.system
 import org.hnau.commons.app.projector.utils.theme.toColorScheme

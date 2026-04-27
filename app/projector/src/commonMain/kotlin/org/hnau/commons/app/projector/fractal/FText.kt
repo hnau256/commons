@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
-import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits

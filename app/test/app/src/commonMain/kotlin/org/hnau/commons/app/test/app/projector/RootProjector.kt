@@ -15,7 +15,6 @@ import org.hnau.commons.app.projector.fractal.FButton
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
-import javax.swing.text.AbstractDocument
 
 class RootProjector(
     scope: CoroutineScope,

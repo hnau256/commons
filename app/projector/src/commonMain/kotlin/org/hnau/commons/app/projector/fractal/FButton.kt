@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import arrow.core.Ior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundToneToContainer

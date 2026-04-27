@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
-import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundTone
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits

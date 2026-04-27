@@ -1,7 +1,6 @@
 package org.hnau.commons.app.model.theme.palette
 
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec
-import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec2026
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 import org.hnau.commons.app.model.theme.color.Chroma

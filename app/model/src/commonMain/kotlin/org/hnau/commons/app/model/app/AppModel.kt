@@ -2,7 +2,6 @@ package org.hnau.commons.app.model.app
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
-import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.toMapper
 
