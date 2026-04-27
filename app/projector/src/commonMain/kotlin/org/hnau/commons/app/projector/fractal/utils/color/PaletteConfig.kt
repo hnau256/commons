@@ -1,7 +1,7 @@
 package org.hnau.commons.app.projector.fractal.utils.color
 
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.DynamicScheme
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.Variant
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 
 data class PaletteConfig(
     val variant: Variant,

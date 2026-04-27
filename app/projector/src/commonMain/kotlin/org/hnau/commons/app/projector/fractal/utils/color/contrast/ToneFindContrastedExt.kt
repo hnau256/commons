@@ -2,13 +2,13 @@ package org.hnau.commons.app.projector.fractal.utils.color.contrast
 
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.fold
-import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
-import org.hnau.commons.app.projector.dynamiccolor.hct.HctSolver
-import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
+import org.hnau.commons.app.model.color.dynamic.hct.Hct
+import org.hnau.commons.app.model.color.dynamic.hct.HctSolver
+import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 import org.hnau.commons.app.model.theme.Tone
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
-import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast as ContrastUtils
+import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 fun Tone.findContrasted(
     palette: TonalPalette,

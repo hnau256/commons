@@ -1,9 +1,9 @@
 package org.hnau.commons.app.projector.utils.theme
 
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.DynamicScheme
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.Variant
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 
 data class DynamicSchemeConfig(
     val variant: Variant = Variant.TONAL_SPOT,

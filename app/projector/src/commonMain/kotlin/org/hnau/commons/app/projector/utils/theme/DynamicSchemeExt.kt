@@ -2,9 +2,9 @@ package org.hnau.commons.app.projector.utils.theme
 
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.Hue
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpecs
-import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.DynamicScheme
-import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpecs
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
+import org.hnau.commons.app.model.color.dynamic.hct.Hct
 
 fun DynamicScheme(
     hue: Hue,

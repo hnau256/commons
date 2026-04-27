@@ -3,7 +3,7 @@ package org.hnau.commons.app.projector.fractal.utils.color.contrast
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.double
 import org.hnau.commons.app.projector.fractal.utils.map
-import org.hnau.commons.app.projector.dynamiccolor.contrast.Contrast as ContrastUtils
+import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 @JvmInline
 value class Contrast(
