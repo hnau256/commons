@@ -15,9 +15,8 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.platformLogWriter
 import kotlinx.coroutines.runBlocking
 import org.hnau.commons.app.model.app.DesktopApp
-import org.hnau.commons.app.model.theme.ThemeBrightness
+import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.uikit.utils.Dimens
-import org.hnau.commons.app.test.data.Currency
 
 @OptIn(InternalComposeApi::class, InternalComposeUiApi::class)
 fun main() = runBlocking {
@@ -27,15 +26,13 @@ fun main() = runBlocking {
     val app = DesktopApp(
         scope = this,
         seed = createCommonsAppTestAppSeed(
-            defaultBrightness = ThemeBrightness.Dark,
-            dependencies = CommonsAppTestAppDependencies.impl(
-                currency = Currency.default, //TODO
-            )
+            dependencies = CommonsAppTestAppDependencies.impl()
         ),
     )
     val projector = createAppProjector(
         scope = this,
         model = app,
+        systemPalettes = SystemPalettes.None,
     )
     application {
         val scale = 2f
