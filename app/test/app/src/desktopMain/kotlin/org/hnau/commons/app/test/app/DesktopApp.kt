@@ -32,7 +32,7 @@ fun main() = runBlocking {
     val projector = createAppProjector(
         scope = this,
         model = app,
-        systemPalettes = SystemPalettes.None,
+        systemPalettes = { SystemPalettes.None },
     )
     application {
         val scale = 2f
