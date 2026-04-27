@@ -8,23 +8,27 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.projector.utils.theme.DynamicColorsGenerator
-import org.hnau.commons.app.projector.utils.theme.DynamicSchemeConfig
-import org.hnau.commons.app.projector.utils.theme.buildColorScheme
-import org.hnau.commons.app.projector.utils.theme.provideDynamicColorsGenerator
+import org.hnau.commons.app.model.theme.color.Hue
+import org.hnau.commons.app.model.theme.palette.Palettes
+import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
+import org.hnau.commons.app.model.theme.palette.SystemPalettes
+import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
+import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
+import org.hnau.commons.app.projector.utils.theme.createFromSystemOrFallback
 import org.hnau.commons.app.projector.utils.theme.system
-import org.hnau.commons.kotlin.ifNull
-import org.hnau.commons.kotlin.ifTrue
+import org.hnau.commons.app.projector.utils.theme.toColorScheme
 
 class AppProjector<M, S, P>(
     scope: CoroutineScope,
     private val model: AppModel<M, S>,
-    private val schemeConfig: DynamicSchemeConfig = DynamicSchemeConfig.default,
+    private val systemPalettes: SystemPalettes,
+    private val fallbackHue: Hue,
+    private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
     createProjector: (CoroutineScope, M) -> P,
     private val content: @Composable (P, PaddingValues) -> Unit,
 ) {
@@ -34,46 +38,28 @@ class AppProjector<M, S, P>(
         model.model,
     )
 
-    private val dynamicColorsGenerator: DynamicColorsGenerator? =
-        provideDynamicColorsGenerator()
-
     @Composable
     fun Content(
         contentPadding: PaddingValues,
     ) {
 
-        val brightness: ThemeBrightness = model
-            .appContext
-            .brightness
-            .value
-            .collectAsState()
-            .value
-            ?: ThemeBrightness.system
+        val brightness: ThemeBrightness = ThemeBrightness.system
 
-        val colorScheme = model
-            .appContext
-            .tryUseSystemHue
-            .value
-            .collectAsState()
-            .value
-            .ifTrue { dynamicColorsGenerator }
-            ?.generateDynamicColors(brightness)
-            .ifNull {
-                val hue = model
-                    .appContext
-                    .fallbackHue
-                    .value
-                    .collectAsState()
-                    .value
-                buildColorScheme(
-                    hue = hue,
-                    config = schemeConfig,
-                    brightness = brightness,
-                )
-            }
+        //TODO remember
+        val palettes: Palettes = Palettes.createFromSystemOrFallback(
+            fallbackHue = fallbackHue,
+            systemPalettes = systemPalettes,
+            brightness = brightness,
+            config = palettesGenerateConfig,
+        )
+
+        //TODO remember
+        val fractalColorsProvider: FractalColorsProvider = FractalColorsProviderByPalettes(
+            palettes = palettes,
+        )
 
         MaterialTheme(
-            colorScheme = colorScheme,
+            colorScheme = palettes.toColorScheme(), //TODO remember
         ) {
             Box(
                 modifier = Modifier
@@ -82,6 +68,7 @@ class AppProjector<M, S, P>(
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+                    LocalFractalColorsProvider provides fractalColorsProvider,
                 ) {
                     content(projector, contentPadding)
                 }

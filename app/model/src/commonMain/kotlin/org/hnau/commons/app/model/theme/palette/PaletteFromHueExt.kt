@@ -1,117 +1,101 @@
 package org.hnau.commons.app.model.theme.palette
 
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec
+import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec2021
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.ColorSpec2026
-import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
-import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
+import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.theme.color.Chroma
-import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.color.Tone
+import org.hnau.commons.app.model.theme.isDark
 
-fun Palette.Companion.create(
+fun TonalPalette.Companion.create(
     hue: Hue,
-    variant: Variant,
     brightness: ThemeBrightness,
-    chroma: Chroma = Chroma.default,
-    platform: DynamicScheme.Platform = DynamicScheme.Platform.PHONE,
-    contrast: Contrast = Contrast.min,
-    spec: ColorSpec = ColorSpec2026(),
-): PaletteTypeValues<Palette> = PaletteTypeValues.create { type ->
+    config: PalettesGenerateConfig = PalettesGenerateConfig.default,
+): PaletteTypeValues<TonalPalette> = PaletteTypeValues.create { type ->
     create(
         hue = hue,
         type = type,
-        variant = variant,
         brightness = brightness,
-        chroma = chroma,
-        platform = platform,
-        contrast = contrast,
-        spec = spec,
+        config = config,
     )
 }
 
-fun Palette.Companion.create(
+fun TonalPalette.Companion.create(
     hue: Hue,
     type: PaletteType,
-    variant: Variant,
     brightness: ThemeBrightness,
-    chroma: Chroma = Chroma.default,
-    platform: DynamicScheme.Platform = DynamicScheme.Platform.PHONE,
-    contrast: Contrast = Contrast.min,
-    spec: ColorSpec = ColorSpec2026(),
-): Palette {
+    config: PalettesGenerateConfig = PalettesGenerateConfig.default,
+): TonalPalette {
 
-    val isDark: Boolean = when (brightness) {
-        ThemeBrightness.Light -> false
-        ThemeBrightness.Dark -> true
-    }
+    val isDark: Boolean = brightness.isDark
 
     val mainHtc = Hct.from(
         hue = hue.degrees.toDouble(),
-        chroma = chroma.raw.toDouble(),
+        chroma = config.chroma.raw.toDouble(),
         tone = Tone.avg.raw.toDouble(),
     )
 
-    val contrastLevel = contrast
+    val contrastLevel = config
+        .contrast
         .contrast
         .toDouble()
+    
+    val spec = when (config.spec) {
+        ColorSpec.SpecVersion.SPEC_2021 -> ColorSpec2021()
+        ColorSpec.SpecVersion.SPEC_2025 -> ColorSpec2026()
+        ColorSpec.SpecVersion.SPEC_2026 -> ColorSpec2026()
+    }
 
-    val tonelPalette = when (type) {
+    return when (type) {
         PaletteType.Primary -> spec.getPrimaryPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
         )
 
         PaletteType.Secondary -> spec.getSecondaryPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
         )
 
         PaletteType.Tertiary -> spec.getTertiaryPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
         )
 
         PaletteType.Neutral -> spec.getNeutralPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
         )
 
         PaletteType.NeutralVariant -> spec.getNeutralVariantPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
         )
 
         PaletteType.Error -> spec.getErrorPalette(
-            /* variant = */ variant,
+            /* variant = */ config.variant,
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
-            /* platform = */ platform,
+            /* platform = */ config.platform,
             /* contrastLevel = */ contrastLevel
-        )
-
-    }
-
-    return Palette { tone ->
-        tonelPalette.getHct(
-            tone = tone.raw.toDouble(),
         )
     }
 }

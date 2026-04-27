@@ -15,7 +15,6 @@ import kotlinx.coroutines.cancel
 class AppViewModel<M, S>(
     context: Context,
     private val state: SavedStateHandle,
-    defaultTryUseSystemHue: Boolean = true,
     seed: AppSeed<M, S>,
 ) : ViewModel() {
 
@@ -29,10 +28,6 @@ class AppViewModel<M, S>(
                 .get<Bundle>(StateKey)
                 ?.getString(StateKey),
         ),
-        appFilesDirProvider = AppFilesDirProvider(
-            context = context,
-        ),
-        defaultTryUseSystemHue = defaultTryUseSystemHue,
         seed = seed,
     )
 
@@ -53,7 +48,6 @@ class AppViewModel<M, S>(
 
         fun <M, S> factory(
             context: Context,
-            defaultTryUseSystemHue: Boolean = true,
             seed: AppSeed<M, S>,
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -61,7 +55,6 @@ class AppViewModel<M, S>(
                 AppViewModel(
                     context = context,
                     state = savedStateHandle,
-                    defaultTryUseSystemHue = defaultTryUseSystemHue,
                     seed = seed,
                 )
             }

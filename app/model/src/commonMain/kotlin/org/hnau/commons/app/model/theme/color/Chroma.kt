@@ -60,9 +60,6 @@ value class Chroma private constructor(
             raw = raw.coerceIn(minRaw, maxRaw)
         )
 
-        val default
-            get() = Chroma(48)
-
         val min: Chroma
             get() = Chroma(minRaw)
 

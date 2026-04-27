@@ -3,13 +3,14 @@ package org.hnau.commons.app.model.app
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
+import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.color.Tone
-import org.hnau.commons.app.model.theme.palette.Palette
 import org.hnau.commons.app.model.theme.palette.PaletteTypeValues
+import org.hnau.commons.app.model.theme.palette.Palettes
+import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.model.theme.palette.create
 import org.hnau.commons.kotlin.KeyValue
@@ -22,17 +23,23 @@ fun SystemPalettes.Companion.getForAndroid(
         return SystemPalettes.None
     }
     return SystemPalettes.Some(
-        palettes = getSystemPalettes(
-            context = context,
+        palettes = Palettes(
+            palettes = getSystemPalettes(
+                context = context,
+            ),
+            config = PalettesGenerateConfig.default,
+            brightness = brightness,
         )
     )
 }
+
+private val brightness = ThemeBrightness.Light
 
 
 @RequiresApi(Build.VERSION_CODES.S)
 private fun getSystemPalettes(
     context: Context,
-): PaletteTypeValues<Palette> = getResourcesByTones().map { type, resourcesByTones ->
+): PaletteTypeValues<TonalPalette> = getResourcesByTones().map { type, resourcesByTones ->
     resourcesByTones
         ?.map { toneWithResources ->
             toneWithResources.map { res ->
@@ -42,11 +49,11 @@ private fun getSystemPalettes(
             }
         }
         ?.let(::SystemPalette)
-        ?: Palette.create(
+        ?: TonalPalette.create(
             hue = Hue(0),
             type = type,
-            variant = Variant.TONAL_SPOT,
-            brightness = ThemeBrightness.Light,
+            config = PalettesGenerateConfig.default,
+            brightness = brightness,
         )
 }
 
@@ -138,19 +145,24 @@ private fun getResourcesByTones(): PaletteTypeValues<List<KeyValue<Tone, Int>>?>
 
 private class SystemPalette(
     private val keyColors: List<KeyValue<Tone, Hct>>,
-) : Palette {
+) : TonalPalette {
 
     private val cache = HashMap<Tone, Hct>()
 
-    override fun get(
-        tone: Tone,
-    ): Hct = cache.getOrPut(
-        key = tone,
-    ) {
-        keyColors.getInterpolation(
-            tone = tone,
-        )
-    }
+    override fun getHct(
+        tone: Double,
+        ): Hct = tone
+        .toInt()
+        .let(Tone::create)
+        .let {tone ->
+            cache.getOrPut(
+                key = tone,
+            ) {
+                keyColors.getInterpolation(
+                    tone = tone,
+                )
+            }
+        }
 
     private fun List<KeyValue<Tone, Hct>>.getInterpolation(
         tone: Tone,

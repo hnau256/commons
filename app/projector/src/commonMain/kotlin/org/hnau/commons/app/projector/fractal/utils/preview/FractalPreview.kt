@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
+import org.hnau.commons.app.model.theme.palette.Palettes
+import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel
-import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByMainColor
+import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
+import org.hnau.commons.app.projector.utils.theme.create
 
 @Composable
 fun FractalPreview(
@@ -19,9 +22,12 @@ fun FractalPreview(
             Column {
                 (0 until 5).forEach { hueIndex ->
                     FBase(
-                        fractalColorsProvider = FractalColorsProviderByMainColor.fromHue(
-                            hue = Hue(hueIndex * 72),
-                            themeBrightness = themeBrightness,
+                        fractalColorsProvider = FractalColorsProviderByPalettes(
+                            palettes = Palettes.create(
+                                hue = Hue(hueIndex * 72),
+                                brightness = themeBrightness,
+                                config = PalettesGenerateConfig.default,
+                            )
                         ),
                     ) {
                         RecursivePreview(

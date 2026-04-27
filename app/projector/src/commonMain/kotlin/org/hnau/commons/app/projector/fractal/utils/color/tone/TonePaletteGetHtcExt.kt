@@ -8,5 +8,5 @@ import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 fun TonalPalette.getHct(
     tone: Tone,
 ): Hct = getHct(
-    tone = tone.raw,
+    tone = tone.raw.toDouble(),
 )

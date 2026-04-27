@@ -18,3 +18,9 @@ inline fun <R> ThemeBrightness.fold(
     ThemeBrightness.Light -> ifLight()
     ThemeBrightness.Dark -> ifDark()
 }
+
+val ThemeBrightness.isDark: Boolean
+    get() = fold(
+        ifLight = { false },
+        ifDark = { true }
+    )

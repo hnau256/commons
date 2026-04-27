@@ -1,23 +1,24 @@
 package org.hnau.commons.app.projector.utils
 
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import org.hnau.commons.app.model.theme.ThemeBrightness
+import androidx.compose.runtime.CompositionLocalProvider
+import org.hnau.commons.app.model.theme.color.Chroma
 import org.hnau.commons.app.model.theme.color.Hue
-import org.hnau.commons.app.model.color.dynamic.dynamiccolor.Variant
-import org.hnau.commons.app.projector.utils.theme.DynamicSchemeConfig
-import org.hnau.commons.app.projector.utils.theme.buildColorScheme
+import org.hnau.commons.app.model.theme.palette.Palettes
+import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
+import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
+import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
+import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
+import org.hnau.commons.app.projector.utils.theme.create
 import org.hnau.commons.app.projector.utils.theme.themeBrightness
+import org.hnau.commons.app.projector.utils.theme.toColorScheme
 
-private val DynamicSchemeConfigForHue = DynamicSchemeConfig(
-    variant = Variant.TONAL_SPOT,
-    contrastLevel = 0.0,
-    chroma = 24.0
-)
-
-private val schemesCache: MutableMap<Hue, MutableMap<ThemeBrightness, ColorScheme>> =
-    kotlin.collections.HashMap()
+private val DynamicSchemeConfigForHue: PalettesGenerateConfig = PalettesGenerateConfig
+    .default
+    .copy(
+        chroma = Chroma.create(24)
+    )
 
 @Composable
 fun SwitchHue(
@@ -25,18 +26,25 @@ fun SwitchHue(
     content: @Composable () -> Unit,
 ) {
     val brightness = MaterialTheme.themeBrightness
-    val scheme = schemesCache
-        .getOrPut(hue) { mutableMapOf() }
-        .getOrPut(brightness) {
-            buildColorScheme(
-                hue = hue,
-                config = DynamicSchemeConfigForHue,
-                brightness = brightness,
-            )
-        }
+
+    //TODO remember
+    val palettes: Palettes = Palettes.create(
+        hue = hue,
+        brightness = brightness,
+        config = DynamicSchemeConfigForHue,
+    )
+
+    //TODO remember
+    val fractalColorsProvider: FractalColorsProvider = FractalColorsProviderByPalettes(
+        palettes = palettes,
+    )
     MaterialTheme(
-        colorScheme = scheme,
+        colorScheme = palettes.toColorScheme(), //TODO remember
     ) {
-        content()
+        CompositionLocalProvider(
+            LocalFractalColorsProvider provides fractalColorsProvider,
+        ) {
+            content()
+        }
     }
 }

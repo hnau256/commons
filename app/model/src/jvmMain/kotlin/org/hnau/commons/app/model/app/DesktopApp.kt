@@ -8,7 +8,5 @@ fun <M, S> DesktopApp(
 ): AppModel<M, S> = AppModel(
     scope = scope,
     savedState = SavedState(null),
-    appFilesDirProvider = AppFilesDirProvider(),
-    defaultTryUseSystemHue = false,
     seed = seed,
 )

@@ -50,13 +50,13 @@ fun Tone.findContrasted(
         oppositeResult != null -> oppositeResult.tone
 
         else -> (this > averageTone).foldBoolean(
-            ifTrue = { Tone.Companion.min },
-            ifFalse = { Tone.Companion.max },
+            ifTrue = { Tone.min },
+            ifFalse = { Tone.max },
         )
     }
 }
 
-private val averageTone: Tone = (Tone.Companion.min + Tone.Companion.max) / 2
+private val averageTone: Tone = (Tone.min + Tone.max) / 2
 
 private fun Tone.lighterOrDarkerWithError(
     lighter: Boolean,
@@ -64,16 +64,21 @@ private fun Tone.lighterOrDarkerWithError(
     ratio: Contrast,
 ): ToneWithError? = lighter
     .foldBoolean(
-        ifTrue = { ContrastUtils.lighter(raw, ratio.contrast) },
-        ifFalse = { ContrastUtils.darker(raw, ratio.contrast) }
+        ifTrue = { ContrastUtils.lighter(raw.toDouble(), ratio.contrast.toDouble()) },
+        ifFalse = { ContrastUtils.darker(raw.toDouble(), ratio.contrast.toDouble()) }
     )
+    ?.toInt()
     ?.let(Tone.Companion::create)
     ?.let { tone ->
         val rawTone = tone.raw
         ToneWithError(
             tone = tone,
             error = run {
-                val argb = HctSolver.solveToInt(palette.hue, palette.chroma, rawTone)
+                val argb = HctSolver.solveToInt(
+                    hueDegrees = palette.hue,
+                    chroma = palette.chroma,
+                    lstar = rawTone.toDouble(),
+                )
                 val actualHct = Hct.fromInt(argb)
                 val toneError = (rawTone - actualHct.tone).absoluteValue
                 val chromaError = (palette.chroma - actualHct.chroma).absoluteValue
