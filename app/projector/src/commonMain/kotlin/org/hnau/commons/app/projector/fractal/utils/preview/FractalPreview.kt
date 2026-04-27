@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.utils.Hue
+import org.hnau.commons.app.model.theme.Hue
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel

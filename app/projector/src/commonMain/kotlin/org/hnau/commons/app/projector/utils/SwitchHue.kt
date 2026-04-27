@@ -4,7 +4,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.utils.Hue
+import org.hnau.commons.app.model.theme.Hue
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.Variant
 import org.hnau.commons.app.projector.utils.theme.DynamicSchemeConfig
 import org.hnau.commons.app.projector.utils.theme.buildColorScheme

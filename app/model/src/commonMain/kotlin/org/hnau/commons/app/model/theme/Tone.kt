@@ -1,7 +1,6 @@
-package org.hnau.commons.app.projector.fractal.utils.color.tone
+package org.hnau.commons.app.model.theme
 
-import org.hnau.commons.app.projector.dynamiccolor.hct.Hct
-import org.hnau.commons.app.projector.dynamiccolor.palettes.TonalPalette
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class Tone private constructor(
@@ -55,9 +54,6 @@ value class Tone private constructor(
 
     companion object {
 
-        private const val minRaw = 0.0
-        private const val maxRaw = 100.0
-
         fun create(
             raw: Double
         ): Tone = Tone(
@@ -69,11 +65,11 @@ value class Tone private constructor(
 
         val max: Tone
             get() = Tone(maxRaw)
+
+        private val minRaw: Double
+            get() = 0.0
+
+        private val maxRaw: Double
+            get() = 100.0
     }
 }
-
-fun TonalPalette.getHct(
-    tone: Tone,
-): Hct = getHct(
-    tone = tone.raw,
-)

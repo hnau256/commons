@@ -5,7 +5,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.utils.Hue
+import org.hnau.commons.app.model.theme.Hue
 
 fun buildColorScheme(
     hue: Hue,

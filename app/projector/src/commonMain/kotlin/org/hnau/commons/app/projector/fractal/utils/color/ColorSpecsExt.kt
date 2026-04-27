@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal.utils.color
 
+import org.hnau.commons.app.model.theme.PaletteType
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.projector.dynamiccolor.dynamiccolor.ColorSpec
 import org.hnau.commons.app.projector.dynamiccolor.hct.Hct

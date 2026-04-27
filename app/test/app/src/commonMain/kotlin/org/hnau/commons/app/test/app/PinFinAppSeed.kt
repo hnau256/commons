@@ -5,7 +5,7 @@ import org.hnau.commons.app.model.file.absolutePath
 import org.hnau.commons.app.model.file.plus
 import org.hnau.commons.app.model.preferences.impl.FileBasedPreferences
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.utils.Hue
+import org.hnau.commons.app.model.theme.Hue
 import org.hnau.commons.app.test.model.RootModel
 import org.hnau.commons.app.test.model.impl
 import org.hnau.commons.app.test.model.utils.budget.storage.BudgetsStorage

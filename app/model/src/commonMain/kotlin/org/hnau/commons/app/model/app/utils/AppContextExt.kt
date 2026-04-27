@@ -11,7 +11,7 @@ import org.hnau.commons.app.model.preferences.map
 import org.hnau.commons.app.model.preferences.mapOption
 import org.hnau.commons.app.model.preferences.withDefault
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.utils.Hue
+import org.hnau.commons.app.model.theme.Hue
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.nameToEnum
 import org.hnau.commons.kotlin.mapper.nullable
