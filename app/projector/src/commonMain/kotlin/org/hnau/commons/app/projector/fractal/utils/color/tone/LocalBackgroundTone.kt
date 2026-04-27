@@ -7,7 +7,7 @@ import androidx.compose.runtime.compositionLocalOf
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.model.theme.PaletteType
 import org.hnau.commons.app.model.theme.Tone
-import org.hnau.commons.app.projector.fractal.utils.color.contrast.Contrast
+import org.hnau.commons.app.model.theme.Contrast
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.local
 import org.hnau.commons.app.projector.fractal.utils.local

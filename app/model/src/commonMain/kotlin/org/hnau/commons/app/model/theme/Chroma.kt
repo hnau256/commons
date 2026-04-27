@@ -3,52 +3,52 @@ package org.hnau.commons.app.model.theme
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class Tone private constructor(
+value class Chroma private constructor(
     val raw: Int,
-) : Comparable<Tone> {
+) : Comparable<Chroma> {
 
     override fun compareTo(
-        other: Tone
+        other: Chroma
     ): Int = raw.compareTo(
         other = other.raw,
     )
 
     inline fun map(
         transform: (Int) -> Int,
-    ): Tone = create(
+    ): Chroma = create(
         raw = transform(raw),
     )
 
     inline fun combineWith(
-        other: Tone,
+        other: Chroma,
         combine: (Int, Int) -> Int,
-    ): Tone = map { tone ->
+    ): Chroma = map { tone ->
         combine(tone, other.raw)
     }
 
     operator fun plus(
-        other: Tone,
-    ): Tone = combineWith(
+        other: Chroma,
+    ): Chroma = combineWith(
         other = other,
         combine = Int::plus,
     )
 
     operator fun minus(
-        other: Tone,
-    ): Tone = combineWith(
+        other: Chroma,
+    ): Chroma = combineWith(
         other = other,
         combine = Int::minus,
     )
 
     operator fun times(
         factor: Number,
-    ): Tone = map { tone ->
+    ): Chroma = map { tone ->
         tone * factor.toInt()
     }
 
     operator fun div(
         factor: Number,
-    ): Tone = map { tone ->
+    ): Chroma = map { tone ->
         tone / factor.toInt()
     }
 
@@ -56,21 +56,18 @@ value class Tone private constructor(
 
         fun create(
             raw: Int
-        ): Tone = Tone(
+        ): Chroma = Chroma(
             raw = raw.coerceIn(minRaw, maxRaw)
         )
 
-        val min: Tone
-            get() = Tone(minRaw)
+        val default
+            get() = Chroma(48)
 
-        val avg: Tone = min.combineWith(
-            other = max,
-        ) { min, max ->
-            (min + max) / 2
-        }
+        val min: Chroma
+            get() = Chroma(minRaw)
 
-        val max: Tone
-            get() = Tone(maxRaw)
+        val max: Chroma
+            get() = Chroma(maxRaw)
 
         private val minRaw: Int
             get() = 0

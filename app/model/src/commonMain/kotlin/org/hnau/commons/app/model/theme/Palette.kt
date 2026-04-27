@@ -7,4 +7,6 @@ fun interface Palette {
     operator fun get(
         tone: Tone,
     ): Hct
+
+    companion object
 }
