@@ -8,6 +8,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":kotlin"))
                 implementation(project(":app:model"))
                 implementation(project(":app:projector"))
                 implementation(hnau.kotlinx.serialization.json)

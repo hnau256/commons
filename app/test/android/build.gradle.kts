@@ -1,15 +1,14 @@
 import java.util.Properties
 
 plugins {
-    id(hnau.plugins.ksp.get().pluginId)
     id(hnau.plugins.hnau.jvmAndroidApp.get().pluginId)
 }
 
 android {
-    namespace = "hnau.commonsAppTest.android"
+    namespace = "hnau.commons.app.test.android"
 
     defaultConfig {
-        applicationId = "hnau.commonsAppTest"
+        applicationId = "hnau.commons.test"
 
         val versionPropsFile = file("version.properties")
         val versionProps =

@@ -16,6 +16,7 @@ import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
+import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
 import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
@@ -26,7 +27,7 @@ import org.hnau.commons.app.projector.utils.theme.toColorScheme
 class AppProjector<M, S, P>(
     scope: CoroutineScope,
     private val model: AppModel<M, S>,
-    private val systemPalettes: SystemPalettes,
+    private val systemPalettes: (ThemeBrightness) -> SystemPalettes,
     private val fallbackHue: Hue,
     private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
     createProjector: (CoroutineScope, M) -> P,
@@ -48,7 +49,7 @@ class AppProjector<M, S, P>(
         //TODO remember
         val palettes: Palettes = Palettes.createFromSystemOrFallback(
             fallbackHue = fallbackHue,
-            systemPalettes = systemPalettes,
+            systemPalettes = systemPalettes(brightness),
             brightness = brightness,
             config = palettesGenerateConfig,
         )
@@ -61,14 +62,11 @@ class AppProjector<M, S, P>(
         MaterialTheme(
             colorScheme = palettes.toColorScheme(), //TODO remember
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+            FBase(
+                fractalColorsProvider = fractalColorsProvider,
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground,
-                    LocalFractalColorsProvider provides fractalColorsProvider,
                 ) {
                     content(projector, contentPadding)
                 }

@@ -18,27 +18,28 @@ import org.hnau.commons.kotlin.lerp
 
 fun SystemPalettes.Companion.getForAndroid(
     context: Context,
-): SystemPalettes {
+): (ThemeBrightness) -> SystemPalettes {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-        return SystemPalettes.None
+        return { SystemPalettes.None }
     }
-    return SystemPalettes.Some(
-        palettes = Palettes(
-            palettes = getSystemPalettes(
-                context = context,
-            ),
-            config = PalettesGenerateConfig.default,
-            brightness = brightness,
+    return { brightness ->
+        SystemPalettes.Some(
+            palettes = Palettes(
+                palettes = getSystemPalettes(
+                    context = context,
+                    brightness = brightness,
+                ),
+                config = PalettesGenerateConfig.default,
+                brightness = brightness,
+            )
         )
-    )
+    }
 }
-
-private val brightness = ThemeBrightness.Light
-
 
 @RequiresApi(Build.VERSION_CODES.S)
 private fun getSystemPalettes(
     context: Context,
+    brightness: ThemeBrightness,
 ): PaletteTypeValues<TonalPalette> = getResourcesByTones().map { type, resourcesByTones ->
     resourcesByTones
         ?.map { toneWithResources ->
@@ -151,10 +152,10 @@ private class SystemPalette(
 
     override fun getHct(
         tone: Double,
-        ): Hct = tone
+    ): Hct = tone
         .toInt()
         .let(Tone::create)
-        .let {tone ->
+        .let { tone ->
             cache.getOrPut(
                 key = tone,
             ) {

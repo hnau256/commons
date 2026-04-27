@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "439708894068",
+    "project_id": "commonstest",
+    "storage_bucket": "commonstest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439708894068:android:a7cef833021fdaaf862221",
+        "android_client_info": {
+          "package_name": "hnau.commons.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCncjRwzcinbhBogXdvVflFFxlDOJJRBZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

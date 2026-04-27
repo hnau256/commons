@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.app.AppViewModel
+import org.hnau.commons.app.model.app.getForAndroid
+import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.test.app.CommonsAppTestAppDependencies
 import org.hnau.commons.app.test.app.createAppProjector
 import org.hnau.commons.app.test.app.createCommonsAppTestAppSeed
 import org.hnau.commons.app.test.app.impl
-import org.hnau.commons.app.test.data.Currency
-import org.hnau.commons.app.test.model.RootModel
+import org.hnau.commons.app.test.app.model.RootModel
 
 class AppActivity : ComponentActivity() {
 
@@ -30,9 +30,7 @@ class AppActivity : ComponentActivity() {
         AppViewModel.factory(
             context = applicationContext,
             seed = createCommonsAppTestAppSeed(
-                dependencies = CommonsAppTestAppDependencies.impl(
-                    currency = Currency.default, //TODO
-                )
+                dependencies = CommonsAppTestAppDependencies.impl()
             ),
         )
     }
@@ -47,6 +45,9 @@ class AppActivity : ComponentActivity() {
         val projector = createAppProjector(
             scope = lifecycleScope,
             model = viewModel.appModel,
+            systemPalettes = SystemPalettes.getForAndroid(
+                context = this,
+            ),
         )
         setContent {
             val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
