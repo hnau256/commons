@@ -27,7 +27,7 @@ private val scaleBaseWithDecays: ScaleTypeValues<BaseWithDecay<Scale>> = ScaleTy
     ),
     space = BaseWithDecay.float(
         initial = 1f,
-        decay = 0.6,
+        decay = 0.7,
     )
 ).map { floatBaseWithDecay ->
     floatBaseWithDecay.map(::Scale)

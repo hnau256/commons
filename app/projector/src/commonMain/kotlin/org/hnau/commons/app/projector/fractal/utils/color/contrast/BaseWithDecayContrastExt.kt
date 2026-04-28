@@ -27,7 +27,7 @@ val Contrast.Companion.container: BaseWithDecay<Contrast>
 
 private val contentContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
     initial = Contrast(7),
-    decay = 0.8,
+    decay = 0.75,
 )
 
 val Contrast.Companion.content: BaseWithDecay<Contrast>

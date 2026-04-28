@@ -33,28 +33,24 @@ class FUnits private constructor(
         private val cache = HashMap<Int, FUnits>()
 
         private val textStyleConfigs: TextStyleValues<TextStyleConfig> = TextStyleValues(
-            default = TextStyleConfig(
-                size = 24.sp,
-                weight = BaseWithDecay.fontWeight(
-                    initial = FontWeight.Normal,
-                    decay = 1.1,
-                ),
-                letterSpacing = BaseWithDecay.textUnit(
-                    initial = 0.5.sp,
-                    decay = 1.4,
-                )
-            ),
             title = TextStyleConfig(
-                size = 32.sp,
-                weight = BaseWithDecay.fontWeight(
-                    initial = FontWeight.Normal,
-                    decay = 1.1,
-                ),
-                letterSpacing = BaseWithDecay.textUnit(
-                    initial = 0.5.sp,
-                    decay = 1.4,
-                )
-            )
+                size = 22.sp,
+                weight = FontWeight.Normal,
+                letterSpacing = 0.1.sp,
+                lineHeightFactor = 1.1f,
+            ),
+            default = TextStyleConfig(
+                size = 16.sp,
+                weight = FontWeight.Medium,
+                letterSpacing = 0.5.sp,
+                lineHeightFactor = 1.1f,
+            ),
+            label = TextStyleConfig(
+                size = 14.sp,
+                weight = FontWeight.SemiBold,
+                letterSpacing = 0.sp,
+                lineHeightFactor = 1.1f,
+            ),
         )
 
         operator fun get(

@@ -30,6 +30,7 @@ import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundT
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
@@ -161,26 +162,31 @@ fun FButtonPreview() {
         }
 
     FractalPreview {
-        FRow {
-            FButton(
-                palette = PaletteType.Tertiary,
-                actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                titleOrIcon = Ior.Right(
-                    value = Icons.Default.Delete
-                )
+        FColumn {
+            FText(
+                text = "Lorem ipsum dolor sit amet",
             )
-            FButton(
-                palette = PaletteType.Primary,
-                actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                isSelected = true,
-                titleOrIcon = Ior.Both(
-                    leftValue = "Settings",
-                    rightValue = Icons.Default.Settings
-                ),
-                /*titleOrIcon = Ior.Left(
+            FRow {
+                FButton(
+                    palette = PaletteType.Tertiary,
+                    actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                    titleOrIcon = Ior.Right(
+                        value = Icons.Default.Delete
+                    )
+                )
+                FButton(
+                    palette = PaletteType.Primary,
+                    actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
+                    isSelected = true,
+                    titleOrIcon = Ior.Both(
+                        leftValue = "Settings",
+                        rightValue = Icons.Default.Settings
+                    ),
+                    /*titleOrIcon = Ior.Left(
                     value = "Settings",
                 ),*/
-            )
+                )
+            }
         }
     }
 }
