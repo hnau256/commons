@@ -10,6 +10,8 @@ import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlin.time.Duration
@@ -17,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 
 fun <T, C : Comparable<C>> getTransitionSpecForSlideByCompare(
     duration: Duration = AnimationDuration,
-    orientation: SlideOrientation,
+    orientation: Orientation,
     offsetFactor: Float = 0.25f,
     extractComparable: (T) -> C,
 ): AnimatedContentTransitionScope<T>.() -> ContentTransform = getTransitionSpecForSlide(
@@ -34,7 +36,7 @@ fun <T, C : Comparable<C>> getTransitionSpecForSlideByCompare(
 
 fun <T> getTransitionSpecForSlide(
     duration: Duration = AnimationDuration,
-    orientation: SlideOrientation,
+    orientation: Orientation,
     slideCoefficientProvider: AnimatedContentTransitionScope<T>.() -> Number,
 ): AnimatedContentTransitionScope<T>.() -> ContentTransform {
     val durationMillis = duration.inWholeMilliseconds.toInt()
@@ -69,7 +71,7 @@ fun <T> getTransitionSpecForSlide(
 }
 
 private fun IntSize.toOffset(
-    orientation: SlideOrientation,
+    orientation: Orientation,
 ): IntOffset = orientation.fold(
     ifHorizontal = { IntOffset(width, 0) },
     ifVertical = { IntOffset(0, height) },

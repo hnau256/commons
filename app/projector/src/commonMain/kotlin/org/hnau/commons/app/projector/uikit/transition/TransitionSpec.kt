@@ -38,13 +38,13 @@ object TransitionSpec {
     }
 
     fun <S> vertical(): AnimatedContentTransitionScope<S>.() -> ContentTransform =
-        { buildSlideTransform(SlideOrientation.Vertical) }
+        { buildSlideTransform(Orientation.Vertical) }
 
     fun <S> horizontal(): AnimatedContentTransitionScope<S>.() -> ContentTransform =
-        { buildSlideTransform(SlideOrientation.Horizontal) }
+        { buildSlideTransform(Orientation.Horizontal) }
 
     private fun <S> AnimatedContentTransitionScope<S>.buildSlideTransform(
-        orientation: SlideOrientation
+        orientation: Orientation
     ): ContentTransform {
 
         val enter = enterFadeIn + orientation.fold(
@@ -85,7 +85,7 @@ object TransitionSpec {
     }
 
     private fun createSizeTransform(
-        orientation: SlideOrientation,
+        orientation: Orientation,
     ): SizeTransform = SizeTransform(
         clip = false,
     ) { initialSize, targetSize ->

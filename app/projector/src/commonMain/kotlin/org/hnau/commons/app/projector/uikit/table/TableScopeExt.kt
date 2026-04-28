@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.kotlin.it
+import org.hnau.commons.kotlin.next
 
 @Composable
 fun TableScope.Subtable(
@@ -18,7 +19,7 @@ fun TableScope.Subtable(
     Cell { modifier ->
         Table(
             modifier = configModifier(modifier),
-            orientation = orientation.opposite,
+            orientation = orientation.next(),
             corners = this,
             content = content,
         )

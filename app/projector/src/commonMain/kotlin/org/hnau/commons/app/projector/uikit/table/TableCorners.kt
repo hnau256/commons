@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.uikit.shape.HnauShape
 import org.hnau.commons.app.projector.uikit.shape.create
+import org.hnau.commons.app.projector.utils.Orientation
 
 @JvmInline
 value class TableCorners private constructor(
@@ -47,18 +48,18 @@ value class TableCorners private constructor(
     )
 
     fun close(
-        orientation: TableOrientation,
+        orientation: Orientation,
         startOrTop: Boolean,
         endOrBottom: Boolean,
     ): TableCorners = closePartially(
         closeStartTop = startOrTop,
         closeStartBottom = when (orientation) {
-            TableOrientation.Vertical -> endOrBottom
-            TableOrientation.Horizontal -> startOrTop
+            Orientation.Vertical -> endOrBottom
+            Orientation.Horizontal -> startOrTop
         },
         closeEndTop = when (orientation) {
-            TableOrientation.Horizontal -> endOrBottom
-            TableOrientation.Vertical -> startOrTop
+            Orientation.Horizontal -> endOrBottom
+            Orientation.Vertical -> startOrTop
         },
         closeEndBottom = endOrBottom,
     )

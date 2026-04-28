@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.uikit.transition.SlideOrientation
 import org.hnau.commons.app.projector.uikit.transition.getTransitionSpecForSlide
+import org.hnau.commons.app.projector.utils.Orientation
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -23,7 +23,7 @@ fun <K, P> StateFlow<StackProjectorTail<K, P>>.Content(
         contentKey = { tail -> tail.key },
         transitionSpec = getTransitionSpecForSlide(
             duration = AnimationDuration,
-            orientation = SlideOrientation.Horizontal,
+            orientation = Orientation.Horizontal,
         ) {
             when (targetState.isNew) {
                 true -> AnimationSlideFactor

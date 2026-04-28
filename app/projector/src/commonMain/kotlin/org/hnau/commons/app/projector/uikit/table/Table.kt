@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.uikit.table.utils.create
 import org.hnau.commons.app.projector.uikit.utils.Dimens
+import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 
 private val arrangement = Arrangement.spacedBy(Dimens.chipsSeparation)
 
@@ -19,7 +21,7 @@ private val arrangement = Arrangement.spacedBy(Dimens.chipsSeparation)
 @Composable
 @NonSkippableComposable
 fun Table(
-    orientation: TableOrientation,
+    orientation: Orientation,
     modifier: Modifier = Modifier,
     corners: TableCorners = TableCorners.opened,
     content: @Composable TableScope.() -> Unit,

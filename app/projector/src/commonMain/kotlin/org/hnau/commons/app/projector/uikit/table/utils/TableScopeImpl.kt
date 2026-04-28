@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.uikit.table.TableCorners
-import org.hnau.commons.app.projector.uikit.table.TableOrientation
 import org.hnau.commons.app.projector.uikit.table.TableScope
+import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 
 internal class TableScopeImpl(
-    override val orientation: TableOrientation,
+    override val orientation: Orientation,
     override val corners: TableCorners,
     private val applyWeight: Modifier.(weight: Float, fill: Boolean) -> Modifier,
 ) : TableScope {
@@ -37,7 +38,7 @@ internal class TableScopeImpl(
 
 @Composable
 internal fun TableScope.Companion.create(
-    orientation: TableOrientation,
+    orientation: Orientation,
     corners: TableCorners,
     columnScope: ColumnScope,
 ): TableScopeImpl = TableScopeImpl(
@@ -54,7 +55,7 @@ internal fun TableScope.Companion.create(
 
 @Composable
 internal fun TableScope.Companion.create(
-    orientation: TableOrientation,
+    orientation: Orientation,
     corners: TableCorners,
     rowScope: RowScope,
 ): TableScopeImpl = TableScopeImpl(
