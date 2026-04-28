@@ -11,7 +11,7 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel
-import org.hnau.commons.app.projector.utils.theme.create
+import org.hnau.commons.app.projector.utils.theme.createCached
 
 @Composable
 fun FractalPreview(
@@ -22,7 +22,7 @@ fun FractalPreview(
             Column {
                 (0 until 5).forEach { hueIndex ->
                     FBase(
-                        palettes = Palettes.create(
+                        palettes = Palettes.createCached(
                             fallbackHue = Hue(hueIndex * 72),
                             systemPalettes = SystemPalettes.None,
                             brightness = themeBrightness,

@@ -12,7 +12,6 @@ import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.color.ColorType
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.content
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.findContrasted
-import org.hnau.commons.app.projector.fractal.utils.color.toColor
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 import org.hnau.commons.app.projector.fractal.utils.color.tone.localBackground
 import org.hnau.commons.app.projector.fractal.utils.local
@@ -59,7 +58,8 @@ private fun Palettes.getColor(
             }
         }
     )
-    .toColor()
+    .toInt()
+    .let(::Color)
 
 @Composable
 fun getLocalColor(

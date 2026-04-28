@@ -5,13 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import org.hnau.commons.app.model.theme.color.Chroma
 import org.hnau.commons.app.model.theme.color.Hue
-import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.utils.theme.LocalPalettes
-import org.hnau.commons.app.projector.utils.theme.create
+import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.themeBrightness
-import org.hnau.commons.app.projector.utils.theme.toColorScheme
 
 private val DynamicSchemeConfigForHue: PalettesGenerateConfig = PalettesGenerateConfig
     .default
@@ -26,19 +24,18 @@ fun SwitchHue(
 ) {
     val brightness = MaterialTheme.themeBrightness
 
-    //TODO remember
-    val palettes: Palettes = Palettes.create(
-        fallbackHue = hue,
+    val palettesWithColorScheme = PalettesWithColorScheme.createCached(
+        hue = hue,
+        systemPalettes = SystemPalettes.None,
         brightness = brightness,
         config = DynamicSchemeConfigForHue,
-        systemPalettes = SystemPalettes.None,
     )
 
     MaterialTheme(
-        colorScheme = palettes.toColorScheme(), //TODO remember
+        colorScheme = palettesWithColorScheme.colorScheme,
     ) {
         CompositionLocalProvider(
-            LocalPalettes provides palettes,
+            LocalPalettes provides palettesWithColorScheme.palettes,
         ) {
             content()
         }

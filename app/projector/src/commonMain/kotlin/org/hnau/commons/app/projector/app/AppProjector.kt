@@ -10,13 +10,11 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
-import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.projector.fractal.FBase
-import org.hnau.commons.app.projector.utils.theme.create
+import org.hnau.commons.app.projector.utils.theme.LocalPalettes
+import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.system
-import org.hnau.commons.app.projector.utils.theme.toColorScheme
 
 class AppProjector<M, S, P>(
     scope: CoroutineScope,
@@ -40,9 +38,8 @@ class AppProjector<M, S, P>(
 
         val brightness: ThemeBrightness = ThemeBrightness.system
 
-        //TODO remember
-        val palettes: Palettes = Palettes.create(
-            fallbackHue = fallbackHue,
+        val palettesWithColorScheme = PalettesWithColorScheme.createCached(
+            hue = fallbackHue,
             systemPalettes = remember(createSystemPalettes, brightness) {
                 createSystemPalettes(brightness)
             },
@@ -51,16 +48,13 @@ class AppProjector<M, S, P>(
         )
 
         MaterialTheme(
-            colorScheme = palettes.toColorScheme(), //TODO remember
+            colorScheme = palettesWithColorScheme.colorScheme,
         ) {
-            FBase(
-                palettes = palettes,
+            CompositionLocalProvider(
+                LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+                LocalPalettes provides palettesWithColorScheme.palettes,
             ) {
-                CompositionLocalProvider(
-                    LocalContentColor provides MaterialTheme.colorScheme.onBackground,
-                ) {
-                    content(projector, contentPadding)
-                }
+                content(projector, contentPadding)
             }
         }
     }

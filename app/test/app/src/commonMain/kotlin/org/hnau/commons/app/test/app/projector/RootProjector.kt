@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import arrow.core.Ior
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.model.theme.palette.Palettes
+import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FButton
-import org.hnau.commons.app.projector.fractal.FButtonPreview
 import org.hnau.commons.app.projector.fractal.FColumn
+import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 
@@ -33,20 +35,25 @@ class RootProjector(
     fun Content(
         contentPadding: PaddingValues,
     ) {
-        FColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding),
+        FBase(
+            palettes = Palettes.local,
+            modifier = Modifier.fillMaxSize(),
         ) {
-            FButtonPreview()
-            /*FButton(
-                actionOrElseOrDisabled = model.task.collectAsState().value,
-                titleOrIcon = Ior.Both(
-                    leftValue = "Settings",
-                    rightValue = Icons.Default.Settings,
-                ),
-                palette = PaletteType.Primary,
-            )*/
+            FColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+            ) {
+                FButton(
+                    actionOrElseOrDisabled = model.task.collectAsState().value,
+                    titleOrIcon = Ior.Both(
+                        leftValue = "Settings",
+                        rightValue = Icons.Default.Settings,
+                    ),
+                    palette = PaletteType.Primary,
+                )
+            }
         }
+
     }
 }
