@@ -5,4 +5,4 @@ import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 @EnumValues(
     valuesClassName = "TextStyleValues"
 )
-enum class TextStyleType { Default, Title, Label }
+enum class TextStyleType { Body, Title, Label }

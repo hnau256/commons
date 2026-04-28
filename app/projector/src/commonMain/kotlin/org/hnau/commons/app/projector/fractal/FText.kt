@@ -18,7 +18,7 @@ import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 fun FText(
     text: String,
     modifier: Modifier = Modifier,
-    type: TextStyleType = TextStyleType.Default,
+    type: TextStyleType = TextStyleType.Body,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,

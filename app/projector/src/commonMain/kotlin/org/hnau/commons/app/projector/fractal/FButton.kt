@@ -168,7 +168,7 @@ fun FButtonPreview() {
             )
             FRow {
                 FButton(
-                    palette = PaletteType.Tertiary,
+                    palette = PaletteType.Secondary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
                     titleOrIcon = Ior.Right(
                         value = Icons.Default.Delete

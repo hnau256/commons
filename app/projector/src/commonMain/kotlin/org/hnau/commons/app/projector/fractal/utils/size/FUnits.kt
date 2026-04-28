@@ -39,7 +39,7 @@ class FUnits private constructor(
                 letterSpacing = 0.1.sp,
                 lineHeightFactor = 1.1f,
             ),
-            default = TextStyleConfig(
+            body = TextStyleConfig(
                 size = 16.sp,
                 weight = FontWeight.Medium,
                 letterSpacing = 0.5.sp,
