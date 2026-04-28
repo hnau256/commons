@@ -17,7 +17,7 @@ fun FRow(
     val units = FUnits.local
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(units.horizontal.medium),
+        horizontalArrangement = Arrangement.spacedBy(units.padding.horizontal.medium),
         content = content
     )
 }
@@ -30,7 +30,7 @@ fun FColumn(
     val units = FUnits.local
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(units.vertical.medium),
+        verticalArrangement = Arrangement.spacedBy(units.padding.vertical.medium),
         content = content
     )
 }

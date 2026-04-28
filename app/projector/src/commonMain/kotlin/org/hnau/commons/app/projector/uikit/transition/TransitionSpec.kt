@@ -17,6 +17,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.IntSize
+import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 
 object TransitionSpec {

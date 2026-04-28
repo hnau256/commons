@@ -11,16 +11,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.fontWeight
 import org.hnau.commons.app.projector.fractal.utils.local
-import org.hnau.commons.app.projector.fractal.utils.textUnit
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
+import org.hnau.commons.app.projector.utils.OrientationValues
 
 class FUnits private constructor(
-    val horizontal: Spaces,
-    val vertical: Spaces,
+    val padding: OrientationValues<Spaces>,
     val shape: Shape,
     val borderShape: Shape,
     val borderWidth: Dp,
@@ -61,12 +58,14 @@ class FUnits private constructor(
             val cornerRadius = 12.dp.scale(distance.scale.space)
             val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
-                horizontal = Spaces(
-                    medium = 16.dp.scale(distance.scale.space),
-                ),
-                vertical = Spaces(
-                    medium = 8.dp.scale(distance.scale.space),
-                ),
+                padding = OrientationValues(
+                    horizontal = 16.dp,
+                    vertical = 8.dp,
+                ).map { size ->
+                    Spaces(
+                        medium = size.scale(distance.scale.space)
+                    )
+                },
                 shape = RoundedCornerShape(size = cornerRadius),
                 borderShape = DeflatedRoundedCornerShape(
                     topStart = CornerSize(cornerRadius),
@@ -91,6 +90,6 @@ val Distance.units: FUnits
 
 @Composable
 fun Modifier.fPadding(): Modifier = padding(
-    horizontal = FUnits.local.horizontal.medium,
-    vertical = FUnits.local.vertical.medium,
+    horizontal = FUnits.local.padding.horizontal.medium,
+    vertical = FUnits.local.padding.vertical.medium,
 )
