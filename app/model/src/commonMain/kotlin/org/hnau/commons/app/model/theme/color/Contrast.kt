@@ -55,6 +55,9 @@ value class Contrast(
 
     companion object {
 
+        val zero: Contrast
+            get() = Contrast(0)
+
         val min: Contrast
             get() = Contrast(ContrastUtils.RATIO_MIN.toInt())
 

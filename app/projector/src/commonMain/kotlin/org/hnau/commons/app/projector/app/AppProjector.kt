@@ -1,11 +1,15 @@
 package org.hnau.commons.app.projector.app
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
@@ -54,7 +58,13 @@ class AppProjector<M, S, P>(
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground,
                 LocalPalettes provides palettesWithColorScheme.palettes,
             ) {
-                content(projector, contentPadding)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                ) {
+                    content(projector, contentPadding)
+                }
             }
         }
     }

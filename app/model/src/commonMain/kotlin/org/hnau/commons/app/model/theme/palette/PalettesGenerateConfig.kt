@@ -20,7 +20,7 @@ data class PalettesGenerateConfig(
             variant = Variant.TONAL_SPOT,
             chroma = Chroma.create(48),
             platform = DynamicScheme.Platform.PHONE,
-            contrast = Contrast.min,
+            contrast = Contrast.zero,
             spec = ColorSpec.SpecVersion.SPEC_2026,
         )
     }
