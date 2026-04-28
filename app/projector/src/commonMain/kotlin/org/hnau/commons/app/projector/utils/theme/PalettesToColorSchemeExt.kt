@@ -5,36 +5,13 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.model.color.dynamic.dynamiccolor.DynamicScheme
-import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.model.theme.isDark
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
-import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
-import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.model.theme.palette.create
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
-
-fun Palettes.Companion.create(
-    fallbackHue: Hue,
-    systemPalettes: SystemPalettes,
-    brightness: ThemeBrightness,
-    config: PalettesGenerateConfig,
-): Palettes = when (systemPalettes) {
-    is SystemPalettes.Some -> systemPalettes.palettes
-    SystemPalettes.None -> Palettes(
-        palettes = TonalPalette.create(
-            hue = fallbackHue,
-            brightness = brightness,
-            config = config,
-        ),
-        config = config,
-        brightness = brightness,
-    )
-}
 
 fun Palettes.toColorScheme(): ColorScheme = DynamicScheme(
     sourceColorHct = palettes[PaletteType.Primary].getHct(Tone.avg),
