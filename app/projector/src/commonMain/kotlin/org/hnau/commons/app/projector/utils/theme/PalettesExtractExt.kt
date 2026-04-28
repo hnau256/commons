@@ -16,7 +16,6 @@ import org.hnau.commons.app.projector.fractal.utils.color.toColor
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 import org.hnau.commons.app.projector.fractal.utils.color.tone.localBackground
 import org.hnau.commons.app.projector.fractal.utils.local
-import org.hnau.commons.kotlin.foldNullable
 
 fun Palettes.getBackgroundTone(
     distance: Distance,
@@ -41,44 +40,26 @@ fun Palettes.getForegroundTone(
     ratio = contrast[distance],
 )
 
-fun Palettes.getColor(
-    tone: Tone,
-    palette: PaletteType,
-): Color = palettes[palette]
-    .getHct(
-        tone = tone,
-    )
-    .toColor()
-
-fun Palettes.getColor(
+private fun Palettes.getColor(
     distance: Distance,
     backgroundTone: Tone,
     palette: PaletteType,
     type: ColorType,
-): Color {
-
-    val foregroundContrast = when (type) {
-        ColorType.Background -> null
-        ColorType.Content -> Contrast.content
-    }
-
-    val tone = foregroundContrast.foldNullable(
-        ifNull = { backgroundTone },
-        ifNotNull = { contrast ->
-            getForegroundTone(
-                backgroundTone = backgroundTone,
-                distance = distance,
-                contrast = contrast,
-                palette = palette,
-            )
+): Color = palettes[palette]
+    .getHct(
+        tone = when (type) {
+            ColorType.Background -> backgroundTone
+            ColorType.Content -> {
+                getForegroundTone(
+                    backgroundTone = backgroundTone,
+                    distance = distance,
+                    contrast = Contrast.content,
+                    palette = palette,
+                )
+            }
         }
     )
-
-    return getColor(
-        tone = tone,
-        palette = palette,
-    )
-}
+    .toColor()
 
 @Composable
 fun getLocalColor(
