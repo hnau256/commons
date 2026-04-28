@@ -22,10 +22,10 @@ fun Palettes.toColorScheme(): ColorScheme = DynamicScheme(
     specVersion = config.spec,
     primaryPalette = palettes[PaletteType.Primary],
     secondaryPalette = palettes[PaletteType.Secondary],
-    tertiaryPalette = palettes[PaletteType.Primary],
-    neutralPalette = palettes[PaletteType.Primary],
-    neutralVariantPalette = palettes[PaletteType.Primary],
-    errorPalette = palettes[PaletteType.Primary],
+    tertiaryPalette = palettes[PaletteType.Tertiary],
+    neutralPalette = palettes[PaletteType.Neutral],
+    neutralVariantPalette = palettes[PaletteType.NeutralVariant],
+    errorPalette = palettes[PaletteType.Error],
 ).toColorScheme(
     brightness = brightness,
 )
