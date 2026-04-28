@@ -7,11 +7,13 @@ import androidx.compose.runtime.compositionLocalOf
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.container
-import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
-import org.hnau.commons.app.projector.fractal.utils.color.provider.local
 import org.hnau.commons.app.projector.fractal.utils.local
+import org.hnau.commons.app.projector.utils.theme.getBackgroundTone
+import org.hnau.commons.app.projector.utils.theme.getForegroundTone
+import org.hnau.commons.app.projector.utils.theme.local
 
 val LocalBackgroundTone: ProvidableCompositionLocal<Tone> =
     compositionLocalOf { error("Background tone isn't provided") }
@@ -36,7 +38,7 @@ fun SwitchBackgroundTone(
     content: @Composable () -> Unit,
 ) {
     SwitchBackgroundTone(
-        newBackgroundTone = FractalColorsProvider.local.getBackgroundTone(
+        newBackgroundTone = Palettes.local.getBackgroundTone(
             distance = Distance.local,
         ),
         content = content,
@@ -48,7 +50,7 @@ fun SwitchBackgroundToneToContainer(
     content: @Composable () -> Unit,
 ) {
     SwitchBackgroundTone(
-        newBackgroundTone = FractalColorsProvider.local.getForegroundTone(
+        newBackgroundTone = Palettes.local.getForegroundTone(
             backgroundTone = Tone.localBackground,
             distance = Distance.local,
             contrast = Contrast.container,

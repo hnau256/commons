@@ -11,7 +11,6 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel
-import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
 import org.hnau.commons.app.projector.utils.theme.create
 
 @Composable
@@ -23,13 +22,11 @@ fun FractalPreview(
             Column {
                 (0 until 5).forEach { hueIndex ->
                     FBase(
-                        fractalColorsProvider = FractalColorsProviderByPalettes(
-                            palettes = Palettes.create(
-                                fallbackHue = Hue(hueIndex * 72),
-                                systemPalettes = SystemPalettes.None,
-                                brightness = themeBrightness,
-                                config = PalettesGenerateConfig.default,
-                            )
+                        palettes = Palettes.create(
+                            fallbackHue = Hue(hueIndex * 72),
+                            systemPalettes = SystemPalettes.None,
+                            brightness = themeBrightness,
+                            config = PalettesGenerateConfig.default,
                         ),
                     ) {
                         RecursivePreview(

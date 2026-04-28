@@ -13,8 +13,6 @@ import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
-import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
-import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
 import org.hnau.commons.app.projector.utils.theme.create
 import org.hnau.commons.app.projector.utils.theme.system
 import org.hnau.commons.app.projector.utils.theme.toColorScheme
@@ -49,16 +47,11 @@ class AppProjector<M, S, P>(
             config = palettesGenerateConfig,
         )
 
-        //TODO remember
-        val fractalColorsProvider: FractalColorsProvider = FractalColorsProviderByPalettes(
-            palettes = palettes,
-        )
-
         MaterialTheme(
             colorScheme = palettes.toColorScheme(), //TODO remember
         ) {
             FBase(
-                fractalColorsProvider = fractalColorsProvider,
+                palettes = palettes,
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground,
