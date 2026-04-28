@@ -7,6 +7,7 @@ import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
+import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FColumn
 import org.hnau.commons.app.projector.fractal.FPanel
@@ -24,7 +25,8 @@ fun FractalPreview(
                     FBase(
                         fractalColorsProvider = FractalColorsProviderByPalettes(
                             palettes = Palettes.create(
-                                hue = Hue(hueIndex * 72),
+                                fallbackHue = Hue(hueIndex * 72),
+                                systemPalettes = SystemPalettes.None,
                                 brightness = themeBrightness,
                                 config = PalettesGenerateConfig.default,
                             )

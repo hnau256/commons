@@ -7,6 +7,7 @@ import org.hnau.commons.app.model.theme.color.Chroma
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
+import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
 import org.hnau.commons.app.projector.fractal.utils.color.provider.LocalFractalColorsProvider
@@ -29,9 +30,10 @@ fun SwitchHue(
 
     //TODO remember
     val palettes: Palettes = Palettes.create(
-        hue = hue,
+        fallbackHue = hue,
         brightness = brightness,
         config = DynamicSchemeConfigForHue,
+        systemPalettes = SystemPalettes.None,
     )
 
     //TODO remember

@@ -19,30 +19,20 @@ import org.hnau.commons.app.model.theme.palette.create
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 
 fun Palettes.Companion.create(
-    hue: Hue,
-    brightness: ThemeBrightness,
-    config: PalettesGenerateConfig,
-): Palettes = Palettes(
-    palettes = TonalPalette.create(
-        hue = hue,
-        brightness = brightness,
-        config = config,
-    ),
-    config = config,
-    brightness = brightness,
-)
-
-fun Palettes.Companion.createFromSystemOrFallback(
     fallbackHue: Hue,
     systemPalettes: SystemPalettes,
     brightness: ThemeBrightness,
     config: PalettesGenerateConfig,
 ): Palettes = when (systemPalettes) {
     is SystemPalettes.Some -> systemPalettes.palettes
-    SystemPalettes.None -> Palettes.create(
-        hue = fallbackHue,
-        brightness = brightness,
+    SystemPalettes.None -> Palettes(
+        palettes = TonalPalette.create(
+            hue = fallbackHue,
+            brightness = brightness,
+            config = config,
+        ),
         config = config,
+        brightness = brightness,
     )
 }
 

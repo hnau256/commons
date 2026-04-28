@@ -15,7 +15,7 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProvider
 import org.hnau.commons.app.projector.fractal.utils.color.provider.FractalColorsProviderByPalettes
-import org.hnau.commons.app.projector.utils.theme.createFromSystemOrFallback
+import org.hnau.commons.app.projector.utils.theme.create
 import org.hnau.commons.app.projector.utils.theme.system
 import org.hnau.commons.app.projector.utils.theme.toColorScheme
 
@@ -42,7 +42,7 @@ class AppProjector<M, S, P>(
         val brightness: ThemeBrightness = ThemeBrightness.system
 
         //TODO remember
-        val palettes: Palettes = Palettes.createFromSystemOrFallback(
+        val palettes: Palettes = Palettes.create(
             fallbackHue = fallbackHue,
             systemPalettes = systemPalettes(brightness),
             brightness = brightness,
