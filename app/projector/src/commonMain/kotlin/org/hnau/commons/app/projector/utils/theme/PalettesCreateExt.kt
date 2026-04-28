@@ -6,7 +6,7 @@ import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.model.theme.palette.create
+import org.hnau.commons.app.model.theme.palette.createAll
 
 fun Palettes.Companion.create(
     fallbackHue: Hue,
@@ -16,7 +16,7 @@ fun Palettes.Companion.create(
 ): Palettes = when (systemPalettes) {
     is SystemPalettes.Some -> systemPalettes.palettes
     SystemPalettes.None -> Palettes(
-        palettes = TonalPalette.create(
+        palettes = TonalPalette.createAll(
             hue = fallbackHue,
             brightness = brightness,
             config = config,

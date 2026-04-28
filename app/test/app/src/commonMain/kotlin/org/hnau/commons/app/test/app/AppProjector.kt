@@ -17,7 +17,7 @@ fun createAppProjector(
 ): AppProjector<RootModel, RootModel.Skeleton, RootProjector> = AppProjector(
     scope = scope,
     model = model,
-    systemPalettes = systemPalettes,
+    createSystemPalettes = systemPalettes,
     fallbackHue = Hue(90),
     createProjector = { scope, model ->
         RootProjector(

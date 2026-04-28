@@ -10,7 +10,7 @@ import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.isDark
 
-fun TonalPalette.Companion.create(
+fun TonalPalette.Companion.createAll(
     hue: Hue,
     brightness: ThemeBrightness,
     config: PalettesGenerateConfig = PalettesGenerateConfig.default,

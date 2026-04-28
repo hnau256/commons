@@ -5,6 +5,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
@@ -20,7 +21,7 @@ import org.hnau.commons.app.projector.utils.theme.toColorScheme
 class AppProjector<M, S, P>(
     scope: CoroutineScope,
     private val model: AppModel<M, S>,
-    private val systemPalettes: (ThemeBrightness) -> SystemPalettes,
+    private val createSystemPalettes: (ThemeBrightness) -> SystemPalettes,
     private val fallbackHue: Hue,
     private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
     createProjector: (CoroutineScope, M) -> P,
@@ -42,7 +43,9 @@ class AppProjector<M, S, P>(
         //TODO remember
         val palettes: Palettes = Palettes.create(
             fallbackHue = fallbackHue,
-            systemPalettes = systemPalettes(brightness),
+            systemPalettes = remember(createSystemPalettes, brightness) {
+                createSystemPalettes(brightness)
+            },
             brightness = brightness,
             config = palettesGenerateConfig,
         )
