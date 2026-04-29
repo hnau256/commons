@@ -7,26 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.Layout
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
-import org.hnau.commons.app.projector.utils.Orientation
-
-@Composable
-fun FLine(
-    orientation: Orientation,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    val separation = FUnits.local.padding[orientation].medium
-    Layout(
-        modifier = modifier,
-        content = content,
-    ) { measurables, constraints ->
-
-        val firstChildConstraint =
-
-    }
-}
 
 @Composable
 fun FRow(
