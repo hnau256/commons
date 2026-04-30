@@ -10,6 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FButton
+import org.hnau.commons.app.projector.fractal.FColumn
+import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
+import org.hnau.commons.app.projector.fractal.semantic.utils.palette
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
@@ -20,7 +23,24 @@ import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
 @Composable
-fun SActions(
+fun SContentWithActions(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+    actions: @Composable SActionsScope.() -> Unit,
+) {
+    FColumn(
+        modifier = modifier,
+    ) {
+        content()
+        SActions(
+            modifier = Modifier.fillMaxWidth(),
+            block = actions,
+        )
+    }
+}
+
+@Composable
+private fun SActions(
     modifier: Modifier = Modifier,
     block: @Composable SActionsScope.() -> Unit,
 ) {
@@ -29,17 +49,20 @@ fun SActions(
         else -> Orientation.Horizontal
     }
 
-    val arrangement = FUnits
+    val separation = FUnits
         .local
         .padding[orientation]
         .medium
-        .let(Arrangement::spacedBy)
+
     orientation.fold(
         ifHorizontal = {
             Row(
                 modifier = modifier,
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = arrangement,
+                horizontalArrangement = Arrangement.spacedBy(
+                    space = separation,
+                    alignment = Alignment.End,
+                ),
             ) {
                 val scope: SActionsScope = remember {
                     SActionsScopeImpl(
@@ -53,7 +76,10 @@ fun SActions(
             Column(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = arrangement,
+                verticalArrangement = Arrangement.spacedBy(
+                    space = separation,
+                    alignment = Alignment.Bottom,
+                ),
             ) {
                 val scope: SActionsScope = remember {
                     SActionsScopeImpl(

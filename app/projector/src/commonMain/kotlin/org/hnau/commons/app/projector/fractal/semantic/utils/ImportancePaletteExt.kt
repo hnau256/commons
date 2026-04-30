@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic
+package org.hnau.commons.app.projector.fractal.semantic.utils
 
 import org.hnau.commons.app.model.theme.palette.PaletteType
 
