@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.horizontalDisplayPadding
 
@@ -37,7 +38,8 @@ fun TopBar(
         modifier = modifier
             .height(TopBarDefaults.height)
             .fillMaxWidth()
-            .padding(horizontal = TopBarDefaults.separation),
+            .padding(horizontal = TopBarDefaults.separation)
+            .padding(start = LocalBackButtonWidth.current),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
             space = Dimens.smallSeparation,
