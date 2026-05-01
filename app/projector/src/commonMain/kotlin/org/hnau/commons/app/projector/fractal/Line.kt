@@ -21,15 +21,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 
-enum class ForceFill {
-    First, Last;
-
-    companion object {
-
-        val default: ForceFill
-            get() = Last
-    }
-}
+enum class ForceFill { First, Last }
 
 @Composable
 fun Line(
@@ -37,7 +29,7 @@ fun Line(
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Horizontal = Arrangement.Start,
     reverseOrdering: Boolean = false,
-    forceFill: ForceFill = ForceFill.default,
+    forceFill: ForceFill? = null,
     content: @Composable () -> Unit,
 ) {
     val measurePolicy = remember(
@@ -133,7 +125,7 @@ fun Line(
 
                 val reverseForForceFill: Boolean = when (forceFill) {
                     ForceFill.First -> true
-                    ForceFill.Last -> false
+                    null, ForceFill.Last -> false
                 }
 
                 var usedByChildren = 0
@@ -145,7 +137,7 @@ fun Line(
 
                         val isLast = index == measurables.lastIndex
 
-                        val childConstraints = isLast.foldBoolean(
+                        val childConstraints = (isLast && forceFill != null).foldBoolean(
                             ifTrue = { fixedCrossAxisConstraints },
                             ifFalse = { childrenConstraints }
                         ).let { constraints ->

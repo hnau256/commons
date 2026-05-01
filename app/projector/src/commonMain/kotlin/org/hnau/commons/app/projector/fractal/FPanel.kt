@@ -33,6 +33,7 @@ fun FPanel(
                             shape = units.shape,
                         )
                         .fPadding(),
+                    propagateMinConstraints = true,
                 ) {
                     content()
                 }
