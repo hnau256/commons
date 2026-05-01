@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FButton
-import org.hnau.commons.app.projector.fractal.FColumn
+import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.semantic.utils.palette
 import org.hnau.commons.app.projector.fractal.utils.Distance
@@ -28,8 +28,9 @@ fun SContentWithActions(
     content: @Composable () -> Unit,
     actions: @Composable SActionsScope.() -> Unit,
 ) {
-    FColumn(
+    FLine(
         modifier = modifier,
+        orientation = Orientation.Vertical,
     ) {
         content()
         SActions(

@@ -9,8 +9,9 @@ import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
-import org.hnau.commons.app.projector.fractal.FColumn
+import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.FPanel
+import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.theme.createCached
 
 @Composable
@@ -49,7 +50,9 @@ private fun RecursivePreview(
         content()
         return
     }
-    FColumn {
+    FLine(
+        orientation = Orientation.Vertical,
+    ) {
         FPanel {
             RecursivePreview(
                 nextLevels = nextLevels - 1,

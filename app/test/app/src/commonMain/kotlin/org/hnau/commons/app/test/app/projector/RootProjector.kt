@@ -14,7 +14,8 @@ import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FButton
-import org.hnau.commons.app.projector.fractal.FColumn
+import org.hnau.commons.app.projector.fractal.FLine
+import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
@@ -39,7 +40,8 @@ class RootProjector(
             palettes = Palettes.local,
             modifier = Modifier.fillMaxSize(),
         ) {
-            FColumn(
+            FLine(
+                orientation = Orientation.Vertical,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding),

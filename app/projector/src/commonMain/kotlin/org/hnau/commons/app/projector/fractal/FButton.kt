@@ -3,6 +3,7 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
+import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -97,6 +99,7 @@ fun <E : CancelOrInProgress> FButton(
                         units.iconSize + units.padding.vertical.medium * 2,
                     ),
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 val titleOrNull = titleOrIcon.leftOrNull()
                 val actionIconOrNull = titleOrIcon.rightOrNull()
@@ -162,11 +165,15 @@ fun FButtonPreview() {
         }
 
     FractalPreview {
-        FColumn {
+        FLine(
+            orientation = Orientation.Vertical,
+        ) {
             FText(
                 text = "Lorem ipsum dolor sit amet",
             )
-            FRow {
+            FLine(
+                orientation = Orientation.Horizontal,
+            ) {
                 FButton(
                     palette = PaletteType.Secondary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,

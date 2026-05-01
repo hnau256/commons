@@ -6,31 +6,29 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
-fun FRow(
+fun FLine(
+    orientation: Orientation,
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
+    separation: Dp = FUnits.local.padding[orientation].medium,
+    alignment: Alignment.Horizontal = Alignment.Start,
+    reverseOrdering: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
-    val units = FUnits.local
-    Row(
+    Line(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(units.padding.horizontal.medium),
-        content = content
-    )
-}
-
-@Composable
-fun FColumn(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    val units = FUnits.local
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(units.padding.vertical.medium),
-        content = content
+        orientation = orientation,
+        arrangement = Arrangement.spacedBy(
+            space = separation,
+            alignment = alignment,
+        ),
+        reverseOrdering = reverseOrdering,
+        content = content,
     )
 }
