@@ -31,7 +31,6 @@ import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundT
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
-import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
