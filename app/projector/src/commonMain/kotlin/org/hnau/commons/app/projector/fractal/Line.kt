@@ -27,12 +27,14 @@ fun Line(
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Horizontal = Arrangement.Start,
     reverseOrdering: Boolean = false,
+    forceFill: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val measurePolicy = remember(
         orientation,
         arrangement,
         reverseOrdering,
+        forceFill,
     ) {
         object : MeasurePolicy {
             override fun MeasureScope.measure(
@@ -129,6 +131,21 @@ fun Line(
                 val placeables = measurables.mapIndexed { index, measurable ->
 
                     val isLast = index == measurables.lastIndex
+
+                    if (isLast && forceFill) {
+                        childConstraints = orientation.fold(
+                            ifHorizontal = {
+                                childConstraints.copy(
+                                    minWidth = childConstraints.maxWidth,
+                                )
+                            },
+                            ifVertical = {
+                                childConstraints.copy(
+                                    minHeight = childConstraints.maxHeight,
+                                )
+                            },
+                        )
+                    }
 
                     val placeable = measurable.measure(
                         constraints = childConstraints,
