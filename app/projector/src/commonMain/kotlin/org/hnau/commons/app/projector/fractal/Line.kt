@@ -11,8 +11,12 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
+import androidx.compose.ui.unit.offset
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
@@ -35,70 +39,60 @@ fun Line(
                 measurables: List<Measurable>,
                 constraints: Constraints,
             ): MeasureResult {
+
                 val spacePx = arrangement.spacing.roundToPx()
-                val spacesCount = (measurables.size - 1).coerceAtLeast(
-                    minimumValue = 0,
-                )
+
+                val spacesCount = (measurables.size - 1).coerceAtLeast(minimumValue = 0)
                 val totalSpace = spacePx * spacesCount
 
                 // 1. Вычисляем размер побочной оси (растягивание)
                 val crossAxisTargetSize = orientation.fold(
                     ifHorizontal = {
                         constraints.hasFixedHeight.foldBoolean(
-                            ifTrue = {
-                                constraints.maxHeight
-                            },
+                            ifTrue = { constraints.maxHeight },
                             ifFalse = {
-                                val maxIntrinsic = measurables.maxOfOrNull { measurable ->
-                                    measurable.maxIntrinsicHeight(
-                                        width = constraints.hasBoundedWidth.foldBoolean(
-                                            ifTrue = {
-                                                constraints.maxWidth
-                                            },
-                                            ifFalse = {
-                                                Int.MAX_VALUE
-                                            },
-                                        ),
-                                    )
-                                } ?: 0
+                                val maxIntrinsic = measurables
+                                    .maxOfOrNull { measurable ->
+                                        measurable.maxIntrinsicHeight(
+                                            width = constraints.hasBoundedWidth.foldBoolean(
+                                                ifTrue = {
+                                                    constraints.maxWidth
+                                                },
+                                                ifFalse = {
+                                                    Int.MAX_VALUE
+                                                },
+                                            ),
+                                        )
+                                    }
+                                    ?: 0
 
-                                maxIntrinsic.coerceIn(
-                                    minimumValue = constraints.minHeight,
-                                    maximumValue = constraints.maxHeight,
-                                )
+                                constraints.constrainHeight(maxIntrinsic)
                             },
                         )
                     },
                     ifVertical = {
                         constraints.hasFixedWidth.foldBoolean(
-                            ifTrue = {
-                                constraints.maxWidth
-                            },
+                            ifTrue = { constraints.maxWidth },
                             ifFalse = {
-                                val maxIntrinsic = measurables.maxOfOrNull { measurable ->
-                                    measurable.maxIntrinsicWidth(
-                                        height = constraints.hasBoundedHeight.foldBoolean(
-                                            ifTrue = {
-                                                constraints.maxHeight
-                                            },
-                                            ifFalse = {
-                                                Int.MAX_VALUE
-                                            },
-                                        ),
-                                    )
-                                } ?: 0
+                                val maxIntrinsic = measurables
+                                    .maxOfOrNull { measurable ->
+                                        measurable.maxIntrinsicWidth(
+                                            height = constraints.hasBoundedHeight.foldBoolean(
+                                                ifTrue = { constraints.maxHeight },
+                                                ifFalse = { Int.MAX_VALUE },
+                                            ),
+                                        )
+                                    }
+                                    ?: 0
 
-                                maxIntrinsic.coerceIn(
-                                    minimumValue = constraints.minWidth,
-                                    maximumValue = constraints.maxWidth,
-                                )
+                                constraints.constrainWidth(maxIntrinsic)
                             },
                         )
                     },
                 )
 
                 // 2. Формируем ограничения для детей (фиксация побочной оси)
-                val childConstraints = orientation.fold(
+                var childConstraints = orientation.fold(
                     ifHorizontal = {
                         constraints.copy(
                             minWidth = 0,
@@ -131,64 +125,62 @@ fun Line(
                     },
                 )
 
-                // 3. Измерение
-                val placeables = measurables.map { measurable ->
-                    measurable.measure(
+                // 3. Измерение (уменьшаем доступное пространство после каждого элемента)
+                val placeables = measurables.mapIndexed { index, measurable ->
+
+                    val isLast = index == measurables.lastIndex
+
+                    val placeable = measurable.measure(
                         constraints = childConstraints,
                     )
+
+                    val additionalSpace = isLast.foldBoolean(
+                        ifTrue = { 0 },
+                        ifFalse = { spacePx }
+                    )
+
+                    childConstraints = orientation.fold(
+                        ifHorizontal = {
+                            childConstraints.offset(
+                                horizontal = -(placeable.width + additionalSpace),
+                            )
+                        },
+                        ifVertical = {
+                            childConstraints.offset(
+                                vertical = -(placeable.height + additionalSpace),
+                            )
+                        },
+                    )
+                    placeable
                 }
 
                 // 4. Логический порядок
                 val orderedPlaceables = reverseOrdering.foldBoolean(
-                    ifTrue = {
-                        placeables.asReversed()
-                    },
-                    ifFalse = {
-                        placeables
-                    },
+                    ifTrue = { placeables.asReversed() },
+                    ifFalse = { placeables },
                 )
 
                 // 5. Вычисление размера главной оси
                 val mainAxisSize = orientation.fold(
                     ifHorizontal = {
-                        val sumWidth = orderedPlaceables.sumOf { placeable ->
-                            placeable.width
-                        }
-
-                        (sumWidth + totalSpace).coerceIn(
-                            minimumValue = constraints.minWidth,
-                            maximumValue = constraints.maxWidth,
-                        )
+                        val sumWidth = orderedPlaceables.sumOf(Placeable::width)
+                        constraints.constrainWidth(sumWidth + totalSpace)
                     },
                     ifVertical = {
-                        val sumHeight = orderedPlaceables.sumOf { placeable ->
-                            placeable.height
-                        }
-
-                        (sumHeight + totalSpace).coerceIn(
-                            minimumValue = constraints.minHeight,
-                            maximumValue = constraints.maxHeight,
-                        )
+                        val sumHeight = orderedPlaceables.sumOf(Placeable::height)
+                        constraints.constrainHeight(sumHeight + totalSpace)
                     },
                 )
 
                 // 6. Итоговые размеры контейнера
                 val layoutWidth = orientation.fold(
-                    ifHorizontal = {
-                        mainAxisSize
-                    },
-                    ifVertical = {
-                        crossAxisTargetSize
-                    },
+                    ifHorizontal = { mainAxisSize },
+                    ifVertical = { crossAxisTargetSize },
                 )
 
                 val layoutHeight = orientation.fold(
-                    ifHorizontal = {
-                        crossAxisTargetSize
-                    },
-                    ifVertical = {
-                        mainAxisSize
-                    },
+                    ifHorizontal = { crossAxisTargetSize },
+                    ifVertical = { mainAxisSize },
                 )
 
                 // 7. Расчет позиций через Arrangement (до PlacementScope)
