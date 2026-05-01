@@ -54,7 +54,10 @@ fun <E : CancelOrInProgress> FButton(
     isSelected: Boolean = false,
 ) {
     SwitchPalette(
-        newPalette = palette,
+        newPalette = actionOrElseOrDisabled.foldNullable(
+            ifNotNull = { palette },
+            ifNull = { PaletteType.Neutral },
+        ),
     ) {
         SwitchBackgroundToneToContainer {
 
