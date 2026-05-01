@@ -5,14 +5,14 @@ import org.hnau.commons.plugins.internal.hnauCommonsVersion
 enum class Version(
     val version: String,
 ) {
-    Kotlin("2.3.10"),
-    AndroidGradlePlugin("9.1.0"),
-    ComposeMultiplatform("1.10.2"),
+    Kotlin("2.3.21"),
+    AndroidGradlePlugin("9.2.0"),
+    ComposeMultiplatform("1.10.3"),
     ComposeMultiplatformMaterial3("1.10.0-alpha05"),
     HnauCommons(hnauCommonsVersion),
     KotlinxSerialization("1.10.0"),
     CommposeMultiplatformIcons("1.7.3"),
-    JetpackCompose("1.10.4"),
+    JetpackCompose("1.10.5"),
     JetpackComposeIcons("1.7.8"),
     JetpackComposeMaterial3("1.5.0-alpha08"),
     ActivityCompose("1.12.4"),
