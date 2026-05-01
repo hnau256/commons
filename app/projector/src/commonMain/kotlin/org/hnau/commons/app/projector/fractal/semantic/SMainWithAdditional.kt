@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.FPanel
+import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
@@ -16,9 +17,10 @@ fun SMainWithAdditional(
     FLine(
         modifier = modifier,
         orientation = Orientation.Vertical,
+        forceFill = ForceFill.Last,
     ) {
         FPanel(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             content = additional,
         )
         main()

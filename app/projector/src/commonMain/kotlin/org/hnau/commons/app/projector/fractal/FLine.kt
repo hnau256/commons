@@ -19,6 +19,7 @@ fun FLine(
     separation: Dp = FUnits.local.padding[orientation].medium,
     alignment: Alignment.Horizontal = Alignment.Start,
     reverseOrdering: Boolean = false,
+    forceFill: ForceFill = ForceFill.default,
     content: @Composable () -> Unit,
 ) {
     Line(
@@ -29,6 +30,7 @@ fun FLine(
             alignment = alignment,
         ),
         reverseOrdering = reverseOrdering,
+        forceFill = forceFill,
         content = content,
     )
 }

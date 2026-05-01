@@ -60,7 +60,7 @@ class FUnits private constructor(
             FUnits(
                 padding = OrientationValues(
                     horizontal = 16.dp,
-                    vertical = 8.dp,
+                    vertical = 12.dp,
                 ).map { size ->
                     Spaces(
                         medium = size.scale(distance.scale.space)

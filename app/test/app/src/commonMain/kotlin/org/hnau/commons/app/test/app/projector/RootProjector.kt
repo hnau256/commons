@@ -10,15 +10,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import arrow.core.Ior
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.FBase
-import org.hnau.commons.app.projector.fractal.FButton
-import org.hnau.commons.app.projector.fractal.FLine
-import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.fractal.FText
+import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
+import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
+import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
+import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
 class RootProjector(
     scope: CoroutineScope,
@@ -38,23 +39,55 @@ class RootProjector(
     ) {
         FBase(
             palettes = Palettes.local,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
-            FLine(
-                orientation = Orientation.Vertical,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
-            ) {
-                FButton(
-                    actionOrElseOrDisabled = model.task.collectAsState().value,
-                    titleOrIcon = Ior.Both(
-                        leftValue = "Settings",
-                        rightValue = Icons.Default.Settings,
-                    ),
-                    palette = PaletteType.Primary,
-                )
-            }
+            SContentWithActions(
+                modifier = Modifier.fillMaxSize(),
+                content = {
+                    SMainWithAdditional(
+                        main = {
+                            FText("Main")
+                        },
+                        additional = {
+                            SContentWithActions(
+                                content = {
+                                    FText("Content")
+                                },
+                                actions = {
+                                    Action(
+                                        actionOrElseOrDisabled = model.task.collectAsState().value,
+                                        titleOrIcon = Ior.Both(
+                                            leftValue = "Primary",
+                                            rightValue = Icons.Default.Settings,
+                                        ),
+                                        importance = Importance.Primary,
+                                    )
+                                    Action<CancelOrInProgress.Cancel>(
+                                        actionOrElseOrDisabled = null,
+                                        titleOrIcon = Ior.Left("Secondary"),
+                                        importance = Importance.Primary,
+                                    )
+                                }
+                            )
+                        },
+                    )
+                },
+                actions = {
+                    Action(
+                        actionOrElseOrDisabled = model.task.collectAsState().value,
+                        titleOrIcon = Ior.Both(
+                            leftValue = "Primary",
+                            rightValue = Icons.Default.Settings,
+                        ),
+                        importance = Importance.Primary,
+                    )
+                    Action<CancelOrInProgress.Cancel>(
+                        actionOrElseOrDisabled = null,
+                        titleOrIcon = Ior.Left("Secondary"),
+                        importance = Importance.Primary,
+                    )
+                }
+            )
         }
 
     }

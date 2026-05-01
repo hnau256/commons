@@ -22,7 +22,7 @@ fun Palettes.getBackgroundTone(
 
     val (start, step) = brightness.fold(
         ifLight = { 98 to -12 },
-        ifDark = { 6 to 8 },
+        ifDark = { 4 to 6 },
     )
 
     return (start + (step * distance.distance)).let(Tone::create)

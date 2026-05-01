@@ -21,13 +21,23 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 
+enum class ForceFill {
+    First, Last;
+
+    companion object {
+
+        val default: ForceFill
+            get() = Last
+    }
+}
+
 @Composable
 fun Line(
     orientation: Orientation,
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Horizontal = Arrangement.Start,
     reverseOrdering: Boolean = false,
-    forceFill: Boolean = false,
+    forceFill: ForceFill = ForceFill.default,
     content: @Composable () -> Unit,
 ) {
     val measurePolicy = remember(
@@ -48,9 +58,12 @@ fun Line(
                 val totalSpace = spacePx * spacesCount
 
                 // 1. Вычисляем размер побочной оси (растягивание)
-                val crossAxisTargetSize = orientation.fold(
+
+
+                val fixedCrossAxisConstraints = orientation.fold(
                     ifHorizontal = {
-                        constraints.hasFixedHeight.foldBoolean(
+
+                        val fixedHeight = constraints.hasFixedHeight.foldBoolean(
                             ifTrue = { constraints.maxHeight },
                             ifFalse = {
                                 val maxIntrinsic = measurables
@@ -71,9 +84,15 @@ fun Line(
                                 constraints.constrainHeight(maxIntrinsic)
                             },
                         )
+
+                        constraints.copy(
+                            minHeight = fixedHeight,
+                            maxHeight = fixedHeight,
+                        )
                     },
                     ifVertical = {
-                        constraints.hasFixedWidth.foldBoolean(
+
+                        val fixedWidth = constraints.hasFixedWidth.foldBoolean(
                             ifTrue = { constraints.maxWidth },
                             ifFalse = {
                                 val maxIntrinsic = measurables
@@ -90,92 +109,80 @@ fun Line(
                                 constraints.constrainWidth(maxIntrinsic)
                             },
                         )
+
+                        constraints.copy(
+                            minWidth = fixedWidth,
+                            maxWidth = fixedWidth,
+                        )
                     },
                 )
 
                 // 2. Формируем ограничения для детей (фиксация побочной оси)
-                var childConstraints = orientation.fold(
+                val childrenConstraints = orientation.fold(
                     ifHorizontal = {
-                        constraints.copy(
+                        fixedCrossAxisConstraints.copy(
                             minWidth = 0,
-                            maxWidth = constraints.hasBoundedWidth.foldBoolean(
-                                ifTrue = {
-                                    constraints.maxWidth
-                                },
-                                ifFalse = {
-                                    Int.MAX_VALUE
-                                },
-                            ),
-                            minHeight = crossAxisTargetSize,
-                            maxHeight = crossAxisTargetSize,
                         )
                     },
                     ifVertical = {
-                        constraints.copy(
-                            minWidth = crossAxisTargetSize,
-                            maxWidth = crossAxisTargetSize,
+                        fixedCrossAxisConstraints.copy(
                             minHeight = 0,
-                            maxHeight = constraints.hasBoundedHeight.foldBoolean(
-                                ifTrue = {
-                                    constraints.maxHeight
-                                },
-                                ifFalse = {
-                                    Int.MAX_VALUE
-                                },
-                            ),
                         )
                     },
                 )
 
-                // 3. Измерение (уменьшаем доступное пространство после каждого элемента)
-                val placeables = measurables.mapIndexed { index, measurable ->
-
-                    val isLast = index == measurables.lastIndex
-
-                    if (isLast && forceFill) {
-                        childConstraints = orientation.fold(
-                            ifHorizontal = {
-                                childConstraints.copy(
-                                    minWidth = childConstraints.maxWidth,
-                                )
-                            },
-                            ifVertical = {
-                                childConstraints.copy(
-                                    minHeight = childConstraints.maxHeight,
-                                )
-                            },
-                        )
-                    }
-
-                    val placeable = measurable.measure(
-                        constraints = childConstraints,
-                    )
-
-                    val additionalSpace = isLast.foldBoolean(
-                        ifTrue = { 0 },
-                        ifFalse = { spacePx }
-                    )
-
-                    childConstraints = orientation.fold(
-                        ifHorizontal = {
-                            childConstraints.offset(
-                                horizontal = -(placeable.width + additionalSpace),
-                            )
-                        },
-                        ifVertical = {
-                            childConstraints.offset(
-                                vertical = -(placeable.height + additionalSpace),
-                            )
-                        },
-                    )
-                    placeable
+                val reverseForForceFill: Boolean = when (forceFill) {
+                    ForceFill.First -> true
+                    ForceFill.Last -> false
                 }
 
+                var usedByChildren = 0
+
+                // 3. Измерение (уменьшаем доступное пространство после каждого элемента)
+                val placeables = measurables
+                    .asReversedIf(reverseForForceFill)
+                    .mapIndexed { index, measurable ->
+
+                        val isLast = index == measurables.lastIndex
+
+                        val childConstraints = isLast.foldBoolean(
+                            ifTrue = { fixedCrossAxisConstraints },
+                            ifFalse = { childrenConstraints }
+                        ).let { constraints ->
+                            orientation.fold(
+                                ifHorizontal = {
+                                    constraints.offset(
+                                        horizontal = -usedByChildren
+                                    )
+                                },
+                                ifVertical = {
+                                    constraints.offset(
+                                        vertical = -usedByChildren
+                                    )
+                                }
+                            )
+                        }
+
+                        val placeable = measurable.measure(
+                            constraints = childConstraints,
+                        )
+
+                        val additionalSpace = isLast.foldBoolean(
+                            ifTrue = { 0 },
+                            ifFalse = { spacePx }
+                        )
+
+                        usedByChildren += orientation.fold(
+                            ifHorizontal = { placeable.width },
+                            ifVertical = { placeable.height },
+                        ) + additionalSpace
+
+                        placeable
+                    }
+                    .asReversedIf(reverseForForceFill)
+
                 // 4. Логический порядок
-                val orderedPlaceables = reverseOrdering.foldBoolean(
-                    ifTrue = { placeables.asReversed() },
-                    ifFalse = { placeables },
-                )
+                val orderedPlaceables = placeables.asReversedIf(reverseOrdering)
 
                 // 5. Вычисление размера главной оси
                 val mainAxisSize = orientation.fold(
@@ -192,11 +199,11 @@ fun Line(
                 // 6. Итоговые размеры контейнера
                 val layoutWidth = orientation.fold(
                     ifHorizontal = { mainAxisSize },
-                    ifVertical = { crossAxisTargetSize },
+                    ifVertical = { fixedCrossAxisConstraints.maxWidth },
                 )
 
                 val layoutHeight = orientation.fold(
-                    ifHorizontal = { crossAxisTargetSize },
+                    ifHorizontal = { fixedCrossAxisConstraints.maxHeight },
                     ifVertical = { mainAxisSize },
                 )
 
@@ -381,3 +388,10 @@ fun Line(
         measurePolicy = measurePolicy,
     )
 }
+
+private fun <T> List<T>.asReversedIf(
+    reverse: Boolean,
+): List<T> = reverse.foldBoolean(
+    ifTrue = { asReversed() },
+    ifFalse = { this },
+)
