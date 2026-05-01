@@ -17,7 +17,7 @@ import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 import org.hnau.commons.app.projector.utils.OrientationValues
 
 class FUnits private constructor(
-    val padding: OrientationValues<Spaces>,
+    val padding: OrientationValues<SpaceSizeValues<Dp>>,
     val shape: Shape,
     val borderShape: Shape,
     val borderWidth: Dp,
@@ -31,7 +31,7 @@ class FUnits private constructor(
 
         private val textStyleConfigs: TextStyleValues<TextStyleConfig> = TextStyleValues(
             title = TextStyleConfig(
-                size = 22.sp,
+                size = 32.sp,
                 weight = FontWeight.Normal,
                 letterSpacing = 0.1.sp,
                 lineHeightFactor = 1.1f,
@@ -43,7 +43,7 @@ class FUnits private constructor(
                 lineHeightFactor = 1.1f,
             ),
             label = TextStyleConfig(
-                size = 14.sp,
+                size = 12.sp,
                 weight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
                 lineHeightFactor = 1.1f,
@@ -61,9 +61,12 @@ class FUnits private constructor(
                 padding = OrientationValues(
                     horizontal = 16.dp,
                     vertical = 12.dp,
-                ).map { size ->
-                    Spaces(
-                        medium = size.scale(distance.scale.space)
+                ).map { medium ->
+                    SpaceSizeValues(
+                        medium = medium,
+                        large = medium * 2,
+                        small = medium / 2,
+                        extraSmall = medium / 4,
                     )
                 },
                 shape = RoundedCornerShape(size = cornerRadius),

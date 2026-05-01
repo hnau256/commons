@@ -4,15 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.SpaceSize
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
 fun FLine(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    separation: Dp = FUnits.local.padding[orientation].medium,
+    separation: SpaceSize = SpaceSize.Medium,
     alignment: Alignment.Horizontal = Alignment.Start,
     reverseOrdering: Boolean = false,
     forceFill: ForceFill? = null,
@@ -22,7 +22,7 @@ fun FLine(
         modifier = modifier,
         orientation = orientation,
         arrangement = Arrangement.spacedBy(
-            space = separation,
+            space = FUnits.local.padding[orientation][separation],
             alignment = alignment,
         ),
         reverseOrdering = reverseOrdering,

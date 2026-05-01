@@ -14,8 +14,10 @@ import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
+import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
@@ -46,7 +48,10 @@ class RootProjector(
                 content = {
                     SMainWithAdditional(
                         main = {
-                            FText("Main")
+                            SElements {
+                                FText("Main title", type = TextStyleType.Title)
+                                FText("Main")
+                            }
                         },
                         additional = {
                             SContentWithActions(
