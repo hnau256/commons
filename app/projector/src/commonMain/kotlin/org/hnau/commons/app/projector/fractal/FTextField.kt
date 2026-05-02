@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -167,15 +168,17 @@ private fun Accessory(
     accessory: @Composable (() -> Unit)?
 ) {
     val orientation = side.orientation
-    accessory.NullableStateContent(
-        transitionSpec = TransitionSpec.byOrientation(orientation),
+    AnimatedContent(
+        targetState = accessory,
+        contentKey = {it != null},
         contentAlignment = side.fold(
-            ifStart = { Alignment.Center },
+            ifStart = { Alignment.CenterEnd },
             ifTop = { Alignment.BottomCenter },
             ifEnd = { Alignment.CenterStart },
             ifBottom = { Alignment.TopCenter }
-        ),
-        anyContent = { accessory ->
+        )
+    ) {localAccessoryOrNull ->
+        localAccessoryOrNull?.let { localAccessory ->
             val space = FUnits.local.padding[orientation].extraSmall
             Box(
                 modifier = Modifier.then(
@@ -190,11 +193,11 @@ private fun Accessory(
                 OffsetDistance(
                     offset = 1,
                 ) {
-                    accessory()
+                    localAccessory()
                 }
             }
-        },
-    )
+        }
+    }
 }
 
 private val mapper = EditingString.textFieldValueMapper
