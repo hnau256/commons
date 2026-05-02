@@ -5,4 +5,15 @@ import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 @EnumValues(
     valuesClassName = "TextStyleValues"
 )
-enum class TextStyleType { Body, Title, Label }
+enum class TextStyleType {
+    Body,
+    Title,
+    Label,
+    ;
+
+    companion object {
+
+        val default: TextStyleType
+            get() = Body
+    }
+}

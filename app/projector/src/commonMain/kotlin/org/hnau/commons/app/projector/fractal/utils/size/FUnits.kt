@@ -92,7 +92,9 @@ val Distance.units: FUnits
     get() = FUnits[this]
 
 @Composable
-fun Modifier.fPadding(): Modifier = padding(
-    horizontal = FUnits.local.padding.horizontal.medium,
-    vertical = FUnits.local.padding.vertical.medium,
+fun Modifier.fPadding(
+    spaceSize: SpaceSize = SpaceSize.default,
+): Modifier = padding(
+    horizontal = FUnits.local.padding.horizontal[spaceSize],
+    vertical = FUnits.local.padding.vertical[spaceSize],
 )

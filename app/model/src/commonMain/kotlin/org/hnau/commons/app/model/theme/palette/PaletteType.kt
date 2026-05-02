@@ -5,7 +5,11 @@ import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 @EnumValues
 enum class PaletteType {
     Primary, Secondary, Tertiary,
-    Neutral, NeutralVariant, Error,;
+    Neutral, NeutralVariant, Error, ;
 
-    companion object
+    companion object {
+
+        val default: PaletteType
+            get() = Primary
+    }
 }

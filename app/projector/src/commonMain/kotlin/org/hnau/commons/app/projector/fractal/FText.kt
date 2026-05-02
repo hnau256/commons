@@ -12,13 +12,14 @@ import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.LocalTextStyleType
 import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 
 @Composable
 fun FText(
     text: String,
     modifier: Modifier = Modifier,
-    type: TextStyleType = TextStyleType.Body,
+    type: TextStyleType = LocalTextStyleType.current,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,

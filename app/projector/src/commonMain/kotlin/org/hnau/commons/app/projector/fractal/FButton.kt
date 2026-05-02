@@ -29,6 +29,7 @@ import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundToneToContainer
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
+import org.hnau.commons.app.projector.fractal.utils.orInactive
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
@@ -49,14 +50,13 @@ import kotlin.time.Duration.Companion.seconds
 fun <E : CancelOrInProgress> FButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
-    palette: PaletteType,
+    palette: PaletteType = PaletteType.default,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
 ) {
     SwitchPalette(
-        newPalette = actionOrElseOrDisabled.foldNullable(
-            ifNotNull = { palette },
-            ifNull = { PaletteType.Neutral },
+        newPalette = palette.orInactive(
+            active = actionOrElseOrDisabled != null,
         ),
     ) {
         SwitchBackgroundToneToContainer {
