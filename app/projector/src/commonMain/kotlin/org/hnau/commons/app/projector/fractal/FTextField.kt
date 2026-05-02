@@ -15,7 +15,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +38,6 @@ import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.orInactive
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
-import org.hnau.commons.app.projector.fractal.utils.size.LocalTextStyleType
 import org.hnau.commons.app.projector.fractal.utils.size.SpaceSize
 import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 import org.hnau.commons.app.projector.fractal.utils.size.fPadding
@@ -171,7 +169,12 @@ private fun Accessory(
     val orientation = side.orientation
     accessory.NullableStateContent(
         transitionSpec = TransitionSpec.byOrientation(orientation),
-        contentAlignment = Alignment.CenterEnd,
+        contentAlignment = side.fold(
+            ifStart = { Alignment.Center },
+            ifTop = { Alignment.BottomCenter },
+            ifEnd = { Alignment.CenterStart },
+            ifBottom = { Alignment.TopCenter }
+        ),
         anyContent = { accessory ->
             val space = FUnits.local.padding[orientation].extraSmall
             Box(
