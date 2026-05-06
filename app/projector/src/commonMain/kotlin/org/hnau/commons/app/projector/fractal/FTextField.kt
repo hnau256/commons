@@ -172,7 +172,7 @@ private fun Accessory(
         ifEnd = { Alignment.CenterStart },
         ifBottom = { Alignment.TopStart },
     )
-    val space = FUnits.local.padding[orientation].extraSmall
+    val space = FUnits.local.padding[orientation].small
     Box(
         modifier = modifier.then(
             side.fold(
