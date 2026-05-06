@@ -32,12 +32,13 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.app.model.EditingString
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.orInactive
-import org.hnau.commons.app.projector.fractal.utils.size.FUnits
 import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.size.fPadding
+import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Side
@@ -72,7 +73,7 @@ fun FTextField(
         )
     ) {
 
-        val units = FUnits.local
+        val units = LocalDistance.current.units
         val color = Color.localContent
 
         var localValue by remember { mutableStateOf(value.value.let(mapper.direct)) }
@@ -171,7 +172,7 @@ private fun Accessory(
         ifEnd = { Alignment.CenterStart },
         ifBottom = { Alignment.TopStart },
     )
-    val space = FUnits.local.padding[orientation].small
+    val space = LocalDistance.current.units.padding[orientation].small
     Box(
         modifier = modifier.then(
             side.fold(

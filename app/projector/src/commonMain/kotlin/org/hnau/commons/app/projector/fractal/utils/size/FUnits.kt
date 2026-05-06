@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.local
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 import org.hnau.commons.app.projector.utils.OrientationValues
 
@@ -88,9 +88,6 @@ class FUnits private constructor(
             )
         }
 
-        val local: FUnits
-            @Composable
-            get() = Distance.local.units
     }
 }
 
@@ -101,6 +98,6 @@ val Distance.units: FUnits
 fun Modifier.fPadding(
     spaceSize: SizeType = SizeType.default,
 ): Modifier = padding(
-    horizontal = FUnits.local.padding.horizontal[spaceSize],
-    vertical = FUnits.local.padding.vertical[spaceSize],
+    horizontal = LocalDistance.current.units.padding.horizontal[spaceSize],
+    vertical = LocalDistance.current.units.padding.vertical[spaceSize],
 )

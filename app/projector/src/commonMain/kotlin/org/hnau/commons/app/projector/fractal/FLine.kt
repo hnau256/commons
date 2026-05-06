@@ -4,8 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.size.SizeType
+import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
@@ -22,7 +23,7 @@ fun FLine(
         modifier = modifier,
         orientation = orientation,
         arrangement = Arrangement.spacedBy(
-            space = FUnits.local.padding[orientation][separation],
+            space = LocalDistance.current.units.padding[orientation][separation],
             alignment = alignment,
         ),
         reverseOrdering = reverseOrdering,

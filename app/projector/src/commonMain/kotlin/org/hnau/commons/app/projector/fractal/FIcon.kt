@@ -14,9 +14,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
-import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -55,7 +56,7 @@ private fun PainterIcon(
 ) {
     Box(
         modifier = modifier
-            .size(FUnits.local.iconSize)
+            .size(LocalDistance.current.units.iconSize)
             .toolingGraphicsLayer()
             .paint(
                 painter = painter,
@@ -71,7 +72,7 @@ private fun TextIcon(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    val units = FUnits.local
+    val units = LocalDistance.current.units
     Box(
         modifier = modifier
             .size(units.iconSize)
@@ -79,14 +80,14 @@ private fun TextIcon(
                 color = Color.localContent,
                 shape = CircleShape,
             ),
-        contentAlignment = Alignment.Center,
-    ) {
-        BasicText(
-            text = text.rememberRun { extractNChars(2) },
-            maxLines = 1,
-            minLines = 1,
-            style = units.textStyle.small.merge(
-                color = Color.localBackground,
+            contentAlignment = Alignment.Center,
+        ) {
+            BasicText(
+                text = text.rememberRun { extractNChars(2) },
+                maxLines = 1,
+                minLines = 1,
+                style = units.textStyle.small.merge(
+                    color = Color.localBackground,
             )
         )
     }

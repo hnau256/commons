@@ -9,10 +9,6 @@ import org.hnau.commons.app.model.theme.palette.PaletteType
 val LocalPalette: ProvidableCompositionLocal<PaletteType> =
     compositionLocalOf { error("Local palette isn't provided") }
 
-val PaletteType.Companion.local: PaletteType
-    @Composable
-    get() = LocalPalette.current
-
 @Composable
 fun SwitchPalette(
     newPalette: PaletteType,

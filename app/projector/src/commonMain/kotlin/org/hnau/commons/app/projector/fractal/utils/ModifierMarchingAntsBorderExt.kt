@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
-import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
+import org.hnau.commons.app.projector.fractal.utils.size.units
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -26,9 +27,9 @@ import kotlin.time.Duration.Companion.seconds
 fun Modifier.fractalDashBorder(
     color: Color,
     shape: Shape,
-    strokeWidth: Dp = FUnits.local.borderWidth,
-    dashLength: Dp = FUnits.local.iconSize / 2,
-    gapLength: Dp = FUnits.local.iconSize / 3,
+    strokeWidth: Dp = LocalDistance.current.units.borderWidth,
+    dashLength: Dp = LocalDistance.current.units.iconSize / 2,
+    gapLength: Dp = LocalDistance.current.units.iconSize / 3,
 ): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "DashTransition")
     val progress by infiniteTransition.animateFloat(

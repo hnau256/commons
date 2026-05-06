@@ -9,12 +9,13 @@ import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
+import org.hnau.commons.app.projector.fractal.utils.LocalPalette
 import org.hnau.commons.app.projector.fractal.utils.color.ColorType
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.content
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.findContrasted
+import org.hnau.commons.app.projector.fractal.utils.color.tone.LocalBackgroundTone
 import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
-import org.hnau.commons.app.projector.fractal.utils.color.tone.localBackground
-import org.hnau.commons.app.projector.fractal.utils.local
 
 fun Palettes.getBackgroundTone(
     distance: Distance,
@@ -64,11 +65,11 @@ private fun Palettes.getColor(
 @Composable
 fun getLocalColor(
     type: ColorType,
-): Color = Palettes
-    .local
+): Color = LocalPalettes
+    .current
     .getColor(
-        distance = Distance.local,
-        backgroundTone = Tone.localBackground,
-        palette = PaletteType.local,
+        distance = LocalDistance.current,
+        backgroundTone = LocalBackgroundTone.current,
+        palette = LocalPalette.current,
         type = type,
     )

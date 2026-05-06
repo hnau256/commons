@@ -29,7 +29,7 @@ import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.app.projector.utils.TitleOrIcon
-import org.hnau.commons.app.projector.utils.theme.local
+import org.hnau.commons.app.projector.utils.theme.LocalPalettes
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -54,7 +54,7 @@ class RootProjector(
         contentPadding: PaddingValues,
     ) {
         FBase(
-            palettes = Palettes.local,
+            palettes = LocalPalettes.current,
             modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
             SContentWithActions(

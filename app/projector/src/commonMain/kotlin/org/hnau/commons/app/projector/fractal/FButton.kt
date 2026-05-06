@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localBackground
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
@@ -30,7 +31,7 @@ import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundT
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.orInactive
 import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
-import org.hnau.commons.app.projector.fractal.utils.size.FUnits
+import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
@@ -64,7 +65,7 @@ fun <E : CancelOrInProgress> FButton(
 
             val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel
 
-            val units = FUnits.local
+            val units = LocalDistance.current.units
 
             val isInProgress = when (actionOrElseOrDisabled) {
                 is ActionOrElse.Else -> true

@@ -6,21 +6,16 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Tone
-import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.utils.LocalDistance
+import org.hnau.commons.app.projector.fractal.utils.LocalPalette
 import org.hnau.commons.app.projector.fractal.utils.color.contrast.container
-import org.hnau.commons.app.projector.fractal.utils.local
 import org.hnau.commons.app.projector.utils.theme.getBackgroundTone
 import org.hnau.commons.app.projector.utils.theme.getForegroundTone
-import org.hnau.commons.app.projector.utils.theme.local
+import org.hnau.commons.app.projector.utils.theme.LocalPalettes
 
 val LocalBackgroundTone: ProvidableCompositionLocal<Tone> =
     compositionLocalOf { error("Background tone isn't provided") }
-
-val Tone.Companion.localBackground: Tone
-    @Composable
-    get() = LocalBackgroundTone.current
 
 @Composable
 fun SwitchBackgroundTone(
@@ -38,8 +33,8 @@ fun SwitchBackgroundTone(
     content: @Composable () -> Unit,
 ) {
     SwitchBackgroundTone(
-        newBackgroundTone = Palettes.local.getBackgroundTone(
-            distance = Distance.local,
+        newBackgroundTone = LocalPalettes.current.getBackgroundTone(
+            distance = LocalDistance.current,
         ),
         content = content,
     )
@@ -50,11 +45,11 @@ fun SwitchBackgroundToneToContainer(
     content: @Composable () -> Unit,
 ) {
     SwitchBackgroundTone(
-        newBackgroundTone = Palettes.local.getForegroundTone(
-            backgroundTone = Tone.localBackground,
-            distance = Distance.local,
+        newBackgroundTone = LocalPalettes.current.getForegroundTone(
+            backgroundTone = LocalBackgroundTone.current,
+            distance = LocalDistance.current,
             contrast = Contrast.container,
-            palette = PaletteType.local,
+            palette = LocalPalette.current,
         ),
         content = content,
     )
