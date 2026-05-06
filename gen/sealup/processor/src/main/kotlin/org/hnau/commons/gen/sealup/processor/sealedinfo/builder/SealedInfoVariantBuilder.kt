@@ -1,10 +1,13 @@
 package org.hnau.commons.gen.sealup.processor.sealedinfo.builder
 
 import com.google.devtools.ksp.getConstructors
+import com.google.devtools.ksp.isAbstract
+import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.gen.kotlin.resolve
@@ -57,7 +60,9 @@ fun SealedInfo.Variant.Companion.create(
                             .ifNull { return CreateResult.Error },
                         constructors = classDeclaration
                             .takeIf { collectConstructors }
+                            ?.takeUnless(KSClassDeclaration::isAbstract)
                             ?.getConstructors()
+                            ?.filter(KSFunctionDeclaration::isPublic)
                             ?.toList()
                             ?.flatMap { constructor ->
                                 val parameters = constructor
