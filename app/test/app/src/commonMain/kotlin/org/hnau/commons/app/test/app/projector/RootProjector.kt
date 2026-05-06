@@ -31,7 +31,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.LocalPalette
 import org.hnau.commons.app.projector.fractal.utils.orError
-import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
+import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
@@ -67,7 +67,7 @@ class RootProjector(
                     SMainWithAdditional(
                         main = {
                             SElements {
-                                FText("Main title", type = TextStyleType.Title)
+                                FText("Main title", type = SizeType.Large)
                                 FText("Main")
                                 val value = remember {
                                     "Qwerty"

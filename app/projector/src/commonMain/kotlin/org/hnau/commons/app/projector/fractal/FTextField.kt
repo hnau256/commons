@@ -36,8 +36,7 @@ import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.orInactive
 import org.hnau.commons.app.projector.fractal.utils.size.FUnits
-import org.hnau.commons.app.projector.fractal.utils.size.SpaceSize
-import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
+import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.size.fPadding
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
@@ -57,7 +56,7 @@ fun FTextField(
     bottomAccessory: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyleType = TextStyleType.Body,
+    textStyle: SizeType = SizeType.default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     maxLines: Int = 1,
@@ -126,7 +125,7 @@ fun FTextField(
                             shape = units.borderShape,
                         )
                         .fPadding(
-                            spaceSize = SpaceSize.Medium,
+                            spaceSize = SizeType.Medium,
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

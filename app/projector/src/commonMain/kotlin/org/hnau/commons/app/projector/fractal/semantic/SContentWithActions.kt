@@ -11,7 +11,7 @@ import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.semantic.utils.palette
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.local
-import org.hnau.commons.app.projector.fractal.utils.size.SpaceSize
+import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -27,7 +27,7 @@ fun SContentWithActions(
         modifier = modifier,
         orientation = Orientation.Vertical,
         forceFill = ForceFill.First,
-        separation = SpaceSize.Large,
+        separation = SizeType.Large,
     ) {
         content()
         SActions(

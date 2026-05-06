@@ -17,11 +17,11 @@ import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 import org.hnau.commons.app.projector.utils.OrientationValues
 
 class FUnits private constructor(
-    val padding: OrientationValues<SpaceSizeValues<Dp>>,
+    val padding: OrientationValues<SizeTypeValues<Dp>>,
     val shape: Shape,
     val borderShape: Shape,
     val borderWidth: Dp,
-    val textStyle: TextStyleValues<TextStyle>,
+    val textStyle: SizeTypeValues<TextStyle>,
     val iconSize: Dp,
 ) {
 
@@ -29,22 +29,28 @@ class FUnits private constructor(
 
         private val cache = HashMap<Int, FUnits>()
 
-        private val textStyleConfigs: TextStyleValues<TextStyleConfig> = TextStyleValues(
-            title = TextStyleConfig(
+        private val textStyleConfigs: SizeTypeValues<TextStyleConfig> = SizeTypeValues(
+            large = TextStyleConfig(
                 size = 32.sp,
                 weight = FontWeight.Normal,
                 letterSpacing = 0.1.sp,
                 lineHeightFactor = 1.1f,
             ),
-            body = TextStyleConfig(
+            medium = TextStyleConfig(
                 size = 16.sp,
                 weight = FontWeight.Medium,
                 letterSpacing = 0.5.sp,
                 lineHeightFactor = 1.1f,
             ),
-            label = TextStyleConfig(
+            small = TextStyleConfig(
                 size = 12.sp,
                 weight = FontWeight.SemiBold,
+                letterSpacing = 0.sp,
+                lineHeightFactor = 1.1f,
+            ),
+            extraSmall = TextStyleConfig(
+                size = 8.sp,
+                weight = FontWeight.Bold,
                 letterSpacing = 0.sp,
                 lineHeightFactor = 1.1f,
             ),
@@ -62,7 +68,7 @@ class FUnits private constructor(
                     horizontal = 16.dp,
                     vertical = 12.dp,
                 ).map { medium ->
-                    SpaceSizeValues(
+                    SizeTypeValues(
                         medium = medium,
                         large = medium * 2,
                         small = medium / 2,
@@ -93,7 +99,7 @@ val Distance.units: FUnits
 
 @Composable
 fun Modifier.fPadding(
-    spaceSize: SpaceSize = SpaceSize.default,
+    spaceSize: SizeType = SizeType.default,
 ): Modifier = padding(
     horizontal = FUnits.local.padding.horizontal[spaceSize],
     vertical = FUnits.local.padding.vertical[spaceSize],
