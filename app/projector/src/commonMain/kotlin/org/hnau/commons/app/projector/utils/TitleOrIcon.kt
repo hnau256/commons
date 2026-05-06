@@ -41,3 +41,14 @@ val TitleOrIcon.iconOrNull: Drawable?
         ifIcon = ::it,
         ifBoth = { _, icon -> icon },
     )
+
+val TitleOrIcon.asIcon: TitleOrIcon.Icon
+    get() = fold(
+        ifTitle = { title ->
+            TitleOrIcon.Icon(
+                icon = Drawable.Text(title)
+            )
+        },
+        ifIcon = TitleOrIcon::Icon,
+        ifBoth = { _, icon -> TitleOrIcon.Icon(icon) },
+    )
