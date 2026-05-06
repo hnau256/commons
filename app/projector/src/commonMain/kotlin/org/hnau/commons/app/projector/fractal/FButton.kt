@@ -38,7 +38,9 @@ import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
+import org.hnau.commons.app.projector.utils.iconOrNull
 import org.hnau.commons.app.projector.utils.orNoAction
+import org.hnau.commons.app.projector.utils.titleOrNull
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
@@ -103,8 +105,8 @@ fun <E : CancelOrInProgress> FButton(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                val titleOrNull = titleOrIcon.leftOrNull()
-                val actionIconOrNull = titleOrIcon.rightOrNull()
+                val titleOrNull = titleOrIcon.titleOrNull
+                val actionIconOrNull = titleOrIcon.iconOrNull
                 val iconOrNull = remember(actionOrCancel, actionIconOrNull) {
                     val type = actionOrCancel?.type
                     when (type) {
@@ -184,17 +186,17 @@ fun FButtonPreview() {
                 FButton(
                     palette = PaletteType.Secondary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
-                    titleOrIcon = Ior.Right(
-                        value = Icons.Default.Delete
+                    titleOrIcon = TitleOrIcon.Icon(
+                        icon = Icons.Default.Delete
                     )
                 )
                 FButton(
                     palette = PaletteType.Primary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
                     isSelected = true,
-                    titleOrIcon = Ior.Both(
-                        leftValue = "Settings",
-                        rightValue = Icons.Default.Settings
+                    titleOrIcon = TitleOrIcon.Both(
+                        title = "Settings",
+                        icon = Icons.Default.Settings
                     ),
                     /*titleOrIcon = Ior.Left(
                     value = "Settings",

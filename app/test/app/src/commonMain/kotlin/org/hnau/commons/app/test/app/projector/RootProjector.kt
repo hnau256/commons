@@ -1,13 +1,10 @@
 package org.hnau.commons.app.test.app.projector
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Settings
@@ -15,9 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import arrow.core.Ior
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.toEditingString
@@ -33,6 +27,7 @@ import org.hnau.commons.app.projector.fractal.utils.LocalPalette
 import org.hnau.commons.app.projector.fractal.utils.orError
 import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Icon
+import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
@@ -110,15 +105,15 @@ class RootProjector(
                                 actions = {
                                     Action(
                                         actionOrElseOrDisabled = model.task.collectAsState().value,
-                                        titleOrIcon = Ior.Both(
-                                            leftValue = "Primary",
-                                            rightValue = Icons.Default.Settings,
+                                        titleOrIcon = TitleOrIcon.Both(
+                                            title = "Primary",
+                                            icon = Icons.Default.Settings,
                                         ),
                                         importance = Importance.Primary,
                                     )
                                     Action<CancelOrInProgress.Cancel>(
                                         actionOrElseOrDisabled = ActionOrElse.Action {},
-                                        titleOrIcon = Ior.Left("Secondary"),
+                                        titleOrIcon = TitleOrIcon.Title("Secondary"),
                                         importance = Importance.Secondary,
                                     )
                                 }
@@ -129,15 +124,15 @@ class RootProjector(
                 actions = {
                     Action(
                         actionOrElseOrDisabled = model.task.collectAsState().value,
-                        titleOrIcon = Ior.Both(
-                            leftValue = "Primary",
-                            rightValue = Icons.Default.Settings,
+                        titleOrIcon = TitleOrIcon.Both(
+                            title = "Primary",
+                            icon = Icons.Default.Settings,
                         ),
                         importance = Importance.Primary,
                     )
                     Action<CancelOrInProgress.Cancel>(
                         actionOrElseOrDisabled = ActionOrElse.Action {},
-                        titleOrIcon = Ior.Left("Secondary"),
+                        titleOrIcon = TitleOrIcon.Title("Secondary"),
                         importance = Importance.Secondary,
                     )
                 }
