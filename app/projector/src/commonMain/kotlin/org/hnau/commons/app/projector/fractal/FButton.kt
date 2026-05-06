@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import arrow.core.Ior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.theme.palette.PaletteType
@@ -36,6 +35,7 @@ import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
+import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.iconOrNull
@@ -45,7 +45,6 @@ import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
 import org.hnau.commons.kotlin.foldNullable
-import org.hnau.commons.kotlin.rightOrNull
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -110,7 +109,7 @@ fun <E : CancelOrInProgress> FButton(
                 val iconOrNull = remember(actionOrCancel, actionIconOrNull) {
                     val type = actionOrCancel?.type
                     when (type) {
-                        ActionOrCancel.Type.Cancel -> Icons.Default.Clear
+                        ActionOrCancel.Type.Cancel -> Drawable.Vector(Icons.Default.Clear)
                         ActionOrCancel.Type.Action, null -> actionIconOrNull
                     }
                 }
@@ -128,9 +127,9 @@ fun <E : CancelOrInProgress> FButton(
                             }
                         ),
                     ) { iconOrNullLocal ->
-                        iconOrNullLocal?.let { icon ->
+                        iconOrNullLocal?.let { drawable ->
                             FIcon(
-                                image = icon,
+                                drawable = drawable,
                                 modifier = titleOrNull.foldNullable(
                                     ifNull = { Modifier },
                                     ifNotNull = {
@@ -187,7 +186,7 @@ fun FButtonPreview() {
                     palette = PaletteType.Secondary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
                     titleOrIcon = TitleOrIcon.Icon(
-                        icon = Icons.Default.Delete
+                        icon = Drawable.Vector(Icons.Default.Delete),
                     )
                 )
                 FButton(
@@ -196,7 +195,7 @@ fun FButtonPreview() {
                     isSelected = true,
                     titleOrIcon = TitleOrIcon.Both(
                         title = "Settings",
-                        icon = Icons.Default.Settings
+                        icon = Drawable.Vector(Icons.Default.Settings),
                     ),
                     /*titleOrIcon = Ior.Left(
                     value = "Settings",

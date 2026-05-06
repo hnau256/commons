@@ -26,6 +26,7 @@ import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.LocalPalette
 import org.hnau.commons.app.projector.fractal.utils.orError
 import org.hnau.commons.app.projector.fractal.utils.size.SizeType
+import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.theme.local
@@ -74,7 +75,7 @@ class RootProjector(
                                     palette = LocalPalette.current.orError(containsDigits),
                                     startAccessory = {
                                         FIcon(
-                                            image = Icons.Default.Settings,
+                                            drawable = Drawable.Vector(Icons.Default.Settings),
                                         )
                                     },
                                     endAccessory = value.collectAsState().value.text.let { it.length > 2 }
@@ -107,7 +108,7 @@ class RootProjector(
                                         actionOrElseOrDisabled = model.task.collectAsState().value,
                                         titleOrIcon = TitleOrIcon.Both(
                                             title = "Primary",
-                                            icon = Icons.Default.Settings,
+                                            icon = Drawable.Vector(Icons.Default.Settings),
                                         ),
                                         importance = Importance.Primary,
                                     )
@@ -126,7 +127,7 @@ class RootProjector(
                         actionOrElseOrDisabled = model.task.collectAsState().value,
                         titleOrIcon = TitleOrIcon.Both(
                             title = "Primary",
-                            icon = Icons.Default.Settings,
+                            icon = Drawable.Vector(Icons.Default.Settings),
                         ),
                         importance = Importance.Primary,
                     )
