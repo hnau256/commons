@@ -117,8 +117,13 @@ fun <E : CancelOrInProgress> FButton(
                         label = "iconOrCancel",
                         contentKey = { it },
                         transitionSpec = titleOrNull.foldNullable(
-                            ifNull = { TransitionSpec.both() },
-                            ifNotNull = { TransitionSpec.horizontal() }
+                            ifNull = { TransitionSpec.rememberCenter() },
+                            ifNotNull = {
+                                TransitionSpec.remember(
+                                    Alignment.CenterStart,
+                                    Alignment.CenterStart,
+                                )
+                            }
                         ),
                     ) { iconOrNullLocal ->
                         iconOrNullLocal?.let { icon ->

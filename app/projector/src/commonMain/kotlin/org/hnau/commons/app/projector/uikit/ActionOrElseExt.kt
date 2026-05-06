@@ -41,7 +41,7 @@ fun <A, E : CancelOrInProgress> ActionOrElseIcon(
     modifier: Modifier = Modifier,
     size: Dp,
     contentPadding: PaddingValues = PaddingValuesZero,
-    transitionSpec: AnimatedContentTransitionScope<ActionOrElse<A, E>?>.() -> ContentTransform = TransitionSpec.both(),
+    transitionSpec: AnimatedContentTransitionScope<ActionOrElse<A, E>?>.() -> ContentTransform = TransitionSpec.rememberCenter(),
     actionIcon: (@Composable () -> Unit)?,
 ) {
     actionOrElseOrDisabled.StateContent(

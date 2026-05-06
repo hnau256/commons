@@ -1,5 +1,6 @@
 package org.hnau.commons.app.test.app.projector
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import arrow.core.Ior
 import kotlinx.coroutines.CoroutineScope
@@ -27,11 +29,14 @@ import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.LocalPalette
+import org.hnau.commons.app.projector.fractal.utils.orError
 import org.hnau.commons.app.projector.fractal.utils.size.TextStyleType
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.app.projector.utils.theme.local
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
+import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 import org.hnau.commons.kotlin.ifTrue
@@ -69,10 +74,12 @@ class RootProjector(
                                         .toEditingString()
                                         .toMutableStateFlowAsInitial()
                                 }
+                                val containsDigits = value.collectAsState().value.text.let { it.any { it.isDigit() } }
                                 FTextField(
+                                    palette = LocalPalette.current.orError(containsDigits),
                                     startAccessory = {
                                         FIcon(
-                                            Icons.Default.Settings
+                                            image = Icons.Default.Settings,
                                         )
                                     },
                                     endAccessory = value.collectAsState().value.text.let { it.length > 2 }
@@ -80,15 +87,14 @@ class RootProjector(
                                             {
                                                 Icon(
                                                     icon = Icons.Default.Clear,
-                                                    modifier = Modifier.height(64.dp).clickable {
+                                                    modifier = Modifier.clickable {
                                                         value.value = "".toEditingString()
                                                     }
                                                 )
                                             }
                                         },
                                     topAccessory = { FText("Title") },
-                                    bottomAccessory = value.collectAsState().value.text.let { it.any { it.isDigit() } }
-                                        .ifTrue {
+                                    bottomAccessory = containsDigits.ifTrue {
                                             {
                                                 FText("Contains digits")
                                             }
@@ -100,9 +106,7 @@ class RootProjector(
                         },
                         additional = {
                             SContentWithActions(
-                                content = {
-                                    FText("Content")
-                                },
+                                content = { FText("Content") },
                                 actions = {
                                     Action(
                                         actionOrElseOrDisabled = model.task.collectAsState().value,
@@ -113,9 +117,9 @@ class RootProjector(
                                         importance = Importance.Primary,
                                     )
                                     Action<CancelOrInProgress.Cancel>(
-                                        actionOrElseOrDisabled = null,
+                                        actionOrElseOrDisabled = ActionOrElse.Action {},
                                         titleOrIcon = Ior.Left("Secondary"),
-                                        importance = Importance.Primary,
+                                        importance = Importance.Secondary,
                                     )
                                 }
                             )
@@ -132,9 +136,9 @@ class RootProjector(
                         importance = Importance.Primary,
                     )
                     Action<CancelOrInProgress.Cancel>(
-                        actionOrElseOrDisabled = null,
+                        actionOrElseOrDisabled = ActionOrElse.Action {},
                         titleOrIcon = Ior.Left("Secondary"),
-                        importance = Importance.Primary,
+                        importance = Importance.Secondary,
                     )
                 }
             )

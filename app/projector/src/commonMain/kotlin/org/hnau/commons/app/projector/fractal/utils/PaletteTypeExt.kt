@@ -9,3 +9,10 @@ fun PaletteType.orInactive(
     ifTrue = { this },
     ifFalse = { PaletteType.Neutral }
 )
+
+fun PaletteType.orError(
+    error: Boolean,
+): PaletteType = error.foldBoolean(
+    ifTrue = { PaletteType.Error },
+    ifFalse = { this }
+)

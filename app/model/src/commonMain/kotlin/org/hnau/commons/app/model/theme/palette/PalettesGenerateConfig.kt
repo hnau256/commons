@@ -18,7 +18,7 @@ data class PalettesGenerateConfig(
 
         val default: PalettesGenerateConfig = PalettesGenerateConfig(
             variant = Variant.TONAL_SPOT,
-            chroma = Chroma.create(48),
+            chroma = Chroma.create(96),
             platform = DynamicScheme.Platform.PHONE,
             contrast = Contrast.zero,
             spec = ColorSpec.SpecVersion.SPEC_2026,

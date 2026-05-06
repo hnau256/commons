@@ -23,7 +23,7 @@ fun InProgress(
                 ifTrue = { Modifier.fillMaxSize() },
                 ifFalse = { Modifier },
             ),
-            transitionSpec = TransitionSpec.crossfade(),
+            transitionSpec = TransitionSpec.rememberCenter(),
             label = "InProgress",
         ) {
             fillMaxSize.foldBoolean(

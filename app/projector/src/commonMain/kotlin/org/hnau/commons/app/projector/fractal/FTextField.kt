@@ -1,14 +1,11 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -123,7 +120,6 @@ fun FTextField(
             decorationBox = { textInput ->
                 Row(
                     modifier = Modifier
-                        .height(IntrinsicSize.Max)
                         .border(
                             width = units.borderWidth,
                             color = Color.localContent,
@@ -138,20 +134,21 @@ fun FTextField(
                         side = Side.Start,
                         accessory = startAccessory,
                     )
-                    Column {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                    ) {
                         Accessory(
                             side = Side.Top,
                             accessory = topAccessory,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         textInput()
                         Accessory(
                             side = Side.Bottom,
                             accessory = bottomAccessory,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                    Spacer(
-                        modifier = Modifier.weight(1f),
-                    )
                     Accessory(
                         side = Side.End,
                         accessory = endAccessory,
@@ -165,36 +162,36 @@ fun FTextField(
 @Composable
 private fun Accessory(
     side: Side,
+    modifier: Modifier = Modifier,
     accessory: @Composable (() -> Unit)?
 ) {
     val orientation = side.orientation
-    AnimatedContent(
-        targetState = accessory,
-        contentKey = {it != null},
-        contentAlignment = side.fold(
-            ifStart = { Alignment.CenterEnd },
-            ifTop = { Alignment.BottomCenter },
-            ifEnd = { Alignment.CenterStart },
-            ifBottom = { Alignment.TopCenter }
-        )
-    ) {localAccessoryOrNull ->
-        localAccessoryOrNull?.let { localAccessory ->
-            val space = FUnits.local.padding[orientation].extraSmall
-            Box(
-                modifier = Modifier.then(
-                    side.fold(
-                        ifStart = { Modifier.padding(end = space) },
-                        ifTop = { Modifier.padding(bottom = space) },
-                        ifEnd = { Modifier.padding(start = space) },
-                        ifBottom = { Modifier.padding(top = space) }
-                    )
-                )
+    val align = side.fold(
+        ifStart = { Alignment.CenterEnd },
+        ifTop = { Alignment.BottomStart },
+        ifEnd = { Alignment.CenterStart },
+        ifBottom = { Alignment.TopStart },
+    )
+    val space = FUnits.local.padding[orientation].extraSmall
+    Box(
+        modifier = modifier.then(
+            side.fold(
+                ifStart = { Modifier.padding(end = space) },
+                ifTop = { Modifier.padding(bottom = space) },
+                ifEnd = { Modifier.padding(start = space) },
+                ifBottom = { Modifier.padding(top = space) }
+            )
+        ),
+        contentAlignment = align,
+    ) {
+        accessory.NullableStateContent(
+            contentAlignment = align,
+            transitionSpec = TransitionSpec.remember(align, align),
+        ) { localAccessory ->
+            OffsetDistance(
+                offset = 1,
             ) {
-                OffsetDistance(
-                    offset = 1,
-                ) {
-                    localAccessory()
-                }
+                localAccessory()
             }
         }
     }
