@@ -18,6 +18,7 @@ import org.hnau.commons.app.projector.utils.OrientationValues
 
 class FUnits private constructor(
     val padding: OrientationValues<SizeTypeValues<Dp>>,
+    val cornerRadius: Dp,
     val shape: Shape,
     val borderShape: Shape,
     val borderWidth: Dp,
@@ -75,6 +76,7 @@ class FUnits private constructor(
                         extraSmall = medium / 4,
                     )
                 },
+                cornerRadius = cornerRadius,
                 shape = RoundedCornerShape(size = cornerRadius),
                 borderShape = DeflatedRoundedCornerShape(
                     topStart = CornerSize(cornerRadius),

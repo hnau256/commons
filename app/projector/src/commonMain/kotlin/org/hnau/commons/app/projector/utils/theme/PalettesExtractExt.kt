@@ -63,13 +63,27 @@ private fun Palettes.getColor(
     .let(::Color)
 
 @Composable
+fun Palettes.getLocalColor(
+    type: ColorType,
+    palettes: PaletteType,
+): Color = getColor(
+    distance = LocalDistance.current,
+    backgroundTone = LocalBackgroundTone.current,
+    palette = palettes,
+    type = type,
+)
+
+@Composable
 fun getLocalColor(
     type: ColorType,
+    distance: Distance = LocalDistance.current,
+    backgroundTone: Tone = LocalBackgroundTone.current,
+    palette: PaletteType = LocalPalette.current,
 ): Color = LocalPalettes
     .current
     .getColor(
-        distance = LocalDistance.current,
-        backgroundTone = LocalBackgroundTone.current,
-        palette = LocalPalette.current,
+        distance = distance,
+        backgroundTone = backgroundTone,
+        palette = palette,
         type = type,
     )
