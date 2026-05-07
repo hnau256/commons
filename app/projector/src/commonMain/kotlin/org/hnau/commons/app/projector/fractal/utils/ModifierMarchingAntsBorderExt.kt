@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.size.units
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds

@@ -9,7 +9,6 @@ import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.semantic.utils.palette
-import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation

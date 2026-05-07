@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.model.EditingString
 import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
 import org.hnau.commons.app.projector.fractal.utils.LocalDistance
+import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
 import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
 import org.hnau.commons.app.projector.fractal.utils.color.localContent
 import org.hnau.commons.app.projector.fractal.utils.orInactive

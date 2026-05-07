@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.toEditingString
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FCheckBox
