@@ -11,10 +11,9 @@ import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.model.theme.isDark
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
-import org.hnau.commons.app.projector.fractal.utils.color.tone.getHct
 
 fun Palettes.toColorScheme(): ColorScheme = DynamicScheme(
-    sourceColorHct = palettes[PaletteType.Primary].getHct(Tone.avg),
+    sourceColorHct = palettes[PaletteType.Primary].getHct(Tone.avg.raw.toDouble()),
     variant = config.variant,
     isDark = brightness.isDark,
     contrastLevel = config.contrast.contrast.toDouble(),

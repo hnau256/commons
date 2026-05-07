@@ -4,17 +4,17 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
-import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.LocalPalette
-import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
-import org.hnau.commons.app.projector.fractal.utils.color.localContent
-import org.hnau.commons.app.projector.fractal.utils.size.LocalSizeType
-import org.hnau.commons.app.projector.fractal.utils.size.SizeType
-import org.hnau.commons.app.projector.fractal.utils.size.units
+import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.newTone
+import org.hnau.commons.app.projector.fractal.size.LocalSizeType
+import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.content
 
 @Composable
 fun FText(
@@ -26,16 +26,16 @@ fun FText(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
-    palette: PaletteType = LocalPalette.current,
     autoSize: TextAutoSize? = null,
 ) {
-    SwitchPalette(
-        newPalette = palette,
+    UpdateFContext(
+        update = { newTone(Contrast.content) },
     ) {
+        val fContext = LocalFContext.current
         BasicText(
             text = text,
-            style = LocalDistance.current.units.textStyle[type].merge(
-                color = Color.localContent,
+            style = fContext.distance.units.textStyle[type].merge(
+                color = fContext.color,
             ),
             modifier = modifier,
             onTextLayout = onTextLayout,

@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.VisualTransformation
@@ -30,15 +29,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.model.EditingString
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.OffsetDistance
-import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
-import org.hnau.commons.app.projector.fractal.utils.color.localContent
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.newTone
+import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.fPadding
+import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.offset
 import org.hnau.commons.app.projector.fractal.utils.orInactive
-import org.hnau.commons.app.projector.fractal.utils.size.SizeType
-import org.hnau.commons.app.projector.fractal.utils.size.fPadding
-import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Side
@@ -67,14 +69,20 @@ fun FTextField(
     interactionSource: MutableInteractionSource? = null,
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
-    SwitchPalette(
-        newPalette = palette.orInactive(
-            active = isFocused,
-        )
+    UpdateFContext(
+        update = {
+            copy(
+                palette = palette.orInactive(
+                    active = isFocused,
+                )
+            )
+        }
     ) {
 
-        val units = LocalDistance.current.units
-        val color = Color.localContent
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val backgroundColor = fContext.color
+        val color = fContext.newTone(Contrast.content).color
 
         var localValue by remember { mutableStateOf(value.value.let(mapper.direct)) }
         LaunchedEffect(value) {
@@ -106,7 +114,7 @@ fun FTextField(
             enabled = enabled,
             readOnly = readOnly,
             textStyle = units.textStyle[textStyle].merge(
-                color = Color.localContent,
+                color = color,
             ),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
@@ -122,7 +130,7 @@ fun FTextField(
                     modifier = Modifier
                         .border(
                             width = units.borderWidth,
-                            color = Color.localContent,
+                            color = color,
                             shape = units.borderShape,
                         )
                         .fPadding(
@@ -172,7 +180,7 @@ private fun Accessory(
         ifEnd = { Alignment.CenterStart },
         ifBottom = { Alignment.TopStart },
     )
-    val space = LocalDistance.current.units.padding[orientation].small
+    val space = LocalFContext.current.distance.units.padding[orientation].small
     Box(
         modifier = modifier.then(
             side.fold(
@@ -188,8 +196,12 @@ private fun Accessory(
             contentAlignment = align,
             transitionSpec = TransitionSpec.remember(align, align),
         ) { localAccessory ->
-            OffsetDistance(
-                offset = 1,
+            UpdateFContext(
+                update = {
+                    copy(
+                        distance = distance.offset(1),
+                    )
+                }
             ) {
                 localAccessory()
             }

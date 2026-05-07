@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils.size
+package org.hnau.commons.app.projector.fractal.size
 
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 

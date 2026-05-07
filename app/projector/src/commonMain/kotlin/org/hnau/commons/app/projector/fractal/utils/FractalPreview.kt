@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils.preview
+package org.hnau.commons.app.projector.fractal.utils
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +11,7 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.FPanel
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.theme.createCached
 
@@ -23,12 +24,16 @@ fun FractalPreview(
             Column {
                 (0 until 5).forEach { hueIndex ->
                     FBase(
-                        palettes = Palettes.createCached(
-                            fallbackHue = Hue(hueIndex * 72),
-                            systemPalettes = SystemPalettes.None,
-                            brightness = themeBrightness,
-                            config = PalettesGenerateConfig.default,
+                        context = FContext(
+                            distance = Distance.zero,
+                            palettes = Palettes.createCached(
+                                fallbackHue = Hue(hueIndex * 72),
+                                systemPalettes = SystemPalettes.None,
+                                brightness = themeBrightness,
+                                config = PalettesGenerateConfig.default,
+                            ),
                         ),
+
                     ) {
                         RecursivePreview(
                             nextLevels = 3,

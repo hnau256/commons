@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils.size
+package org.hnau.commons.app.projector.fractal.size
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit

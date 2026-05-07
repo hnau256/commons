@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.FPanel
 import org.hnau.commons.app.projector.fractal.ForceFill
-import org.hnau.commons.app.projector.fractal.utils.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable

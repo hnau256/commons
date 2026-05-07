@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils.size
+package org.hnau.commons.app.projector.fractal.size
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 import org.hnau.commons.app.projector.utils.OrientationValues
 
@@ -100,6 +100,6 @@ val Distance.units: FUnits
 fun Modifier.fPadding(
     spaceSize: SizeType = SizeType.default,
 ): Modifier = padding(
-    horizontal = LocalDistance.current.units.padding.horizontal[spaceSize],
-    vertical = LocalDistance.current.units.padding.vertical[spaceSize],
+    horizontal = LocalFContext.current.distance.units.padding.horizontal[spaceSize],
+    vertical = LocalFContext.current.distance.units.padding.vertical[spaceSize],
 )

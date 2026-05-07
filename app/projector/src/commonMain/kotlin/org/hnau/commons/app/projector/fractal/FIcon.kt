@@ -9,15 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.color.localBackground
-import org.hnau.commons.app.projector.fractal.utils.color.localContent
-import org.hnau.commons.app.projector.fractal.utils.size.units
+import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.newTone
+import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -27,26 +29,30 @@ fun FIcon(
     drawable: Drawable,
     modifier: Modifier = Modifier,
 ) {
-    drawable.fold(
-        ifPainter = { painter ->
-            PainterIcon(
-                painter = painter,
-                modifier = modifier,
-            )
-        },
-        ifVector = { vector ->
-            PainterIcon(
-                painter = rememberVectorPainter(vector),
-                modifier = modifier,
-            )
-        },
-        ifText = { text ->
-            TextIcon(
-                text = text,
-                modifier = modifier,
-            )
-        }
-    )
+    UpdateFContext(
+        update = { newTone(Contrast.content) },
+    ) {
+        drawable.fold(
+            ifPainter = { painter ->
+                PainterIcon(
+                    painter = painter,
+                    modifier = modifier,
+                )
+            },
+            ifVector = { vector ->
+                PainterIcon(
+                    painter = rememberVectorPainter(vector),
+                    modifier = modifier,
+                )
+            },
+            ifText = { text ->
+                TextIcon(
+                    text = text,
+                    modifier = modifier,
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -54,14 +60,15 @@ private fun PainterIcon(
     painter: Painter,
     modifier: Modifier = Modifier,
 ) {
+    val fContext = LocalFContext.current
     Box(
         modifier = modifier
-            .size(LocalDistance.current.units.iconSize)
+            .size(fContext.distance.units.iconSize)
             .toolingGraphicsLayer()
             .paint(
                 painter = painter,
                 colorFilter = ColorFilter.tint(
-                    color = Color.localContent,
+                    color = fContext.color,
                 )
             )
     )
@@ -72,24 +79,28 @@ private fun TextIcon(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    val units = LocalDistance.current.units
+    val units = LocalFContext.current.distance.units
     Box(
         modifier = modifier
             .size(units.iconSize)
             .background(
-                color = Color.localContent,
+                color = LocalFContext.current.color,
                 shape = CircleShape,
             ),
-            contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center,
+    ) {
+        UpdateFContext(
+            update = { newTone(Contrast.content) },
         ) {
             BasicText(
                 text = text.rememberRun { extractNChars(2) },
                 maxLines = 1,
                 minLines = 1,
                 style = units.textStyle.small.merge(
-                    color = Color.localBackground,
+                    color = LocalFContext.current.color,
+                )
             )
-        )
+        }
     }
 }
 

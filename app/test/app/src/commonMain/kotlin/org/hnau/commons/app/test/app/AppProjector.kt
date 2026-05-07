@@ -26,8 +26,9 @@ fun createAppProjector(
             dependencies = RootProjector.Dependencies.impl(),
         )
     },
-    content = { rootProjector, contentPadding ->
+    content = { rootProjector, contentPadding, palettes ->
         rootProjector.Content(
+            palettes = palettes,
             contentPadding = contentPadding,
         )
     }

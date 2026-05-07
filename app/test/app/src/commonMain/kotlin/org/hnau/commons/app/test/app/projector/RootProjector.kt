@@ -17,23 +17,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.toEditingString
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FCheckBox
 import org.hnau.commons.app.projector.fractal.FIcon
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.FTextField
+import org.hnau.commons.app.projector.fractal.context.FContext
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.LocalPalette
+import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.orError
-import org.hnau.commons.app.projector.fractal.utils.size.SizeType
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Icon
 import org.hnau.commons.app.projector.utils.TitleOrIcon
-import org.hnau.commons.app.projector.utils.theme.LocalPalettes
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -55,10 +57,14 @@ class RootProjector(
 
     @Composable
     fun Content(
+        palettes: Palettes,
         contentPadding: PaddingValues,
     ) {
         FBase(
-            palettes = LocalPalettes.current,
+            context = FContext(
+                distance = Distance.zero,
+                palettes = palettes,
+            ),
             modifier = Modifier.fillMaxSize().padding(contentPadding),
         ) {
             SContentWithActions(
@@ -77,7 +83,7 @@ class RootProjector(
                                 val containsDigits =
                                     value.collectAsState().value.text.let { it.any { it.isDigit() } }
                                 FTextField(
-                                    palette = LocalPalette.current.orError(containsDigits),
+                                    palette = LocalFContext.current.palette.orError(containsDigits),
                                     startAccessory = {
                                         FIcon(
                                             drawable = Drawable.Vector(Icons.Default.Settings),

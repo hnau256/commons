@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FButton
 import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.ForceFill
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.semantic.utils.palette
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -43,7 +43,7 @@ fun SActions(
 ) {
     FLine(
         modifier = modifier,
-        orientation = when (LocalDistance.current.distance) {
+        orientation = when (LocalFContext.current.distance.distance) {
             0 -> Orientation.Vertical
             else -> Orientation.Horizontal
         },

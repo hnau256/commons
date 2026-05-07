@@ -1,42 +1,72 @@
-package org.hnau.commons.app.projector.fractal.utils.color.contrast
+package org.hnau.commons.app.projector.fractal.context
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
 import org.hnau.commons.app.model.color.dynamic.hct.HctSolver
 import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
-import org.hnau.commons.app.model.theme.ThemeBrightness
+import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.fold
+import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifNull
 import kotlin.math.absoluteValue
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
-fun Tone.findContrasted(
-    palette: TonalPalette,
-    themeBrightness: ThemeBrightness,
-    ratio: Contrast,
+val FContext.tone: Tone
+    get() = customTone.ifNull {
+        val (start, step) = distanceBackgroundToneStartsAndSteps[palettes.brightness]
+        return (start + (step * distance.distance)).let(Tone::create)
+    }
+
+val FContext.color: Color
+    get() = palettes.palettes[palette]
+        .getHct(tone.raw.toDouble())
+        .toInt()
+        .let(::Color)
+
+fun FContext.newTone(
+    contrast: BaseWithDecay<Contrast>,
+): FContext = copy(
+    customTone = findContrasted(
+        contrast = contrast[distance],
+    )
+)
+
+private val distanceBackgroundToneStartsAndSteps: ThemeBrightnessValues<Pair<Int, Int>> =
+    ThemeBrightnessValues(
+        dark = 4 to 6,
+        light = 98 to -12,
+    )
+
+private fun FContext.findContrasted(
+    contrast: Contrast,
 ): Tone {
 
-    val baseResult = lighterOrDarkerWithError(
-        lighter = themeBrightness.fold(
+    val palette = palettes.palettes[palette]
+
+    val baseResult = tone.lighterOrDarkerWithError(
+        lighter = palettes.brightness.fold(
             ifLight = { false },
             ifDark = { true },
         ),
         palette = palette,
-        ratio = ratio,
+        ratio = contrast,
     )
 
     if (baseResult != null && baseResult.error < 0.1) {
         return baseResult.tone
     }
 
-    val oppositeResult = lighterOrDarkerWithError(
-        lighter = themeBrightness.fold(
+    val oppositeResult = tone.lighterOrDarkerWithError(
+        lighter = palettes.brightness.fold(
             ifLight = { true },
             ifDark = { false },
         ),
         palette = palette,
-        ratio = ratio,
+        ratio = contrast,
     )
 
     return when {
@@ -49,7 +79,7 @@ fun Tone.findContrasted(
 
         oppositeResult != null -> oppositeResult.tone
 
-        else -> (this > averageTone).foldBoolean(
+        else -> (tone > averageTone).foldBoolean(
             ifTrue = { Tone.min },
             ifFalse = { Tone.max },
         )

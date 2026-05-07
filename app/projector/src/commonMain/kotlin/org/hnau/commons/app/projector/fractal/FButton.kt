@@ -18,20 +18,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.SwitchPalette
-import org.hnau.commons.app.projector.fractal.utils.color.localBackground
-import org.hnau.commons.app.projector.fractal.utils.color.localContent
-import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundToneToContainer
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.newTone
+import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.FractalPreview
+import org.hnau.commons.app.projector.fractal.utils.container
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.orInactive
-import org.hnau.commons.app.projector.fractal.utils.preview.FractalPreview
-import org.hnau.commons.app.projector.fractal.utils.size.units
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
@@ -52,102 +53,108 @@ import kotlin.time.Duration.Companion.seconds
 fun <E : CancelOrInProgress> FButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
-    palette: PaletteType = PaletteType.default,
     modifier: Modifier = Modifier,
+    palette: PaletteType = PaletteType.default,
     isSelected: Boolean = false,
 ) {
-    SwitchPalette(
-        newPalette = palette.orInactive(
-            active = actionOrElseOrDisabled != null,
-        ),
+    UpdateFContext(
+        update = {
+            copy(
+                palette = palette.orInactive(
+                    active = actionOrElseOrDisabled != null,
+                ),
+            ).newTone(
+                contrast = Contrast.container,
+            )
+        }
     ) {
-        SwitchBackgroundToneToContainer {
 
-            val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel
+        val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel
 
-            val units = LocalDistance.current.units
 
-            val isInProgress = when (actionOrElseOrDisabled) {
-                is ActionOrElse.Else -> true
-                is ActionOrElse.Action, null -> false
+        val isInProgress = when (actionOrElseOrDisabled) {
+            is ActionOrElse.Else -> true
+            is ActionOrElse.Action, null -> false
+        }
+
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val foregroundColor = fContext.newTone(Contrast.content).color
+        Row(
+            modifier = modifier
+                .clip(units.shape)
+                .clickable(
+                    enabled = actionOrCancel?.onClick != null,
+                    onClick = actionOrCancel?.onClick.orNoAction,
+                )
+                .background(fContext.color)
+                .then(
+                    when {
+                        isInProgress -> Modifier.fractalDashBorder(
+                            color = foregroundColor,
+                            shape = units.borderShape,
+                        )
+
+                        isSelected -> Modifier.border(
+                            width = units.borderWidth,
+                            color = foregroundColor,
+                            shape = units.borderShape,
+                        )
+
+                        else -> Modifier
+                    }
+                )
+                .padding(
+                    horizontal = units.padding.horizontal.medium,
+                )
+                .height(
+                    units.iconSize + units.padding.vertical.medium * 2,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            val titleOrNull = titleOrIcon.titleOrNull
+            val actionIconOrNull = titleOrIcon.iconOrNull
+            val iconOrNull = remember(actionOrCancel, actionIconOrNull) {
+                val type = actionOrCancel?.type
+                when (type) {
+                    ActionOrCancel.Type.Cancel -> Drawable.Vector(Icons.Default.Clear)
+                    ActionOrCancel.Type.Action, null -> actionIconOrNull
+                }
             }
-
-            Row(
-                modifier = modifier
-                    .clip(units.shape)
-                    .clickable(
-                        enabled = actionOrCancel?.onClick != null,
-                        onClick = actionOrCancel?.onClick.orNoAction,
-                    )
-                    .background(Color.localBackground)
-                    .then(
-                        when {
-                            isInProgress -> Modifier.fractalDashBorder(
-                                color = Color.localContent,
-                                shape = units.borderShape,
+            iconOrNull
+                .StateContent(
+                    label = "iconOrCancel",
+                    contentKey = { it },
+                    transitionSpec = titleOrNull.foldNullable(
+                        ifNull = { TransitionSpec.rememberCenter() },
+                        ifNotNull = {
+                            TransitionSpec.remember(
+                                Alignment.CenterStart,
+                                Alignment.CenterStart,
                             )
-
-                            isSelected -> Modifier.border(
-                                width = units.borderWidth,
-                                color = Color.localContent,
-                                shape = units.borderShape,
-                            )
-
-                            else -> Modifier
                         }
-                    )
-                    .padding(
-                        horizontal = units.padding.horizontal.medium,
-                    )
-                    .height(
-                        units.iconSize + units.padding.vertical.medium * 2,
                     ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                val titleOrNull = titleOrIcon.titleOrNull
-                val actionIconOrNull = titleOrIcon.iconOrNull
-                val iconOrNull = remember(actionOrCancel, actionIconOrNull) {
-                    val type = actionOrCancel?.type
-                    when (type) {
-                        ActionOrCancel.Type.Cancel -> Drawable.Vector(Icons.Default.Clear)
-                        ActionOrCancel.Type.Action, null -> actionIconOrNull
-                    }
-                }
-                iconOrNull
-                    .StateContent(
-                        label = "iconOrCancel",
-                        contentKey = { it },
-                        transitionSpec = titleOrNull.foldNullable(
-                            ifNull = { TransitionSpec.rememberCenter() },
-                            ifNotNull = {
-                                TransitionSpec.remember(
-                                    Alignment.CenterStart,
-                                    Alignment.CenterStart,
-                                )
-                            }
-                        ),
-                    ) { iconOrNullLocal ->
-                        iconOrNullLocal?.let { drawable ->
-                            FIcon(
-                                drawable = drawable,
-                                modifier = titleOrNull.foldNullable(
-                                    ifNull = { Modifier },
-                                    ifNotNull = {
-                                        Modifier.padding(
-                                            end = units.padding.horizontal.extraSmall,
-                                        )
-                                    }
-                                )
+                ) { iconOrNullLocal ->
+                    iconOrNullLocal?.let { drawable ->
+                        FIcon(
+                            drawable = drawable,
+                            modifier = titleOrNull.foldNullable(
+                                ifNull = { Modifier },
+                                ifNotNull = {
+                                    Modifier.padding(
+                                        end = units.padding.horizontal.extraSmall,
+                                    )
+                                }
                             )
-                        }
+                        )
                     }
-                titleOrNull?.let { title ->
-                    FText(
-                        text = title,
-                        maxLines = 1,
-                    )
                 }
+            titleOrNull?.let { title ->
+                FText(
+                    text = title,
+                    maxLines = 1,
+                )
             }
         }
     }

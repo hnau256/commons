@@ -5,38 +5,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import org.hnau.commons.app.model.theme.palette.PaletteType
-import org.hnau.commons.app.model.theme.palette.Palettes
-import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.LocalDistance
-import org.hnau.commons.app.projector.fractal.utils.LocalPalette
-import org.hnau.commons.app.projector.fractal.utils.color.localBackground
-import org.hnau.commons.app.projector.fractal.utils.color.tone.SwitchBackgroundTone
-import org.hnau.commons.app.projector.fractal.utils.size.fPadding
-import org.hnau.commons.app.projector.utils.theme.LocalPalettes
+import org.hnau.commons.app.projector.fractal.context.FContext
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.size.fPadding
 
 @Composable
 fun FBase(
-    palettes: Palettes,
+    context: FContext,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalPalettes provides palettes,
-        LocalDistance provides Distance.zero,
-        LocalPalette provides PaletteType.Neutral,
+        LocalFContext provides context,
     ) {
-        SwitchBackgroundTone {
-            Box(
-                modifier = modifier
-                    .background(
-                        color = Color.localBackground,
-                    )
-                    .fPadding(),
-            ) {
-                content()
-            }
+        val fContext = LocalFContext.current
+        Box(
+            modifier = modifier
+                .background(
+                    color = fContext.color,
+                )
+                .fPadding(),
+        ) {
+            content()
         }
     }
 }
