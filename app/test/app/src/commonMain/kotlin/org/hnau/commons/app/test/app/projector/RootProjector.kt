@@ -16,7 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import arrow.core.prependTo
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.toEditingString
 import org.hnau.commons.app.projector.fractal.FBase
@@ -77,25 +79,24 @@ class RootProjector(
                                 FText("Main")
                                 val value = remember {
                                     "Qwerty"
-                                        .toEditingString()
                                         .toMutableStateFlowAsInitial()
                                 }
                                 val containsDigits =
-                                    value.collectAsState().value.text.let { it.any { it.isDigit() } }
+                                    value.collectAsState().value.let { it.any { it.isDigit() } }
                                 FTextField(
-                                    palette = LocalFContext.current.palette.orError(containsDigits),
+                                    palette = PaletteType.Primary.orError(containsDigits),
                                     startAccessory = {
                                         FIcon(
                                             drawable = Drawable.Vector(Icons.Default.Settings),
                                         )
                                     },
-                                    endAccessory = value.collectAsState().value.text.let { it.length > 2 }
+                                    endAccessory = value.collectAsState().value.let { it.length > 2 }
                                         .ifTrue {
                                             {
                                                 Icon(
                                                     icon = Icons.Default.Clear,
                                                     modifier = Modifier.clickable {
-                                                        value.value = "".toEditingString()
+                                                        value.value = ""
                                                     }
                                                 )
                                             }

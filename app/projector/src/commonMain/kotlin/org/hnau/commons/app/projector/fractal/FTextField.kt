@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -9,26 +10,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.KeyboardActionHandler
+import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldDecorator
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.model.EditingString
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
@@ -46,27 +57,27 @@ import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Side
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.orientation
-import org.hnau.commons.app.projector.utils.textFieldValueMapper
 
 @Composable
 fun FTextField(
-    value: MutableStateFlow<EditingString>,
+    value: MutableStateFlow<String>,
     modifier: Modifier = Modifier,
     palette: PaletteType = PaletteType.default,
+    textStyle: SizeType = SizeType.default,
     startAccessory: @Composable (() -> Unit)? = null,
     topAccessory: @Composable (() -> Unit)? = null,
     endAccessory: @Composable (() -> Unit)? = null,
     bottomAccessory: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: SizeType = SizeType.default,
+    inputTransformation: InputTransformation? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    maxLines: Int = 1,
-    minLines: Int = 1,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
+    onKeyboardAction: KeyboardActionHandler? = null,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
+    onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
+    outputTransformation: OutputTransformation? = null,
+    scrollState: ScrollState = rememberScrollState(),
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
     UpdateFContext(
@@ -79,27 +90,33 @@ fun FTextField(
         }
     ) {
 
-        val fContext = LocalFContext.current
-        val units = fContext.distance.units
-        val backgroundColor = fContext.color
-        val color = fContext.newTone(Contrast.content).color
+        val externalText by value.collectAsState()
 
-        var localValue by remember { mutableStateOf(value.value.let(mapper.direct)) }
-        LaunchedEffect(value) {
-            value.collect { value ->
-                localValue = value.let(mapper.direct)
+        val internalState = rememberSaveable(saver = TextFieldState.Saver) {
+            TextFieldState(externalText)
+        }
+
+        LaunchedEffect(internalState) {
+            snapshotFlow { internalState.text }.collect { newUiText ->
+                value.value = newUiText.toString()
             }
         }
+
+        LaunchedEffect(externalText) {
+            if (externalText != internalState.text.toString()) {
+                internalState.setTextAndPlaceCursorAtEnd(externalText)
+            }
+        }
+
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val color = fContext.newTone(Contrast.content).color
 
         val bringIntoViewRequester = remember { BringIntoViewRequester() }
         val coroutineScope = rememberCoroutineScope()
 
         BasicTextField(
-            value = localValue,
-            onValueChange = { newValue ->
-                value.value = newValue.let(mapper.reverse)
-                localValue = newValue
-            },
+            state = internalState,
             modifier = modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged { focusState ->
@@ -117,96 +134,122 @@ fun FTextField(
                 color = color,
             ),
             keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            maxLines = maxLines,
-            minLines = minLines,
-            singleLine = minLines <= 1,
-            visualTransformation = visualTransformation,
+            lineLimits = lineLimits,
+            inputTransformation = inputTransformation,
+            outputTransformation = outputTransformation,
+            onKeyboardAction = onKeyboardAction,
             onTextLayout = onTextLayout,
             interactionSource = interactionSource,
+            scrollState = scrollState,
             cursorBrush = SolidColor(color),
-            decorationBox = { textInput ->
-                Row(
-                    modifier = Modifier
-                        .border(
-                            width = units.borderWidth,
-                            color = color,
-                            shape = units.borderShape,
-                        )
-                        .fPadding(
-                            spaceSize = SizeType.Medium,
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Accessory(
-                        side = Side.Start,
-                        accessory = startAccessory,
-                    )
-                    Column(
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Accessory(
-                            side = Side.Top,
-                            accessory = topAccessory,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        textInput()
-                        Accessory(
-                            side = Side.Bottom,
-                            accessory = bottomAccessory,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                    Accessory(
-                        side = Side.End,
-                        accessory = endAccessory,
-                    )
-                }
-            }
+            decorator = remember(
+                startAccessory,
+                topAccessory,
+                endAccessory,
+                bottomAccessory,
+                color,
+            ) {
+                Decorator(
+                    startAccessory = startAccessory,
+                    topAccessory = topAccessory,
+                    endAccessory = endAccessory,
+                    bottomAccessory = bottomAccessory,
+                    color = color,
+                )
+            },
         )
     }
 }
 
-@Composable
-private fun Accessory(
-    side: Side,
-    modifier: Modifier = Modifier,
-    accessory: @Composable (() -> Unit)?
-) {
-    val orientation = side.orientation
-    val align = side.fold(
-        ifStart = { Alignment.CenterEnd },
-        ifTop = { Alignment.BottomStart },
-        ifEnd = { Alignment.CenterStart },
-        ifBottom = { Alignment.TopStart },
-    )
-    val space = LocalFContext.current.distance.units.padding[orientation].small
-    Box(
-        modifier = modifier.then(
-            side.fold(
-                ifStart = { Modifier.padding(end = space) },
-                ifTop = { Modifier.padding(bottom = space) },
-                ifEnd = { Modifier.padding(start = space) },
-                ifBottom = { Modifier.padding(top = space) }
-            )
-        ),
-        contentAlignment = align,
+private data class Decorator(
+    private val startAccessory: @Composable (() -> Unit)?,
+    private val topAccessory: @Composable (() -> Unit)?,
+    private val endAccessory: @Composable (() -> Unit)?,
+    private val bottomAccessory: @Composable (() -> Unit)?,
+    private val color: Color,
+) : TextFieldDecorator {
+    @Composable
+    override fun Decoration(
+        innerTextField: @Composable (() -> Unit),
     ) {
-        accessory.NullableStateContent(
-            contentAlignment = align,
-            transitionSpec = TransitionSpec.remember(align, align),
-        ) { localAccessory ->
-            UpdateFContext(
-                update = {
-                    copy(
-                        distance = distance.offset(1),
-                    )
-                }
+        val units = LocalFContext.current.distance.units
+        Row(
+            modifier = Modifier
+                .border(
+                    width = units.borderWidth,
+                    color = color,
+                    shape = units.borderShape,
+                )
+                .fPadding(
+                    spaceSize = SizeType.Medium,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Accessory(
+                side = Side.Start,
+                accessory = startAccessory,
+            )
+            Column(
+                modifier = Modifier.weight(1f),
             ) {
-                localAccessory()
+                Accessory(
+                    side = Side.Top,
+                    accessory = topAccessory,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                innerTextField()
+                Accessory(
+                    side = Side.Bottom,
+                    accessory = bottomAccessory,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            Accessory(
+                side = Side.End,
+                accessory = endAccessory,
+            )
+        }
+    }
+
+    @Composable
+    private fun Accessory(
+        side: Side,
+        modifier: Modifier = Modifier,
+        accessory: @Composable (() -> Unit)?
+    ) {
+        val orientation = side.orientation
+        val align = side.fold(
+            ifStart = { Alignment.CenterEnd },
+            ifTop = { Alignment.BottomStart },
+            ifEnd = { Alignment.CenterStart },
+            ifBottom = { Alignment.TopStart },
+        )
+        val space = LocalFContext.current.distance.units.padding[orientation].small
+        Box(
+            modifier = modifier.then(
+                side.fold(
+                    ifStart = { Modifier.padding(end = space) },
+                    ifTop = { Modifier.padding(bottom = space) },
+                    ifEnd = { Modifier.padding(start = space) },
+                    ifBottom = { Modifier.padding(top = space) }
+                )
+            ),
+            contentAlignment = align,
+        ) {
+            accessory.NullableStateContent(
+                contentAlignment = align,
+                transitionSpec = TransitionSpec.remember(align, align),
+            ) { localAccessory ->
+                UpdateFContext(
+                    update = {
+                        copy(
+                            distance = distance.offset(1),
+                        )
+                    }
+                ) {
+                    localAccessory()
+                }
             }
         }
     }
 }
-
-private val mapper = EditingString.textFieldValueMapper
