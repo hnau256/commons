@@ -213,16 +213,19 @@ internal object Versions {
 
         private val kotlinpoetGroup = GroupId("com.squareup")
 
+        private val kermit = "co.touchlab" withArtifact "kermit" withVersion Version.Kermit
+
         val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(
             kotlinpoetGroup withArtifact "kotlinpoet" withVersion Version.Kotlinpoet withAlias "kotlinpoet-core",
             kotlinpoetGroup withArtifact "kotlinpoet-ksp" withVersion Version.Kotlinpoet withAlias "kotlinpoet-ksp",
             "com.google.devtools.ksp" withArtifact "symbol-processing-api" withVersion Version.Ksp withAlias "ksp-api",
             "org.slf4j" withArtifact "slf4j-api" withVersion Version.Slf4j withAlias "slf4j-api",
-            "co.touchlab" withArtifact "kermit" withVersion Version.Kermit withAlias "kermit",
+            kermit withAlias "kermit",
+            "com.ionspin.kotlin" withArtifact "bignum" withVersion Version.BigNum withAlias "bignum",
         )
 
         val unconditioned: List<Versioned<LibraryId>> = listOf(
-            "co.touchlab" withArtifact "kermit" withVersion Version.Kermit,
+            kermit,
         )
     }
 }
