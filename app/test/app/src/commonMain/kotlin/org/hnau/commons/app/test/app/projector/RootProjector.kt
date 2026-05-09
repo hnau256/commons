@@ -1,13 +1,13 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,18 +16,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import arrow.core.prependTo
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.model.theme.palette.Palettes
-import org.hnau.commons.app.model.toEditingString
 import org.hnau.commons.app.projector.fractal.FBase
 import org.hnau.commons.app.projector.fractal.FCheckBox
 import org.hnau.commons.app.projector.fractal.FIcon
+import org.hnau.commons.app.projector.fractal.FItem
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.FTextField
 import org.hnau.commons.app.projector.fractal.context.FContext
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
@@ -43,6 +41,7 @@ import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
+import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue
 
 class RootProjector(
@@ -110,12 +109,23 @@ class RootProjector(
                                     value = value,
                                     modifier = Modifier.fillMaxWidth(),
                                 )
-                                Box {
-                                    var isChecked by remember { mutableStateOf(false) }
-                                    FCheckBox(
-                                        isChecked = isChecked,
-                                        onClick = { isChecked = !isChecked }
-                                    )
+                                var isChecked by remember { mutableStateOf(false) }
+                                FItem(
+                                    onClick = { isChecked = !isChecked },
+                                    endAccessory = {
+                                        FCheckBox(
+                                            isChecked = isChecked,
+                                        )
+                                    },
+                                    topAccessory = isChecked.ifTrue { { FText("Top accessory") } },
+                                    bottomAccessory = isChecked.ifFalse { { FText("Bottom accessory") } },
+                                    startAccessory = {
+                                        FIcon(
+                                            drawable = Drawable.Vector(Icons.Default.Map)
+                                        )
+                                    }
+                                ) {
+                                    FText("Check box")
                                 }
                             }
                         },
