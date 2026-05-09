@@ -13,7 +13,6 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.fPadding
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.offset
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
@@ -92,8 +91,9 @@ private fun Accessory(
     ) { localAccessory ->
         UpdateFContext(
             update = {
-                copy(
-                    distance = distance.offset(1),
+                makeDeeper(
+                    offset = 1,
+                    resetOverlay = false,
                 )
             }
         ) {

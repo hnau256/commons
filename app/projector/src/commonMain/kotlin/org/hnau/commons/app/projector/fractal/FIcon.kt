@@ -13,13 +13,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.newTone
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -30,7 +27,7 @@ fun FIcon(
     modifier: Modifier = Modifier,
 ) {
     UpdateFContext(
-        update = { newTone(Contrast.content) },
+        update = { overlay(Saturation.Active) }
     ) {
         drawable.fold(
             ifPainter = { painter ->
@@ -68,7 +65,7 @@ private fun PainterIcon(
             .paint(
                 painter = painter,
                 colorFilter = ColorFilter.tint(
-                    color = fContext.color,
+                    color = fContext.getContentColor(Saturation.Active),
                 )
             )
     )
@@ -79,28 +76,25 @@ private fun TextIcon(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    val units = LocalFContext.current.distance.units
+    val fContext = LocalFContext.current
+    val units = fContext.distance.units
     Box(
         modifier = modifier
             .size(units.iconSize)
             .background(
-                color = LocalFContext.current.color,
+                color = fContext.containerColor,
                 shape = CircleShape,
             ),
         contentAlignment = Alignment.Center,
     ) {
-        UpdateFContext(
-            update = { newTone(Contrast.content) },
-        ) {
-            BasicText(
-                text = text.rememberRun { extractNChars(2) },
-                maxLines = 1,
-                minLines = 1,
-                style = units.textStyle.small.merge(
-                    color = LocalFContext.current.color,
-                )
+        BasicText(
+            text = text.rememberRun { extractNChars(2) },
+            maxLines = 1,
+            minLines = 1,
+            style = units.textStyle.small.merge(
+                color = fContext.getContentColor(Saturation.Active),
             )
-        }
+        )
     }
 }
 

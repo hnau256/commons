@@ -8,9 +8,9 @@ import org.hnau.commons.app.projector.fractal.FButton
 import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
-import org.hnau.commons.app.projector.fractal.semantic.utils.palette
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -60,12 +60,15 @@ object SActionsScope {
     fun <E : CancelOrInProgress> Action(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
-        importance: Importance = Importance.default,
+        mood: Mood = Mood.Primary,
     ) {
-        FButton(
-            actionOrElseOrDisabled = actionOrElseOrDisabled,
-            palette = importance.palette,
-            titleOrIcon = titleOrIcon,
-        )
+        UpdateFContext(
+            update = { changeMood(mood = mood) }
+        ) {
+            FButton(
+                actionOrElseOrDisabled = actionOrElseOrDisabled,
+                titleOrIcon = titleOrIcon,
+            )
+        }
     }
 }

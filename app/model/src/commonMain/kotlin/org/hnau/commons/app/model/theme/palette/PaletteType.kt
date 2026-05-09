@@ -9,6 +9,7 @@ enum class PaletteType {
 
     companion object {
 
+        @Deprecated("Use Mood and Saturation instead")
         val default: PaletteType
             get() = Primary
     }

@@ -18,17 +18,10 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.hnau.commons.app.model.theme.color.Contrast
-import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.newTone
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.content
-import org.hnau.commons.app.projector.fractal.utils.orInactive
+import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
 import androidx.compose.runtime.remember as rememberInComposer
@@ -37,82 +30,75 @@ import androidx.compose.runtime.remember as rememberInComposer
 fun FCheckBox(
     isChecked: Boolean,
     modifier: Modifier = Modifier,
-    palette: PaletteType = PaletteType.default,
     onClick: (() -> Unit)? = null,
 ) {
-    UpdateFContext(
-        update = {
-            copy(palette = palette)
-        }
-    ) {
 
-        val inactiveState = StateInfo.remember(
-            checked = false,
+    val inactiveState = StateInfo.remember(
+        checked = false,
+    )
+
+    val activeState = StateInfo.remember(
+        checked = true,
+    )
+
+    val activePercentage: Float by animateFloatAsState(
+        isChecked.foldBoolean(
+            ifTrue = { 1f },
+            ifFalse = { 0f },
         )
+    )
 
-        val activeState = StateInfo.remember(
-            checked = true,
-        )
+    val distance = LocalFContext.current.distance
+    val units = distance.units
+    val handleSize = 24.dp.scale(distance.scale.space)
+    val maxOffset = activeState.handleOffset - inactiveState.handleOffset
+    val separation = units.padding.vertical.small
 
-        val activePercentage: Float by animateFloatAsState(
-            isChecked.foldBoolean(
-                ifTrue = { 1f },
-                ifFalse = { 0f },
+    Box(
+        modifier = modifier
+            .border(
+                width = units.borderWidth,
+                color = lerp(
+                    start = inactiveState.borderColor,
+                    stop = activeState.borderColor,
+                    fraction = activePercentage,
+                ),
+                shape = units.borderShape,
             )
-        )
-
-        val distance = LocalFContext.current.distance
-        val units = distance.units
-        val handleSize = 24.dp.scale(distance.scale.space)
-        val maxOffset = activeState.handleOffset - inactiveState.handleOffset
-        val separation = units.padding.vertical.small
-
+            .clip(units.shape)
+            .clickableOption(onClick)
+            .background(
+                color = lerp(
+                    start = inactiveState.containerColor,
+                    stop = activeState.containerColor,
+                    fraction = activePercentage,
+                ),
+            )
+            .padding(separation)
+            .size(
+                width = maxOffset + handleSize,
+                height = handleSize,
+            ),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
         Box(
-            modifier = modifier
-                .border(
-                    width = units.borderWidth,
-                    color = lerp(
-                        start = inactiveState.borderColor,
-                        stop = activeState.borderColor,
-                        fraction = activePercentage,
-                    ),
-                    shape = units.borderShape,
-                )
-                .clip(units.shape)
-                .clickableOption(onClick)
+            modifier = Modifier
+                .graphicsLayer {
+                    translationX = maxOffsetPx * activePercentage
+                }
+                .size(handleSize)
                 .background(
                     color = lerp(
-                        start = inactiveState.containerColor,
-                        stop = activeState.containerColor,
+                        start = inactiveState.contentColor,
+                        stop = activeState.contentColor,
                         fraction = activePercentage,
                     ),
-                )
-                .padding(separation)
-                .size(
-                    width = maxOffset + handleSize,
-                    height = handleSize,
-                ),
-            contentAlignment = Alignment.CenterStart,
-        ) {
-            val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        translationX = maxOffsetPx * activePercentage
-                    }
-                    .size(handleSize)
-                    .background(
-                        color = lerp(
-                            start = inactiveState.contentColor,
-                            stop = activeState.contentColor,
-                            fraction = activePercentage,
-                        ),
-                        shape = RoundedCornerShape(
-                            size = units.cornerRadius - separation,
-                        )
+                    shape = RoundedCornerShape(
+                        size = units.cornerRadius - separation,
                     )
-            )
-        }
+                )
+        )
     }
 }
 
@@ -130,21 +116,15 @@ private data class StateInfo(
             checked: Boolean,
         ): StateInfo {
 
+            val saturation = Saturation.get(checked)
             val fContext = LocalFContext.current
 
-            val containerFContext = fContext.copy(
-                palette = fContext.palette.orInactive(
-                    active = checked,
-                )
-            ).newTone(
-                contrast = Contrast.container,
+            val overlayFContext = fContext.overlay(
+                saturation = saturation,
             )
 
-            val containerColor = containerFContext.color
-
-            val contentColor = containerFContext.newTone(
-                contrast = Contrast.content,
-            ).color
+            val containerColor = overlayFContext.containerColor
+            val contentColor = overlayFContext.getContentColor(saturation)
 
             val distance = fContext.distance
             return rememberInComposer(

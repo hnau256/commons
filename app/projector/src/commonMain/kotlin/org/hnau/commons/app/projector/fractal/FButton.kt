@@ -21,18 +21,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.model.theme.color.Contrast
-import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.newTone
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.FractalPreview
-import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
-import org.hnau.commons.app.projector.fractal.utils.orInactive
 import org.hnau.commons.app.projector.uikit.ActionOrCancel
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.state.StateContent
@@ -54,17 +48,13 @@ fun <E : CancelOrInProgress> FButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
-    palette: PaletteType = PaletteType.default,
     isSelected: Boolean = false,
 ) {
+    val saturation = Saturation.get(actionOrElseOrDisabled != null)
     UpdateFContext(
         update = {
-            copy(
-                palette = palette.orInactive(
-                    active = actionOrElseOrDisabled != null,
-                ),
-            ).newTone(
-                contrast = Contrast.container,
+            overlay(
+                saturation = Saturation.get(actionOrElseOrDisabled != null)
             )
         }
     ) {
@@ -79,7 +69,7 @@ fun <E : CancelOrInProgress> FButton(
 
         val fContext = LocalFContext.current
         val units = fContext.distance.units
-        val foregroundColor = fContext.newTone(Contrast.content).color
+        val foregroundColor = fContext.getContentColor(saturation)
         Row(
             modifier = modifier
                 .clip(units.shape)
@@ -87,7 +77,7 @@ fun <E : CancelOrInProgress> FButton(
                     enabled = actionOrCancel?.onClick != null,
                     onClick = actionOrCancel?.onClick.orNoAction,
                 )
-                .background(fContext.color)
+                .background(fContext.containerColor)
                 .then(
                     when {
                         isInProgress -> Modifier.fractalDashBorder(
@@ -191,14 +181,12 @@ fun FButtonPreview() {
                 orientation = Orientation.Horizontal,
             ) {
                 FButton(
-                    palette = PaletteType.Secondary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
                     titleOrIcon = TitleOrIcon.Icon(
                         icon = Drawable.Vector(Icons.Default.Delete),
                     )
                 )
                 FButton(
-                    palette = PaletteType.Primary,
                     actionOrElseOrDisabled = createActionOrCancel().collectAsState().value,
                     isSelected = true,
                     titleOrIcon = TitleOrIcon.Both(

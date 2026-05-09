@@ -29,9 +29,9 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
-import org.hnau.commons.app.projector.fractal.semantic.utils.Importance
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.orError
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Icon
@@ -62,8 +62,7 @@ class RootProjector(
         contentPadding: PaddingValues,
     ) {
         FBase(
-            context = FContext(
-                distance = Distance.zero,
+            context = FContext.create(
                 palettes = palettes,
             ),
             modifier = Modifier.fillMaxSize().padding(contentPadding),
@@ -82,8 +81,7 @@ class RootProjector(
                                 }
                                 val containsDigits =
                                     value.collectAsState().value.let { it.any { it.isDigit() } }
-                                FTextField(
-                                    palette = PaletteType.Primary.orError(containsDigits),
+                                FItem(
                                     startAccessory = {
                                         FIcon(
                                             drawable = Drawable.Vector(Icons.Default.Settings),
@@ -106,9 +104,12 @@ class RootProjector(
                                             FText("Contains digits")
                                         }
                                     },
-                                    value = value,
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
+                                ) {
+                                    FTextField(
+                                        value = value,
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
                                 var isChecked by remember { mutableStateOf(false) }
                                 FItem(
                                     onClick = { isChecked = !isChecked },
@@ -139,12 +140,12 @@ class RootProjector(
                                             title = "Primary",
                                             icon = Drawable.Vector(Icons.Default.Settings),
                                         ),
-                                        importance = Importance.Primary,
+                                        mood = Mood.Primary,
                                     )
                                     Action<CancelOrInProgress.Cancel>(
                                         actionOrElseOrDisabled = ActionOrElse.Action {},
                                         titleOrIcon = TitleOrIcon.Title("Secondary"),
-                                        importance = Importance.Secondary,
+                                        mood = Mood.Secondary,
                                     )
                                 }
                             )
@@ -158,12 +159,12 @@ class RootProjector(
                             title = "Primary",
                             icon = Drawable.Vector(Icons.Default.Settings),
                         ),
-                        importance = Importance.Primary,
+                        mood = Mood.Primary,
                     )
                     Action<CancelOrInProgress.Cancel>(
                         actionOrElseOrDisabled = ActionOrElse.Action {},
                         titleOrIcon = TitleOrIcon.Title("Secondary"),
-                        importance = Importance.Secondary,
+                        mood = Mood.Secondary,
                     )
                 }
             )

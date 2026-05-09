@@ -1,13 +1,11 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -30,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -40,34 +37,17 @@ import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.model.theme.color.Contrast
-import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.newTone
 import org.hnau.commons.app.projector.fractal.size.SizeType
-import org.hnau.commons.app.projector.fractal.size.fPadding
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.content
-import org.hnau.commons.app.projector.fractal.utils.offset
-import org.hnau.commons.app.projector.fractal.utils.orInactive
-import org.hnau.commons.app.projector.uikit.state.NullableStateContent
-import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
-import org.hnau.commons.app.projector.utils.Side
-import org.hnau.commons.app.projector.utils.fold
-import org.hnau.commons.app.projector.utils.orientation
+import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
 fun FTextField(
     value: MutableStateFlow<String>,
     modifier: Modifier = Modifier,
-    palette: PaletteType = PaletteType.default,
     textStyle: SizeType = SizeType.default,
-    startAccessory: @Composable (() -> Unit)? = null,
-    topAccessory: @Composable (() -> Unit)? = null,
-    endAccessory: @Composable (() -> Unit)? = null,
-    bottomAccessory: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     inputTransformation: InputTransformation? = null,
@@ -80,176 +60,88 @@ fun FTextField(
     scrollState: ScrollState = rememberScrollState(),
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
-    UpdateFContext(
-        update = {
-            copy(
-                palette = palette.orInactive(
-                    active = isFocused,
-                )
-            )
-        }
-    ) {
 
-        val externalText by value.collectAsState()
+    val externalText by value.collectAsState()
 
-        val internalState = rememberSaveable(saver = TextFieldState.Saver) {
-            TextFieldState(externalText)
-        }
-
-        LaunchedEffect(internalState) {
-            snapshotFlow { internalState.text }.collect { newUiText ->
-                value.value = newUiText.toString()
-            }
-        }
-
-        LaunchedEffect(externalText) {
-            if (externalText != internalState.text.toString()) {
-                internalState.setTextAndPlaceCursorAtEnd(externalText)
-            }
-        }
-
-        val fContext = LocalFContext.current
-        val units = fContext.distance.units
-        val color = fContext.newTone(Contrast.content).color
-
-        val bringIntoViewRequester = remember { BringIntoViewRequester() }
-        val coroutineScope = rememberCoroutineScope()
-
-        BasicTextField(
-            state = internalState,
-            modifier = modifier
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                    if (isFocused) {
-                        coroutineScope.launch {
-                            delay(100)
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            enabled = enabled,
-            readOnly = readOnly,
-            textStyle = units.textStyle[textStyle].merge(
-                color = color,
-            ),
-            keyboardOptions = keyboardOptions,
-            lineLimits = lineLimits,
-            inputTransformation = inputTransformation,
-            outputTransformation = outputTransformation,
-            onKeyboardAction = onKeyboardAction,
-            onTextLayout = onTextLayout,
-            interactionSource = interactionSource,
-            scrollState = scrollState,
-            cursorBrush = SolidColor(color),
-            decorator = remember(
-                startAccessory,
-                topAccessory,
-                endAccessory,
-                bottomAccessory,
-                color,
-            ) {
-                Decorator(
-                    startAccessory = startAccessory,
-                    topAccessory = topAccessory,
-                    endAccessory = endAccessory,
-                    bottomAccessory = bottomAccessory,
-                    color = color,
-                )
-            },
-        )
+    val internalState = rememberSaveable(saver = TextFieldState.Saver) {
+        TextFieldState(externalText)
     }
+
+    LaunchedEffect(internalState) {
+        snapshotFlow { internalState.text }.collect { newUiText ->
+            value.value = newUiText.toString()
+        }
+    }
+
+    LaunchedEffect(externalText) {
+        if (externalText != internalState.text.toString()) {
+            internalState.setTextAndPlaceCursorAtEnd(externalText)
+        }
+    }
+
+    val fContext = LocalFContext.current
+    val units = fContext.distance.units
+    val color = fContext.getContentColor(Saturation.get(isFocused))
+
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
+    BasicTextField(
+        state = internalState,
+        modifier = modifier
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .onFocusChanged { focusState ->
+                isFocused = focusState.isFocused
+                if (isFocused) {
+                    coroutineScope.launch {
+                        delay(100)
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            },
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = units.textStyle[textStyle].merge(
+            color = color,
+        ),
+        keyboardOptions = keyboardOptions,
+        lineLimits = lineLimits,
+        inputTransformation = inputTransformation,
+        outputTransformation = outputTransformation,
+        onKeyboardAction = onKeyboardAction,
+        onTextLayout = onTextLayout,
+        interactionSource = interactionSource,
+        scrollState = scrollState,
+        cursorBrush = SolidColor(color),
+        decorator = remember(
+            color,
+        ) {
+            Decorator(
+                color = color,
+            )
+        },
+    )
 }
 
 private data class Decorator(
-    private val startAccessory: @Composable (() -> Unit)?,
-    private val topAccessory: @Composable (() -> Unit)?,
-    private val endAccessory: @Composable (() -> Unit)?,
-    private val bottomAccessory: @Composable (() -> Unit)?,
     private val color: Color,
 ) : TextFieldDecorator {
+
     @Composable
     override fun Decoration(
         innerTextField: @Composable (() -> Unit),
     ) {
         val units = LocalFContext.current.distance.units
-        Row(
-            modifier = Modifier
-                .border(
-                    width = units.borderWidth,
-                    color = color,
-                    shape = units.borderShape,
-                )
-                .fPadding(
-                    spaceSize = SizeType.Medium,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+        Line(
+            orientation = Orientation.Vertical,
+            arrangement = Arrangement.spacedBy(units.padding.vertical.small),
         ) {
-            Accessory(
-                side = Side.Start,
-                accessory = startAccessory,
+            innerTextField()
+            Spacer(
+                modifier = Modifier
+                    .height(units.borderWidth)
+                    .background(color),
             )
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
-                Accessory(
-                    side = Side.Top,
-                    accessory = topAccessory,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                innerTextField()
-                Accessory(
-                    side = Side.Bottom,
-                    accessory = bottomAccessory,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-            Accessory(
-                side = Side.End,
-                accessory = endAccessory,
-            )
-        }
-    }
-
-    @Composable
-    private fun Accessory(
-        side: Side,
-        modifier: Modifier = Modifier,
-        accessory: @Composable (() -> Unit)?
-    ) {
-        val orientation = side.orientation
-        val align = side.fold(
-            ifStart = { Alignment.CenterEnd },
-            ifTop = { Alignment.BottomStart },
-            ifEnd = { Alignment.CenterStart },
-            ifBottom = { Alignment.TopStart },
-        )
-        val space = LocalFContext.current.distance.units.padding[orientation].small
-        Box(
-            modifier = modifier.then(
-                side.fold(
-                    ifStart = { Modifier.padding(end = space) },
-                    ifTop = { Modifier.padding(bottom = space) },
-                    ifEnd = { Modifier.padding(start = space) },
-                    ifBottom = { Modifier.padding(top = space) }
-                )
-            ),
-            contentAlignment = align,
-        ) {
-            accessory.NullableStateContent(
-                contentAlignment = align,
-                transitionSpec = TransitionSpec.remember(align, align),
-            ) { localAccessory ->
-                UpdateFContext(
-                    update = {
-                        copy(
-                            distance = distance.offset(1),
-                        )
-                    }
-                ) {
-                    localAccessory()
-                }
-            }
         }
     }
 }

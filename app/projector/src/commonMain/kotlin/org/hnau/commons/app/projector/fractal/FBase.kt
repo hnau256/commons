@@ -7,7 +7,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.size.fPadding
 
 @Composable
@@ -23,7 +22,7 @@ fun FBase(
         Box(
             modifier = modifier
                 .background(
-                    color = fContext.color,
+                    color = fContext.containerColor,
                 )
                 .fPadding(),
         ) {
