@@ -26,12 +26,14 @@ import org.hnau.commons.app.projector.fractal.FItem
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.FTextField
 import org.hnau.commons.app.projector.fractal.context.FContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.orError
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Icon
@@ -41,6 +43,7 @@ import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
+import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifFalse
 import org.hnau.commons.kotlin.ifTrue
 
@@ -81,34 +84,48 @@ class RootProjector(
                                 }
                                 val containsDigits =
                                     value.collectAsState().value.let { it.any { it.isDigit() } }
-                                FItem(
-                                    startAccessory = {
-                                        FIcon(
-                                            drawable = Drawable.Vector(Icons.Default.Settings),
-                                        )
-                                    },
-                                    endAccessory = value.collectAsState().value.let { it.length > 2 }
-                                        .ifTrue {
-                                            {
-                                                Icon(
-                                                    icon = Icons.Default.Clear,
-                                                    modifier = Modifier.clickable {
-                                                        value.value = ""
-                                                    }
+                                UpdateFContext(
+                                    update = {
+                                        containsDigits.foldBoolean(
+                                            ifFalse = { this },
+                                            ifTrue = {
+                                                copy(
+                                                    mood = Mood.Error,
+                                                    saturation = Saturation.Active,
                                                 )
                                             }
-                                        },
-                                    topAccessory = { FText("Title") },
-                                    bottomAccessory = containsDigits.ifTrue {
-                                        {
-                                            FText("Contains digits")
-                                        }
-                                    },
+                                        )
+                                    }
                                 ) {
-                                    FTextField(
-                                        value = value,
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
+                                    FItem(
+                                        startAccessory = {
+                                            FIcon(
+                                                drawable = Drawable.Vector(Icons.Default.Settings),
+                                            )
+                                        },
+                                        endAccessory = value.collectAsState().value.let { it.length > 2 }
+                                            .ifTrue {
+                                                {
+                                                    Icon(
+                                                        icon = Icons.Default.Clear,
+                                                        modifier = Modifier.clickable {
+                                                            value.value = ""
+                                                        }
+                                                    )
+                                                }
+                                            },
+                                        topAccessory = { FText("Title") },
+                                        bottomAccessory = containsDigits.ifTrue {
+                                            {
+                                                FText("Contains digits")
+                                            }
+                                        },
+                                    ) {
+                                        FTextField(
+                                            value = value,
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    }
                                 }
                                 var isChecked by remember { mutableStateOf(false) }
                                 FItem(
