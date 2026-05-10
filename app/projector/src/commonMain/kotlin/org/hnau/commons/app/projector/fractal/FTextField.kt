@@ -51,7 +51,6 @@ fun FTextField(
     modifier: Modifier = Modifier,
     textStyle: SizeType = SizeType.default,
     enabled: Boolean = true,
-    readOnly: Boolean = false,
     inputTransformation: InputTransformation? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActionHandler? = null,
@@ -109,7 +108,7 @@ fun FTextField(
                     }
                 },
             enabled = enabled,
-            readOnly = readOnly,
+            readOnly = !enabled,
             textStyle = units.textStyle[textStyle].merge(
                 color = color,
             ),

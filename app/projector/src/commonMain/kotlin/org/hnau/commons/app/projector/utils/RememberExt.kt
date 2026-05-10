@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 
 @Composable
 inline fun <I, O> I.rememberRun(
-    vararg additionalKeys: Any,
+    vararg additionalKeys: Any?,
     crossinline block: I.() -> O,
 ): O = remember(this, *additionalKeys) {
     block()
@@ -13,7 +13,7 @@ inline fun <I, O> I.rememberRun(
 
 @Composable
 inline fun <I, O> I.rememberLet(
-    vararg additionalKeys: Any,
+    vararg additionalKeys: Any?,
     crossinline block: (I) -> O,
 ): O = remember(this, *additionalKeys) {
     block(this)
