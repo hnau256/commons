@@ -156,7 +156,7 @@ internal object Versions {
             "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
 
         val unconditioned: List<Versioned<LibraryId>> =
-            listOf("core", "core-serialization", "fx-coroutines").map(::buildArrowDependency)
+            listOf("core", "core-serialization", "fx-coroutines", "optics").map(::buildArrowDependency)
 
         val opticsProcessor: Versioned<LibraryId> =
             buildArrowDependency("optics")
