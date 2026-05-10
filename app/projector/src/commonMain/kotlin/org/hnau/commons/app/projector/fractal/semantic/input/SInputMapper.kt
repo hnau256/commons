@@ -6,17 +6,17 @@ import org.hnau.commons.kotlin.it
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.equality
 
-data class SInputMapper<S, E, T>(
-    val direct: (T) -> S,
-    val parse: (S) -> Either<E, T>,
+data class SInputMapper<S, E, V>(
+    val direct: (V) -> S,
+    val parse: (S) -> Either<E, V>,
     val convertErrorToString: (E) -> String,
 ) {
 
     companion object {
 
-        fun <S, T> createAlwaysSuccess(
-            mapper: Mapper<T, S>,
-        ): SInputMapper<S, Nothing, T> = SInputMapper(
+        fun <S, V> createAlwaysSuccess(
+            mapper: Mapper<V, S>,
+        ): SInputMapper<S, Nothing, V> = SInputMapper(
             direct = mapper.direct,
             parse = { state -> mapper.reverse(state).right() },
             convertErrorToString = { "" },
@@ -25,10 +25,10 @@ data class SInputMapper<S, E, T>(
         fun <T> createIdentity(): SInputMapper<T, Nothing, T> =
             createAlwaysSuccess(Mapper.equality())
 
-        fun <T, E> createValidator(
-            validate: (T) -> Either<E, Unit>,
+        fun <V, E> createValidator(
+            validate: (V) -> Either<E, Unit>,
             convertErrorToString: (E) -> String,
-        ): SInputMapper<T, E, T> = SInputMapper(
+        ): SInputMapper<V, E, V> = SInputMapper(
             direct = ::it,
             parse = { value -> validate(value).map { value } },
             convertErrorToString = convertErrorToString,

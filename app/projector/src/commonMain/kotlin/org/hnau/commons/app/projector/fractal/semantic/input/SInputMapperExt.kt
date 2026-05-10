@@ -28,7 +28,7 @@ operator fun <SI, EI, EO, M, TO> SInputMapper<SI, EI, M>.plus(
     }
 )
 
-fun <S, E, T> SInputMapper<S, Either<Nothing, E>, T>.simplify(): SInputMapper<S, E, T> =
+fun <S, E, V> SInputMapper<S, Either<Nothing, E>, V>.simplify(): SInputMapper<S, E, V> =
     SInputMapper(
         direct = direct,
         parse = { value -> parse(value).mapLeft { error -> error.value } },

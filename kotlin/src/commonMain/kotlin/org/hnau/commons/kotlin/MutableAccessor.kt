@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.identity
+import arrow.optics.Lens
 import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KMutableProperty0
@@ -87,3 +88,10 @@ inline fun <T> MutableAccessor<T?>.getOrInit(
     null -> init().also { set(it) }
     else -> valueOrNull
 }
+
+fun <I, O> MutableAccessor<I>.extract(
+    optics: Lens<I, O>,
+): MutableAccessor<O> = MutableAccessor(
+    get = { optics.get(get()) },
+    set = { value -> optics.set(get(), value) }
+)
