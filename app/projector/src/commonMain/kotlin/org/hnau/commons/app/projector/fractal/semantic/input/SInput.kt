@@ -40,7 +40,7 @@ fun <S, E, V> SInput(
 
     val scope = rememberCoroutineScope()
 
-    val inputContentDrawer by remember(scope, inputState) {
+    val inputContentDrawer by remember(scope, inputState, enabled) {
         inputState
             .toMutableState(scope)
             .mapState(scope) { (type, state) ->
