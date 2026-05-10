@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.size.LocalSizeType
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
@@ -28,7 +29,7 @@ fun FText(
     BasicText(
         text = text,
         style = fContext.distance.units.textStyle[type].merge(
-            color = fContext.getContentColor(Saturation.Neutral),
+            color = fContext.contentColor,
         ),
         modifier = modifier,
         onTextLayout = onTextLayout,

@@ -23,6 +23,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.FractalPreview
 import org.hnau.commons.app.projector.fractal.utils.Saturation
@@ -50,12 +53,11 @@ fun <E : CancelOrInProgress> FButton(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
 ) {
-    val saturation = Saturation.get(actionOrElseOrDisabled != null)
     UpdateFContext(
         update = {
-            overlay(
+            copy(
                 saturation = Saturation.get(actionOrElseOrDisabled != null)
-            )
+            ).overlay()
         }
     ) {
 
@@ -69,7 +71,7 @@ fun <E : CancelOrInProgress> FButton(
 
         val fContext = LocalFContext.current
         val units = fContext.distance.units
-        val foregroundColor = fContext.getContentColor(saturation)
+        val foregroundColor = fContext.contentColor
         Row(
             modifier = modifier
                 .clip(units.shape)

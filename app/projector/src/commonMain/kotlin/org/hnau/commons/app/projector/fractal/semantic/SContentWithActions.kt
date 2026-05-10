@@ -63,7 +63,7 @@ object SActionsScope {
         mood: Mood = Mood.Primary,
     ) {
         UpdateFContext(
-            update = { changeMood(mood = mood) }
+            update = { copy(mood = mood) }
         ) {
             FButton(
                 actionOrElseOrDisabled = actionOrElseOrDisabled,

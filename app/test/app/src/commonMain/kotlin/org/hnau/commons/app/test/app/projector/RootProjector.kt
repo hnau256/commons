@@ -62,7 +62,7 @@ class RootProjector(
         contentPadding: PaddingValues,
     ) {
         FBase(
-            context = FContext.create(
+            context = FContext(
                 palettes = palettes,
             ),
             modifier = Modifier.fillMaxSize().padding(contentPadding),

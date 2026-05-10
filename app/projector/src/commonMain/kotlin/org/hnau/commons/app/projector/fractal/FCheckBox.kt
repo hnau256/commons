@@ -19,6 +19,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
@@ -116,15 +119,14 @@ private data class StateInfo(
             checked: Boolean,
         ): StateInfo {
 
-            val saturation = Saturation.get(checked)
             val fContext = LocalFContext.current
 
-            val overlayFContext = fContext.overlay(
-                saturation = saturation,
-            )
+            val overlayFContext = fContext.copy(
+                saturation = Saturation.get(checked),
+            ).overlay()
 
             val containerColor = overlayFContext.containerColor
-            val contentColor = overlayFContext.getContentColor(saturation)
+            val contentColor = overlayFContext.contentColor
 
             val distance = fContext.distance
             return rememberInComposer(

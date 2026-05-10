@@ -35,7 +35,7 @@ fun SwitchHue(
     ) {
         UpdateFContext(
             update = {
-                changePalettes(
+                copy(
                     palettes = palettesWithColorScheme.palettes,
                 )
             }

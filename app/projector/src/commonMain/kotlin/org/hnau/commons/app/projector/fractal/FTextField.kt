@@ -38,6 +38,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
@@ -60,67 +62,75 @@ fun FTextField(
     scrollState: ScrollState = rememberScrollState(),
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
-
-    val externalText by value.collectAsState()
-
-    val internalState = rememberSaveable(saver = TextFieldState.Saver) {
-        TextFieldState(externalText)
-    }
-
-    LaunchedEffect(internalState) {
-        snapshotFlow { internalState.text }.collect { newUiText ->
-            value.value = newUiText.toString()
-        }
-    }
-
-    LaunchedEffect(externalText) {
-        if (externalText != internalState.text.toString()) {
-            internalState.setTextAndPlaceCursorAtEnd(externalText)
-        }
-    }
-
-    val fContext = LocalFContext.current
-    val units = fContext.distance.units
-    val color = fContext.getContentColor(Saturation.get(isFocused))
-
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
-
-    BasicTextField(
-        state = internalState,
-        modifier = modifier
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .onFocusChanged { focusState ->
-                isFocused = focusState.isFocused
-                if (isFocused) {
-                    coroutineScope.launch {
-                        delay(100)
-                        bringIntoViewRequester.bringIntoView()
-                    }
-                }
-            },
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = units.textStyle[textStyle].merge(
-            color = color,
-        ),
-        keyboardOptions = keyboardOptions,
-        lineLimits = lineLimits,
-        inputTransformation = inputTransformation,
-        outputTransformation = outputTransformation,
-        onKeyboardAction = onKeyboardAction,
-        onTextLayout = onTextLayout,
-        interactionSource = interactionSource,
-        scrollState = scrollState,
-        cursorBrush = SolidColor(color),
-        decorator = remember(
-            color,
-        ) {
-            Decorator(
-                color = color,
+    UpdateFContext(
+        update = {
+            copy(
+                saturation = Saturation.get(isFocused)
             )
-        },
-    )
+        }
+    ) {
+
+        val externalText by value.collectAsState()
+
+        val internalState = rememberSaveable(saver = TextFieldState.Saver) {
+            TextFieldState(externalText)
+        }
+
+        LaunchedEffect(internalState) {
+            snapshotFlow { internalState.text }.collect { newUiText ->
+                value.value = newUiText.toString()
+            }
+        }
+
+        LaunchedEffect(externalText) {
+            if (externalText != internalState.text.toString()) {
+                internalState.setTextAndPlaceCursorAtEnd(externalText)
+            }
+        }
+
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val color = fContext.contentColor
+
+        val bringIntoViewRequester = remember { BringIntoViewRequester() }
+        val coroutineScope = rememberCoroutineScope()
+
+        BasicTextField(
+            state = internalState,
+            modifier = modifier
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                    if (isFocused) {
+                        coroutineScope.launch {
+                            delay(100)
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = units.textStyle[textStyle].merge(
+                color = color,
+            ),
+            keyboardOptions = keyboardOptions,
+            lineLimits = lineLimits,
+            inputTransformation = inputTransformation,
+            outputTransformation = outputTransformation,
+            onKeyboardAction = onKeyboardAction,
+            onTextLayout = onTextLayout,
+            interactionSource = interactionSource,
+            scrollState = scrollState,
+            cursorBrush = SolidColor(color),
+            decorator = remember(
+                color,
+            ) {
+                Decorator(
+                    color = color,
+                )
+            },
+        )
+    }
 }
 
 private data class Decorator(

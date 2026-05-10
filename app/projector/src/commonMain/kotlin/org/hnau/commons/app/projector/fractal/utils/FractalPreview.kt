@@ -24,7 +24,7 @@ fun FractalPreview(
             Column {
                 (0 until 5).forEach { hueIndex ->
                     FBase(
-                        context = FContext.create(
+                        context = FContext(
                             palettes = Palettes.createCached(
                                 fallbackHue = Hue(hueIndex * 72),
                                 systemPalettes = SystemPalettes.None,

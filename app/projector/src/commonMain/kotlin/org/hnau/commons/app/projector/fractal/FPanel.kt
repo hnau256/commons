@@ -6,8 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.fPadding
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.plus
 
 @Composable
 fun FPanel(
@@ -16,9 +20,11 @@ fun FPanel(
 ) {
     UpdateFContext(
         update = {
-            makeDeeper(
-                offset = 1,
-                resetOverlay = true,
+            copy(
+                distance = distance + 1,
+                saturation = Saturation.Neutral,
+                mood = Mood.default,
+                customContainerTone = null,
             )
         }
     ) {

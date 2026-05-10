@@ -15,8 +15,10 @@ import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -26,30 +28,26 @@ fun FIcon(
     drawable: Drawable,
     modifier: Modifier = Modifier,
 ) {
-    UpdateFContext(
-        update = { overlay(Saturation.Active) }
-    ) {
-        drawable.fold(
-            ifPainter = { painter ->
-                PainterIcon(
-                    painter = painter,
-                    modifier = modifier,
-                )
-            },
-            ifVector = { vector ->
-                PainterIcon(
-                    painter = rememberVectorPainter(vector),
-                    modifier = modifier,
-                )
-            },
-            ifText = { text ->
-                TextIcon(
-                    text = text,
-                    modifier = modifier,
-                )
-            }
-        )
-    }
+    drawable.fold(
+        ifPainter = { painter ->
+            PainterIcon(
+                painter = painter,
+                modifier = modifier,
+            )
+        },
+        ifVector = { vector ->
+            PainterIcon(
+                painter = rememberVectorPainter(vector),
+                modifier = modifier,
+            )
+        },
+        ifText = { text ->
+            TextIcon(
+                text = text,
+                modifier = modifier,
+            )
+        }
+    )
 }
 
 @Composable
@@ -65,7 +63,7 @@ private fun PainterIcon(
             .paint(
                 painter = painter,
                 colorFilter = ColorFilter.tint(
-                    color = fContext.getContentColor(Saturation.Active),
+                    color = fContext.contentColor,
                 )
             )
     )
@@ -76,25 +74,29 @@ private fun TextIcon(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    val fContext = LocalFContext.current
-    val units = fContext.distance.units
-    Box(
-        modifier = modifier
-            .size(units.iconSize)
-            .background(
-                color = fContext.containerColor,
-                shape = CircleShape,
-            ),
-        contentAlignment = Alignment.Center,
+    UpdateFContext(
+        update = { overlay() }
     ) {
-        BasicText(
-            text = text.rememberRun { extractNChars(2) },
-            maxLines = 1,
-            minLines = 1,
-            style = units.textStyle.small.merge(
-                color = fContext.getContentColor(Saturation.Active),
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        Box(
+            modifier = modifier
+                .size(units.iconSize)
+                .background(
+                    color = fContext.containerColor,
+                    shape = CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            BasicText(
+                text = text.rememberRun { extractNChars(2) },
+                maxLines = 1,
+                minLines = 1,
+                style = units.textStyle.small.merge(
+                    color = fContext.contentColor,
+                )
             )
-        )
+        }
     }
 }
 

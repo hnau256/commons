@@ -12,10 +12,9 @@ value class Distance(
     }
 }
 
-
-fun Distance.offset(
-    offset: Int,
+operator fun Distance.plus(
+    count: Int,
 ): Distance = Distance(
-    distance = distance + offset,
+    distance = distance + count,
 )
 
