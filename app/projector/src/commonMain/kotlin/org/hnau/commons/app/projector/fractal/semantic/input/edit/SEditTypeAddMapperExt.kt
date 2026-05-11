@@ -5,26 +5,26 @@ import org.hnau.commons.app.projector.fractal.semantic.input.SInputMapper
 import org.hnau.commons.app.projector.fractal.semantic.input.plus
 import org.hnau.commons.app.projector.fractal.semantic.input.simplify
 
-fun <EI, EO, TI, TO> SEditType<EI, TI>.addMapper(
-    mapper: SInputMapper<TI, EO, TO>,
-): SEditType<Either<EI, EO>, TO> = object : SEditType<Either<EI, EO>, TO> {
+fun <EI, EO, VI, VO> SEditType<EI, VI>.addMapper(
+    mapper: SInputMapper<VI, EO, VO>,
+): SEditType<Either<EI, EO>, VO> = object : SEditType<Either<EI, EO>, VO> {
 
-    private val source: SEditType<EI, TI>
+    private val source: SEditType<EI, VI>
         get() = this@addMapper
     override val config: SEditType.Config
         get() = source.config
 
-    override val mapper: SInputMapper<String, Either<EI, EO>, TO> = source.mapper + mapper
+    override val mapper: SInputMapper<String, Either<EI, EO>, VO> = source.mapper + mapper
 }
 
-fun <E, T> SEditType<Either<Nothing, E>, T>.simplify(): SEditType<E, T> =
-    object : SEditType<E, T> {
+fun <E, V> SEditType<Either<Nothing, E>, V>.simplify(): SEditType<E, V> =
+    object : SEditType<E, V> {
 
-        private val source: SEditType<Either<Nothing, E>, T>
+        private val source: SEditType<Either<Nothing, E>, V>
             get() = this@simplify
         override val config: SEditType.Config
             get() = source.config
 
-        override val mapper: SInputMapper<String, E, T> =
+        override val mapper: SInputMapper<String, E, V> =
             source.mapper.simplify()
     }

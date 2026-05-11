@@ -4,7 +4,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import org.hnau.commons.app.projector.fractal.semantic.input.SInputMapper
 
-interface SEditType<E, T> {
+interface SEditType<E, V> {
 
     data class Config(
         val keyboardType: KeyboardType,
@@ -13,7 +13,7 @@ interface SEditType<E, T> {
 
     val config: Config
 
-    val mapper: SInputMapper<String, E, T>
+    val mapper: SInputMapper<String, E, V>
 
     companion object
 }
