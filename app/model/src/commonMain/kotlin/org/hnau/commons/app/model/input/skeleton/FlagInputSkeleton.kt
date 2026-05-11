@@ -1,11 +1,9 @@
 package org.hnau.commons.app.model.input.skeleton
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModel
+import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
-import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 
 @Serializable
 data class FlagInputSkeleton(
@@ -20,13 +18,10 @@ data class FlagInputSkeleton(
         )
     )
 
-    fun toModel(
-        scope: CoroutineScope,
-        enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
-    ): InputModel<Boolean, Nothing, Boolean, InputType.Flag> = InputModel(
-        scope = scope,
-        skeleton = input,
-        type = InputType.Flag,
-        enabled = enabled,
-    )
+    fun toModelFactory(): InputModel.Factory<Boolean, Nothing, Boolean, InputType.Flag> =
+        InputModel.Factory.simple(
+            skeleton = input,
+            type = InputType.Flag,
+            parser = InputParser.createIdentity(),
+        )
 }

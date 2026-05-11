@@ -1,13 +1,10 @@
 package org.hnau.commons.app.model.input.skeleton
 
 import arrow.core.Either
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModel
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
-import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 import org.hnau.commons.kotlin.it
 
 @Serializable
@@ -23,29 +20,16 @@ data class EditTextInputSkeleton(
         )
     )
 
-    inline fun <E, V> toModel(
-        scope: CoroutineScope,
-        enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
+    inline fun <E, V> toModelFactory(
         configParser: (mapper: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
-    ): InputModel<String, E, V, InputType.Edit<E, V>> =
-        InputModel(
-            scope = scope,
-            skeleton = input,
-            type = InputType.Edit(
-                parser = InputParser.createIdentity<String>()
-                    .let(configParser),
-            ),
-            enabled = enabled,
-        )
-
-    fun toModel(
-        scope: CoroutineScope,
-        enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
-    ): InputModel<String, Nothing, String, InputType.Edit<Nothing, String>> = toModel(
-        scope = scope,
-        enabled = enabled,
-        configParser = ::it,
+    ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
+        skeleton = input,
+        type = InputType.Edit,
+        parser = InputParser.createIdentity<String>().let(configParser)
     )
+
+    fun toModelFactory(): InputModel.Factory<String, Nothing, String, InputType.Edit> =
+        toModelFactory(::it)
 }
 
 data class StringIsTooShort(

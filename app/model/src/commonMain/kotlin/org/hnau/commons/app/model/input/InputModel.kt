@@ -5,34 +5,47 @@
 package org.hnau.commons.app.model.input
 
 import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.UseSerializers
 import org.hnau.commons.app.model.input.skeleton.InputSkeleton
 import org.hnau.commons.app.model.utils.Editable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 import org.hnau.commons.kotlin.serialization.MutableStateFlowSerializer
 
-class InputModel<S, E, V, I : InputType<S, E, V>>(
+class InputModel<S, E, V, I : InputType<S>>(
     scope: CoroutineScope,
     private val skeleton: InputSkeleton<S>,
-    private val type: I,
-    val enabled: StateFlow<Boolean>,
-) {
+    override val type: I,
+    private val parser: InputParser<S, E, V>,
+    override val enabled: StateFlow<Boolean>,
+) : InputStateHolder<S, E, I> {
 
-    val state: MutableStateFlow<S>
-        get() = skeleton.state
-
-    val stateWithValueOrError: StateFlow<KeyValue<S, Either<E, V>>> = skeleton
+    private val stateWithValueOrError: StateFlow<KeyValue<S, Either<E, V>>> = skeleton
         .state
         .mapState(scope) { state ->
-            val valueOrError = type
-                .parser
-                .parse(state)
+            val valueOrError = parser.parse(state)
             KeyValue(state, valueOrError)
         }
+
+    override val stateWithErrorOrNone: StateFlow<KeyValue<S, Option<E>>> =
+        stateWithValueOrError.mapState(scope) { stateWithValueOrError ->
+            stateWithValueOrError.map { valueOrError ->
+                valueOrError.fold(
+                    ifLeft = { error -> Some(error) },
+                    ifRight = { None },
+                )
+            }
+        }
+
+    override fun updateState(newState: S) {
+        skeleton.state.value = newState
+    }
 
     val valueOrError: StateFlow<Either<E, V>> = stateWithValueOrError.mapState(
         scope = scope,
@@ -49,5 +62,34 @@ class InputModel<S, E, V, I : InputType<S, E, V>>(
                 )
             }
         )
+    }
+
+    interface Factory<S, E, V, I : InputType<S>> {
+
+        fun createInputModel(
+            scope: CoroutineScope,
+            enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
+        ): InputModel<S, E, V, I>
+
+        companion object {
+
+            fun <S, E, V, I : InputType<S>> simple(
+                skeleton: InputSkeleton<S>,
+                type: I,
+                parser: InputParser<S, E, V>,
+            ): Factory<S, E, V, I> = object : Factory<S, E, V, I> {
+
+                override fun createInputModel(
+                    scope: CoroutineScope,
+                    enabled: StateFlow<Boolean>
+                ): InputModel<S, E, V, I> = InputModel(
+                    scope = scope,
+                    enabled = enabled,
+                    skeleton = skeleton,
+                    type = type,
+                    parser = parser,
+                )
+            }
+        }
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +34,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
@@ -47,7 +45,8 @@ import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
 fun FTextField(
-    value: MutableStateFlow<String>,
+    value: String,
+    onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     textStyle: SizeType = SizeType.default,
     enabled: Boolean = true,
@@ -69,21 +68,19 @@ fun FTextField(
         }
     ) {
 
-        val externalText by value.collectAsState()
-
         val internalState = rememberSaveable(saver = TextFieldState.Saver) {
-            TextFieldState(externalText)
+            TextFieldState(value)
         }
 
         LaunchedEffect(internalState) {
             snapshotFlow { internalState.text }.collect { newUiText ->
-                value.value = newUiText.toString()
+                onValueChanged(newUiText.toString())
             }
         }
 
-        LaunchedEffect(externalText) {
-            if (externalText != internalState.text.toString()) {
-                internalState.setTextAndPlaceCursorAtEnd(externalText)
+        LaunchedEffect(value) {
+            if (value != internalState.text.toString()) {
+                internalState.setTextAndPlaceCursorAtEnd(value)
             }
         }
 
