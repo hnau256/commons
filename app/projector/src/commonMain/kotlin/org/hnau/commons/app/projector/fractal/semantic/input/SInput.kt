@@ -16,10 +16,10 @@ import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.hnau.commons.app.projector.fractal.FCheckBox
 import org.hnau.commons.app.projector.fractal.FIcon
-import org.hnau.commons.app.projector.fractal.FItem
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.FTextField
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.semantic.SItem
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable
@@ -123,7 +123,7 @@ private fun rememberItemDrawerFactory(
                         )
                     }
                 ) {
-                    FItem(
+                    SItem(
                         onClick = onClick,
                         modifier = modifier,
                         startAccessory = icon?.let { iconNotNull ->

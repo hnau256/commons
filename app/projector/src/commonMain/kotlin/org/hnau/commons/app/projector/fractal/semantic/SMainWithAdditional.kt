@@ -3,8 +3,6 @@ package org.hnau.commons.app.projector.fractal.semantic
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.FLine
-import org.hnau.commons.app.projector.fractal.FPanel
 import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation
@@ -15,13 +13,13 @@ fun SMainWithAdditional(
     main: @Composable () -> Unit,
     additional: @Composable () -> Unit,
 ) {
-    FLine(
+    SLine(
         modifier = modifier,
         orientation = Orientation.Vertical,
         forceFill = ForceFill.Last,
         separation = SizeType.Large,
     ) {
-        FPanel(
+        SPanel(
             modifier = Modifier.fillMaxWidth(),
             content = additional,
         )

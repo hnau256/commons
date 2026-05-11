@@ -1,5 +1,6 @@
 package org.hnau.commons.app.test.app.projector
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +24,8 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
+import org.hnau.commons.app.projector.fractal.semantic.SScreen
+import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.semantic.input.SInput
 import org.hnau.commons.app.projector.fractal.semantic.input.SInputMapper
 import org.hnau.commons.app.projector.fractal.semantic.input.SInputState
@@ -63,123 +67,126 @@ class RootProjector(
             context = FContext(
                 palettes = palettes,
             ),
-            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            modifier = Modifier.fillMaxSize(),
         ) {
-            SContentWithActions(
-                modifier = Modifier.fillMaxSize(),
-                content = {
-                    SMainWithAdditional(
-                        main = {
-                            SElements {
-                                FText("Main title", type = SizeType.Large)
-                                FText("Main")
+            SScreen(
+                contentPadding = contentPadding,
+            ) {
+                SContentWithActions(
+                    modifier = Modifier.fillMaxSize(),
+                    content = {
+                        SMainWithAdditional(
+                            main = {
+                                SElements {
+                                    SText("Main title", type = SizeType.Large)
+                                    SText("Main")
 
-                                SInput(
-                                    title = "Flag",
-                                    icon = Drawable.Vector(Icons.Default.Computer),
-                                    inputState = remember {
-                                        SInputState
-                                            .create(
-                                                type = SInputType.Flag,
-                                                initialValue = false,
-                                            )
-                                            .toMutableStateFlowAsInitial()
-                                    },
-                                )
+                                    SInput(
+                                        title = "Flag",
+                                        icon = Drawable.Vector(Icons.Default.Computer),
+                                        inputState = remember {
+                                            SInputState
+                                                .create(
+                                                    type = SInputType.Flag,
+                                                    initialValue = false,
+                                                )
+                                                .toMutableStateFlowAsInitial()
+                                        },
+                                    )
 
-                                SInput(
-                                    title = "Decimal",
-                                    icon = null,
-                                    inputState = remember {
-                                        SInputState
-                                            .create(
-                                                type = SInputType.Edit(
-                                                    type = SEditType.decimal("Is not decimal"),
-                                                ),
-                                                initialValue = BigDecimal.fromFloat(123.345f),
-                                            )
-                                            .toMutableStateFlowAsInitial()
-                                    },
-                                )
-
-                                SInput(
-                                    title = "Integer",
-                                    icon = Drawable.Vector(Icons.Default.Lens),
-                                    inputState = remember {
-                                        SInputState
-                                            .create(
-                                                type = SInputType.Edit(
-                                                    type = SEditType.integer("Is not integer"),
-                                                ),
-                                                initialValue = BigInteger.fromInt(123),
-                                            )
-                                            .toMutableStateFlowAsInitial()
-                                    },
-                                )
-
-                                SInput(
-                                    title = "Text",
-                                    icon = Drawable.Vector(Icons.Default.AddComment),
-                                    inputState = remember {
-                                        SInputState
-                                            .create(
-                                                type = SInputType.Edit(
-                                                    type = SEditType.text().addMapper(
-                                                        SInputMapper.createMinLengthValidator(
-                                                            minLength = 3,
-                                                            convertErrorToString = { error ->
-                                                                "Expected at least ${error.minLength} symbols, got ${error.actualLength}"
-                                                            }
-                                                        )
+                                    SInput(
+                                        title = "Decimal",
+                                        icon = null,
+                                        inputState = remember {
+                                            SInputState
+                                                .create(
+                                                    type = SInputType.Edit(
+                                                        type = SEditType.decimal("Is not decimal"),
                                                     ),
-                                                ),
-                                                initialValue = "qwerty",
-                                            )
-                                            .toMutableStateFlowAsInitial()
-                                    },
-                                )
+                                                    initialValue = BigDecimal.fromFloat(123.345f),
+                                                )
+                                                .toMutableStateFlowAsInitial()
+                                        },
+                                    )
 
-                            }
-                        },
-                        additional = {
-                            SContentWithActions(
-                                content = { FText("Content") },
-                                actions = {
-                                    Action(
-                                        actionOrElseOrDisabled = model.task.collectAsState().value,
-                                        titleOrIcon = TitleOrIcon.Both(
-                                            title = "Primary",
-                                            icon = Drawable.Vector(Icons.Default.Settings),
-                                        ),
-                                        mood = Mood.Primary,
+                                    SInput(
+                                        title = "Integer",
+                                        icon = Drawable.Vector(Icons.Default.Lens),
+                                        inputState = remember {
+                                            SInputState
+                                                .create(
+                                                    type = SInputType.Edit(
+                                                        type = SEditType.integer("Is not integer"),
+                                                    ),
+                                                    initialValue = BigInteger.fromInt(123),
+                                                )
+                                                .toMutableStateFlowAsInitial()
+                                        },
                                     )
-                                    Action<CancelOrInProgress.Cancel>(
-                                        actionOrElseOrDisabled = ActionOrElse.Action {},
-                                        titleOrIcon = TitleOrIcon.Title("Secondary"),
-                                        mood = Mood.Secondary,
+
+                                    SInput(
+                                        title = "Text",
+                                        icon = Drawable.Vector(Icons.Default.AddComment),
+                                        inputState = remember {
+                                            SInputState
+                                                .create(
+                                                    type = SInputType.Edit(
+                                                        type = SEditType.text().addMapper(
+                                                            SInputMapper.createMinLengthValidator(
+                                                                minLength = 3,
+                                                                convertErrorToString = { error ->
+                                                                    "Expected at least ${error.minLength} symbols, got ${error.actualLength}"
+                                                                }
+                                                            )
+                                                        ),
+                                                    ),
+                                                    initialValue = "qwerty",
+                                                )
+                                                .toMutableStateFlowAsInitial()
+                                        },
                                     )
+
                                 }
-                            )
-                        },
-                    )
-                },
-                actions = {
-                    Action(
-                        actionOrElseOrDisabled = model.task.collectAsState().value,
-                        titleOrIcon = TitleOrIcon.Both(
-                            title = "Primary",
-                            icon = Drawable.Vector(Icons.Default.Settings),
-                        ),
-                        mood = Mood.Primary,
-                    )
-                    Action<CancelOrInProgress.Cancel>(
-                        actionOrElseOrDisabled = ActionOrElse.Action {},
-                        titleOrIcon = TitleOrIcon.Title("Secondary"),
-                        mood = Mood.Secondary,
-                    )
-                }
-            )
+                            },
+                            additional = {
+                                SContentWithActions(
+                                    content = { SText("Content") },
+                                    actions = {
+                                        Action(
+                                            actionOrElseOrDisabled = model.task.collectAsState().value,
+                                            titleOrIcon = TitleOrIcon.Both(
+                                                title = "Primary",
+                                                icon = Drawable.Vector(Icons.Default.Settings),
+                                            ),
+                                            mood = Mood.Primary,
+                                        )
+                                        Action<CancelOrInProgress.Cancel>(
+                                            actionOrElseOrDisabled = ActionOrElse.Action {},
+                                            titleOrIcon = TitleOrIcon.Title("Secondary"),
+                                            mood = Mood.Secondary,
+                                        )
+                                    }
+                                )
+                            },
+                        )
+                    },
+                    actions = {
+                        Action(
+                            actionOrElseOrDisabled = model.task.collectAsState().value,
+                            titleOrIcon = TitleOrIcon.Both(
+                                title = "Primary",
+                                icon = Drawable.Vector(Icons.Default.Settings),
+                            ),
+                            mood = Mood.Primary,
+                        )
+                        Action<CancelOrInProgress.Cancel>(
+                            actionOrElseOrDisabled = ActionOrElse.Action {},
+                            titleOrIcon = TitleOrIcon.Title("Secondary"),
+                            mood = Mood.Secondary,
+                        )
+                    }
+                )
+            }
         }
-
     }
 }

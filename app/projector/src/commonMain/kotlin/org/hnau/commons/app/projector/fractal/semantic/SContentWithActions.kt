@@ -1,14 +1,15 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FButton
-import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Orientation
@@ -22,7 +23,7 @@ fun SContentWithActions(
     content: @Composable () -> Unit,
     actions: @Composable SActionsScope.() -> Unit,
 ) {
-    FLine(
+    SLine(
         modifier = modifier,
         orientation = Orientation.Vertical,
         forceFill = ForceFill.First,
@@ -41,7 +42,7 @@ fun SActions(
     modifier: Modifier = Modifier,
     block: @Composable SActionsScope.() -> Unit,
 ) {
-    FLine(
+    SLine(
         modifier = modifier,
         orientation = when (LocalFContext.current.distance.distance) {
             0 -> Orientation.Vertical
@@ -66,6 +67,7 @@ object SActionsScope {
             update = { copy(mood = mood) }
         ) {
             FButton(
+                modifier = Modifier.padding(LocalSContentPadding.current),
                 actionOrElseOrDisabled = actionOrElseOrDisabled,
                 titleOrIcon = titleOrIcon,
             )

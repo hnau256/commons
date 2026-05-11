@@ -11,10 +11,15 @@ import org.hnau.commons.app.projector.uikit.utils.Dimens
 
 @Composable
 fun Modifier.option(
-    buildModifierOrNull: @Composable Modifier.() -> Modifier?,
-): Modifier = buildModifierOrNull()
+    modifierOrNull: Modifier?,
+): Modifier = modifierOrNull
     ?.let(Modifier::then)
     ?: this
+
+@Composable
+fun Modifier.option(
+    buildModifierOrNull: @Composable Modifier.() -> Modifier?,
+): Modifier = option(buildModifierOrNull())
 
 fun Modifier.clickableOption(
     onClick: (() -> Unit)?,
