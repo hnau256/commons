@@ -24,7 +24,7 @@ fun SContentWithActions(
     actions: @Composable SActionsScope.() -> Unit,
 ) {
     SLine(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         orientation = Orientation.Vertical,
         forceFill = ForceFill.First,
         separation = SizeType.Large,

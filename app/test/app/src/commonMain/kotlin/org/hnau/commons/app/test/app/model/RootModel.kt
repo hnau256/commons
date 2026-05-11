@@ -1,5 +1,7 @@
 package org.hnau.commons.app.test.app.model
 
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
@@ -23,12 +25,20 @@ class RootModel(
 
     @Serializable
     data class Skeleton(
-        val a: Int = 0,
+        val form: FormModel.Skeleton = FormModel.Skeleton(
+            initial = Config(
+                flag = true,
+                decimal = BigDecimal.fromFloat(123.456f),
+                integer = BigInteger.fromInt(123),
+                text = "qwerty",
+            )
+        ),
     )
 
-    val task = actionOrCancelIfExecuting(scope) {
-        delay(5.seconds)
-    }
+    val form = FormModel(
+        scope = scope,
+        skeleton = skeleton.form,
+    )
 
     val goBackHandler: GoBackHandler
         get() = NeverGoBackHandler

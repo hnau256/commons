@@ -1,11 +1,15 @@
 package org.hnau.commons.app.test.app
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.app.AppProjector
+import org.hnau.commons.app.projector.fractal.FBase
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.app.test.app.projector.RootProjector
 import org.hnau.commons.app.test.app.projector.impl
@@ -27,9 +31,15 @@ fun createAppProjector(
         )
     },
     content = { rootProjector, contentPadding, palettes ->
-        rootProjector.Content(
-            palettes = palettes,
-            contentPadding = contentPadding,
-        )
+        FBase(
+            context = FContext(
+                palettes = palettes,
+            ),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            rootProjector.Content(
+                contentPadding = contentPadding,
+            )
+        }
     }
 )
