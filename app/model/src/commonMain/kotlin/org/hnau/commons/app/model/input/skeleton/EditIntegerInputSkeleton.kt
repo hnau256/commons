@@ -2,7 +2,6 @@ package org.hnau.commons.app.model.input.skeleton
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.serialization.Serializable
-import org.hnau.commons.app.model.input.InputModel
 import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
@@ -23,7 +22,7 @@ data class EditIntegerInputSkeleton(
     )
 
     inline fun <E, V> toModelPrototype(
-        configParser: (mapper: InputParser<String, UnableParseStringToIntegerError, BigInteger>) -> InputParser<String, E, V>,
+        configParser: (parser: InputParser<String, UnableParseStringToIntegerError, BigInteger>) -> InputParser<String, E, V>,
     ): InputModelPrototype<String, E, V, InputType.Edit> = InputModelPrototype(
         skeleton = input,
         type = InputType.Edit(

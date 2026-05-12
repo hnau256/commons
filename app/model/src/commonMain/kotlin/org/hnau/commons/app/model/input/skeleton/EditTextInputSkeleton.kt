@@ -2,7 +2,6 @@ package org.hnau.commons.app.model.input.skeleton
 
 import arrow.core.Either
 import kotlinx.serialization.Serializable
-import org.hnau.commons.app.model.input.InputModel
 import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
@@ -22,7 +21,7 @@ data class EditTextInputSkeleton(
     )
 
     inline fun <E, V> toModelPrototype(
-        configParser: (mapper: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
+        configParser: (parser: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
     ): InputModelPrototype<String, E, V, InputType.Edit> = InputModelPrototype(
         skeleton = input,
         type = InputType.Edit(
