@@ -15,7 +15,6 @@ import org.hnau.commons.app.model.input.skeleton.InputSkeleton
 import org.hnau.commons.app.model.utils.Editable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
-import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 import org.hnau.commons.kotlin.serialization.MutableStateFlowSerializer
 
 class InputModel<S, E, V, I : InputType<S>>(
@@ -62,34 +61,5 @@ class InputModel<S, E, V, I : InputType<S>>(
                 )
             }
         )
-    }
-
-    interface Factory<S, E, V, I : InputType<S>> {
-
-        fun createInputModel(
-            scope: CoroutineScope,
-            enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
-        ): InputModel<S, E, V, I>
-
-        companion object {
-
-            fun <S, E, V, I : InputType<S>> simple(
-                skeleton: InputSkeleton<S>,
-                type: I,
-                parser: InputParser<S, E, V>,
-            ): Factory<S, E, V, I> = object : Factory<S, E, V, I> {
-
-                override fun createInputModel(
-                    scope: CoroutineScope,
-                    enabled: StateFlow<Boolean>
-                ): InputModel<S, E, V, I> = InputModel(
-                    scope = scope,
-                    enabled = enabled,
-                    skeleton = skeleton,
-                    type = type,
-                    parser = parser,
-                )
-            }
-        }
     }
 }

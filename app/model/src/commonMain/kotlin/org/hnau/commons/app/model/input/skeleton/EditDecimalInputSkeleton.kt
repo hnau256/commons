@@ -3,6 +3,7 @@ package org.hnau.commons.app.model.input.skeleton
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModel
+import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.kotlin.it
@@ -21,9 +22,9 @@ data class EditDecimalInputSkeleton(
         )
     )
 
-    inline fun <E, V> toModelFactory(
+    inline fun <E, V> toModelPrototype(
         configParser: (mapper: InputParser<String, UnableParseStringToDecimalError, BigDecimal>) -> InputParser<String, E, V>,
-    ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
+    ): InputModelPrototype<String, E, V, InputType.Edit> = InputModelPrototype(
         skeleton = input,
         type = InputType.Edit(
             contentType = InputType.Edit.ContentType.Decimal,
@@ -38,8 +39,8 @@ data class EditDecimalInputSkeleton(
         ).let(configParser)
     )
 
-    fun toModelFactory(): InputModel.Factory<String, UnableParseStringToDecimalError, BigDecimal, InputType.Edit> =
-        toModelFactory(::it)
+    fun toModelPrototype(): InputModelPrototype<String, UnableParseStringToDecimalError, BigDecimal, InputType.Edit> =
+        toModelPrototype(::it)
 }
 
 

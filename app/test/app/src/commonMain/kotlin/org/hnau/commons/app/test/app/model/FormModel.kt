@@ -48,27 +48,27 @@ class FormModel(
 
     val flag: InputModel<Boolean, Nothing, Boolean, InputType.Flag> = skeleton
         .flag
-        .toModelFactory()
-        .createInputModel(scope)
+        .toModelPrototype()
+        .toInputModel(scope)
 
 
     val decimal: InputModel<String, UnableParseStringToDecimalError, BigDecimal, InputType.Edit> =
         skeleton
             .decimal
-            .toModelFactory()
-            .createInputModel(scope)
+            .toModelPrototype()
+            .toInputModel(scope)
 
 
     val integer: InputModel<String, UnableParseStringToIntegerError, BigInteger, InputType.Edit> =
-        skeleton.integer.toModelFactory()
-            .createInputModel(scope)
+        skeleton.integer.toModelPrototype()
+            .toInputModel(scope)
 
 
     val text: InputModel<String, StringIsTooShort, String, InputType.Edit> =
-        skeleton.text.toModelFactory {
+        skeleton.text.toModelPrototype {
             (it + InputParser.createStringMinLengthValidator(3)).simplify()
         }
-            .createInputModel(scope)
+            .toInputModel(scope)
 
     val config: StateFlow<Editable<Config>> = flag
         .editable

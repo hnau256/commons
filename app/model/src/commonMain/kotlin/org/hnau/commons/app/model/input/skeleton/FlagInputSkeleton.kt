@@ -2,6 +2,7 @@ package org.hnau.commons.app.model.input.skeleton
 
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModel
+import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
 
@@ -18,8 +19,8 @@ data class FlagInputSkeleton(
         )
     )
 
-    fun toModelFactory(): InputModel.Factory<Boolean, Nothing, Boolean, InputType.Flag> =
-        InputModel.Factory.simple(
+    fun toModelPrototype(): InputModelPrototype<Boolean, Nothing, Boolean, InputType.Flag> =
+        InputModelPrototype(
             skeleton = input,
             type = InputType.Flag,
             parser = InputParser.createIdentity(),

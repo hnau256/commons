@@ -3,6 +3,7 @@ package org.hnau.commons.app.model.input.skeleton
 import arrow.core.Either
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModel
+import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.kotlin.it
@@ -20,9 +21,9 @@ data class EditTextInputSkeleton(
         )
     )
 
-    inline fun <E, V> toModelFactory(
+    inline fun <E, V> toModelPrototype(
         configParser: (mapper: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
-    ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
+    ): InputModelPrototype<String, E, V, InputType.Edit> = InputModelPrototype(
         skeleton = input,
         type = InputType.Edit(
             contentType = InputType.Edit.ContentType.Text,
@@ -30,8 +31,8 @@ data class EditTextInputSkeleton(
         parser = InputParser.createIdentity<String>().let(configParser)
     )
 
-    fun toModelFactory(): InputModel.Factory<String, Nothing, String, InputType.Edit> =
-        toModelFactory(::it)
+    fun toModelPrototype(): InputModelPrototype<String, Nothing, String, InputType.Edit> =
+        toModelPrototype(::it)
 }
 
 data class StringIsTooShort(
