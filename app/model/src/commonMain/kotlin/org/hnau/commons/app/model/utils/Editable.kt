@@ -143,7 +143,7 @@ inline fun <I, O> Editable.Value<I>.map(
     transform: (I) -> O,
 ): Editable.Value<O> = Editable.Value(
     value = transform(value),
-    changed = false,
+    changed = changed,
 )
 
 inline fun <I, O> Editable<I>.map(
