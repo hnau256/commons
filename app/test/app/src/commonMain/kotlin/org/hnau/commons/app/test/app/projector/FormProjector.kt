@@ -13,7 +13,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
-import org.hnau.commons.app.projector.fractal.semantic.input.toUiInputStateHolder
+import org.hnau.commons.app.projector.fractal.semantic.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -27,7 +27,6 @@ class FormProjector(
 
     private val flag: InputProjector = model
         .flag
-        .toUiInputStateHolder()
         .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
@@ -38,40 +37,37 @@ class FormProjector(
 
     private val decimal: InputProjector = model
         .decimal
-        .toUiInputStateHolder { state, _ ->
-            "Unable parse '$state' to BigDecimal"
-        }
         .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Decimal",
             icon = Drawable.Vector(Icons.Default.CropDin),
-        )
+        ) { state, _ ->
+            "Unable parse '$state' to BigDecimal"
+        }
 
 
     private val integer: InputProjector = model
         .integer
-        .toUiInputStateHolder { state, _ ->
-            "Unable parse '$state' to BigInteger"
-        }
         .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Integer",
             icon = Drawable.Vector(Icons.Default.Earbuds),
-        )
+        ) { state, _ ->
+            "Unable parse '$state' to BigInteger"
+        }
 
     private val text = model
         .text
-        .toUiInputStateHolder { state, error ->
-            "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
-        }
         .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Text",
             icon = Drawable.Vector(Icons.Default.Chair),
-        )
+        ) { state, error ->
+            "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
+        }
 
     @Composable
     fun Content(

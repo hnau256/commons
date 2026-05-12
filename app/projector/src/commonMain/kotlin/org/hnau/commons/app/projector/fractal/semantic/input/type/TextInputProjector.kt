@@ -13,12 +13,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.FIcon
 import org.hnau.commons.app.projector.fractal.FTextField
 import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
-import org.hnau.commons.app.projector.fractal.semantic.input.UiInputStateHolder
 import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.ifTrue
@@ -46,9 +46,9 @@ fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorC
 }
 
 @JvmName("toEditInputProjectorPrototype")
-fun UiInputStateHolder<String, InputType.Edit>.toInputProjectorPrototype(
+fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
     imeAction: ImeAction = ImeAction.Default,
-): InputProjectorPrototype<String, InputType.Edit> =
+): InputProjectorPrototype<String, E, InputType.Edit> =
     toInputProjectorPrototype { type, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
