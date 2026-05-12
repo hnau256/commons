@@ -45,7 +45,8 @@ fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorC
     )
 }
 
-fun UiInputStateHolder<String, InputType.Edit>.toTextInputProjectorFactory(
+@JvmName("toEditInputProjectorPrototype")
+fun UiInputStateHolder<String, InputType.Edit>.toInputProjectorPrototype(
     imeAction: ImeAction = ImeAction.Default,
 ): InputProjectorPrototype<String, InputType.Edit> =
     toInputProjectorPrototype { type, state, updateState ->

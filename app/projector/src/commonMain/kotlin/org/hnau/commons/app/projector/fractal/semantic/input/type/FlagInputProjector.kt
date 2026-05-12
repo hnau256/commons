@@ -12,7 +12,8 @@ import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPro
 import org.hnau.commons.kotlin.ifTrue
 
 
-fun UiInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjectorPrototype<Boolean, InputType.Flag> =
+@JvmName("toFlagInputProjectorPrototype")
+fun UiInputStateHolder<Boolean, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, InputType.Flag> =
     toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithTitle { title, itemDrawer ->
             val enabled by enabled.collectAsState()

@@ -14,8 +14,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.toUiInputStateHolder
-import org.hnau.commons.app.projector.fractal.semantic.input.type.toFlagInputProjectorFactory
-import org.hnau.commons.app.projector.fractal.semantic.input.type.toTextInputProjectorFactory
+import org.hnau.commons.app.projector.fractal.semantic.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.FormModel
@@ -29,7 +28,7 @@ class FormProjector(
     private val flag: InputProjector = model
         .flag
         .toUiInputStateHolder()
-        .toFlagInputProjectorFactory()
+        .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Flag",
@@ -42,7 +41,7 @@ class FormProjector(
         .toUiInputStateHolder { state, _ ->
             "Unable parse '$state' to BigDecimal"
         }
-        .toTextInputProjectorFactory()
+        .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Decimal",
@@ -55,7 +54,7 @@ class FormProjector(
         .toUiInputStateHolder { state, _ ->
             "Unable parse '$state' to BigInteger"
         }
-        .toTextInputProjectorFactory()
+        .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Integer",
@@ -67,7 +66,7 @@ class FormProjector(
         .toUiInputStateHolder { state, error ->
             "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
         }
-        .toTextInputProjectorFactory()
+        .toInputProjectorPrototype()
         .createInputProjector(
             scope = scope,
             title = "Text",
