@@ -14,8 +14,8 @@ import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.toUiInputStateHolder
-import org.hnau.commons.app.projector.fractal.semantic.input.toTextInputProjectorFactory
-import org.hnau.commons.app.projector.fractal.semantic.input.toFlagInputProjectorFactory
+import org.hnau.commons.app.projector.fractal.semantic.input.type.toFlagInputProjectorFactory
+import org.hnau.commons.app.projector.fractal.semantic.input.type.toTextInputProjectorFactory
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.FormModel
