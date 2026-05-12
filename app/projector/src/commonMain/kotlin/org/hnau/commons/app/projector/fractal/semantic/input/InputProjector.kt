@@ -109,34 +109,6 @@ class InputProjector(
     }
 }
 
-data class UiInputStateHolder<S, I : InputType<S>>(
-    val type: I,
-    val enabled: StateFlow<Boolean>,
-    val createStateWithErrorOrNull: (CoroutineScope) -> StateFlow<KeyValue<S, String?>>,
-    val updateState: (newState: S) -> Unit,
-)
-
-inline fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toUiInputStateHolder(
-    crossinline parseError: (S, E) -> String,
-): UiInputStateHolder<S, I> = UiInputStateHolder(
-    type = type,
-    updateState = ::updateState,
-    enabled = enabled,
-    createStateWithErrorOrNull = { scope ->
-        stateWithErrorOrNone.mapState(scope) { stateWithErrorOrNone ->
-            stateWithErrorOrNone.map { errorOrNone ->
-                errorOrNone.map { error ->
-                    val state = stateWithErrorOrNone.key
-                    parseError(state, error)
-                }.getOrNull()
-            }
-        }
-    }
-)
-
-fun <S, I : InputType<S>> InputStateHolder<S, Nothing, I>.toUiInputStateHolder(): UiInputStateHolder<S, I> =
-    toUiInputStateHolder { _, _ -> "" }
-
 fun <S, I : InputType<S>> UiInputStateHolder<S, I>.toInputProjectorFactory(
     createContentProjector: (type: I, state: StateFlow<S>, updateState: (S) -> Unit) -> InputContentProjector,
 ): InputProjector.Factory = object : InputProjector.Factory {
