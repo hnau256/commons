@@ -25,7 +25,9 @@ data class EditIntegerInputSkeleton(
         configParser: (mapper: InputParser<String, UnableParseStringToIntegerError, BigInteger>) -> InputParser<String, E, V>,
     ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
         skeleton = input,
-        type = InputType.Edit,
+        type = InputType.Edit(
+            contentType = InputType.Edit.ContentType.Integer,
+        ),
         parser = InputParser<String, UnableParseStringToIntegerError, BigInteger>(
             parse = { string ->
                 Result

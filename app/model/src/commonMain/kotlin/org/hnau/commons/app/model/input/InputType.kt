@@ -4,6 +4,12 @@ sealed interface InputType<S> {
 
     data object Flag : InputType<Boolean>
 
-    data object Edit : InputType<String>
+    data class Edit(
+        val contentType: ContentType,
+    ) : InputType<String> {
+
+
+        enum class ContentType { Text, Integer, Decimal }
+    }
 }
 

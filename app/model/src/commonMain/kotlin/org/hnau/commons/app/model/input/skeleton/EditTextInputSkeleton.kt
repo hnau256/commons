@@ -24,7 +24,9 @@ data class EditTextInputSkeleton(
         configParser: (mapper: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
     ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
         skeleton = input,
-        type = InputType.Edit,
+        type = InputType.Edit(
+            contentType = InputType.Edit.ContentType.Text,
+        ),
         parser = InputParser.createIdentity<String>().let(configParser)
     )
 
@@ -62,7 +64,7 @@ fun InputParser.Companion.createStringMaxLengthValidator(
     maxLength: Int,
 ): InputParser<String, StringIsTooLong, String> = InputParser.createValidator { string ->
     val actualLength = string.length
-    if (actualLength < maxLength) {
+    if (actualLength > maxLength) {
         return@createValidator Either.Left(
             StringIsTooLong(
                 expectedMaxLength = maxLength,

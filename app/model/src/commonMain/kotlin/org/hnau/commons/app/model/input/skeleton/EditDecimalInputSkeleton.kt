@@ -25,7 +25,9 @@ data class EditDecimalInputSkeleton(
         configParser: (mapper: InputParser<String, UnableParseStringToDecimalError, BigDecimal>) -> InputParser<String, E, V>,
     ): InputModel.Factory<String, E, V, InputType.Edit> = InputModel.Factory.simple(
         skeleton = input,
-        type = InputType.Edit,
+        type = InputType.Edit(
+            contentType = InputType.Edit.ContentType.Decimal,
+        ),
         parser = InputParser<String, UnableParseStringToDecimalError, BigDecimal>(
             parse = { string ->
                 Result

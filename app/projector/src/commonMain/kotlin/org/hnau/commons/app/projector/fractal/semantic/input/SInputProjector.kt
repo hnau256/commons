@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal.semantic.input
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -10,6 +11,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.input.InputStateHolder
@@ -180,8 +184,33 @@ fun ErrorAsStringInputStateHolder<Boolean, InputType.Flag>.toFlagSInputProjector
         }
     }
 
-fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextSInputProjectorFactory(): SInputProjector.Factory =
-    toSInputProjectorFactory { _, state, updateState ->
+
+data class TextSInputProjectorConfig(
+    val keyboardType: KeyboardType,
+    val capitalization: KeyboardCapitalization,
+)
+
+fun InputType.Edit.ContentType.toTextSInputProjectorConfig(): TextSInputProjectorConfig = when (this) {
+    InputType.Edit.ContentType.Text -> TextSInputProjectorConfig(
+        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.Sentences,
+    )
+
+    InputType.Edit.ContentType.Integer -> TextSInputProjectorConfig(
+        keyboardType = KeyboardType.Number,
+        capitalization = KeyboardCapitalization.None,
+    )
+
+    InputType.Edit.ContentType.Decimal -> TextSInputProjectorConfig(
+        keyboardType = KeyboardType.Decimal,
+        capitalization = KeyboardCapitalization.None,
+    )
+}
+
+fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextSInputProjectorFactory(
+    imeAction: ImeAction = ImeAction.Default,
+): SInputProjector.Factory =
+    toSInputProjectorFactory { type, state, updateState ->
         SInputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
@@ -200,14 +229,15 @@ fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextSInputProjectorF
                         }
                     }
             ) {
+                val config = type.contentType.toTextSInputProjectorConfig()
                 FTextField(
                     value = value,
                     onValueChanged = updateState,
-                    /*keyboardOptions = KeyboardOptions(
+                    keyboardOptions = KeyboardOptions(
                         capitalization = config.capitalization,
                         imeAction = imeAction,
                         keyboardType = config.keyboardType,
-                    ),*/
+                    ),
                     lineLimits = TextFieldLineLimits.SingleLine,
                     enabled = enabled,
                 )
