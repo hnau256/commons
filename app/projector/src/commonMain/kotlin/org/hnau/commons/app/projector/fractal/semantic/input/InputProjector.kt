@@ -109,16 +109,16 @@ class InputProjector(
     }
 }
 
-data class ErrorAsStringInputStateHolder<S, I : InputType<S>>(
+data class UiInputStateHolder<S, I : InputType<S>>(
     val type: I,
     val enabled: StateFlow<Boolean>,
     val createStateWithErrorOrNull: (CoroutineScope) -> StateFlow<KeyValue<S, String?>>,
     val updateState: (newState: S) -> Unit,
 )
 
-inline fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toErrorAsStringInputStateHolder(
+inline fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toUiInputStateHolder(
     crossinline parseError: (S, E) -> String,
-): ErrorAsStringInputStateHolder<S, I> = ErrorAsStringInputStateHolder(
+): UiInputStateHolder<S, I> = UiInputStateHolder(
     type = type,
     updateState = ::updateState,
     enabled = enabled,
@@ -134,10 +134,10 @@ inline fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toErrorAsStringInp
     }
 )
 
-fun <S, I : InputType<S>> InputStateHolder<S, Nothing, I>.toErrorAsStringInputStateHolder(): ErrorAsStringInputStateHolder<S, I> =
-    toErrorAsStringInputStateHolder { _, _ -> "" }
+fun <S, I : InputType<S>> InputStateHolder<S, Nothing, I>.toUiInputStateHolder(): UiInputStateHolder<S, I> =
+    toUiInputStateHolder { _, _ -> "" }
 
-fun <S, I : InputType<S>> ErrorAsStringInputStateHolder<S, I>.toInputProjectorFactory(
+fun <S, I : InputType<S>> UiInputStateHolder<S, I>.toInputProjectorFactory(
     createContentProjector: (type: I, state: StateFlow<S>, updateState: (S) -> Unit) -> InputContentProjector,
 ): InputProjector.Factory = object : InputProjector.Factory {
 
@@ -166,7 +166,7 @@ fun <S, I : InputType<S>> ErrorAsStringInputStateHolder<S, I>.toInputProjectorFa
     }
 }
 
-fun ErrorAsStringInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjector.Factory =
+fun UiInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjector.Factory =
     toInputProjectorFactory { _, state, updateState ->
         InputContentProjector.WithTitle { title, itemDrawer ->
             val enabled by enabled.collectAsState()
@@ -207,7 +207,7 @@ fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorC
     )
 }
 
-fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextInputProjectorFactory(
+fun UiInputStateHolder<String, InputType.Edit>.toTextInputProjectorFactory(
     imeAction: ImeAction = ImeAction.Default,
 ): InputProjector.Factory =
     toInputProjectorFactory { type, state, updateState ->

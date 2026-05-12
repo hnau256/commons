@@ -13,7 +13,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
-import org.hnau.commons.app.projector.fractal.semantic.input.toErrorAsStringInputStateHolder
+import org.hnau.commons.app.projector.fractal.semantic.input.toUiInputStateHolder
 import org.hnau.commons.app.projector.fractal.semantic.input.toTextInputProjectorFactory
 import org.hnau.commons.app.projector.fractal.semantic.input.toFlagInputProjectorFactory
 import org.hnau.commons.app.projector.utils.Drawable
@@ -28,7 +28,7 @@ class FormProjector(
 
     private val flag: InputProjector = model
         .flag
-        .toErrorAsStringInputStateHolder()
+        .toUiInputStateHolder()
         .toFlagInputProjectorFactory()
         .createInputProjector(
             scope = scope,
@@ -39,7 +39,7 @@ class FormProjector(
 
     private val decimal: InputProjector = model
         .decimal
-        .toErrorAsStringInputStateHolder { state, _ ->
+        .toUiInputStateHolder { state, _ ->
             "Unable parse '$state' to BigDecimal"
         }
         .toTextInputProjectorFactory()
@@ -52,7 +52,7 @@ class FormProjector(
 
     private val integer: InputProjector = model
         .integer
-        .toErrorAsStringInputStateHolder { state, _ ->
+        .toUiInputStateHolder { state, _ ->
             "Unable parse '$state' to BigInteger"
         }
         .toTextInputProjectorFactory()
@@ -64,7 +64,7 @@ class FormProjector(
 
     private val text = model
         .text
-        .toErrorAsStringInputStateHolder { state, error ->
+        .toUiInputStateHolder { state, error ->
             "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
         }
         .toTextInputProjectorFactory()
