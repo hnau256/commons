@@ -14,9 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.FCheckBox
 import org.hnau.commons.app.projector.fractal.FIcon
@@ -27,8 +25,6 @@ import org.hnau.commons.app.projector.fractal.semantic.SItem
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable
-import org.hnau.commons.kotlin.KeyValue
-import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
@@ -98,48 +94,10 @@ class InputProjector(
                 }
             )
     }
-
-    interface Factory {
-
-        fun createInputProjector(
-            scope: CoroutineScope,
-            title: String,
-            icon: Drawable?,
-        ): InputProjector
-    }
 }
 
-fun <S, I : InputType<S>> UiInputStateHolder<S, I>.toInputProjectorFactory(
-    createContentProjector: (type: I, state: StateFlow<S>, updateState: (S) -> Unit) -> InputContentProjector,
-): InputProjector.Factory = object : InputProjector.Factory {
-
-    override fun createInputProjector(
-        scope: CoroutineScope,
-        title: String,
-        icon: Drawable?
-    ): InputProjector {
-        val stateWithErrorOrNull = createStateWithErrorOrNull(scope)
-        return InputProjector(
-            title = title,
-            icon = icon,
-            errorMessage = stateWithErrorOrNull.mapState(
-                scope = scope,
-                transform = KeyValue<*, String?>::value
-            ),
-            contentProjector = createContentProjector(
-                type,
-                stateWithErrorOrNull.mapState(
-                    scope = scope,
-                    transform = KeyValue<S, *>::key,
-                ),
-                updateState,
-            )
-        )
-    }
-}
-
-fun UiInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjector.Factory =
-    toInputProjectorFactory { _, state, updateState ->
+fun UiInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjectorPrototype<Boolean, InputType.Flag> =
+    toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithTitle { title, itemDrawer ->
             val enabled by enabled.collectAsState()
             val isChecked by state.collectAsState()
@@ -181,8 +139,8 @@ fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorC
 
 fun UiInputStateHolder<String, InputType.Edit>.toTextInputProjectorFactory(
     imeAction: ImeAction = ImeAction.Default,
-): InputProjector.Factory =
-    toInputProjectorFactory { type, state, updateState ->
+): InputProjectorPrototype<String, InputType.Edit> =
+    toInputProjectorPrototype { type, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
