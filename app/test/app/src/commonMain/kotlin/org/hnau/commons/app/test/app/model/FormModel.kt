@@ -10,7 +10,6 @@ import org.hnau.commons.app.model.input.InputModel
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.model.input.plus
-import org.hnau.commons.app.model.input.simplify
 import org.hnau.commons.app.model.input.skeleton.EditDecimalInputSkeleton
 import org.hnau.commons.app.model.input.skeleton.EditIntegerInputSkeleton
 import org.hnau.commons.app.model.input.skeleton.EditTextInputSkeleton
@@ -66,7 +65,7 @@ class FormModel(
 
     val text: InputModel<String, StringIsTooShort, String, InputType.Edit> =
         skeleton.text.toModelPrototype {
-            (it + InputParser.createStringMinLengthValidator(3)).simplify()
+            it + InputParser.createStringMinLengthValidator(3)
         }
             .toInputModel(scope)
 
