@@ -2,23 +2,23 @@ package org.hnau.commons.app.projector.fractal.semantic.input
 
 import androidx.compose.runtime.Composable
 
-sealed interface SInputContentProjector {
+sealed interface InputContentProjector {
 
     data class WithTitle(
         val content: @Composable (title: String, item: ItemDrawer) -> Unit,
-    ) : SInputContentProjector
+    ) : InputContentProjector
 
     data class WithoutTitle(
         val content: @Composable (item: ItemDrawer) -> Unit,
-    ) : SInputContentProjector
+    ) : InputContentProjector
 
     companion object
 }
 
-inline fun <R> SInputContentProjector.fold(
+inline fun <R> InputContentProjector.fold(
     ifWithTitle: (content: @Composable (title: String, item: ItemDrawer) -> Unit) -> R,
     ifWithoutTitle: (content: @Composable (item: ItemDrawer) -> Unit) -> R,
 ): R = when (this) {
-    is SInputContentProjector.WithTitle -> ifWithTitle(content)
-    is SInputContentProjector.WithoutTitle -> ifWithoutTitle(content)
+    is InputContentProjector.WithTitle -> ifWithTitle(content)
+    is InputContentProjector.WithoutTitle -> ifWithoutTitle(content)
 }

@@ -32,10 +32,10 @@ import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
-class SInputProjector(
+class InputProjector(
     private val title: String,
     private val icon: Drawable?,
-    private val contentProjector: SInputContentProjector,
+    private val contentProjector: InputContentProjector,
     private val errorMessage: StateFlow<String?>,
 ) {
 
@@ -101,11 +101,11 @@ class SInputProjector(
 
     interface Factory {
 
-        fun createSInputProjector(
+        fun createInputProjector(
             scope: CoroutineScope,
             title: String,
             icon: Drawable?,
-        ): SInputProjector
+        ): InputProjector
     }
 }
 
@@ -137,17 +137,17 @@ inline fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toErrorAsStringInp
 fun <S, I : InputType<S>> InputStateHolder<S, Nothing, I>.toErrorAsStringInputStateHolder(): ErrorAsStringInputStateHolder<S, I> =
     toErrorAsStringInputStateHolder { _, _ -> "" }
 
-fun <S, I : InputType<S>> ErrorAsStringInputStateHolder<S, I>.toSInputProjectorFactory(
-    createContentProjector: (type: I, state: StateFlow<S>, updateState: (S) -> Unit) -> SInputContentProjector,
-): SInputProjector.Factory = object : SInputProjector.Factory {
+fun <S, I : InputType<S>> ErrorAsStringInputStateHolder<S, I>.toInputProjectorFactory(
+    createContentProjector: (type: I, state: StateFlow<S>, updateState: (S) -> Unit) -> InputContentProjector,
+): InputProjector.Factory = object : InputProjector.Factory {
 
-    override fun createSInputProjector(
+    override fun createInputProjector(
         scope: CoroutineScope,
         title: String,
         icon: Drawable?
-    ): SInputProjector {
+    ): InputProjector {
         val stateWithErrorOrNull = createStateWithErrorOrNull(scope)
-        return SInputProjector(
+        return InputProjector(
             title = title,
             icon = icon,
             errorMessage = stateWithErrorOrNull.mapState(
@@ -166,9 +166,9 @@ fun <S, I : InputType<S>> ErrorAsStringInputStateHolder<S, I>.toSInputProjectorF
     }
 }
 
-fun ErrorAsStringInputStateHolder<Boolean, InputType.Flag>.toFlagSInputProjectorFactory(): SInputProjector.Factory =
-    toSInputProjectorFactory { _, state, updateState ->
-        SInputContentProjector.WithTitle { title, itemDrawer ->
+fun ErrorAsStringInputStateHolder<Boolean, InputType.Flag>.toFlagInputProjectorFactory(): InputProjector.Factory =
+    toInputProjectorFactory { _, state, updateState ->
+        InputContentProjector.WithTitle { title, itemDrawer ->
             val enabled by enabled.collectAsState()
             val isChecked by state.collectAsState()
             itemDrawer.Item(
@@ -185,33 +185,33 @@ fun ErrorAsStringInputStateHolder<Boolean, InputType.Flag>.toFlagSInputProjector
     }
 
 
-data class TextSInputProjectorConfig(
+data class TextInputProjectorConfig(
     val keyboardType: KeyboardType,
     val capitalization: KeyboardCapitalization,
 )
 
-fun InputType.Edit.ContentType.toTextSInputProjectorConfig(): TextSInputProjectorConfig = when (this) {
-    InputType.Edit.ContentType.Text -> TextSInputProjectorConfig(
+fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorConfig = when (this) {
+    InputType.Edit.ContentType.Text -> TextInputProjectorConfig(
         keyboardType = KeyboardType.Text,
         capitalization = KeyboardCapitalization.Sentences,
     )
 
-    InputType.Edit.ContentType.Integer -> TextSInputProjectorConfig(
+    InputType.Edit.ContentType.Integer -> TextInputProjectorConfig(
         keyboardType = KeyboardType.Number,
         capitalization = KeyboardCapitalization.None,
     )
 
-    InputType.Edit.ContentType.Decimal -> TextSInputProjectorConfig(
+    InputType.Edit.ContentType.Decimal -> TextInputProjectorConfig(
         keyboardType = KeyboardType.Decimal,
         capitalization = KeyboardCapitalization.None,
     )
 }
 
-fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextSInputProjectorFactory(
+fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextInputProjectorFactory(
     imeAction: ImeAction = ImeAction.Default,
-): SInputProjector.Factory =
-    toSInputProjectorFactory { type, state, updateState ->
-        SInputContentProjector.WithoutTitle { itemDrawer ->
+): InputProjector.Factory =
+    toInputProjectorFactory { type, state, updateState ->
+        InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
             itemDrawer.Item(
@@ -229,7 +229,7 @@ fun ErrorAsStringInputStateHolder<String, InputType.Edit>.toTextSInputProjectorF
                         }
                     }
             ) {
-                val config = type.contentType.toTextSInputProjectorConfig()
+                val config = type.contentType.toTextInputProjectorConfig()
                 FTextField(
                     value = value,
                     onValueChanged = updateState,

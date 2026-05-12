@@ -12,10 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
-import org.hnau.commons.app.projector.fractal.semantic.input.SInputProjector
+import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.toErrorAsStringInputStateHolder
-import org.hnau.commons.app.projector.fractal.semantic.input.toTextSInputProjectorFactory
-import org.hnau.commons.app.projector.fractal.semantic.input.toFlagSInputProjectorFactory
+import org.hnau.commons.app.projector.fractal.semantic.input.toTextInputProjectorFactory
+import org.hnau.commons.app.projector.fractal.semantic.input.toFlagInputProjectorFactory
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.FormModel
@@ -26,37 +26,37 @@ class FormProjector(
     model: FormModel,
 ) {
 
-    private val flag: SInputProjector = model
+    private val flag: InputProjector = model
         .flag
         .toErrorAsStringInputStateHolder()
-        .toFlagSInputProjectorFactory()
-        .createSInputProjector(
+        .toFlagInputProjectorFactory()
+        .createInputProjector(
             scope = scope,
             title = "Flag",
             icon = Drawable.Vector(Icons.Default.Mood),
         )
 
 
-    private val decimal: SInputProjector = model
+    private val decimal: InputProjector = model
         .decimal
         .toErrorAsStringInputStateHolder { state, _ ->
             "Unable parse '$state' to BigDecimal"
         }
-        .toTextSInputProjectorFactory()
-        .createSInputProjector(
+        .toTextInputProjectorFactory()
+        .createInputProjector(
             scope = scope,
             title = "Decimal",
             icon = Drawable.Vector(Icons.Default.CropDin),
         )
 
 
-    private val integer: SInputProjector = model
+    private val integer: InputProjector = model
         .integer
         .toErrorAsStringInputStateHolder { state, _ ->
             "Unable parse '$state' to BigInteger"
         }
-        .toTextSInputProjectorFactory()
-        .createSInputProjector(
+        .toTextInputProjectorFactory()
+        .createInputProjector(
             scope = scope,
             title = "Integer",
             icon = Drawable.Vector(Icons.Default.Earbuds),
@@ -67,8 +67,8 @@ class FormProjector(
         .toErrorAsStringInputStateHolder { state, error ->
             "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
         }
-        .toTextSInputProjectorFactory()
-        .createSInputProjector(
+        .toTextInputProjectorFactory()
+        .createInputProjector(
             scope = scope,
             title = "Text",
             icon = Drawable.Vector(Icons.Default.Chair),
