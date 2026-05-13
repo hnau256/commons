@@ -17,9 +17,14 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
+import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
+import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 
@@ -45,11 +50,7 @@ fun SDialog(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .clickable(
-                        onClick = { info.cancel?.invoke() },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                    )
+                    .noIndicationClickable { info.cancel?.invoke() }
                     .fillMaxSize()
                     .background(
                         Color.Black.copy(
@@ -58,19 +59,49 @@ fun SDialog(
                     )
                     .padding(LocalSContentPadding.current)
             ) {
-                CompositionLocalProvider(
-                    LocalSContentPadding provides PaddingValues.Zero,
-                ) {
-                    SPanel {
-                        SContentWithActions(
-                            content = info.content,
-                            actions = info.actions
+                UpdateFContext(
+                    update = {
+                        copy(
+                            distance = distance + 1,
                         )
+                    }
+                ) {
+                    CompositionLocalProvider(
+                        LocalSContentPadding provides PaddingValues.Zero,
+                    ) {
+                        val fContext = LocalFContext.current
+                        Box(
+                            modifier = Modifier
+                                .padding(LocalSContentPadding.current)
+                                .noIndicationClickable {}
+                                .background(
+                                    color = fContext.containerColor,
+                                    shape = fContext.distance.units.shape,
+                                )
+                        ) {
+                            CompositionLocalProvider(
+                                LocalSContentPadding provides LocalFContext.current.distance.units.paddingValues[SizeType.default],
+                            ) {
+                                SContentWithActions(
+                                    content = info.content,
+                                    actions = info.actions
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
 }
+
+@Composable
+private fun Modifier.noIndicationClickable(
+    onClick: () -> Unit,
+): Modifier = clickable(
+    onClick = onClick,
+    interactionSource = remember { MutableInteractionSource() },
+    indication = null,
+)
 
 
 private val shadowAlpha: ThemeBrightnessValues<BaseWithDecay<Float>> =

@@ -89,7 +89,6 @@ class FormProjector(
             SElements {
                 SText(
                     text = "Config is not saved",
-                    type = SizeType.Large,
                 )
             }
         },
