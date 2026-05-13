@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.CropDin
 import androidx.compose.material.icons.filled.Earbuds
+import androidx.compose.material.icons.filled.Factory
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import org.hnau.commons.app.projector.fractal.semantic.input.type.toInputProject
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.FormModel
+import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
 class FormProjector(
@@ -75,6 +77,12 @@ class FormProjector(
     ) {
         SScreen(
             contentPadding = contentPadding,
+            actions = {
+                Action(
+                    actionOrElseOrDisabled = ActionOrElse.Else(CancelOrInProgress.InProgress),
+                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Factory))
+                )
+            }
         ) {
             SContentWithActions(
                 content = {
