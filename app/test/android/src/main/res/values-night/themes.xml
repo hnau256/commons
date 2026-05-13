@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="Theme.commons.test.NightBase" parent="Theme.commons.test.Base">
+        <item name="android:windowBackground">@color/background_night</item>
+    </style>
+
+    <style name="Theme.commons.test" parent="Theme.commons.test.NightBase" />
+</resources>
