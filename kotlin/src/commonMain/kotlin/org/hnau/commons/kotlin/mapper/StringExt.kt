@@ -3,6 +3,8 @@ package org.hnau.commons.kotlin.mapper
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -40,6 +42,12 @@ private val stringToUuidInner = Mapper(Uuid.Companion::parse, Uuid::toString)
 
 @OptIn(ExperimentalUuidApi::class)
 val Mapper.Companion.stringToUuid get() = stringToUuidInner
+
+private val stringToBigIntegerInner = Mapper(BigInteger::parseString, BigInteger::toString)
+val Mapper.Companion.stringToBigInteger get() = stringToBigIntegerInner
+
+private val stringToBigDecimalInner = Mapper(BigDecimal::parseString, BigDecimal::toString)
+val Mapper.Companion.stringToBigDecimal get() = stringToBigDecimalInner
 
 private const val stringToOptionNonePrefix = '0'
 private const val stringToOptionSomePrefix = '1'
