@@ -10,12 +10,14 @@ import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
+import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.container
 import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.fractal.utils.resolve
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
 import kotlin.math.absoluteValue
+import kotlin.times
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 val FContext.containerColor: Color
@@ -37,10 +39,8 @@ fun FContext.overlay(
 )
 
 private val FContext.containerTone: Tone
-    get() = customContainerTone.ifNull {
-        val (start, step) = distanceBackgroundToneStartsAndSteps[palettes.brightness]
-        (start + (step * distance.distance)).let(Tone::create)
-    }
+    get() = customContainerTone
+        .ifNull { backgroundToneCalculators[palettes.brightness](distance) }
 
 private val FContext.palette: PaletteType
     get() = PaletteType.resolve(
@@ -62,11 +62,13 @@ private fun FContext.getColor(
     .let(::Color)
 
 
-private val distanceBackgroundToneStartsAndSteps: ThemeBrightnessValues<Pair<Int, Int>> =
+private val backgroundToneCalculators: ThemeBrightnessValues<(Distance) -> Tone> =
     ThemeBrightnessValues(
         dark = 4 to 6,
         light = 98 to -12,
-    )
+    ).map { (start, step) ->
+        { distance: Distance -> (start + (step * distance.distance)).let(Tone::create) }
+    }
 
 private fun FContext.findContrastedTone(
     contrast: Contrast,

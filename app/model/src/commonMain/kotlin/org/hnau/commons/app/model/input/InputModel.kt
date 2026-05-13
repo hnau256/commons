@@ -11,7 +11,7 @@ import arrow.core.Some
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.UseSerializers
-import org.hnau.commons.app.model.input.skeleton.InputSkeleton
+import org.hnau.commons.app.model.input.InputSkeleton
 import org.hnau.commons.app.model.utils.Editable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState

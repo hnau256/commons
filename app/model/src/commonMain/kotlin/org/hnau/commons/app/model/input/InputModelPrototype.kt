@@ -2,7 +2,7 @@ package org.hnau.commons.app.model.input
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.model.input.skeleton.InputSkeleton
+import org.hnau.commons.app.model.input.InputSkeleton
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 
 data class InputModelPrototype<S, E, V, I : InputType<S>>(
