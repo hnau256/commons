@@ -1,8 +1,11 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
@@ -15,9 +18,14 @@ fun SScreen(
     contentPadding: PaddingValues = PaddingValuesZero,
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(
-        LocalSContentPadding provides contentPadding + LocalFContext.current.distance.units.paddingValues[SizeType.default]
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        propagateMinConstraints = true,
     ) {
-        content()
+        CompositionLocalProvider(
+            LocalSContentPadding provides contentPadding + LocalFContext.current.distance.units.paddingValues[SizeType.default]
+        ) {
+            content()
+        }
     }
 }
