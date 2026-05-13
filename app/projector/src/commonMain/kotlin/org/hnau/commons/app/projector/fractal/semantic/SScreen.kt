@@ -38,7 +38,7 @@ fun SScreen(
         modifier = Modifier.fillMaxSize(),
         propagateMinConstraints = true,
     ) {
-        CompositionLocalProvider(
+        CompositionLocalProvider( //TODO use paddingValues only for content
             LocalSContentPadding provides contentPadding + LocalFContext.current.distance.units.paddingValues[SizeType.default]
         ) {
             SOvercompose(
