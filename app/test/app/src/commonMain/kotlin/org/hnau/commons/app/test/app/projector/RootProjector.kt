@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
+import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 
@@ -28,8 +29,13 @@ class RootProjector(
     fun Content(
         contentPadding: PaddingValues,
     ) {
-        form.Content(
-            contentPadding = contentPadding
-        )
+        BackButtonHost(
+            contentPadding = contentPadding,
+            goBackHandler = model.goBackHandler,
+        ) { contentPadding ->
+            form.Content(
+                contentPadding = contentPadding
+            )
+        }
     }
 }

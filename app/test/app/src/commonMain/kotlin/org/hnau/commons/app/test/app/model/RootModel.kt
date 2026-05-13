@@ -41,5 +41,5 @@ class RootModel(
     )
 
     val goBackHandler: GoBackHandler
-        get() = NeverGoBackHandler
+        get() = form.goBackHandler
 }

@@ -14,11 +14,15 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
+import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.type.toInputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Drawable
+import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
 import org.hnau.commons.app.projector.utils.TitleOrIcon
+import org.hnau.commons.app.test.app.model.Config
 import org.hnau.commons.app.test.app.model.FormModel
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
@@ -78,6 +82,22 @@ class FormProjector(
             "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
         }
 
+    private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(
+        scope = scope,
+        model = model.savableDelegate,
+        notSaved = {
+            SElements {
+                SText(
+                    text = "Config is not saved",
+                    type = SizeType.Large,
+                )
+            }
+        },
+        save = "Save",
+        edit = "Edit",
+        reset = "Reset",
+    )
+
     @Composable
     fun Content(
         contentPadding: PaddingValues,
@@ -110,6 +130,7 @@ class FormProjector(
                     )
                 }
             )
+            savableDelegate.Dialog()
         }
     }
 
