@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Factory
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
@@ -39,7 +40,9 @@ class FormProjector(
 
     private val decimal: InputProjector = model
         .decimal
-        .toInputProjectorPrototype()
+        .toInputProjectorPrototype(
+            imeAction = ImeAction.Next,
+        )
         .createInputProjector(
             scope = scope,
             title = "Decimal",
@@ -51,7 +54,9 @@ class FormProjector(
 
     private val integer: InputProjector = model
         .integer
-        .toInputProjectorPrototype()
+        .toInputProjectorPrototype(
+            imeAction = ImeAction.Next,
+        )
         .createInputProjector(
             scope = scope,
             title = "Integer",
@@ -62,7 +67,9 @@ class FormProjector(
 
     private val text = model
         .text
-        .toInputProjectorPrototype()
+        .toInputProjectorPrototype(
+            imeAction = ImeAction.Done,
+        )
         .createInputProjector(
             scope = scope,
             title = "Text",
