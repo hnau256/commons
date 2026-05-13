@@ -37,10 +37,10 @@ class FormModel(
         constructor(
             initial: Config,
         ) : this(
-            flag = FlagInputSkeleton(initial.flag),
-            decimal = EditDecimalInputSkeleton(initial.decimal),
-            integer = EditIntegerInputSkeleton(initial.integer),
-            text = EditTextInputSkeleton(initial.text),
+            flag = FlagInputSkeleton.createForExisting(initial.flag),
+            decimal = EditDecimalInputSkeleton.createForExisting(initial.decimal),
+            integer = EditIntegerInputSkeleton.createForExisting(initial.integer),
+            text = EditTextInputSkeleton.createForExisting(initial.text),
         )
     }
 

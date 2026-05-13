@@ -19,7 +19,7 @@ import org.hnau.commons.kotlin.serialization.MutableStateFlowSerializer
 
 class InputModel<S, E, V, I : InputType<S>>(
     scope: CoroutineScope,
-    private val skeleton: InputSkeleton<S>,
+    private val skeleton: InputSkeleton<S, V>,
     override val type: I,
     private val parser: InputParser<S, E, V>,
     override val enabled: StateFlow<Boolean>,
@@ -51,15 +51,12 @@ class InputModel<S, E, V, I : InputType<S>>(
         transform = KeyValue<*, Either<E, V>>::value,
     )
 
-    val editable: StateFlow<Editable<V>> = valueOrError.mapState(scope) { valueOrError ->
-        valueOrError.fold(
-            ifLeft = { Editable.Incorrect },
-            ifRight = { value ->
-                Editable.Value(
-                    value = value,
-                    changed = value != skeleton.initialValue,
-                )
-            }
-        )
-    }
+    val editable: StateFlow<Editable<V>> = Editable.create(
+        scope = scope,
+        valueOrNone = valueOrError.mapState(
+            scope = scope,
+            transform = Either<*, V>::getOrNone,
+        ),
+        initialValueOrNone = skeleton.initialValue,
+    )
 }

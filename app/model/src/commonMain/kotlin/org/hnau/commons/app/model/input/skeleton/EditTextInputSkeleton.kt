@@ -1,6 +1,8 @@
 package org.hnau.commons.app.model.input.skeleton
 
 import arrow.core.Either
+import arrow.core.None
+import arrow.core.some
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
@@ -9,16 +11,29 @@ import org.hnau.commons.kotlin.it
 
 @Serializable
 data class EditTextInputSkeleton(
-    val input: InputSkeleton<String>,
+    val input: InputSkeleton<String, String>,
 ) {
 
-    constructor(
-        initial: String,
-    ) : this(
-        input = InputSkeleton(
-            initialValue = initial,
+    companion object {
+
+        fun createForExisting(
+            initialValue: String,
+        ): EditTextInputSkeleton = EditTextInputSkeleton(
+            input = InputSkeleton.create(
+                initialValue = initialValue.some(),
+                initialState = initialValue,
+            )
         )
-    )
+
+        fun createForNew(
+            defaultValue: String,
+        ): EditTextInputSkeleton = EditTextInputSkeleton(
+            input = InputSkeleton.create(
+                initialValue = None,
+                initialState = defaultValue,
+            )
+        )
+    }
 
     inline fun <E, V> toModelPrototype(
         configParser: (parser: InputParser<String, Nothing, String>) -> InputParser<String, E, V>,

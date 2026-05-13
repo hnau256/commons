@@ -1,25 +1,46 @@
+@file:UseSerializers(
+    BigIntegerSerializer::class,
+)
+
 package org.hnau.commons.app.model.input.skeleton
 
+import arrow.core.None
+import arrow.core.some
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.hnau.commons.app.model.input.InputModelPrototype
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.kotlin.it
+import org.hnau.commons.kotlin.serialization.BigIntegerSerializer
 import org.hnau.commons.kotlin.toEither
 
 @Serializable
 data class EditIntegerInputSkeleton(
-    val input: InputSkeleton<String>,
+    val input: InputSkeleton<String, BigInteger>,
 ) {
 
-    constructor(
-        initial: BigInteger,
-    ) : this(
-        input = InputSkeleton(
-            initialValue = initial.toString(),
+    companion object {
+
+        fun createForExisting(
+            initialValue: BigInteger,
+        ): EditIntegerInputSkeleton = EditIntegerInputSkeleton(
+            input = InputSkeleton.create(
+                initialValue = initialValue.some(),
+                initialState = initialValue.toString(),
+            )
         )
-    )
+
+        fun createForNew(
+            defaultValue: BigInteger,
+        ): EditIntegerInputSkeleton = EditIntegerInputSkeleton(
+            input = InputSkeleton.create(
+                initialValue = None,
+                initialState = defaultValue.toString(),
+            )
+        )
+    }
 
     inline fun <E, V> toModelPrototype(
         configParser: (parser: InputParser<String, UnableParseStringToIntegerError, BigInteger>) -> InputParser<String, E, V>,

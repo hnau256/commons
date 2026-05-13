@@ -6,7 +6,7 @@ import org.hnau.commons.app.model.input.skeleton.InputSkeleton
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 
 data class InputModelPrototype<S, E, V, I : InputType<S>>(
-    val skeleton: InputSkeleton<S>,
+    val skeleton: InputSkeleton<S, V>,
     val type: I,
     val parser: InputParser<S, E, V>,
 ) {
