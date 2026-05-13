@@ -8,7 +8,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(hnau.bignum)
                 implementation(project(":kotlin"))
                 implementation(project(":app:model"))
                 implementation(project(":gen:enumvalues:annotations"))

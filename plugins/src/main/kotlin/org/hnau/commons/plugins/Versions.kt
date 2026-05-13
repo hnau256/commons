@@ -156,7 +156,12 @@ internal object Versions {
             "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
 
         val unconditioned: List<Versioned<LibraryId>> =
-            listOf("core", "core-serialization", "fx-coroutines", "optics").map(::buildArrowDependency)
+            listOf(
+                "core",
+                "core-serialization",
+                "fx-coroutines",
+                "optics"
+            ).map(::buildArrowDependency)
 
         val opticsProcessor: Versioned<LibraryId> =
             buildArrowDependency("optics")
@@ -221,11 +226,11 @@ internal object Versions {
             "com.google.devtools.ksp" withArtifact "symbol-processing-api" withVersion Version.Ksp withAlias "ksp-api",
             "org.slf4j" withArtifact "slf4j-api" withVersion Version.Slf4j withAlias "slf4j-api",
             kermit withAlias "kermit",
-            "com.ionspin.kotlin" withArtifact "bignum" withVersion Version.BigNum withAlias "bignum",
         )
 
         val unconditioned: List<Versioned<LibraryId>> = listOf(
             kermit,
+            "com.ionspin.kotlin" withArtifact "bignum" withVersion Version.BigNum,
         )
     }
 }

@@ -11,7 +11,6 @@ kotlin {
                 implementation(project(":kotlin"))
                 implementation(hnau.kotlinx.io)
                 implementation(hnau.kotlinx.serialization.json)
-                implementation(hnau.bignum)
                 implementation(project(":gen:enumvalues:annotations"))
             }
         }
