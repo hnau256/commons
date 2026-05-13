@@ -23,6 +23,20 @@ import androidx.compose.runtime.remember as rememberInComposer
 object TransitionSpec {
 
     @Composable
+    fun <S> rememberCrossfade(): AnimatedContentTransitionScope<S>.() -> ContentTransform {
+        return rememberInComposer { crossfade() }
+    }
+
+    fun <S> crossfade(): AnimatedContentTransitionScope<S>.() -> ContentTransform {
+        val spec = tween<Float>(
+            durationMillis = 300,
+        )
+        val enter = fadeIn(spec)
+        val exit = fadeOut(spec)
+        return { enter togetherWith exit }
+    }
+
+    @Composable
     fun <S> rememberCenter(): AnimatedContentTransitionScope<S>.() -> ContentTransform {
         val layoutDirection = LocalLayoutDirection.current
         return rememberInComposer(layoutDirection) {
