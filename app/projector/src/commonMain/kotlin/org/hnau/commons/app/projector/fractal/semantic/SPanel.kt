@@ -21,7 +21,7 @@ fun SPanel(
     ) {
         val padding = LocalFContext.current.distance.units.padding
         val contentPadding = PaddingValues(
-            horizontal = padding.horizontal.medium,
+            horizontal = padding.horizontal.large,
             vertical = padding.vertical.large,
         )
         CompositionLocalProvider(
