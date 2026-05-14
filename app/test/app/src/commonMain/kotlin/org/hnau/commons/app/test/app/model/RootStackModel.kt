@@ -1,6 +1,7 @@
 package org.hnau.commons.app.test.app.model
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
@@ -15,11 +16,13 @@ import org.hnau.commons.app.model.stack.SkeletonWithModel
 import org.hnau.commons.app.model.stack.goBackHandler
 import org.hnau.commons.app.model.stack.modelsOnly
 import org.hnau.commons.app.model.stack.push
+import org.hnau.commons.app.model.stack.tryDropLast
 import org.hnau.commons.app.model.stack.withModels
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.gen.sealup.annotations.SealUp
 import org.hnau.commons.gen.sealup.annotations.Variant
 import org.hnau.commons.kotlin.mapper.toMapper
+import kotlin.time.Duration.Companion.seconds
 
 class RootStackModel(
     private val scope: CoroutineScope,
@@ -130,6 +133,11 @@ class RootStackModel(
             Element.form(
                 scope = modelScope,
                 skeleton = formSkeleton,
+                save = { newConfig ->
+                    delay(3.seconds)
+                    config.update(newConfig)
+                },
+                goBack = { skeleton.stack.tryDropLast() }
             )
         },
     )

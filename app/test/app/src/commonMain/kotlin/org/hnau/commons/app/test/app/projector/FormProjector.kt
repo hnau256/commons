@@ -9,9 +9,9 @@ import androidx.compose.material.icons.filled.Factory
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.SText
@@ -25,11 +25,10 @@ import org.hnau.commons.app.test.app.model.Config
 import org.hnau.commons.app.test.app.model.FormModel
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
-import org.hnau.commons.kotlin.coroutines.noAction
 
 class FormProjector(
     scope: CoroutineScope,
-    model: FormModel,
+    private val model: FormModel,
 ) {
 
     private val flag: InputProjector = model
@@ -105,30 +104,23 @@ class FormProjector(
             contentPadding = contentPadding,
             actions = {
                 Action(
-                    actionOrElseOrDisabled = ActionOrElse.Else(CancelOrInProgress.InProgress),
-                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Factory))
+                    actionOrElseOrDisabled = model
+                        .savableDelegate
+                        .saveOrInactive
+                        .collectAsState()
+                        .value
+                        ?.collectAsState()
+                        ?.value,
+                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Save))
                 )
             }
         ) {
-            SContentWithActions(
-                content = {
-                    SElements {
-                        flag.Content()
-                        decimal.Content()
-                        integer.Content()
-                        text.Content()
-                    }
-                },
-                actions = {
-                    Action(
-                        actionOrElseOrDisabled = ActionOrElse.noAction,
-                        titleOrIcon = TitleOrIcon.Both(
-                            title = "Save",
-                            icon = Drawable.Vector(Icons.Default.Save),
-                        )
-                    )
-                }
-            )
+            SElements {
+                flag.Content()
+                decimal.Content()
+                integer.Content()
+                text.Content()
+            }
             savableDelegate.Dialog()
         }
     }

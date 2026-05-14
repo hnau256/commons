@@ -38,6 +38,8 @@ import org.hnau.commons.kotlin.serialization.BigIntegerSerializer
 class FormModel(
     scope: CoroutineScope,
     skeleton: Skeleton,
+    goBack: () -> Unit,
+    save: suspend (Config) -> Unit,
 ) {
 
     @Serializable
@@ -130,8 +132,8 @@ class FormModel(
             },
         skeleton = skeleton.savableDelegate,
         modelGoBackHandler = NeverGoBackHandler,
-        close = {},
-        save = {},
+        close = goBack,
+        save = save,
     )
 
     val goBackHandler: GoBackHandler
