@@ -29,7 +29,8 @@ class FUnits private constructor(
         OrientationValues.create { containerOrientation ->
             SizeTypeValues.create { sizeType ->
                 val values = OrientationValues.create { dimensionOrientation ->
-                    padding[dimensionOrientation.compareWith(containerOrientation)][sizeType]
+                    val direction = dimensionOrientation.compareWith(containerOrientation)
+                    padding[direction][sizeType]
                 }
                 PaddingValues(
                     horizontal = values.horizontal,
