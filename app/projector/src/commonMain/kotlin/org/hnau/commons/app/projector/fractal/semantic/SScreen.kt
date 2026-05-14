@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -8,14 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import org.hnau.commons.app.projector.fractal.FLine
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
@@ -38,41 +33,52 @@ fun SScreen(
         modifier = Modifier.fillMaxSize(),
         propagateMinConstraints = true,
     ) {
-        CompositionLocalProvider( //TODO use paddingValues only for content
-            LocalSContentPadding provides contentPadding + LocalFContext.current.distance.units.paddingValues[SizeType.default]
+        CompositionLocalProvider(
+            LocalSContentPadding provides contentPadding
         ) {
             SOvercompose(
                 top = {
-                    SLine(
-                        orientation = Orientation.Horizontal,
-                        alignment = Alignment.End,
-                        reverseOrdering = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = LocalBackButtonWidth.current,
-                                bottom = LocalFContext.current.distance.units.padding.vertical.medium,
-                            )
+                    val horizontalPadding =
+                        PaddingValues(horizontal = LocalFContext.current.distance.units.padding.horizontal.medium)
+                    CompositionLocalProvider(
+                        value = LocalSContentPadding provides (LocalSContentPadding.current + horizontalPadding),
                     ) {
-                        UpdateFContext(
-                            update = {
-                                copy(
-                                    distance = distance + 1,
+                        SLine(
+                            orientation = Orientation.Horizontal,
+                            alignment = Alignment.End,
+                            reverseOrdering = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = LocalBackButtonWidth.current,
+                                    bottom = LocalFContext.current.distance.units.padding.vertical.medium,
                                 )
-                            }
                         ) {
-                            SActionsScope.actions()
-                        }
-                        Spacer(
-                            modifier = Modifier.height(
-                                TopBarDefaults.height + LocalSContentPadding.current.run {
-                                    calculateTopPadding() + calculateBottomPadding()
+                            UpdateFContext(
+                                update = {
+                                    copy(
+                                        distance = distance + 1,
+                                    )
                                 }
+                            ) {
+                                SActionsScope.actions()
+                            }
+                            Spacer(
+                                modifier = Modifier.height(
+                                    TopBarDefaults.height + LocalSContentPadding.current.run {
+                                        calculateTopPadding() + calculateBottomPadding()
+                                    }
+                                )
                             )
-                        )
+                        }
                     }
                 },
-                content = content,
+                content = {
+                    CompositionLocalProvider(
+                        value = LocalSContentPadding provides (LocalSContentPadding.current + LocalFContext.current.distance.units.paddingValues[SizeType.default]),
+                        content = content,
+                    )
+                },
             )
         }
     }
