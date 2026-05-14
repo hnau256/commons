@@ -8,6 +8,7 @@ import org.hnau.commons.app.projector.fractal.FButton
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -27,6 +28,7 @@ fun SActions(
         },
         reverseOrdering = true,
         alignment = Alignment.End,
+        separation = SizeType.Small,
     ) {
         SActionsScope.block()
     }

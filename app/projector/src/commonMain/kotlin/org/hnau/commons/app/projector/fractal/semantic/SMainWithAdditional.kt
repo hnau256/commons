@@ -17,7 +17,6 @@ fun SMainWithAdditional(
         modifier = modifier,
         orientation = Orientation.Vertical,
         forceFill = ForceFill.Last,
-        separation = SizeType.Large,
     ) {
         SPanel(
             modifier = Modifier.fillMaxWidth(),
