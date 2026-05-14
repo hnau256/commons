@@ -3,3 +3,4 @@ build
 .idea
 .kotlin
 local.properties
+app/test/app/preferences.txt
