@@ -1,7 +1,9 @@
 package org.hnau.commons.app.projector.fractal.utils
 
+import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 import org.hnau.commons.kotlin.foldBoolean
 
+@EnumValues
 enum class Saturation {
     Active, Neutral;
 

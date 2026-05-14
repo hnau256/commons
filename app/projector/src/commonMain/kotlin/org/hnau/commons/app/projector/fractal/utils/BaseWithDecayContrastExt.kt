@@ -22,10 +22,26 @@ private val containerContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
 val Contrast.Companion.container: BaseWithDecay<Contrast>
     get() = containerContrast
 
-private val contentContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
-    initial = Contrast(7),
+private val contentBySaturationContrast: SaturationValues<BaseWithDecay<Contrast>> = SaturationValues(
+    active = BaseWithDecay.contrast(
+        initial = Contrast(9),
+        decay = 0.9,
+    ),
+    neutral = BaseWithDecay.contrast(
+        initial = Contrast(4),
+        decay = 0.9,
+    ),
+)
+
+
+
+val Contrast.Companion.contentBySaturation: SaturationValues<BaseWithDecay<Contrast>>
+    get() = contentBySaturationContrast
+
+private val contentLowContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
+    initial = Contrast(5),
     decay = 0.9,
 )
 
-val Contrast.Companion.content: BaseWithDecay<Contrast>
-    get() = contentContrast
+val Contrast.Companion.contentLow: BaseWithDecay<Contrast>
+    get() = contentLowContrast

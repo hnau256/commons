@@ -7,7 +7,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.plus
 
 @Composable
 fun FBase(
@@ -16,7 +20,9 @@ fun FBase(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalFContext provides context,
+        LocalFContext provides context.copy(
+            distance = context.distance + (-1),
+        ),
     ) {
         val fContext = LocalFContext.current
         Box(
@@ -25,7 +31,18 @@ fun FBase(
                     color = fContext.containerColor,
                 ),
         ) {
-            content()
+            UpdateFContext(
+                update = {
+                    copy(
+                        distance = distance + 1,
+                        saturation = Saturation.Neutral,
+                        mood = Mood.default,
+                        customContainerTone = null,
+                    )
+                }
+            ) {
+                content()
+            }
         }
     }
 }

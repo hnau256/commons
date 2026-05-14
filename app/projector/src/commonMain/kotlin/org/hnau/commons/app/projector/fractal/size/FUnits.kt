@@ -75,7 +75,7 @@ class FUnits private constructor(
             val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
                 padding = OrientationValues(
-                    horizontal = 16.dp,
+                    horizontal = 20.dp,
                     vertical = 12.dp,
                 ).map { medium ->
                     SizeTypeValues(

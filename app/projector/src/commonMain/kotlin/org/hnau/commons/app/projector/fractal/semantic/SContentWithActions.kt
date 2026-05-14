@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.ForceFill
-import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
@@ -17,7 +16,6 @@ fun SContentWithActions(
         modifier = modifier.fillMaxWidth(),
         orientation = Orientation.Vertical,
         forceFill = ForceFill.First,
-        separation = SizeType.Large,
     ) {
         content()
         SActions(

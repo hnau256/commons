@@ -64,10 +64,16 @@ class ActionProjector(
                             SContentWithActions(
                                 content = {
                                     SElements {
-                                        SText(
-                                            text = "Config",
-                                            type = SizeType.Large,
-                                        )
+                                        UpdateFContext(
+                                            update = {
+                                                copy(saturation = Saturation.Active)
+                                            }
+                                        ) {
+                                            SText(
+                                                text = "Config",
+                                                type = SizeType.Large,
+                                            )
+                                        }
                                         configItems
                                             .collectAsState()
                                             .value

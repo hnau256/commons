@@ -21,25 +21,25 @@ fun FPanel(
     contentPadding: PaddingValues = LocalFContext.current.distance.units.paddingValues[SizeType.Medium],
     content: @Composable () -> Unit,
 ) {
-    UpdateFContext(
-        update = {
-            copy(
-                distance = distance + 1,
-                saturation = Saturation.Neutral,
-                mood = Mood.default,
-                customContainerTone = null,
+    val fContext = LocalFContext.current
+    Box(
+        modifier = modifier
+            .background(
+                color = fContext.containerColor,
+                shape = fContext.distance.units.shape,
             )
-        }
+            .padding(contentPadding),
+        propagateMinConstraints = true,
     ) {
-        val fContext = LocalFContext.current
-        Box(
-            modifier = modifier
-                .background(
-                    color = fContext.containerColor,
-                    shape = fContext.distance.units.shape,
+        UpdateFContext(
+            update = {
+                copy(
+                    distance = distance + 1,
+                    saturation = Saturation.Neutral,
+                    mood = Mood.default,
+                    customContainerTone = null,
                 )
-                .padding(contentPadding),
-            propagateMinConstraints = true,
+            }
         ) {
             content()
         }

@@ -12,7 +12,7 @@ import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.contentBySaturation
 import org.hnau.commons.app.projector.fractal.utils.resolve
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
@@ -25,7 +25,7 @@ val FContext.containerColor: Color
 val FContext.contentColor: Color
     get() = getColor(
         tone = calcTone(
-            contrast = Contrast.content,
+            contrast = Contrast.contentBySaturation[saturation],
         )
     )
 
@@ -63,8 +63,8 @@ private fun FContext.getColor(
 
 private val backgroundToneCalculators: ThemeBrightnessValues<(Distance) -> Tone> =
     ThemeBrightnessValues(
-        dark = 4 to 6,
-        light = 98 to -12,
+        dark = 10 to 6,
+        light = 86 to -12,
     ).map { (start, step) ->
         { distance: Distance -> (start + (step * distance.distance)).let(Tone::create) }
     }

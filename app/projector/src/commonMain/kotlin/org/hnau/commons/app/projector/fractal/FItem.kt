@@ -64,6 +64,7 @@ fun FItem(
             side = Side.Start,
             contentPadding = contentPadding,
             accessory = startAccessory,
+            distanceOffset = 0,
         )
         Line(
             modifier = Modifier.weight(1f),
@@ -73,18 +74,21 @@ fun FItem(
                 side = Side.Top,
                 contentPadding = contentPadding,
                 accessory = topAccessory,
+                distanceOffset = 1,
             )
             content()
             Accessory(
                 side = Side.Bottom,
                 contentPadding = contentPadding,
                 accessory = bottomAccessory,
+                distanceOffset = 1,
             )
         }
         Accessory(
             side = Side.End,
             contentPadding = contentPadding,
             accessory = endAccessory,
+            distanceOffset = 0,
         )
     }
 }
@@ -93,6 +97,7 @@ fun FItem(
 private fun Accessory(
     side: Side,
     contentPadding: PaddingValues,
+    distanceOffset: Int,
     accessory: @Composable (() -> Unit)?
 ) {
     val align = side.fold(
@@ -137,7 +142,7 @@ private fun Accessory(
                 UpdateFContext(
                     update = {
                         copy(
-                            distance = distance + 1,
+                            distance = distance + distanceOffset,
                         )
                     }
                 ) {
