@@ -8,7 +8,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.contentColor
-import org.hnau.commons.app.projector.fractal.size.LocalSizeType
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 
@@ -16,7 +15,7 @@ import org.hnau.commons.app.projector.fractal.size.units
 fun FText(
     text: String,
     modifier: Modifier = Modifier,
-    type: SizeType = LocalSizeType.current,
+    type: SizeType = SizeType.default,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,

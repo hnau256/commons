@@ -3,6 +3,7 @@ package org.hnau.commons.app.test.app.projector
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.material.icons.filled.RunCircle
@@ -11,6 +12,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.projector.fractal.FIcon
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SItem
@@ -18,6 +21,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.ActionModel
@@ -69,7 +73,18 @@ class ActionProjector(
                                             .fastForEach { (title, value) ->
                                                 SItem(
                                                     topAccessory = { SText(title) },
-                                                    content = { SText(value) },
+                                                    startAccessory = { FIcon(Drawable.Vector(Icons.Default.Alarm)) },
+                                                    content = {
+                                                        UpdateFContext(
+                                                            update = {
+                                                                copy(saturation = Saturation.Active)
+                                                            }
+                                                        ) {
+                                                            SText(
+                                                                text = value,
+                                                            )
+                                                        }
+                                                    },
                                                 )
                                             }
                                     }

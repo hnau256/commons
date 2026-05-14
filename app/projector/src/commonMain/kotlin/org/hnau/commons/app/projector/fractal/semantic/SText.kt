@@ -8,14 +8,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 import org.hnau.commons.app.projector.fractal.FText
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
-import org.hnau.commons.app.projector.fractal.size.LocalSizeType
 import org.hnau.commons.app.projector.fractal.size.SizeType
 
 @Composable
 fun SText(
     text: String,
     modifier: Modifier = Modifier,
-    type: SizeType = LocalSizeType.current,
+    type: SizeType = SizeType.default,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
