@@ -16,12 +16,15 @@ class RootProjector(
     @Pipe
     interface Dependencies {
 
+        fun stack(): RootStackProjector.Dependencies
+
         companion object
     }
 
-    private val form = FormProjector(
+    private val stack = RootStackProjector(
         scope = scope,
-        model = model.form,
+        model = model.stack,
+        dependencies = dependencies.stack(),
     )
 
     @Composable
@@ -32,7 +35,7 @@ class RootProjector(
             contentPadding = contentPadding,
             goBackHandler = model.goBackHandler,
         ) { contentPadding ->
-            form.Content(
+            stack.Content(
                 contentPadding = contentPadding
             )
         }

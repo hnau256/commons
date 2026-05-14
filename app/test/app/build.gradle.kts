@@ -12,6 +12,7 @@ kotlin {
                 implementation(project(":app:model"))
                 implementation(project(":app:projector"))
                 implementation(hnau.kotlinx.serialization.json)
+                implementation(project(":gen:sealup:annotations"))
                 implementation(project(":gen:pipe:annotations"))
             }
         }
@@ -25,5 +26,6 @@ compose.desktop {
 }
 
 dependencies {
+    kspCommonMainMetadata(project(":gen:sealup:processor"))
     kspCommonMainMetadata(project(":gen:pipe:processor"))
 }

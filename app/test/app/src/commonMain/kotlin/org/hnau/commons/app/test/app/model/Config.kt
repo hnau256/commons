@@ -18,4 +18,15 @@ data class Config(
     val decimal: BigDecimal,
     val integer: BigInteger,
     val text: String,
-)
+) {
+
+    companion object {
+
+        val default = Config(
+            flag = false,
+            decimal = BigDecimal.fromDouble(456.789),
+            integer = BigInteger.fromInt(123),
+            text = "QWERTY"
+        )
+    }
+}

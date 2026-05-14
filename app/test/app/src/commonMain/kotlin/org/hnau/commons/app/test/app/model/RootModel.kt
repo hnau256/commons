@@ -1,7 +1,5 @@
 package org.hnau.commons.app.test.app.model
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
-import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.goback.GoBackHandler
@@ -16,26 +14,22 @@ class RootModel(
     @Pipe
     interface Dependencies {
 
+        fun stack(): RootStackModel.Dependencies
+
         companion object
     }
 
     @Serializable
     data class Skeleton(
-        val form: FormModel.Skeleton = FormModel.Skeleton(
-            initial = Config(
-                flag = true,
-                decimal = BigDecimal.fromFloat(123.456f),
-                integer = BigInteger.fromInt(123),
-                text = "qwerty",
-            )
-        ),
+        val stack: RootStackModel.Skeleton = RootStackModel.Skeleton(),
     )
 
-    val form = FormModel(
+    val stack = RootStackModel(
         scope = scope,
-        skeleton = skeleton.form,
+        skeleton = skeleton.stack,
+        dependencies = dependencies.stack(),
     )
 
     val goBackHandler: GoBackHandler
-        get() = form.goBackHandler
+        get() = stack.goBackHandler
 }
