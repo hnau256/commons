@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.SText
@@ -100,25 +101,32 @@ class FormProjector(
     ) {
         SScreen(
             contentPadding = contentPadding,
-            actions = {
-                Action(
-                    actionOrElseOrDisabled = model
-                        .savableDelegate
-                        .saveOrInactive
-                        .collectAsState()
-                        .value
-                        ?.collectAsState()
-                        ?.value,
-                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Save))
-                )
-            }
         ) {
-            SElements {
-                flag.Content()
-                decimal.Content()
-                integer.Content()
-                text.Content()
-            }
+            SContentWithActions(
+                content = {
+                    SElements {
+                        flag.Content()
+                        decimal.Content()
+                        integer.Content()
+                        text.Content()
+                    }
+                },
+                actions = {
+                    Action(
+                        actionOrElseOrDisabled = model
+                            .savableDelegate
+                            .saveOrInactive
+                            .collectAsState()
+                            .value
+                            ?.collectAsState()
+                            ?.value,
+                        titleOrIcon = TitleOrIcon.Both(
+                            title = "Save",
+                            icon = Drawable.Vector(Icons.Default.Save),
+                        )
+                    )
+                }
+            )
             savableDelegate.Dialog()
         }
     }

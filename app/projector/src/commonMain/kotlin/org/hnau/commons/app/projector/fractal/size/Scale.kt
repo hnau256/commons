@@ -23,7 +23,7 @@ value class Scale(
 private val scaleBaseWithDecays: ScaleTypeValues<BaseWithDecay<Scale>> = ScaleTypeValues(
     content = BaseWithDecay.float(
         initial = 1f,
-        decay = 0.9,
+        decay = 0.85,
     ),
     space = BaseWithDecay.float(
         initial = 1f,

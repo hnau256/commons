@@ -41,7 +41,7 @@ class FUnits private constructor(
 
         private val textStyleConfigs: SizeTypeValues<TextStyleConfig> = SizeTypeValues(
             large = TextStyleConfig(
-                size = 24.sp,
+                size = 28.sp,
                 weight = FontWeight.Normal,
                 letterSpacing = 0.1.sp,
                 lineHeightFactor = 1.1f,

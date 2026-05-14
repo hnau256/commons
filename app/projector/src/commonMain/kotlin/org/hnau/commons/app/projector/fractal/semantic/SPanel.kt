@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.FPanel
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
-import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 
 @Composable
@@ -20,7 +19,11 @@ fun SPanel(
         modifier = modifier.padding(LocalSContentPadding.current),
         contentPadding = PaddingValues.Zero,
     ) {
-        val contentPadding = LocalFContext.current.distance.units.paddingValues[SizeType.default]
+        val padding = LocalFContext.current.distance.units.padding
+        val contentPadding = PaddingValues(
+            horizontal = padding.horizontal.medium,
+            vertical = padding.vertical.large,
+        )
         CompositionLocalProvider(
             LocalSContentPadding provides contentPadding,
         ) {
