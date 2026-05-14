@@ -18,7 +18,7 @@ import org.hnau.commons.app.projector.fractal.utils.plus
 @Composable
 fun FPanel(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = LocalFContext.current.distance.units.paddingValues[SizeType.Medium],
+    contentPadding: PaddingValues = LocalFContext.current.distance.units.paddingValues.vertical[SizeType.Medium],
     content: @Composable () -> Unit,
 ) {
     val fContext = LocalFContext.current

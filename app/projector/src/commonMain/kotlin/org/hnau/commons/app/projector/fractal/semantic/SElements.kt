@@ -15,7 +15,7 @@ fun SElements(
     SLine(
         modifier = modifier.verticalScroll(rememberScrollState()),
         orientation = Orientation.Vertical,
-        separation = SizeType.Small,
+        separation = SizeType.Medium,
         content = content,
     )
 }

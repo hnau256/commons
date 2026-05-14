@@ -23,7 +23,7 @@ fun FLine(
         modifier = modifier,
         orientation = orientation,
         arrangement = Arrangement.spacedBy(
-            space = LocalFContext.current.distance.units.padding[orientation][separation],
+            space = LocalFContext.current.distance.units.padding.along[separation],
             alignment = alignment,
         ),
         reverseOrdering = reverseOrdering,

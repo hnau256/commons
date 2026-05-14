@@ -19,13 +19,8 @@ fun SPanel(
         modifier = modifier.padding(LocalSContentPadding.current),
         contentPadding = PaddingValues.Zero,
     ) {
-        val padding = LocalFContext.current.distance.units.padding
-        val contentPadding = PaddingValues(
-            horizontal = padding.horizontal.medium,
-            vertical = padding.vertical.medium,
-        )
         CompositionLocalProvider(
-            LocalSContentPadding provides contentPadding,
+            LocalSContentPadding provides LocalFContext.current.distance.units.paddingValues.vertical.large,
         ) {
             content()
         }

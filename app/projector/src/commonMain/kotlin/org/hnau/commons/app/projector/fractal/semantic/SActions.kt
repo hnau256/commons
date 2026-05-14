@@ -27,7 +27,7 @@ fun SActions(
             else -> Orientation.Horizontal
         },
         reverseOrdering = true,
-        alignment = Alignment.End,
+        alignment = Alignment.Start,
         separation = SizeType.Small,
     ) {
         SActionsScope.block()

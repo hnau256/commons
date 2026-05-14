@@ -1,25 +1,22 @@
 package org.hnau.commons.app.projector.fractal.size
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.utils.Distance
 import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
-import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.DirectionValues
 import org.hnau.commons.app.projector.utils.OrientationValues
+import org.hnau.commons.app.projector.utils.compareWith
 
 class FUnits private constructor(
-    val padding: OrientationValues<SizeTypeValues<Dp>>,
+    val padding: DirectionValues<SizeTypeValues<Dp>>,
     val cornerRadius: Dp,
     val shape: Shape,
     val borderShape: Shape,
@@ -28,12 +25,18 @@ class FUnits private constructor(
     val iconSize: Dp,
 ) {
 
-    val paddingValues: SizeTypeValues<PaddingValues> = SizeTypeValues.create { sizeType ->
-        PaddingValues(
-            horizontal = padding[Orientation.Horizontal][sizeType],
-            vertical = padding[Orientation.Vertical][sizeType],
-        )
-    }
+    val paddingValues: OrientationValues<SizeTypeValues<PaddingValues>> =
+        OrientationValues.create { containerOrientation ->
+            SizeTypeValues.create { sizeType ->
+                val values = OrientationValues.create { dimensionOrientation ->
+                    padding[dimensionOrientation.compareWith(containerOrientation)][sizeType]
+                }
+                PaddingValues(
+                    horizontal = values.horizontal,
+                    vertical = values.vertical,
+                )
+            }
+        }
 
     companion object {
 
@@ -74,15 +77,15 @@ class FUnits private constructor(
             val cornerRadius = 12.dp.scale(distance.scale.space)
             val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
-                padding = OrientationValues(
-                    horizontal = 20.dp,
-                    vertical = 12.dp,
+                padding = DirectionValues(
+                    along = 16.dp,
+                    across = 12.dp,
                 ).map { medium ->
                     SizeTypeValues(
                         medium = medium,
-                        large = medium * 2,
-                        small = medium / 2,
-                        extraSmall = medium / 4,
+                        large = medium * 1.75f,
+                        small = medium / 1.75f,
+                        extraSmall = medium / 3f,
                     )
                 },
                 cornerRadius = cornerRadius,
@@ -104,10 +107,3 @@ class FUnits private constructor(
 
 val Distance.units: FUnits
     get() = FUnits[this]
-
-@Composable
-fun Modifier.fPadding(
-    spaceSize: SizeType = SizeType.default,
-): Modifier = padding(
-    paddingValues = LocalFContext.current.distance.units.paddingValues[spaceSize]
-)

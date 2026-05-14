@@ -80,7 +80,7 @@ fun SDialog(
                                 )
                         ) {
                             CompositionLocalProvider(
-                                LocalSContentPadding provides LocalFContext.current.distance.units.paddingValues[SizeType.default],
+                                LocalSContentPadding provides LocalFContext.current.distance.units.paddingValues.vertical[SizeType.default],
                             ) {
                                 SContentWithActions(
                                     content = info.content,

@@ -51,9 +51,7 @@ fun main() = runBlocking {
                 LocalDensity provides density,
             ) {
                 projector.Content(
-                    contentPadding = PaddingValues(
-                        vertical = Dimens.separation,
-                    )
+                    contentPadding = PaddingValues.Zero,
                 )
             }
         }

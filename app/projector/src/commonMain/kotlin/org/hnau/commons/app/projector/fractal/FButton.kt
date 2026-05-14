@@ -97,10 +97,10 @@ fun <E : CancelOrInProgress> FButton(
                     }
                 )
                 .padding(
-                    horizontal = units.padding.horizontal.medium,
+                    horizontal = units.padding.along.medium,
                 )
                 .height(
-                    units.iconSize + units.padding.vertical.medium * 2,
+                    units.iconSize + units.padding.across.medium * 2,
                 ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -135,7 +135,7 @@ fun <E : CancelOrInProgress> FButton(
                                 ifNull = { Modifier },
                                 ifNotNull = {
                                     Modifier.padding(
-                                        end = units.padding.horizontal.extraSmall,
+                                        end = units.padding.along.extraSmall,
                                     )
                                 }
                             )
