@@ -25,6 +25,10 @@ class RootStackProjector(
     @SealUp(
         variants = [
             Variant(
+                type = ActionProjector::class,
+                identifier = "action",
+            ),
+            Variant(
                 type = FormProjector::class,
                 identifier = "form",
             ),
@@ -49,6 +53,12 @@ class RootStackProjector(
             extractKey = RootStackElementModel::ordinal,
             createProjector = { scope, model ->
                 model.fold(
+                    ifAction = { actionModel ->
+                        Element.action(
+                            scope = scope,
+                            model = actionModel,
+                        )
+                    },
                     ifForm = { formModel ->
                         Element.form(
                             scope = scope,

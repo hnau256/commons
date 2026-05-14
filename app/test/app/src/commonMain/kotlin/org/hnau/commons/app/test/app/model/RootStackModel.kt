@@ -4,16 +4,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.hnau.commons.app.model.goback.GoBackHandler
+import org.hnau.commons.app.model.preferences.Preference
 import org.hnau.commons.app.model.preferences.Preferences
+import org.hnau.commons.app.model.preferences.map
+import org.hnau.commons.app.model.preferences.withDefault
 import org.hnau.commons.app.model.stack.NonEmptyStack
 import org.hnau.commons.app.model.stack.SkeletonWithModel
 import org.hnau.commons.app.model.stack.goBackHandler
 import org.hnau.commons.app.model.stack.modelsOnly
+import org.hnau.commons.app.model.stack.push
 import org.hnau.commons.app.model.stack.withModels
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.gen.sealup.annotations.SealUp
 import org.hnau.commons.gen.sealup.annotations.Variant
+import org.hnau.commons.kotlin.mapper.toMapper
 
 class RootStackModel(
     private val scope: CoroutineScope,
@@ -24,17 +30,25 @@ class RootStackModel(
     @Serializable
     data class Skeleton(
         val stack: MutableStateFlow<NonEmptyStack<RootStackElementSkeleton>> =
-            MutableStateFlow(NonEmptyStack(ElementSkeleton.form(Config.default))),
+            MutableStateFlow(NonEmptyStack(ElementSkeleton.action)),
     )
 
     @Pipe
     interface Dependencies {
 
         val preferences: Preferences
+
+        fun action(
+            config: StateFlow<Config>,
+        ): ActionModel.Dependencies
     }
 
     @SealUp(
         variants = [
+            Variant(
+                type = ActionModel::class,
+                identifier = "action",
+            ),
             Variant(
                 type = FormModel::class,
                 identifier = "form",
@@ -53,6 +67,10 @@ class RootStackModel(
     @SealUp(
         variants = [
             Variant(
+                type = Unit::class,
+                identifier = "action",
+            ),
+            Variant(
                 type = FormModel.Skeleton::class,
                 identifier = "form",
             ),
@@ -66,6 +84,14 @@ class RootStackModel(
         companion object
     }
 
+    private val config: Preference<Config> = dependencies
+        .preferences["config"]
+        .map(
+            scope = scope,
+            mapper = Json.toMapper(Config.serializer()),
+        )
+        .withDefault(scope) { Config.default }
+
     private val stackWithModels: StateFlow<NonEmptyStack<SkeletonWithModel<RootStackElementSkeleton, RootStackElementModel>>> =
         skeleton
             .stack
@@ -75,14 +101,31 @@ class RootStackModel(
             ) { modelScope, skeleton ->
                 createModel(
                     modelScope = modelScope,
-                    skeleton = skeleton,
+                    elementSkeleton = skeleton,
                 )
             }
 
     private fun createModel(
         modelScope: CoroutineScope,
-        skeleton: RootStackElementSkeleton,
-    ): RootStackElementModel = skeleton.fold(
+        elementSkeleton: RootStackElementSkeleton,
+    ): RootStackElementModel = elementSkeleton.fold(
+        ifAction = {
+            Element.action(
+                scope = scope,
+                dependencies = dependencies.action(
+                    config = config.value,
+                ),
+                editConfig = {
+                    skeleton
+                        .stack
+                        .push(
+                            ElementSkeleton.form(
+                                initial = config.value.value
+                            )
+                        )
+                }
+            )
+        },
         ifForm = { formSkeleton ->
             Element.form(
                 scope = modelScope,
