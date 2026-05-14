@@ -17,7 +17,6 @@ import org.hnau.commons.app.projector.fractal.utils.resolve
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
 import kotlin.math.absoluteValue
-import kotlin.times
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 val FContext.containerColor: Color
