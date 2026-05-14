@@ -2,10 +2,15 @@ package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
+import org.hnau.commons.app.projector.uikit.state.LoadableContent
+import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
+import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
+import org.hnau.commons.kotlin.map
 
 class RootProjector(
     scope: CoroutineScope,
@@ -21,11 +26,17 @@ class RootProjector(
         companion object
     }
 
-    private val stack = RootStackProjector(
-        scope = scope,
-        model = model.stack,
-        dependencies = dependencies.stack(),
-    )
+    private val stack = model
+        .stack
+        .mapWithScope(scope) { scope, stackModelOrLoading ->
+            stackModelOrLoading.map { stackModel ->
+                RootStackProjector(
+                    scope = scope,
+                    model = stackModel,
+                    dependencies = dependencies.stack(),
+                )
+            }
+        }
 
     @Composable
     fun Content(
@@ -35,9 +46,16 @@ class RootProjector(
             contentPadding = contentPadding,
             goBackHandler = model.goBackHandler,
         ) { contentPadding ->
-            stack.Content(
-                contentPadding = contentPadding
-            )
+            stack
+                .collectAsState()
+                .value
+                .LoadableContent(
+                    transitionSpec = TransitionSpec.rememberCrossfade(),
+                ) { stack ->
+                    stack.Content(
+                        contentPadding = contentPadding
+                    )
+                }
         }
     }
 }

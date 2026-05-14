@@ -14,6 +14,7 @@ import androidx.compose.ui.window.rememberWindowState
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.platformLogWriter
 import kotlinx.coroutines.runBlocking
+import org.hnau.commons.app.model.app.AppFilesDirProvider
 import org.hnau.commons.app.model.app.DesktopApp
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.uikit.utils.Dimens
@@ -26,7 +27,7 @@ fun main() = runBlocking {
     val app = DesktopApp(
         scope = this,
         seed = createCommonsAppTestAppSeed(
-            dependencies = CommonsAppTestAppDependencies.impl()
+            appFilesDirProvider = AppFilesDirProvider()
         ),
     )
     val projector = createAppProjector(

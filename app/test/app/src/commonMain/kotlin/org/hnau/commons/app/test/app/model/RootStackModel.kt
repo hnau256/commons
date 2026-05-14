@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import org.hnau.commons.app.model.goback.GoBackHandler
+import org.hnau.commons.app.model.preferences.Preferences
 import org.hnau.commons.app.model.stack.NonEmptyStack
 import org.hnau.commons.app.model.stack.SkeletonWithModel
 import org.hnau.commons.app.model.stack.goBackHandler
@@ -27,7 +28,10 @@ class RootStackModel(
     )
 
     @Pipe
-    interface Dependencies
+    interface Dependencies {
+
+        val preferences: Preferences
+    }
 
     @SealUp(
         variants = [
