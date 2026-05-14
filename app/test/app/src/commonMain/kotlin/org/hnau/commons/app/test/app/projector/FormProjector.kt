@@ -25,6 +25,7 @@ import org.hnau.commons.app.test.app.model.Config
 import org.hnau.commons.app.test.app.model.FormModel
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
+import org.hnau.commons.kotlin.coroutines.noAction
 
 class FormProjector(
     scope: CoroutineScope,
@@ -119,8 +120,8 @@ class FormProjector(
                     }
                 },
                 actions = {
-                    Action<CancelOrInProgress.Cancel>(
-                        actionOrElseOrDisabled = null,
+                    Action(
+                        actionOrElseOrDisabled = ActionOrElse.noAction,
                         titleOrIcon = TitleOrIcon.Both(
                             title = "Save",
                             icon = Drawable.Vector(Icons.Default.Save),

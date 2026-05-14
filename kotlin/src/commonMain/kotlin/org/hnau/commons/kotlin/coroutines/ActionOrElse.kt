@@ -28,7 +28,23 @@ sealed interface ActionOrElse<out I, out E : CancelOrInProgress> {
     data class Else<out E : CancelOrInProgress>(
         val cancelOrInProgress: E,
     ) : ActionOrElse<Nothing, E>
+
+    companion object
 }
+
+fun <I> ActionOrElse.Companion.instant(
+    instantAction: (I) -> Unit,
+): ActionOrElse<I, CancelOrInProgress.Cancel> = ActionOrElse.Action(
+    action = instantAction,
+)
+
+fun ActionOrElse.Companion.instant(
+    instantAction: () -> Unit,
+): ActionOrElse<Unit, CancelOrInProgress.Cancel> =
+    ActionOrElse.instant { _ -> instantAction() }
+
+val ActionOrElse.Companion.noAction: ActionOrElse<Unit, CancelOrInProgress.Cancel>?
+    get() = null
 
 
 fun ActionOrElse.Else<CancelOrInProgress.Cancel>.cancel() {

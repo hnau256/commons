@@ -15,6 +15,7 @@ import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.coroutines.instant
 
 class ProjectorSavableDelegate<T>(
     scope: CoroutineScope,
@@ -34,22 +35,6 @@ class ProjectorSavableDelegate<T>(
                     content = notSaved,
                     cancel = cancel,
                     actions = {
-                        Action<CancelOrInProgress.Cancel>(
-                            actionOrElseOrDisabled = ActionOrElse.Action { cancel() },
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = edit,
-                                icon = Drawable.Vector(Icons.Default.Edit),
-                            ),
-                            mood = Mood.Tertiary,
-                        )
-                        Action<CancelOrInProgress.Cancel>(
-                            actionOrElseOrDisabled = ActionOrElse.Action { dialog.exitWithoutSaving() },
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = reset,
-                                icon = Drawable.Vector(Icons.Default.Clear),
-                            ),
-                            mood = Mood.Error,
-                        )
                         dialog.saveAndExitIfPossible?.let { saveAndExitIfPossible ->
                             Action(
                                 actionOrElseOrDisabled = saveAndExitIfPossible.collectAsState().value,
@@ -60,6 +45,22 @@ class ProjectorSavableDelegate<T>(
                                 mood = Mood.Primary,
                             )
                         }
+                        Action(
+                            actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
+                            titleOrIcon = TitleOrIcon.Both(
+                                title = reset,
+                                icon = Drawable.Vector(Icons.Default.Clear),
+                            ),
+                            mood = Mood.Error,
+                        )
+                        Action(
+                            actionOrElseOrDisabled = ActionOrElse.instant(cancel),
+                            titleOrIcon = TitleOrIcon.Both(
+                                title = edit,
+                                icon = Drawable.Vector(Icons.Default.Edit),
+                            ),
+                            mood = Mood.Tertiary,
+                        )
                     }
                 )
             }

@@ -10,6 +10,7 @@ import org.hnau.commons.app.projector.fractal.semantic.SDialog
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.coroutines.instant
 
 class ProjectorBlockBackDelegate<B>(
     scope: CoroutineScope,
@@ -29,8 +30,8 @@ class ProjectorBlockBackDelegate<B>(
                     content = { content(blockReason) },
                     cancel = cancel,
                     actions = {
-                        Action<CancelOrInProgress.Cancel>(
-                            actionOrElseOrDisabled = ActionOrElse.Action { cancel() },
+                        Action(
+                            actionOrElseOrDisabled = ActionOrElse.instant(cancel),
                             titleOrIcon = closeInfo,
                         )
                         actions(blockReason)
