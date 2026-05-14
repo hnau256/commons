@@ -8,7 +8,6 @@ package org.hnau.commons.app.test.app.model
 import arrow.core.plus
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.integer.BigInteger
-import jdk.jfr.ContentType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -18,16 +17,21 @@ import org.hnau.commons.app.model.input.InputModel
 import org.hnau.commons.app.model.input.InputParser
 import org.hnau.commons.app.model.input.InputSkeleton
 import org.hnau.commons.app.model.input.InputType
-import org.hnau.commons.app.model.input.parse.StringIsTooShort
-import org.hnau.commons.app.model.input.parse.UnableParseStringToDecimalError
-import org.hnau.commons.app.model.input.parse.UnableParseStringToIntegerError
-import org.hnau.commons.app.model.input.parse.createStringMinLengthValidator
-import org.hnau.commons.app.model.input.parse.stringToBigDecimal
-import org.hnau.commons.app.model.input.parse.stringToBigInteger
+import org.hnau.commons.app.model.input.factory.InputModelFactory
+import org.hnau.commons.app.model.input.factory.createModel
+import org.hnau.commons.app.model.input.factory.createSkeletonForEdit
+import org.hnau.commons.app.model.input.factory.type.StringIsTooShort
+import org.hnau.commons.app.model.input.factory.type.UnableParseStringToDecimalError
+import org.hnau.commons.app.model.input.factory.type.UnableParseStringToIntegerError
+import org.hnau.commons.app.model.input.factory.type.createStringMinLengthValidator
+import org.hnau.commons.app.model.input.factory.type.editDecimal
+import org.hnau.commons.app.model.input.factory.type.editInteger
+import org.hnau.commons.app.model.input.factory.type.editText
+import org.hnau.commons.app.model.input.factory.type.flag
 import org.hnau.commons.app.model.input.plus
-import org.hnau.commons.app.model.input.toModelPrototype
 import org.hnau.commons.app.model.utils.ModelSavableDelegate
 import org.hnau.commons.app.model.utils.combineEditableWith
+import org.hnau.commons.kotlin.it
 import org.hnau.commons.kotlin.serialization.BigDecimalSerializer
 import org.hnau.commons.kotlin.serialization.BigIntegerSerializer
 
@@ -48,55 +52,56 @@ class FormModel(
         constructor(
             initial: Config,
         ) : this(
-            flag = InputSkeleton.Factory<Boolean>()
-                .createForEdit(initial.flag),
+            flag = InputModelFactory
+                .flag
+                .createSkeletonForEdit(initial.flag),
 
-            decimal = InputSkeleton.Factory(BigDecimal::toStringExpanded)
-                .createForEdit(initial.decimal),
+            decimal = InputModelFactory
+                .editDecimal
+                .createSkeletonForEdit(initial.decimal),
 
-            integer = InputSkeleton.Factory(BigInteger::toString)
-                .createForEdit(initial.integer),
+            integer = InputModelFactory
+                .editInteger
+                .createSkeletonForEdit(initial.integer),
 
-            text = InputSkeleton.Factory<String>()
-                .createForEdit(initial.text),
+            text = textInputModelFactory
+                .createSkeletonForEdit(initial.text),
         )
     }
 
 
-    val flag: InputModel<Boolean, Nothing, Boolean, InputType.Flag> = skeleton
+    val flag: InputModel<Boolean, Nothing, Boolean, InputType.Flag> = InputModelFactory
         .flag
-        .toModelPrototype(InputType.Flag)
-        .toInputModel(scope)
+        .createModel(
+            scope = scope,
+            skeleton = skeleton.flag,
+        )
 
 
     val decimal: InputModel<String, UnableParseStringToDecimalError, BigDecimal, InputType.Edit> =
-        skeleton
-            .decimal
-            .toModelPrototype(
-                type = InputType.Edit(InputType.Edit.ContentType.Decimal),
-                parser = InputParser.stringToBigDecimal,
+        InputModelFactory
+            .editDecimal
+            .createModel(
+                scope = scope,
+                skeleton = skeleton.decimal,
             )
-            .toInputModel(scope)
 
 
     val integer: InputModel<String, UnableParseStringToIntegerError, BigInteger, InputType.Edit> =
-        skeleton
-            .integer
-            .toModelPrototype(
-                type = InputType.Edit(InputType.Edit.ContentType.Integer),
-                parser = InputParser.stringToBigInteger,
+        InputModelFactory
+            .editInteger
+            .createModel(
+                scope = scope,
+                skeleton = skeleton.integer,
             )
-            .toInputModel(scope)
 
 
     val text: InputModel<String, StringIsTooShort, String, InputType.Edit> =
-        skeleton
-            .text
-            .toModelPrototype(
-                type = InputType.Edit(InputType.Edit.ContentType.Text),
-                parser = InputParser.createStringMinLengthValidator(3)
+        textInputModelFactory
+            .createModel(
+                scope = scope,
+                skeleton = skeleton.text,
             )
-            .toInputModel(scope)
 
     val savableDelegate: ModelSavableDelegate<Config> = ModelSavableDelegate(
         scope = scope,
@@ -131,4 +136,15 @@ class FormModel(
 
     val goBackHandler: GoBackHandler
         get() = savableDelegate.goBackHandler
+
+    companion object {
+
+        private val textInputModelFactory: InputModelFactory<String, StringIsTooShort, String, InputType.Edit> =
+            InputModelFactory
+                .editText(
+                    encoder = ::it,
+                ) { initialParser ->
+                    initialParser + InputParser.createStringMinLengthValidator(3)
+                }
+    }
 }

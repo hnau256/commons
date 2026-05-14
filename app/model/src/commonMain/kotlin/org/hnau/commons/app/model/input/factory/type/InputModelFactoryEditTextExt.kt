@@ -1,7 +1,33 @@
-package org.hnau.commons.app.model.input.parse
+package org.hnau.commons.app.model.input.factory.type
 
 import arrow.core.Either
 import org.hnau.commons.app.model.input.InputParser
+import org.hnau.commons.app.model.input.InputType
+import org.hnau.commons.app.model.input.factory.InputModelFactory
+import org.hnau.commons.kotlin.it
+
+fun <E, V> InputModelFactory.Companion.editText(
+    encoder: (V) -> String,
+    configParser: (InputParser<String, Nothing, String>) -> InputParser<String, E, V>,
+): InputModelFactory<String, E, V, InputType.Edit> = edit(
+    contentType = InputType.Edit.ContentType.Text,
+    encoder = encoder,
+    parser = InputParser
+        .createIdentity<String>()
+        .let(configParser),
+)
+
+val InputModelFactory.Companion.editText: InputModelFactory<String, Nothing, String, InputType.Edit>
+    get() = inputModelFactoryEditText
+
+
+private val inputModelFactoryEditText: InputModelFactory<String, Nothing, String, InputType.Edit> =
+    InputModelFactory.editText(
+        encoder = ::it,
+        configParser = ::it,
+    )
+
+
 
 data class StringIsTooShort(
     val expectedMinLength: Int,

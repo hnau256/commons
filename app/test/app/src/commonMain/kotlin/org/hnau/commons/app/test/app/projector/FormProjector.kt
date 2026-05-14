@@ -18,7 +18,6 @@ import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.type.toInputProjectorPrototype
-import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
 import org.hnau.commons.app.projector.utils.TitleOrIcon
