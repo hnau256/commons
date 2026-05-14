@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,15 +9,13 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
@@ -63,10 +60,9 @@ fun FItem(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val layoutDirection = LocalLayoutDirection.current
         Accessory(
             side = Side.Start,
-            placeholderSize = contentPadding.calculateStartPadding(layoutDirection),
+            contentPadding = contentPadding,
             accessory = startAccessory,
         )
         Line(
@@ -75,19 +71,19 @@ fun FItem(
         ) {
             Accessory(
                 side = Side.Top,
-                placeholderSize = contentPadding.calculateTopPadding(),
+                contentPadding = contentPadding,
                 accessory = topAccessory,
             )
             content()
             Accessory(
                 side = Side.Bottom,
-                placeholderSize = contentPadding.calculateBottomPadding(),
+                contentPadding = contentPadding,
                 accessory = bottomAccessory,
             )
         }
         Accessory(
             side = Side.End,
-            placeholderSize = contentPadding.calculateEndPadding(layoutDirection),
+            contentPadding = contentPadding,
             accessory = endAccessory,
         )
     }
@@ -96,7 +92,7 @@ fun FItem(
 @Composable
 private fun Accessory(
     side: Side,
-    placeholderSize: Dp,
+    contentPadding: PaddingValues,
     accessory: @Composable (() -> Unit)?
 ) {
     val align = side.fold(
@@ -111,15 +107,30 @@ private fun Accessory(
         label = "Accessory${side}OrPlaceholder",
         contentKey = { it != null },
     ) { localAccessoryOrNull ->
+        val layoutDirection = LocalLayoutDirection.current
+        val startPadding = contentPadding.calculateStartPadding(layoutDirection)
+        val topPadding = contentPadding.calculateTopPadding()
+        val endPadding = contentPadding.calculateEndPadding(layoutDirection)
+        val bottomPadding = contentPadding.calculateBottomPadding()
         localAccessoryOrNull.foldNullable(
             ifNull = {
                 Spacer(
                     modifier = side.fold(
-                        ifStart = { Modifier.width(placeholderSize) },
-                        ifTop = { Modifier.height(placeholderSize) },
-                        ifEnd = { Modifier.width(placeholderSize) },
-                        ifBottom = { Modifier.height(placeholderSize) },
-                    )
+                        ifStart = {
+                            Modifier.size(
+                                width = startPadding,
+                                height = topPadding + bottomPadding,
+                            )
+                        },
+                        ifTop = { Modifier.height(topPadding) },
+                        ifEnd = {
+                            Modifier.size(
+                                width = endPadding,
+                                height = topPadding + bottomPadding,
+                            )
+                        },
+                        ifBottom = { Modifier.height(bottomPadding) },
+                    ),
                 )
             },
             ifNotNull = { localAccessory ->
@@ -133,10 +144,34 @@ private fun Accessory(
                     val space = LocalFContext.current.distance.units.padding[side.orientation].small
                     Box(
                         modifier = side.fold(
-                            ifStart = { Modifier.padding(end = space, start = placeholderSize) },
-                            ifTop = { Modifier.padding(bottom = space, top = placeholderSize) },
-                            ifEnd = { Modifier.padding(start = space, end = placeholderSize) },
-                            ifBottom = { Modifier.padding(top = space, bottom = placeholderSize) }
+                            ifStart = {
+                                Modifier.padding(
+                                    end = space,
+                                    start = startPadding,
+                                    top = topPadding,
+                                    bottom = bottomPadding,
+                                )
+                            },
+                            ifTop = {
+                                Modifier.padding(
+                                    bottom = space,
+                                    top = topPadding,
+                                )
+                            },
+                            ifEnd = {
+                                Modifier.padding(
+                                    start = space,
+                                    end = endPadding,
+                                    top = topPadding,
+                                    bottom = bottomPadding,
+                                )
+                            },
+                            ifBottom = {
+                                Modifier.padding(
+                                    top = space,
+                                    bottom = bottomPadding,
+                                )
+                            }
                         ),
                     ) {
                         localAccessory()

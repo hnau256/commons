@@ -85,11 +85,9 @@ class FormProjector(
         scope = scope,
         model = model.savableDelegate,
         notSaved = {
-            SElements {
-                SText(
-                    text = "Config is not saved",
-                )
-            }
+            SText(
+                text = "Config is not saved",
+            )
         },
         save = "Save",
         edit = "Edit",
