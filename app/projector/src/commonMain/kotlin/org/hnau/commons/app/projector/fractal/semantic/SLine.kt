@@ -68,7 +68,7 @@ fun SLine(
         ifVertical = {
 
             val top = contentPadding.calculateTopPadding()
-            val bottom = contentPadding.calculateTopPadding()
+            val bottom = contentPadding.calculateBottomPadding()
 
             val itemExpansion = min(
                 separationSize / 2,
