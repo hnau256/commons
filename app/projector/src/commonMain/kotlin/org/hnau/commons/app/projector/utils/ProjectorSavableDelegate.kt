@@ -46,20 +46,20 @@ class ProjectorSavableDelegate<T>(
                             )
                         }
                         Action(
-                            actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = reset,
-                                icon = Drawable.Vector(Icons.Default.Clear),
-                            ),
-                            mood = Mood.Error,
-                        )
-                        Action(
                             actionOrElseOrDisabled = ActionOrElse.instant(cancel),
                             titleOrIcon = TitleOrIcon.Both(
                                 title = edit,
                                 icon = Drawable.Vector(Icons.Default.Edit),
                             ),
                             mood = Mood.Tertiary,
+                        )
+                        Action(
+                            actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
+                            titleOrIcon = TitleOrIcon.Both(
+                                title = reset,
+                                icon = Drawable.Vector(Icons.Default.Clear),
+                            ),
+                            mood = Mood.Error,
                         )
                     }
                 )
