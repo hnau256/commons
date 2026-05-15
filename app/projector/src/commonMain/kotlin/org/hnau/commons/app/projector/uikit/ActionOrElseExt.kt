@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Icon
-import org.hnau.commons.app.projector.utils.PaddingValuesZero
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.invoke
@@ -40,7 +39,7 @@ fun <A, E : CancelOrInProgress> ActionOrElseIcon(
     actionOrElseOrDisabled: ActionOrElse<A, E>?,
     modifier: Modifier = Modifier,
     size: Dp,
-    contentPadding: PaddingValues = PaddingValuesZero,
+    contentPadding: PaddingValues = PaddingValues.Zero,
     transitionSpec: AnimatedContentTransitionScope<ActionOrElse<A, E>?>.() -> ContentTransform = TransitionSpec.rememberCenter(),
     actionIcon: (@Composable () -> Unit)?,
 ) {

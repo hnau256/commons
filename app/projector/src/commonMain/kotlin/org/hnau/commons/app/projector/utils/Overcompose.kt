@@ -17,7 +17,7 @@ import androidx.compose.ui.util.fastForEach
 @Composable
 fun Overcompose(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValuesZero,
+    contentPadding: PaddingValues = PaddingValues.Zero,
     top: @Composable (PaddingValues) -> Unit = { paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues),

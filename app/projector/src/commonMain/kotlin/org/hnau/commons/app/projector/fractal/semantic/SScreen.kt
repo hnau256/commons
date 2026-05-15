@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
@@ -20,13 +18,12 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.app.projector.utils.PaddingValuesZero
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.plus
 
 @Composable
 fun SScreen(
-    contentPadding: PaddingValues = PaddingValuesZero,
+    contentPadding: PaddingValues = PaddingValues.Zero,
     actions: @Composable SActionsScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {

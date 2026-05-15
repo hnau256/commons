@@ -106,10 +106,6 @@ operator fun PaddingValues.plus(
     combine = Dp::plus,
 )
 
-val PaddingValuesZero: PaddingValues = PaddingValues(
-    all = 0.dp,
-)
-
 @Composable
 fun PaddingValues.toWindowInsets(): WindowInsets = LocalLayoutDirection.current.let { layoutDirection ->
     WindowInsets(
