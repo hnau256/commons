@@ -1,14 +1,17 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
-import org.hnau.commons.app.projector.fractal.FText
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.units
 
 @Composable
 fun SText(
@@ -22,10 +25,13 @@ fun SText(
     minLines: Int = 1,
     autoSize: TextAutoSize? = null,
 ) {
-    FText(
+    val fContext = LocalFContext.current
+    BasicText(
         text = text,
+        style = fContext.distance.units.textStyle[type].merge(
+            color = fContext.contentColor,
+        ),
         modifier = modifier.padding(LocalSContentPadding.current),
-        type = type,
         onTextLayout = onTextLayout,
         overflow = overflow,
         softWrap = softWrap,

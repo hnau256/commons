@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.FButton
+import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
@@ -45,7 +45,7 @@ object SActionsScope {
         UpdateFContext(
             update = { copy(mood = mood) }
         ) {
-            FButton(
+            SButton(
                 modifier = Modifier.padding(LocalSContentPadding.current),
                 actionOrElseOrDisabled = actionOrElseOrDisabled,
                 titleOrIcon = titleOrIcon,

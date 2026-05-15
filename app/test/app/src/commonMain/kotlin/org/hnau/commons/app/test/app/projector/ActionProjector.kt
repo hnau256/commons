@@ -11,9 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.FIcon
-import org.hnau.commons.app.projector.fractal.FLine
-import org.hnau.commons.app.projector.fractal.FText
+import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
@@ -85,16 +83,16 @@ class ActionProjector(
                                                 .value
                                                 .fastForEach { (title, value) ->
                                                     SItem(
-                                                        topAccessory = { FText(title) },
+                                                        topAccessory = { SText(title) },
                                                         startAccessory = {
-                                                            FIcon(
+                                                            SIcon(
                                                                 Drawable.Vector(
                                                                     Icons.Default.Alarm
                                                                 )
                                                             )
                                                         },
                                                         content = {
-                                                            FText(
+                                                            SText(
                                                                 text = value,
                                                             )
                                                         },

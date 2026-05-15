@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.FCheckBox
-import org.hnau.commons.app.projector.fractal.FText
+import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPrototype
@@ -26,7 +26,7 @@ fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype
                     )
                 }
             ) {
-                FText(title)
+                SText(title)
             }
         }
     }

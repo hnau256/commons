@@ -9,6 +9,8 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.plus
@@ -23,6 +25,7 @@ fun FBase(
         LocalFContext provides context.copy(
             distance = context.distance + (-1),
         ),
+        LocalSContentPadding provides context.distance.units.paddingValues.vertical.medium,
     ) {
         val fContext = LocalFContext.current
         Box(

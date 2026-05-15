@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.FIcon
-import org.hnau.commons.app.projector.fractal.FText
+import org.hnau.commons.app.projector.fractal.SIcon
+import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.SItem
 import org.hnau.commons.app.projector.fractal.utils.Mood
@@ -58,14 +58,14 @@ class InputProjector(
                 SItem(
                     onClick = onClick,
                     startAccessory = icon?.let { iconNotNull ->
-                        { FIcon(iconNotNull) }
+                        { SIcon(iconNotNull) }
                     },
                     endAccessory = endAccessory,
                     topAccessory = itemTitleWithContent.first?.let { title ->
-                        { FText(title) }
+                        { SText(title) }
                     },
                     bottomAccessory = errorMessage?.let { message ->
-                        { FText(message) }
+                        { SText(message) }
                     },
                     content = content,
                 )

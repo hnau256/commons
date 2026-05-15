@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
-import org.hnau.commons.app.projector.fractal.FIcon
+import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.FTextField
 import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
@@ -59,7 +59,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                     .and(enabled)
                     .ifTrue {
                         {
-                            FIcon(
+                            SIcon(
                                 drawable = Drawable.Vector(Icons.Default.Cancel),
                                 modifier = Modifier
                                     .clip(CircleShape)

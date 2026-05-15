@@ -5,7 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.CropDin
 import androidx.compose.material.icons.filled.Earbuds
-import androidx.compose.material.icons.filled.Factory
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
@@ -24,8 +23,6 @@ import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.Config
 import org.hnau.commons.app.test.app.model.FormModel
-import org.hnau.commons.kotlin.coroutines.ActionOrElse
-import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
 class FormProjector(
     scope: CoroutineScope,

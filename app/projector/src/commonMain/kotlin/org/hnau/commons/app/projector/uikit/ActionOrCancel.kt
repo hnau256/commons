@@ -31,6 +31,6 @@ val <E : CancelOrInProgress> ActionOrElse<Unit, E>.actionOrCancel: ActionOrCance
         }
     }
 
-val <E : CancelOrInProgress> ActionOrElse<Unit, E>.rememberActionOrCancel: ActionOrCancel?
-    @Composable
-    get() = remember(this) { actionOrCancel }
+@Composable
+fun <E : CancelOrInProgress> ActionOrElse<Unit, E>.rememberActionOrCancel(): ActionOrCancel? =
+    remember(this) { actionOrCancel }

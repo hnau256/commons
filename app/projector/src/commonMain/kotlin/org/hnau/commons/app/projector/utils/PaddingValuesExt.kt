@@ -7,8 +7,29 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
+
+val PaddingValues.left: Dp
+    @Composable
+    get() = calculateLeftPadding(LocalLayoutDirection.current)
+
+val PaddingValues.right: Dp
+    @Composable
+    get() = calculateRightPadding(LocalLayoutDirection.current)
+
+val PaddingValues.start: Dp
+    @Composable
+    get() = calculateStartPadding(LocalLayoutDirection.current)
+
+val PaddingValues.end: Dp
+    @Composable
+    get() = calculateEndPadding(LocalLayoutDirection.current)
+
+val PaddingValues.top: Dp
+    get() = calculateTopPadding()
+
+val PaddingValues.bottom: Dp
+    get() = calculateBottomPadding()
 
 @Composable
 inline fun PaddingValues.map(
@@ -16,23 +37,20 @@ inline fun PaddingValues.map(
     top: (Dp) -> Dp = { Dp.Unspecified },
     end: (Dp) -> Dp = { Dp.Unspecified },
     bottom: (Dp) -> Dp = { Dp.Unspecified },
-): PaddingValues {
-    val layoutDirection = LocalLayoutDirection.current
-    return PaddingValues(
-        start = calculateStartPadding(layoutDirection).let { startValue ->
-            start(startValue).takeOrElse { startValue }
-        },
-        top = calculateTopPadding().let { topValue ->
-            top(topValue).takeOrElse { topValue }
-        },
-        end = calculateEndPadding(layoutDirection).let { endValue ->
-            end(endValue).takeOrElse { endValue }
-        },
-        bottom = calculateBottomPadding().let { bottomValue ->
-            bottom(bottomValue).takeOrElse { bottomValue }
-        },
-    )
-}
+): PaddingValues = PaddingValues(
+    start = this.start.let { startValue ->
+        start(startValue).takeOrElse { startValue }
+    },
+    top = this.top.let { topValue ->
+        top(topValue).takeOrElse { topValue }
+    },
+    end = this.end.let { endValue ->
+        end(endValue).takeOrElse { endValue }
+    },
+    bottom = this.bottom.let { bottomValue ->
+        bottom(bottomValue).takeOrElse { bottomValue }
+    },
+)
 
 @Composable
 inline fun PaddingValues.map(
@@ -64,27 +82,12 @@ fun PaddingValues.combineWith(
     top: (Dp, other: Dp) -> Dp,
     end: (Dp, other: Dp) -> Dp,
     bottom: (Dp, other: Dp) -> Dp,
-): PaddingValues {
-    val layoutDirection = LocalLayoutDirection.current
-    return PaddingValues(
-        start = start(
-            calculateStartPadding(layoutDirection),
-            other.calculateStartPadding(layoutDirection)
-        ),
-        top = top(
-            calculateTopPadding(),
-            other.calculateTopPadding()
-        ),
-        end = end(
-            calculateEndPadding(layoutDirection),
-            other.calculateEndPadding(layoutDirection)
-        ),
-        bottom = bottom(
-            calculateBottomPadding(),
-            other.calculateBottomPadding()
-        ),
-    )
-}
+): PaddingValues = PaddingValues(
+    start = start(this.start, other.start),
+    top = start(this.top, other.top),
+    end = start(this.end, other.end),
+    bottom = start(this.bottom, other.bottom),
+)
 
 @Composable
 fun PaddingValues.combineWith(
@@ -107,11 +110,9 @@ operator fun PaddingValues.plus(
 )
 
 @Composable
-fun PaddingValues.toWindowInsets(): WindowInsets = LocalLayoutDirection.current.let { layoutDirection ->
-    WindowInsets(
-        left = calculateLeftPadding(layoutDirection),
-        top = calculateTopPadding(),
-        right = calculateRightPadding(layoutDirection),
-        bottom = calculateBottomPadding(),
-    )
-}
+fun PaddingValues.toWindowInsets(): WindowInsets = WindowInsets(
+    left = left,
+    top = top,
+    right = right,
+    bottom = bottom,
+)

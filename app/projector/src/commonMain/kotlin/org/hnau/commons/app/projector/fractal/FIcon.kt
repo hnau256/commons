@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
@@ -18,13 +19,15 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentBox
+import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
 
 @Composable
-fun FIcon(
+fun SIcon(
     drawable: Drawable,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +61,7 @@ private fun PainterIcon(
     val fContext = LocalFContext.current
     Box(
         modifier = modifier
+            .padding(LocalSContentPadding.current)
             .size(fContext.distance.units.iconSize)
             .toolingGraphicsLayer()
             .paint(
@@ -81,6 +85,7 @@ private fun TextIcon(
         val units = fContext.distance.units
         Box(
             modifier = modifier
+                .padding(LocalSContentPadding.current)
                 .size(units.iconSize)
                 .background(
                     color = fContext.containerColor,
