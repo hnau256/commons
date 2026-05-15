@@ -18,6 +18,7 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.SContentWithActions
 import org.hnau.commons.app.projector.fractal.semantic.SElements
 import org.hnau.commons.app.projector.fractal.semantic.SItem
+import org.hnau.commons.app.projector.fractal.semantic.SLine
 import org.hnau.commons.app.projector.fractal.semantic.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.semantic.SScreen
 import org.hnau.commons.app.projector.fractal.semantic.SText
@@ -75,7 +76,7 @@ class ActionProjector(
                                                 type = SizeType.Large,
                                             )
                                         }
-                                        FLine(
+                                        SLine(
                                             orientation = Orientation.Vertical,
                                             separation = SizeType.ExtraSmall,
                                         ) {
