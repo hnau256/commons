@@ -73,9 +73,10 @@ fun FItem(
                 distanceOffset = 0,
                 saturation = Saturation.Active,
             )
-            Line(
+            FLine(
                 modifier = Modifier.weight(1f),
                 orientation = Orientation.Vertical,
+                separation = null,
             ) {
                 Accessory(
                     side = Side.Top,

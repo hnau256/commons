@@ -3,7 +3,6 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -138,9 +137,9 @@ private data class Decorator(
         innerTextField: @Composable (() -> Unit),
     ) {
         val units = LocalFContext.current.distance.units
-        Line(
+        FLine(
             orientation = Orientation.Vertical,
-            arrangement = Arrangement.spacedBy(units.padding.across.small),
+            separation = SizeType.Small,
         ) {
             innerTextField()
             Spacer(
