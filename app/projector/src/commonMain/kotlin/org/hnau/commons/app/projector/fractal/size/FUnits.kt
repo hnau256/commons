@@ -79,14 +79,14 @@ class FUnits private constructor(
             val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
                 padding = DirectionValues(
-                    along = 16.dp,
+                    along = 20.dp,
                     across = 12.dp,
                 ).map { medium ->
                     SizeTypeValues(
                         medium = medium,
-                        large = medium * 1.75f,
-                        small = medium / 1.75f,
-                        extraSmall = medium / 3f,
+                        large = medium * 1.5f,
+                        small = medium / 1.5f,
+                        extraSmall = medium / 1.5f / 1.5f,
                     )
                 },
                 cornerRadius = cornerRadius,

@@ -83,7 +83,7 @@ class ActionProjector(
                                         }
                                         FLine(
                                             orientation = Orientation.Vertical,
-                                            separation = SizeType.Medium,
+                                            separation = SizeType.ExtraSmall,
                                         ) {
                                             configItems
                                                 .collectAsState()

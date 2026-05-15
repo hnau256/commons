@@ -165,12 +165,14 @@ private fun Accessory(
                             )
                         }
                     ) {
-                        val space = LocalFContext.current.distance.units.padding.across.small
+                        val units = LocalFContext.current.distance.units
+                        val alongSpace = units.padding.along.small
+                        val acrossSpace = units.padding.across.small
                         Box(
                             modifier = side.fold(
                                 ifStart = {
                                     Modifier.padding(
-                                        end = space,
+                                        end = alongSpace,
                                         start = startPadding,
                                         top = topPadding,
                                         bottom = bottomPadding,
@@ -178,13 +180,13 @@ private fun Accessory(
                                 },
                                 ifTop = {
                                     Modifier.padding(
-                                        bottom = space,
+                                        bottom = acrossSpace,
                                         top = topPadding,
                                     )
                                 },
                                 ifEnd = {
                                     Modifier.padding(
-                                        start = space,
+                                        start = alongSpace,
                                         end = endPadding,
                                         top = topPadding,
                                         bottom = bottomPadding,
@@ -192,7 +194,7 @@ private fun Accessory(
                                 },
                                 ifBottom = {
                                     Modifier.padding(
-                                        top = space,
+                                        top = acrossSpace,
                                         bottom = bottomPadding,
                                     )
                                 }

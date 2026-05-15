@@ -55,7 +55,7 @@ fun FCheckBox(
     val units = distance.units
     val handleSize = 24.dp.scale(distance.scale.space)
     val maxOffset = activeState.handleOffset - inactiveState.handleOffset
-    val separation = units.padding.across.small
+    val separation = units.padding.across.extraSmall
 
     Box(
         modifier = modifier

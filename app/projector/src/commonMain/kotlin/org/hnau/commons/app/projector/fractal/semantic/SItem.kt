@@ -26,7 +26,11 @@ fun SItem(
 ) {
     FItem(
         modifier = modifier,
-        contentPadding = LocalSContentPadding.current,
+        contentPadding = LocalSContentPadding.current.combineWith(
+            other = LocalFContext.current.distance.units.paddingValues.horizontal.extraSmall,
+        ) { actual, min ->
+            actual.coerceAtLeast(min)
+        },
         shapeToClip = null,
         startAccessory = startAccessory?.withoutSContentPaddings(),
         topAccessory = topAccessory?.withoutSContentPaddings(),
