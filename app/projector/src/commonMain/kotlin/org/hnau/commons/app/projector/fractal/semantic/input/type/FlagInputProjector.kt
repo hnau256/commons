@@ -4,7 +4,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
-import org.hnau.commons.app.projector.fractal.FCheckBox
+import org.hnau.commons.app.projector.fractal.SCheckBox
 import org.hnau.commons.app.projector.fractal.semantic.SText
 import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
@@ -21,7 +21,7 @@ fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype
             itemDrawer.Item(
                 onClick = enabled.ifTrue { { updateState(!isChecked) } },
                 endAccessory = {
-                    FCheckBox(
+                    SCheckBox(
                         isChecked = isChecked
                     )
                 }
