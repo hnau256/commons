@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.SIcon
-import org.hnau.commons.app.projector.fractal.FTextField
+import org.hnau.commons.app.projector.fractal.STextField
 import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPrototype
@@ -69,7 +69,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                     }
             ) {
                 val config = type.contentType.toTextInputProjectorConfig()
-                FTextField(
+                STextField(
                     value = value,
                     onValueChanged = updateState,
                     keyboardOptions = KeyboardOptions(
