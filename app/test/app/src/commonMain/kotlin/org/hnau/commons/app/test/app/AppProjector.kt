@@ -1,8 +1,6 @@
 package org.hnau.commons.app.test.app
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness

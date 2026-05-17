@@ -1,6 +1,5 @@
 package org.hnau.commons.app.test.app.projector
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
@@ -9,8 +8,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow

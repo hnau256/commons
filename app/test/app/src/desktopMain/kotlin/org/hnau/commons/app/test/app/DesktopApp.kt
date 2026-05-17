@@ -17,7 +17,6 @@ import kotlinx.coroutines.runBlocking
 import org.hnau.commons.app.model.app.AppFilesDirProvider
 import org.hnau.commons.app.model.app.DesktopApp
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.projector.uikit.utils.Dimens
 
 @OptIn(InternalComposeApi::class, InternalComposeUiApi::class)
 fun main() = runBlocking {

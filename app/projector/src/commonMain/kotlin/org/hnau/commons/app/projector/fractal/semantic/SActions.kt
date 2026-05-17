@@ -1,15 +1,11 @@
 package org.hnau.commons.app.projector.fractal.semantic
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Orientation
