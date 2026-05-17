@@ -13,7 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import org.hnau.commons.app.projector.fractal.FLine
+import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
@@ -24,6 +24,7 @@ import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.Side
+import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldNullable
 
@@ -56,45 +57,49 @@ fun SItem(
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val contentPadding = LocalSContentPadding.current
-            Accessory(
-                side = Side.Start,
-                contentPadding = contentPadding,
-                accessory = startAccessory,
-                distanceOffset = 0,
-                saturation = Saturation.Active,
-            )
-            FLine(
-                modifier = Modifier.weight(1f),
-                orientation = Orientation.Vertical,
-                separation = null,
+            CompositionLocalProvider(
+                LocalSContentPadding provides LocalSContentPadding.current.copy(end = 0.dp)
             ) {
                 Accessory(
-                    side = Side.Top,
-                    contentPadding = contentPadding,
-                    accessory = topAccessory,
-                    distanceOffset = 1,
-                    saturation = Saturation.Neutral,
-                )
-                CompositionLocalProvider(
-                    value = LocalSContentPadding provides PaddingValues.Zero,
-                    content = content,
-                )
-                Accessory(
-                    side = Side.Bottom,
-                    contentPadding = contentPadding,
-                    accessory = bottomAccessory,
-                    distanceOffset = 1,
-                    saturation = Saturation.Neutral,
+                    side = Side.Start,
+                    accessory = startAccessory,
+                    distanceOffset = 0,
+                    saturation = Saturation.Active,
                 )
             }
-            Accessory(
-                side = Side.End,
-                contentPadding = contentPadding,
-                accessory = endAccessory,
-                distanceOffset = 0,
-                saturation = Saturation.Active,
-            )
+            CompositionLocalProvider(
+                LocalSContentPadding provides LocalSContentPadding.current.copy(start = 0.dp, end = 0.dp)
+            ) {
+                SLine(
+                    modifier = Modifier.weight(1f),
+                    orientation = Orientation.Vertical,
+                    separation = null,
+                ) {
+                    Accessory(
+                        side = Side.Top,
+                        accessory = topAccessory,
+                        distanceOffset = 1,
+                        saturation = Saturation.Neutral,
+                    )
+                    content()
+                    Accessory(
+                        side = Side.Bottom,
+                        accessory = bottomAccessory,
+                        distanceOffset = 1,
+                        saturation = Saturation.Neutral,
+                    )
+                }
+            }
+            CompositionLocalProvider(
+                LocalSContentPadding provides LocalSContentPadding.current.copy(start = 0.dp)
+            ) {
+                Accessory(
+                    side = Side.End,
+                    accessory = endAccessory,
+                    distanceOffset = 0,
+                    saturation = Saturation.Active,
+                )
+            }
         }
     }
 }
@@ -102,7 +107,6 @@ fun SItem(
 @Composable
 private fun Accessory(
     side: Side,
-    contentPadding: PaddingValues,
     distanceOffset: Int,
     saturation: Saturation,
     accessory: @Composable (() -> Unit)?
@@ -114,6 +118,7 @@ private fun Accessory(
             )
         }
     ) {
+        val contentPadding = LocalSContentPadding.current
         val align = side.fold(
             ifStart = { Alignment.CenterEnd },
             ifTop = { Alignment.BottomStart },
@@ -161,8 +166,8 @@ private fun Accessory(
                         }
                     ) {
                         val units = LocalFContext.current.distance.units
-                        val alongSpace = units.padding.along.small
-                        val acrossSpace = units.padding.across.small
+                        val alongSpace = units.padding.along.extraSmall
+                        val acrossSpace = units.padding.across.extraSmall
                         val accessoryContentPadding = side.fold(
                             ifStart = {
                                 PaddingValues(

@@ -18,7 +18,7 @@ import org.hnau.commons.app.projector.utils.fold
 fun SLine(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    separation: SizeType = SizeType.Medium,
+    separation: SizeType? = null,
     alignment: Alignment.Horizontal = Alignment.Start,
     reverseOrdering: Boolean = false,
     forceFill: ForceFill? = null,

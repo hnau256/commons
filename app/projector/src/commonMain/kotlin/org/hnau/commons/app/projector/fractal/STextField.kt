@@ -139,8 +139,9 @@ private data class Decorator(
     ) {
         val units = LocalFContext.current.distance.units
         SLine(
+            modifier = Modifier,
             orientation = Orientation.Vertical,
-            separation = SizeType.Small,
+            separation = SizeType.ExtraSmall,
         ) {
             innerTextField()
             Spacer(
