@@ -81,14 +81,16 @@ class FUnits private constructor(
                 padding = DirectionValues(
                     along = 20.dp,
                     across = 16.dp,
-                ).map { medium ->
-                    SizeTypeValues(
-                        medium = medium,
-                        large = medium * 1.5f,
-                        small = medium / 1.5f,
-                        extraSmall = medium / 1.5f / 1.5f,
-                    )
-                },
+                )
+                    .map { padding -> padding.scale(distance.scale.space) }
+                    .map { medium ->
+                        SizeTypeValues(
+                            medium = medium,
+                            large = medium * 1.5f,
+                            small = medium / 1.5f,
+                            extraSmall = medium / 1.5f / 1.5f,
+                        )
+                    },
                 cornerRadius = cornerRadius,
                 shape = RoundedCornerShape(size = cornerRadius),
                 borderShape = DeflatedRoundedCornerShape(
