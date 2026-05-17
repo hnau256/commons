@@ -80,7 +80,7 @@ class FUnits private constructor(
             FUnits(
                 padding = DirectionValues(
                     along = 20.dp,
-                    across = 12.dp,
+                    across = 16.dp,
                 ).map { medium ->
                     SizeTypeValues(
                         medium = medium,

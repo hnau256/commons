@@ -23,7 +23,7 @@ import org.hnau.commons.app.projector.utils.plus
 
 @Composable
 fun SScreen(
-    contentPadding: PaddingValues = PaddingValues.Zero,
+    contentPadding: PaddingValues,
     actions: @Composable SActionsScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {

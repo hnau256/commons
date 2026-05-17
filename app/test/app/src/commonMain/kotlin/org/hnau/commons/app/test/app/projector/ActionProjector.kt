@@ -102,13 +102,13 @@ class ActionProjector(
                                     }
                                 },
                                 actions = {
-                                    Action(
+                                    /*Action(
                                         actionOrElseOrDisabled = ActionOrElse.instant(model.editConfig),
                                         titleOrIcon = TitleOrIcon.Both(
                                             title = "Edit",
                                             icon = Drawable.Vector(Icons.Default.Edit),
                                         ),
-                                    )
+                                    )*/
                                 }
                             )
                         }
