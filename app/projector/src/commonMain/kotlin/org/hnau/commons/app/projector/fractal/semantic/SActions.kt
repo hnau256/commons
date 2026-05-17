@@ -48,7 +48,6 @@ object SActionsScope {
             update = { copy(mood = mood) }
         ) {
             SButton(
-                modifier = Modifier.padding(LocalSContentPadding.current),
                 actionOrElseOrDisabled = actionOrElseOrDisabled,
                 titleOrIcon = titleOrIcon,
             )
