@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic.input
+package org.hnau.commons.app.projector.fractal.input
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.semantic.SItem
-import org.hnau.commons.app.projector.fractal.semantic.SText
+import org.hnau.commons.app.projector.fractal.SItem
+import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Drawable

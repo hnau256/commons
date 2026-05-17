@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.utils.ModelBlockBackDelegate
-import org.hnau.commons.app.projector.fractal.semantic.DialogContentInfo
-import org.hnau.commons.app.projector.fractal.semantic.SActionsScope
-import org.hnau.commons.app.projector.fractal.semantic.SDialog
+import org.hnau.commons.app.projector.fractal.DialogContentInfo
+import org.hnau.commons.app.projector.fractal.SActionsScope
+import org.hnau.commons.app.projector.fractal.SDialog
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant

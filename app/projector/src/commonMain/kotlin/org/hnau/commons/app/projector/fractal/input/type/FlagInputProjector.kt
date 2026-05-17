@@ -1,14 +1,14 @@
-package org.hnau.commons.app.projector.fractal.semantic.input.type
+package org.hnau.commons.app.projector.fractal.input.type
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.SCheckBox
-import org.hnau.commons.app.projector.fractal.semantic.SText
-import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
-import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
-import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.SText
+import org.hnau.commons.app.projector.fractal.input.InputContentProjector
+import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.kotlin.ifTrue
 
 

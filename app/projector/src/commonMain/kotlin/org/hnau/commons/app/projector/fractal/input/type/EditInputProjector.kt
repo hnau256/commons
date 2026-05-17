@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic.input.type
+package org.hnau.commons.app.projector.fractal.input.type
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
@@ -17,9 +17,9 @@ import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.STextField
-import org.hnau.commons.app.projector.fractal.semantic.input.InputContentProjector
-import org.hnau.commons.app.projector.fractal.semantic.input.InputProjectorPrototype
-import org.hnau.commons.app.projector.fractal.semantic.input.toInputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.input.InputContentProjector
+import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.ifTrue
 

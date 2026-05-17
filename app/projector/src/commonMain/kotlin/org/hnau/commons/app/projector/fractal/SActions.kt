@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic
+package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment

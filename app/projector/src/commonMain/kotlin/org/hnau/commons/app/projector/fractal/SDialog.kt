@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic
+package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +19,7 @@ import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
+import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay

@@ -9,8 +9,8 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.utils.ModelSavableDelegate
-import org.hnau.commons.app.projector.fractal.semantic.DialogContentInfo
-import org.hnau.commons.app.projector.fractal.semantic.SDialog
+import org.hnau.commons.app.projector.fractal.DialogContentInfo
+import org.hnau.commons.app.projector.fractal.SDialog
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState

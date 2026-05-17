@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic.utils
+package org.hnau.commons.app.projector.fractal.utils
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues

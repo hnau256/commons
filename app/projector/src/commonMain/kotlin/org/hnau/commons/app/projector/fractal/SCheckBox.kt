@@ -22,7 +22,7 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.context.overlay
-import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentBox
+import org.hnau.commons.app.projector.fractal.utils.LocalSContentBox
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation

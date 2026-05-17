@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic
+package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.semantic.utils.LocalSContentPadding
+import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.plus

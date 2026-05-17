@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.semantic.input
+package org.hnau.commons.app.projector.fractal.input
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow

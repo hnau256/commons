@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.contentColor
-import org.hnau.commons.app.projector.fractal.semantic.SLine
+import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
