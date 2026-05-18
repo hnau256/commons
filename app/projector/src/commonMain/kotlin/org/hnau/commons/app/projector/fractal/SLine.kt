@@ -16,26 +16,47 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.foldNullable
 
 @Composable
 fun SLine(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    separation: SizeType? = null,
+    separation: SizeType,
+    alignment: Alignment.Horizontal = Alignment.Start,
+    reverseOrdering: Boolean = false,
+    forceFill: ForceFill? = null,
+    content: @Composable () -> Unit,
+) {
+    SLine(
+        orientation = orientation,
+        modifier = modifier,
+        separation = LocalFContext.current.distance.units.padding.along[separation],
+        alignment = alignment,
+        reverseOrdering = reverseOrdering,
+        forceFill = forceFill,
+        content = content
+    )
+}
+
+@Composable
+fun SLine(
+    orientation: Orientation,
+    modifier: Modifier = Modifier,
+    separation: Dp = 0.dp,
     alignment: Alignment.Horizontal = Alignment.Start,
     reverseOrdering: Boolean = false,
     forceFill: ForceFill? = null,
@@ -85,7 +106,7 @@ fun SLine(
 private fun FLine(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    separation: SizeType? = null,
+    separation: Dp = 0.dp,
     alignment: Alignment.Horizontal = Alignment.Start,
     reverseOrdering: Boolean = false,
     forceFill: ForceFill? = null,
@@ -94,14 +115,9 @@ private fun FLine(
     Line(
         modifier = modifier,
         orientation = orientation,
-        arrangement = separation.foldNullable(
-            ifNull = { Arrangement.aligned(alignment) },
-            ifNotNull = { size ->
-                Arrangement.spacedBy(
-                    space = LocalFContext.current.distance.units.padding.along[size],
-                    alignment = alignment,
-                )
-            }
+        arrangement = Arrangement.spacedBy(
+            space = separation,
+            alignment = alignment,
         ),
         reverseOrdering = reverseOrdering,
         forceFill = forceFill,

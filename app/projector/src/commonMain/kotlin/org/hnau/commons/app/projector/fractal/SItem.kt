@@ -73,7 +73,6 @@ fun SItem(
                 SLine(
                     modifier = Modifier.weight(1f),
                     orientation = Orientation.Vertical,
-                    separation = null,
                 ) {
                     Accessory(
                         side = Side.Top,

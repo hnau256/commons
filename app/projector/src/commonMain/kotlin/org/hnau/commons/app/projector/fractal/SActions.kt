@@ -3,7 +3,6 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
@@ -25,7 +24,7 @@ fun SActions(
             else -> Orientation.Horizontal
         },
         reverseOrdering = true,
-        alignment = Alignment.Start,
+        alignment = Alignment.End,
         separation = SizeType.Small,
     ) {
         SActionsScope.block()

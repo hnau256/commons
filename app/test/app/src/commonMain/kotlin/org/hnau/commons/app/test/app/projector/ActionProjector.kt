@@ -1,6 +1,7 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
@@ -8,9 +9,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.projector.fractal.Column
+import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.SContentWithActions
@@ -19,6 +23,7 @@ import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SScreen
+import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Saturation
@@ -74,31 +79,28 @@ class ActionProjector(
                                                 type = SizeType.Large,
                                             )
                                         }
-                                        SLine(
-                                            orientation = Orientation.Vertical,
-                                            separation = SizeType.ExtraSmall,
-                                        ) {
-                                            configItems
+                                        STable(
+                                            columnToFill = ForceFill.Last,
+                                            rows = configItems
                                                 .collectAsState()
-                                                .value
-                                                .fastForEach { (title, value) ->
-                                                    SItem(
-                                                        topAccessory = { SText(title) },
-                                                        startAccessory = {
-                                                            SIcon(
-                                                                Drawable.Vector(
-                                                                    Icons.Default.Alarm
-                                                                )
-                                                            )
-                                                        },
-                                                        content = {
-                                                            SText(
-                                                                text = value,
-                                                            )
-                                                        },
-                                                    )
-                                                }
-                                        }
+                                                .value,
+                                            columns = remember {
+                                                listOf(
+                                                    Column(
+                                                        saturation = Saturation.Neutral,
+                                                    ) { (title) ->
+                                                        SText(title)
+                                                    },
+                                                    Column(
+                                                        saturation = Saturation.Active,
+                                                    ) { (_, value) ->
+                                                        SText(
+                                                            text = value,
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
                                     }
                                 },
                                 actions = {
