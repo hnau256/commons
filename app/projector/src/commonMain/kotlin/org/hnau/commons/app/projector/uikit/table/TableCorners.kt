@@ -1,15 +1,21 @@
 package org.hnau.commons.app.projector.uikit.table
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Shape
-import org.hnau.commons.app.projector.uikit.shape.HnauShape
-import org.hnau.commons.app.projector.uikit.shape.create
 import org.hnau.commons.app.projector.utils.Orientation
 
 @JvmInline
 value class TableCorners private constructor(
     private val packed: Byte,
 ) {
+
+    fun interface Provider {
+
+        fun getTableCorners(): TableCorners
+
+        companion object {
+
+            val opened = Provider { TableCorners.opened }
+        }
+    }
 
     constructor(
         startTopIsOpened: Boolean,
@@ -75,15 +81,6 @@ value class TableCorners private constructor(
     ) { (name, opened) ->
         "$name:${if (opened) "opened" else "closed"}"
     }
-
-    val shape: Shape
-        @Composable
-        get() = HnauShape.create(
-            startTopRoundCorners = startTopIsOpened,
-            startBottomRoundCorners = startBottomIsOpened,
-            endTopRoundCorners = endTopIsOpened,
-            endBottomRoundCorners = endBottomIsOpened,
-        )
 
     companion object {
 

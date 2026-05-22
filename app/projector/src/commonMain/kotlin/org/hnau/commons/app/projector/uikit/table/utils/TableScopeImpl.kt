@@ -1,71 +1,55 @@
 package org.hnau.commons.app.projector.uikit.table.utils
 
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import org.hnau.commons.app.projector.uikit.line.LinePosition
+import org.hnau.commons.app.projector.uikit.line.LineScope
+import org.hnau.commons.app.projector.uikit.line.onPositionInLineChanged
 import org.hnau.commons.app.projector.uikit.table.TableCorners
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.app.projector.utils.fold
 
 internal class TableScopeImpl(
     override val orientation: Orientation,
-    override val corners: TableCorners,
-    private val applyWeight: Modifier.(weight: Float, fill: Boolean) -> Modifier,
-) : TableScope {
+    override val corners: TableCorners.Provider,
+    private val lineScope: LineScope,
+) : TableScope, LineScope by lineScope {
 
     @Composable
     override fun Cell(
-        content: @Composable (TableCorners.(Modifier) -> Unit),
+        content: @Composable (TableCorners.Provider.(Modifier) -> Unit),
     ) {
+        var position by remember {
+            mutableStateOf(
+                LinePosition(
+                    isFirst = false,
+                    isLast = false,
+                )
+            )
+        }
+        val corners by remember {
+            derivedStateOf {
+                TableCorners.Provider {
+                    corners
+                        .getTableCorners()
+                        .close(
+                            orientation = orientation,
+                            startOrTop = !position.isFirst,
+                            endOrBottom = !position.isLast,
+                        )
+                }
+            }
+        }
         content(
-            TableCorners.opened,
-            orientation.fold(
-                ifHorizontal = { Modifier.fillMaxHeight() },
-                ifVertical = { Modifier.fillMaxWidth() },
-            ),
-        )
-    }
-
-    override fun Modifier.weight(
-        weight: Float,
-        fill: Boolean,
-    ): Modifier = applyWeight(weight, fill)
-}
-
-@Composable
-internal fun TableScope.Companion.create(
-    orientation: Orientation,
-    corners: TableCorners,
-    columnScope: ColumnScope,
-): TableScopeImpl = TableScopeImpl(
-    orientation = orientation,
-    corners = corners,
-) { weight, fill ->
-    with(columnScope) {
-        weight(
-            weight = weight,
-            fill = fill,
-        )
-    }
-}
-
-@Composable
-internal fun TableScope.Companion.create(
-    orientation: Orientation,
-    corners: TableCorners,
-    rowScope: RowScope,
-): TableScopeImpl = TableScopeImpl(
-    orientation = orientation,
-    corners = corners,
-) { weight, fill ->
-    with(rowScope) {
-        weight(
-            weight = weight,
-            fill = fill,
+            corners,
+            Modifier.onPositionInLineChanged { newPosition ->
+                position = newPosition
+            },
         )
     }
 }

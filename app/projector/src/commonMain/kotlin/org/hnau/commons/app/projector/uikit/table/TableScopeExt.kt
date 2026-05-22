@@ -13,12 +13,12 @@ import org.hnau.commons.kotlin.it
 
 @Composable
 fun TableScope.Subtable(
-    configModifier: (Modifier) -> Modifier = ::it,
+    modifier: Modifier = Modifier,
     content: @Composable TableScope.() -> Unit,
 ) {
-    Cell { modifier ->
+    Cell { cellModifier ->
         Table(
-            modifier = configModifier(modifier),
+            modifier = cellModifier.then(modifier),
             orientation = orientation.opposite,
             corners = this,
             content = content,
