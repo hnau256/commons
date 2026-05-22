@@ -40,6 +40,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.compareWith
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.castOrElse
+import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.it
@@ -79,6 +80,19 @@ private data class LineMeasurePolicy(
         measurables: List<Measurable>,
         constraints: Constraints,
     ): MeasureResult = with(orientation) {
+
+        measurables.forEachIndexed { i, measurable ->
+            measurable
+                .parentData
+                ?.castOrNull<LineParentData>()
+                ?.onPositionCallback
+                ?.invoke(
+                    LinePosition(
+                        isFirst = i <= 0,
+                        isLast = i >= measurables.lastIndex,
+                    )
+            )
+        }
 
         val across = calcIntrinsicAcross(
             measurables = measurables,
