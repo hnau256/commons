@@ -99,7 +99,7 @@ private data class LineMeasurePolicy(
 
         val size = IntSize(
             across = across,
-            along = placeables.sumOf { placeable -> placeable.along } - measurables.separationsSum(),
+            along = placeables.sumOf { placeable -> placeable.along } + measurables.separationsSum(),
         ).let(constraints::constrain)
 
         val sizes = placeables.map { placeable -> placeable.along }.toIntArray()
@@ -191,7 +191,7 @@ private data class LineMeasurePolicy(
             resultOrWeight.getOrElse { weight ->
                 val along = weight.takeIf { it > 0f }.foldNullable(
                     ifNull = { 0 },
-                    ifNotNull = { (allWeighedElementsAlong.value * weight).toInt() }
+                    ifNotNull = { (allWeighedElementsAlong.value * weight / totalWeight).toInt() }
                 )
                 val measurable = measurables[i]
                 measurable.measure(
