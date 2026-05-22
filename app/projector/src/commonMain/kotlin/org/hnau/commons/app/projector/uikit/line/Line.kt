@@ -25,6 +25,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.Constraints
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.arrangeForCorrectOrientation
+import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.maxAcross
 import org.hnau.commons.app.projector.uikit.line.ext.maxAlong
@@ -43,6 +44,7 @@ import org.hnau.commons.kotlin.castOrElse
 import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.it
 
 @Composable
@@ -66,9 +68,11 @@ fun Line(
                 layoutDirection = layoutDirection,
             )
         },
-        content = { LineScope.content() },
+        content = { lineScopeImpl.content() },
     )
 }
+
+private val lineScopeImpl: LineScope = object : LineScope {}
 
 private data class LineMeasurePolicy(
     private val orientation: Orientation,
@@ -91,14 +95,15 @@ private data class LineMeasurePolicy(
                         isFirst = i <= 0,
                         isLast = i >= measurables.lastIndex,
                     )
-            )
+                )
         }
 
-        val across = calcIntrinsicAcross(
+        val childrenAcross = calcIntrinsicAcross(
             measurables = measurables,
             max = true,
             along = constraints.maxAlong,
         )
+        val across = constraints.constrainAcross(childrenAcross)
 
         val placeables = measure(
             measurables = measurables,
@@ -163,8 +168,13 @@ private data class LineMeasurePolicy(
         fun I.extractLineParentData(): LineParentData =
             extractParentData().castOrElse<LineParentData> { emptyLineParentData }
 
-        val useFakeWeight = measurables.none { measurable ->
-            measurable.extractLineParentData().weight > 0f
+        var forceWeight: Float? = null
+        if (constraints.maxAlong != null) {
+            val hasAtLeastOneWeight = measurables
+                .any { measurable -> measurable.extractLineParentData().weight > 0f }
+            if (!hasAtLeastOneWeight) {
+                forceWeight = 1f
+            }
         }
 
         var totalWeight = 0f
@@ -173,10 +183,7 @@ private data class LineMeasurePolicy(
 
         val firstStepResult: List<Either<Float, O>> = measurables.map { measurable ->
 
-            var weight = measurable.extractLineParentData().weight
-            if (weight <= 0f && useFakeWeight) {
-                weight = 1f
-            }
+            val weight = forceWeight ?: measurable.extractLineParentData().weight
 
             if (weight > 0f) {
                 totalWeight += weight
@@ -240,7 +247,9 @@ private data class LineMeasurePolicy(
             extractAlong = ::it,
             extractParentData = IntrinsicMeasurable::parentData,
         )
-    }.sum()
+            .sum()
+            .plus(measurables.separationsSum())
+    }
 
     private fun IntrinsicMeasureScope.calcIntrinsicAcross(
         measurables: List<IntrinsicMeasurable>,
