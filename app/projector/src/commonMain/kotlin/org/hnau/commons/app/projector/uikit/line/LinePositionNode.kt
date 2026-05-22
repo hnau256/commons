@@ -9,7 +9,7 @@ import org.hnau.commons.kotlin.castOrElse
 
 context(_: LineScope)
 fun Modifier.onPositionInLineChanged(
-    onPositionCallback: ((LinePosition) -> Unit)?,
+    onPositionCallback: (LinePosition) -> Unit,
 ): Modifier = then(
     LinePositionElement(
         onPositionCallback = onPositionCallback,
@@ -42,6 +42,6 @@ private data class LinePositionElement(
     override fun InspectorInfo.inspectableProperties() {
         name = "Position"
         value = onPositionCallback
-        properties["Position"] = onPositionCallback
+        properties["onPositionCallback"] = onPositionCallback
     }
 }
