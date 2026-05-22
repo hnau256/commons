@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.uikit.table
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -12,7 +11,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.rememberLet
-import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.foldBoolean
 
 val TableCorners.Provider.shape: Shape
