@@ -84,7 +84,7 @@ private fun FContext.findContrastedTone(
         ratio = contrast,
     )
 
-    if (baseResult != null && baseResult.error < 0.1) {
+    if (baseResult != null && baseResult.error < 1.0) {
         return baseResult.tone
     }
 

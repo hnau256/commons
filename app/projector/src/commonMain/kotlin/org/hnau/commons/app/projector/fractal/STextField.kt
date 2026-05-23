@@ -167,7 +167,7 @@ private data class Decorator(
     companion object {
 
         private val containerContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
-            initial = Contrast(1.2),
+            initial = Contrast(1.1),
             decay = 0.8,
         )
     }
