@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.uikit.table
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.NonSkippableComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -12,9 +11,7 @@ import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.Orientation
 
 
-
 @Composable
-@NonSkippableComposable
 fun Table(
     orientation: Orientation,
     modifier: Modifier = Modifier,
