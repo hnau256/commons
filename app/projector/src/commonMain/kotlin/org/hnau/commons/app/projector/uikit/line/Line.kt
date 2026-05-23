@@ -52,6 +52,7 @@ fun Line(
     orientation: Orientation,
     modifier: Modifier = Modifier,
     separation: Dp = 0.dp,
+    reverseOrdering: Boolean = false,
     content: @Composable LineScope.() -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -61,11 +62,13 @@ fun Line(
             orientation,
             separation,
             layoutDirection,
+            reverseOrdering,
         ) {
             LineMeasurePolicy(
                 orientation = orientation,
                 separation = separation,
                 layoutDirection = layoutDirection,
+                reverseOrdering = reverseOrdering,
             )
         },
         content = { lineScopeImpl.content() },
@@ -78,6 +81,7 @@ private data class LineMeasurePolicy(
     private val orientation: Orientation,
     private val separation: Dp,
     private val layoutDirection: LayoutDirection,
+    private val reverseOrdering: Boolean,
 ) : MeasurePolicy {
 
     override fun MeasureScope.measure(
@@ -85,7 +89,12 @@ private data class LineMeasurePolicy(
         constraints: Constraints,
     ): MeasureResult = with(orientation) {
 
-        measurables.forEachIndexed { i, measurable ->
+        val orderedMeasurables = reverseOrdering.foldBoolean(
+            ifTrue = { measurables.asReversed() },
+            ifFalse = { measurables },
+        )
+
+        orderedMeasurables.forEachIndexed { i, measurable ->
             measurable
                 .parentData
                 ?.castOrNull<LineParentData>()
@@ -93,20 +102,20 @@ private data class LineMeasurePolicy(
                 ?.invoke(
                     LinePosition(
                         isFirst = i <= 0,
-                        isLast = i >= measurables.lastIndex,
+                        isLast = i >= orderedMeasurables.lastIndex,
                     )
                 )
         }
 
         val childrenAcross = calcIntrinsicAcross(
-            measurables = measurables,
+            measurables = orderedMeasurables,
             max = true,
             along = constraints.maxAlong,
         )
         val across = constraints.constrainAcross(childrenAcross)
 
         val placeables = measure(
-            measurables = measurables,
+            measurables = orderedMeasurables,
             constraints = constraints.copy(
                 minAcross = across,
                 maxAcross = across,
@@ -118,7 +127,7 @@ private data class LineMeasurePolicy(
 
         val size = IntSize(
             across = across,
-            along = placeables.sumOf { placeable -> placeable.along } + measurables.separationsSum(),
+            along = placeables.sumOf { placeable -> placeable.along } + orderedMeasurables.separationsSum(),
         ).let(constraints::constrain)
 
         val separationPixels = separationPixels

@@ -13,6 +13,7 @@ import org.hnau.commons.app.projector.utils.opposite
 @Composable
 fun TableScope.Subtable(
     modifier: Modifier = Modifier,
+    reverseOrdering: Boolean = false,
     content: @Composable TableScope.() -> Unit,
 ) {
     Cell { cellModifier ->
@@ -21,6 +22,7 @@ fun TableScope.Subtable(
             orientation = orientation.opposite,
             corners = this,
             content = content,
+            reverseOrdering = reverseOrdering,
         )
     }
 }

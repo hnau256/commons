@@ -17,12 +17,14 @@ fun Table(
     modifier: Modifier = Modifier,
     separation: Dp = Dimens.chipsSeparation,
     corners: TableCorners.Provider = TableCorners.Provider.opened,
+    reverseOrdering: Boolean = false,
     content: @Composable TableScope.() -> Unit,
 ) {
     Line(
         modifier = modifier,
         orientation = orientation,
         separation = separation,
+        reverseOrdering = reverseOrdering,
     ) {
         val lineScope: LineScope = this
         val scope = remember(
