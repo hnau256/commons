@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,7 +20,6 @@ import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
@@ -57,7 +54,6 @@ fun SDialog(
                             alpha = shadowAlpha[fContext.palettes.brightness][fContext.distance],
                         )
                     )
-                    .padding(LocalSContentPadding.current)
             ) {
                 UpdateFContext(
                     update = {
@@ -66,28 +62,20 @@ fun SDialog(
                         )
                     }
                 ) {
-                    CompositionLocalProvider(
-                        LocalSContentPadding provides PaddingValues.Zero,
+                    val fContext = LocalFContext.current
+                    Box(
+                        modifier = Modifier
+                            .noIndicationClickable {}
+                            .background(
+                                color = fContext.containerColor,
+                                shape = fContext.distance.units.shape,
+                            )
+                            .padding(fContext.distance.units.paddingValues.vertical[SizeType.default])
                     ) {
-                        val fContext = LocalFContext.current
-                        Box(
-                            modifier = Modifier
-                                .padding(LocalSContentPadding.current)
-                                .noIndicationClickable {}
-                                .background(
-                                    color = fContext.containerColor,
-                                    shape = fContext.distance.units.shape,
-                                )
-                        ) {
-                            CompositionLocalProvider(
-                                LocalSContentPadding provides LocalFContext.current.distance.units.paddingValues.vertical[SizeType.default],
-                            ) {
-                                SContentWithActions(
-                                    content = info.content,
-                                    actions = info.actions
-                                )
-                            }
-                        }
+                        SContentWithActions(
+                            content = info.content,
+                            actions = info.actions
+                        )
                     }
                 }
             }

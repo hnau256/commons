@@ -2,9 +2,9 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.util.fastForEachIndexed
@@ -12,8 +12,6 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentBox
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.Orientation
@@ -57,7 +55,7 @@ fun <R> STable(
                     rows.fastForEachIndexed { rowIndex, row ->
                         val topIsOpened = rowIndex == 0
                         val bottomIsOpened = rowIndex == rows.lastIndex
-                        LocalSContentBox(
+                        Box(
                             propagateMinConstraints = true,
                         ) {
                             UpdateFContext(
@@ -91,14 +89,11 @@ fun <R> STable(
                                 Box(
                                     modifier = Modifier
                                         .clip(shape)
-                                        .background(fContext.containerColor),
+                                        .background(fContext.containerColor)
+                                        .padding(units.paddingValues.horizontal.medium),
                                     propagateMinConstraints = true,
                                 ) {
-                                    CompositionLocalProvider(
-                                        LocalSContentPadding provides units.paddingValues.horizontal.medium
-                                    ) {
-                                        column.cell(row)
-                                    }
+                                    column.cell(row)
                                 }
                             }
                         }

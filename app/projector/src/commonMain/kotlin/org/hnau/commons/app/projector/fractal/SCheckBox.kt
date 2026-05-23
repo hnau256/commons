@@ -24,7 +24,6 @@ import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentBox
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
@@ -36,7 +35,7 @@ fun SCheckBox(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    LocalSContentBox {
+    Box {
 
         val inactiveState = StateInfo.remember(
             checked = false,

@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
@@ -11,8 +10,6 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
-
 @Composable
 fun SText(
     text: String,
@@ -31,7 +28,7 @@ fun SText(
         style = fContext.distance.units.textStyle[type].merge(
             color = fContext.contentColor,
         ),
-        modifier = modifier.padding(LocalSContentPadding.current),
+        modifier = modifier,
         onTextLayout = onTextLayout,
         overflow = overflow,
         softWrap = softWrap,

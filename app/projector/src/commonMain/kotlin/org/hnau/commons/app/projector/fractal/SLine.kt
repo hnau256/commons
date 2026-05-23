@@ -1,9 +1,7 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +20,7 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 
@@ -38,44 +34,15 @@ fun SLine(
     forceFill: ForceFill? = null,
     content: @Composable () -> Unit,
 ) {
-    val contentPadding = LocalSContentPadding.current
-    val (childrenContentPadding, padding) = orientation.fold(
-        ifHorizontal = {
-            val childrenContentPadding = contentPadding.copy(
-                start = 0.dp,
-                end = 0.dp,
-            )
-            val padding = contentPadding.copy(
-                top = 0.dp,
-                bottom = 0.dp,
-            )
-            childrenContentPadding to padding
-        },
-        ifVertical = {
-            val childrenContentPadding = contentPadding.copy(
-                top = 0.dp,
-                bottom = 0.dp,
-            )
-            val padding = contentPadding.copy(
-                start = 0.dp,
-                end = 0.dp,
-            )
-            childrenContentPadding to padding
-        },
+    FLine(
+        orientation = orientation,
+        modifier = modifier,
+        separation = separation,
+        alignment = alignment,
+        reverseOrdering = reverseOrdering,
+        forceFill = forceFill,
+        content = content,
     )
-    CompositionLocalProvider(
-        LocalSContentPadding provides childrenContentPadding
-    ) {
-        FLine(
-            orientation = orientation,
-            modifier = modifier.padding(padding),
-            separation = separation,
-            alignment = alignment,
-            reverseOrdering = reverseOrdering,
-            forceFill = forceFill,
-            content = content,
-        )
-    }
 }
 
 @Composable
