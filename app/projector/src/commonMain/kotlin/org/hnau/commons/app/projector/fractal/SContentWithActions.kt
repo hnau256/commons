@@ -3,8 +3,9 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
@@ -26,10 +27,11 @@ fun SContentWithActions(
         ) {
             content()
         }
+        Spacer(
+            Modifier.height(LocalFContext.current.distance.units.padding.along.medium)
+        )
         SActions(
-            modifier = Modifier.fillMaxWidth().padding(
-                top = LocalFContext.current.distance.units.padding.along.medium,
-            ),
+            modifier = Modifier.fillMaxWidth(),
             block = actions,
         )
     }

@@ -1,5 +1,6 @@
 package org.hnau.commons.app.test.app.projector
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
@@ -7,8 +8,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
@@ -80,15 +84,23 @@ class ActionProjector(
                                                 .value
                                             Subtable {
                                                 rows.forEach { (title) ->
-                                                    CellBox {
+                                                    SCellBox {
                                                         SText(title)
                                                     }
                                                 }
                                             }
                                             Subtable {
                                                 rows.forEach { (_, value) ->
-                                                    CellBox {
-                                                        SText(value)
+                                                    SCellBox {
+                                                        UpdateFContext(
+                                                            update = {
+                                                                copy(
+                                                                    saturation = Saturation.Active,
+                                                                )
+                                                            }
+                                                        ) {
+                                                            SText(value)
+                                                        }
                                                     }
                                                 }
                                             }

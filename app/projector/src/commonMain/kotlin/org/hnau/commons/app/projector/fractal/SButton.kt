@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
@@ -35,87 +36,83 @@ fun <E : CancelOrInProgress> SButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
+    shape: Shape = LocalFContext.current.distance.units.shape,
     isSelected: Boolean = false,
 ) {
-    Box(
-        modifier = modifier,
-        propagateMinConstraints = true,
+    UpdateFContext(
+        update = {
+            copy(
+                saturation = Saturation.get(actionOrElseOrDisabled != null)
+            ).overlay()
+        }
     ) {
-        UpdateFContext(
-            update = {
-                copy(
-                    saturation = Saturation.get(actionOrElseOrDisabled != null)
-                ).overlay()
-            }
-        ) {
 
-            val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
+        val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
 
 
-            val isInProgress = when (actionOrElseOrDisabled) {
-                is ActionOrElse.Else -> true
-                is ActionOrElse.Action, null -> false
-            }
+        val isInProgress = when (actionOrElseOrDisabled) {
+            is ActionOrElse.Else -> true
+            is ActionOrElse.Action, null -> false
+        }
 
-            val fContext = LocalFContext.current
-            val units = fContext.distance.units
-            val foregroundColor = fContext.contentColor
-            Box(
-                propagateMinConstraints = true,
-                modifier = Modifier
-                    .clip(units.shape)
-                    .clickable(
-                        enabled = actionOrCancel?.onClick != null,
-                        onClick = actionOrCancel?.onClick.orNoAction,
-                    )
-                    .background(fContext.containerColor)
-                    .then(
-                        when {
-                            isInProgress -> Modifier.fractalDashBorder(
-                                color = foregroundColor,
-                                shape = units.borderShape,
-                            )
-
-                            isSelected -> Modifier.border(
-                                width = units.borderWidth,
-                                color = foregroundColor,
-                                shape = units.borderShape,
-                            )
-
-                            else -> Modifier
-                        }
-                    )
-                    .padding(units.paddingValues.horizontal.medium),
-            ) {
-                STitleOrIcon(
-                    titleOrIcon = remember(actionOrCancel, titleOrIcon) {
-
-                        val type = actionOrCancel?.type
-                        val iconToOverwrite = when (type) {
-                            ActionOrCancel.Type.Cancel -> Drawable.Vector(Icons.Default.Clear)
-                            ActionOrCancel.Type.Action, null -> titleOrIcon.iconOrNull
-                        }
-
-                        titleOrIcon.fold(
-                            ifTitle = { title ->
-                                iconToOverwrite.foldNullable(
-                                    ifNull = { TitleOrIcon.Title(title) },
-                                    ifNotNull = { icon -> TitleOrIcon.Both(title, icon) },
-                                )
-                            },
-                            ifIcon = { icon ->
-                                TitleOrIcon.Icon(iconToOverwrite ?: icon)
-                            },
-                            ifBoth = { title, icon ->
-                                TitleOrIcon.Both(
-                                    title = title,
-                                    icon = iconToOverwrite ?: icon,
-                                )
-                            }
-                        )
-                    },
+        val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val foregroundColor = fContext.contentColor
+        Box(
+            propagateMinConstraints = true,
+            modifier = modifier
+                .clip(shape)
+                .clickable(
+                    enabled = actionOrCancel?.onClick != null,
+                    onClick = actionOrCancel?.onClick.orNoAction,
                 )
-            }
+                .background(fContext.containerColor)
+                .then(
+                    when {
+                        isInProgress -> Modifier.fractalDashBorder(
+                            color = foregroundColor,
+                            shape = units.borderShape,
+                        )
+
+                        isSelected -> Modifier.border(
+                            width = units.borderWidth,
+                            color = foregroundColor,
+                            shape = units.borderShape,
+                        )
+
+                        else -> Modifier
+                    }
+                )
+                .padding(units.paddingValues.horizontal.medium),
+        ) {
+            STitleOrIcon(
+                titleOrIcon = remember(actionOrCancel, titleOrIcon) {
+
+                    val type = actionOrCancel?.type
+                    val iconToOverwrite = when (type) {
+                        ActionOrCancel.Type.Cancel -> Drawable.Vector(Icons.Default.Clear)
+                        ActionOrCancel.Type.Action, null -> titleOrIcon.iconOrNull
+                    }
+
+                    titleOrIcon.fold(
+                        ifTitle = { title ->
+                            iconToOverwrite.foldNullable(
+                                ifNull = { TitleOrIcon.Title(title) },
+                                ifNotNull = { icon -> TitleOrIcon.Both(title, icon) },
+                            )
+                        },
+                        ifIcon = { icon ->
+                            TitleOrIcon.Icon(iconToOverwrite ?: icon)
+                        },
+                        ifBoth = { title, icon ->
+                            TitleOrIcon.Both(
+                                title = title,
+                                icon = iconToOverwrite ?: icon,
+                            )
+                        }
+                    )
+                },
+            )
         }
     }
 }

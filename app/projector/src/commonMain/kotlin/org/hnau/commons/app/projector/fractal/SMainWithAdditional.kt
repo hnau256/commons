@@ -17,10 +17,12 @@ fun SMainWithAdditional(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        SPanel(
+        Box(
             modifier = Modifier.fillMaxWidth(),
-            content = additional,
-        )
+            propagateMinConstraints = true,
+        ) {
+            additional()
+        }
         Box(
             modifier = Modifier.fillMaxWidth(),
             propagateMinConstraints = true,

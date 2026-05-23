@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,6 +12,7 @@ import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
+import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
@@ -20,17 +22,21 @@ fun SActions(
     block: @Composable SActionsScope.() -> Unit,
 ) {
     val fContext = LocalFContext.current
+    val orientation = when (fContext.distance.distance) {
+        0 -> Orientation.Vertical
+        else -> Orientation.Horizontal
+    }
     Line(
         modifier = modifier,
-        orientation = when (fContext.distance.distance) {
-            0 -> Orientation.Vertical
-            else -> Orientation.Horizontal
-        },
+        orientation = orientation,
         reverseOrdering = true,
         separation = fContext.distance.units.padding.along.small,
     ) {
         SActionsScope.block()
-        Spacer(Modifier.weight(1f))
+        orientation.fold(
+            ifHorizontal = { Spacer(Modifier.weight(1f)) },
+            ifVertical = {},
+        )
     }
 }
 

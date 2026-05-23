@@ -28,7 +28,7 @@ private val contentBySaturationContrast: SaturationValues<BaseWithDecay<Contrast
         decay = 0.9,
     ),
     neutral = BaseWithDecay.contrast(
-        initial = Contrast(3),
+        initial = Contrast(5),
         decay = 0.9,
     ),
 )
