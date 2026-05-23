@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
@@ -26,10 +28,13 @@ fun SScreen(
     actions: @Composable SActionsScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
-    val additionalPadding = LocalFContext.current.distance.units.paddingValues.vertical.medium.copy(top = 0.dp)
+    val fContext = LocalFContext.current
+    val additionalPadding = fContext.distance.units.paddingValues.vertical.medium.copy(top = 0.dp)
     val fullPadding = contentPadding + additionalPadding
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(fContext.containerColor),
         propagateMinConstraints = true,
     ) {
         SOvercompose(

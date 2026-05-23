@@ -21,24 +21,26 @@ import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
 fun TableScope.SCell(
-    content: @Composable TableCorners.Provider.(Modifier) -> Unit,
+    content: @Composable TableCorners.Provider.(Modifier, Shape) -> Unit,
 ) {
     Cell { modifier ->
+        val shape = rememberSCellShape()
         UpdateFContext(
             update = {
                 copy(
                     distance = distance + 1,
                     saturation = Saturation.Neutral,
+                    customContainerTone = null,
                 )
             }
         ) {
-            content(modifier)
+            content(modifier, shape)
         }
     }
 }
 
 @Composable
-fun TableCorners.Provider.rememberSCellShape(): Shape = rememberCellShape(
+private fun TableCorners.Provider.rememberSCellShape(): Shape = rememberCellShape(
     cornerRadii = LocalFContext.current.distance.units.cornerRadius.let { max ->
         (max / 3)..max
     }
@@ -52,8 +54,7 @@ fun TableScope.SCellBox(
     propagateMinConstraints: Boolean = false,
     content: @Composable BoxScope.(Shape) -> Unit,
 ) {
-    SCell { cellModifier ->
-        val shape = rememberSCellShape()
+    SCell { cellModifier, shape ->
         val fContext = LocalFContext.current
         Box(
             modifier = cellModifier

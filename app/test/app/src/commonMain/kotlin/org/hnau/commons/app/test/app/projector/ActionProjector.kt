@@ -11,14 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.projector.fractal.SButton
+import org.hnau.commons.app.projector.fractal.SCell
 import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.SText
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.table.Subtable
@@ -62,9 +66,14 @@ class ActionProjector(
                     SMainWithAdditional(
                         main = { Box {} },
                         additional = {
-                            SContentWithActions(
-                                content = {
-                                    SElements {
+                            SElements {
+                                Table(
+                                    separation = LocalFContext.current.distance.units.borderWidth,
+                                    orientation = Orientation.Vertical,
+                                ) {
+                                    SCellBox(
+                                        contentAlignment = Alignment.CenterStart,
+                                    ) {
                                         UpdateFContext(
                                             saturation = Saturation.Active,
                                         ) {
@@ -73,51 +82,49 @@ class ActionProjector(
                                                 type = SizeType.Large,
                                             )
                                         }
-                                        Table(
-                                            orientation = Orientation.Horizontal,
-                                        ) {
-                                            val rows = configItems
-                                                .collectAsState()
-                                                .value
-                                            Subtable(
-                                                modifier = Modifier.weight(1f),
-                                            ) {
-                                                rows.forEach { (title) ->
-                                                    SCellBox(
-                                                        contentAlignment = Alignment.CenterStart,
-                                                    ) {
-                                                        SText(title)
-                                                    }
+                                    }
+                                    Subtable {
+                                        val rows = configItems
+                                            .collectAsState()
+                                            .value
+                                        Subtable {
+                                            rows.forEach { (title) ->
+                                                SCellBox(
+                                                    contentAlignment = Alignment.CenterStart,
+                                                ) {
+                                                    SText(title)
                                                 }
                                             }
-                                            Subtable(
-                                                modifier = Modifier.weight(1f),
-                                            ) {
-                                                rows.forEach { (_, value) ->
-                                                    SCellBox(
-                                                        contentAlignment = Alignment.CenterEnd,
+                                        }
+                                        Subtable(
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+                                            rows.forEach { (_, value) ->
+                                                SCellBox(
+                                                    contentAlignment = Alignment.CenterEnd,
+                                                ) {
+                                                    UpdateFContext(
+                                                        saturation = Saturation.Active,
                                                     ) {
-                                                        UpdateFContext(
-                                                            saturation = Saturation.Active,
-                                                        ) {
-                                                            SText(value)
-                                                        }
+                                                        SText(value)
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                },
-                                actions = {
-                                    Action(
-                                        actionOrElseOrDisabled = ActionOrElse.instant(model.editConfig),
-                                        titleOrIcon = TitleOrIcon.Both(
-                                            title = "Edit",
-                                            icon = Drawable.Vector(Icons.Default.Edit),
-                                        ),
-                                    )
+                                    SCell { modifier, shape ->
+                                        SButton(
+                                            modifier = modifier,
+                                            actionOrElseOrDisabled = ActionOrElse.instant(model.editConfig),
+                                            titleOrIcon = TitleOrIcon.Both(
+                                                title = "Edit",
+                                                icon = Drawable.Vector(Icons.Default.Edit),
+                                            ),
+                                            shape = shape,
+                                        )
+                                    }
                                 }
-                            )
+                            }
                         }
                     )
                 },

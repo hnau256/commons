@@ -45,25 +45,25 @@ class FUnits private constructor(
 
         private val textStyleConfigs: SizeTypeValues<TextStyleConfig> = SizeTypeValues(
             large = TextStyleConfig(
-                size = 28.sp,
+                size = 32.sp,
                 weight = FontWeight.Normal,
                 letterSpacing = 0.1.sp,
                 lineHeightFactor = 1.1f,
             ),
             medium = TextStyleConfig(
-                size = 16.sp,
+                size = 18.sp,
                 weight = FontWeight.Medium,
                 letterSpacing = 0.5.sp,
                 lineHeightFactor = 1.1f,
             ),
             small = TextStyleConfig(
-                size = 12.sp,
+                size = 16.sp,
                 weight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
                 lineHeightFactor = 1.1f,
             ),
             extraSmall = TextStyleConfig(
-                size = 8.sp,
+                size = 12.sp,
                 weight = FontWeight.Bold,
                 letterSpacing = 0.sp,
                 lineHeightFactor = 1.1f,
@@ -75,7 +75,7 @@ class FUnits private constructor(
         ): FUnits = cache.getOrPut(
             key = distance.distance,
         ) {
-            val cornerRadius = 12.dp.scale(distance.scale.space)
+            val cornerRadius = 16.dp.scale(distance.scale.space)
             val borderWidth = 2.dp.scale(distance.scale.content, 0.25.dp)
             FUnits(
                 padding = DirectionValues(
