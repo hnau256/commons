@@ -7,6 +7,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SCellBox
@@ -18,6 +20,7 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.table.Subtable
 import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.utils.Drawable
@@ -76,16 +79,24 @@ class ActionProjector(
                                             val rows = configItems
                                                 .collectAsState()
                                                 .value
-                                            Subtable {
+                                            Subtable(
+                                                modifier = Modifier.weight(1f),
+                                            ) {
                                                 rows.forEach { (title) ->
-                                                    SCellBox {
+                                                    SCellBox(
+                                                        contentAlignment = Alignment.CenterStart,
+                                                    ) {
                                                         SText(title)
                                                     }
                                                 }
                                             }
-                                            Subtable {
+                                            Subtable(
+                                                modifier = Modifier.weight(1f),
+                                            ) {
                                                 rows.forEach { (_, value) ->
-                                                    SCellBox {
+                                                    SCellBox(
+                                                        contentAlignment = Alignment.CenterEnd,
+                                                    ) {
                                                         UpdateFContext(
                                                             saturation = Saturation.Active,
                                                         ) {
