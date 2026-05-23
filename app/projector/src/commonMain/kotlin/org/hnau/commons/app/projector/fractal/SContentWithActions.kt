@@ -1,11 +1,14 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
 fun SContentWithActions(
@@ -13,15 +16,20 @@ fun SContentWithActions(
     content: @Composable () -> Unit,
     actions: @Composable SActionsScope.() -> Unit,
 ) {
-    SLine(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        orientation = Orientation.Vertical,
-        forceFill = ForceFill.First,
-        separation = LocalFContext.current.distance.units.padding.along.medium,
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        content()
-        SActions(
+        Box(
             modifier = Modifier.fillMaxWidth(),
+            propagateMinConstraints = true,
+        ) {
+            content()
+        }
+        SActions(
+            modifier = Modifier.fillMaxWidth().padding(
+                top = LocalFContext.current.distance.units.padding.along.medium,
+            ),
             block = actions,
         )
     }

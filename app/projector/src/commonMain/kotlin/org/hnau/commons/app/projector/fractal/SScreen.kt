@@ -15,6 +15,8 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
+import org.hnau.commons.app.projector.uikit.line.Line
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.plus
@@ -34,9 +36,8 @@ fun SScreen(
         SOvercompose(
             modifier = Modifier.padding(fullPadding),
             top = {
-                SLine(
+                Line(
                     orientation = Orientation.Horizontal,
-                    alignment = Alignment.End,
                     reverseOrdering = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -45,6 +46,7 @@ fun SScreen(
                             bottom = LocalFContext.current.distance.units.padding.across.medium,
                         )
                 ) {
+                    Spacer(Modifier.weight(1f))
                     SActionsScope.actions()
                     Spacer(
                         modifier = Modifier.height(TopBarDefaults.height)

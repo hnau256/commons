@@ -1,12 +1,14 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.uikit.line.Line
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
@@ -18,16 +20,16 @@ fun SActions(
     block: @Composable SActionsScope.() -> Unit,
 ) {
     val fContext = LocalFContext.current
-    SLine(
+    Line(
         modifier = modifier,
         orientation = when (fContext.distance.distance) {
             0 -> Orientation.Vertical
             else -> Orientation.Horizontal
         },
         reverseOrdering = true,
-        alignment = Alignment.End,
         separation = fContext.distance.units.padding.along.small,
     ) {
+        //Spacer(Modifier.weight(1f))
         SActionsScope.block()
     }
 }

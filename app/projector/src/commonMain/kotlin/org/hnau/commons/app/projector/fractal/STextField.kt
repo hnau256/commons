@@ -40,6 +40,7 @@ import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
@@ -137,7 +138,7 @@ private data class Decorator(
         innerTextField: @Composable (() -> Unit),
     ) {
         val units = LocalFContext.current.distance.units
-        SLine(
+        Line(
             modifier = Modifier,
             orientation = Orientation.Vertical,
             separation = LocalFContext.current.distance.units.padding.along.extraSmall,

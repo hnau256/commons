@@ -169,31 +169,28 @@ private data class LineMeasurePolicy(
         fun I.extractLineParentData(): LineParentData =
             extractParentData().castOrElse<LineParentData> { emptyLineParentData }
 
-        var forceWeight: Float? = null
-        if (constraints.maxAlong != null) {
-            val hasAtLeastOneWeight = measurables
-                .any { measurable -> measurable.extractLineParentData().weight > 0f }
-            if (!hasAtLeastOneWeight) {
-                forceWeight = 1f
-            }
-        }
+        val hasAtLeastOneWeight = measurables
+            .any { measurable -> measurable.extractLineParentData().weight > 0f }
 
         var totalWeight = 0f
         val separationsSum = measurables.separationsSum()
         var usedAlong = 0
 
-        val firstStepResult: List<Either<Float, O>> = measurables.map { measurable ->
+        val firstStepResult: List<Either<Float, O>> = measurables.mapIndexed { i, measurable ->
 
-            val weight = forceWeight ?: measurable.extractLineParentData().weight
-
+            val weight = measurable.extractLineParentData().weight
             if (weight > 0f) {
                 totalWeight += weight
-                return@map weight.left()
+                return@mapIndexed weight.left()
             }
 
-            val childConstraints = constraints
+            var childConstraints = constraints
                 .offset(along = -(usedAlong + separationsSum))
-                .withoutMinAlong()
+
+            val isLast = i >= measurables.lastIndex
+            if (hasAtLeastOneWeight || !isLast) {
+                childConstraints = childConstraints.withoutMinAlong()
+            }
 
             val measureResult = measurable.measure(childConstraints)
             val measuredResultAlong = measureResult.extractAlong()
@@ -239,7 +236,7 @@ private data class LineMeasurePolicy(
                 )
             },
             measure = { constraints ->
-                val across = constraints.maxAcross ?: Int.MAX_VALUE
+                val across = constraints.maxAcross ?: Constraints.Infinity
                 max.foldBoolean(
                     ifTrue = { maxIntrinsicAlong(across) },
                     ifFalse = { minIntrinsicAlong(across) },
@@ -260,10 +257,12 @@ private data class LineMeasurePolicy(
         if (measurables.isEmpty()) {
             return@with 0
         }
-        val alongWithoutSeparations = along.foldNullable(
-            ifNull = { Int.MAX_VALUE },
-            ifNotNull = { alongNotNull -> alongNotNull - measurables.separationsSum() },
-        )
+        val alongWithoutSeparations = along
+            .foldNullable(
+                ifNull = { Constraints.Infinity },
+                ifNotNull = { alongNotNull -> alongNotNull - measurables.separationsSum() },
+            )
+            .coerceAtLeast(0)
         measurables.maxOf { measurable ->
             max.foldBoolean(
                 ifTrue = { measurable.maxIntrinsicAcross(alongWithoutSeparations) },

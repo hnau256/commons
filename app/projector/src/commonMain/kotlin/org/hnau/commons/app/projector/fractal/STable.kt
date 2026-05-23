@@ -14,6 +14,7 @@ import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.foldBoolean
 
@@ -27,8 +28,6 @@ fun <R> STable(
     rows: List<R>,
     columns: List<Column<R>>,
     modifier: Modifier = Modifier,
-    rowToFill: ForceFill? = null,
-    columnToFill: ForceFill? = null,
 ) {
     UpdateFContext(
         update = {
@@ -38,19 +37,17 @@ fun <R> STable(
         }
     ) {
         val separation = LocalFContext.current.distance.units.borderWidth
-        SLine(
+        Line(
             orientation = Orientation.Horizontal,
             modifier = modifier,
             separation = separation,
-            forceFill = columnToFill,
         ) {
             columns.fastForEachIndexed { columnIndex, column ->
                 val startIsOpened = columnIndex == 0
                 val endIsOpened = columnIndex == columns.lastIndex
-                SLine(
+                Line(
                     orientation = Orientation.Vertical,
                     separation = separation,
-                    forceFill = rowToFill,
                 ) {
                     rows.fastForEachIndexed { rowIndex, row ->
                         val topIsOpened = rowIndex == 0

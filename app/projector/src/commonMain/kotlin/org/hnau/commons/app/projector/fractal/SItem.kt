@@ -13,6 +13,7 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.plus
+import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.state.StateContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
@@ -55,7 +56,7 @@ fun SItem(
                 distanceOffset = 0,
                 saturation = Saturation.Active,
             )
-            SLine(
+            Line(
                 modifier = Modifier.weight(1f),
                 orientation = Orientation.Vertical,
             ) {
