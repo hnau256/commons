@@ -5,7 +5,7 @@ import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUti
 
 @JvmInline
 value class Contrast(
-    val contrast: Int,
+    val contrast: Double,
 ) : Comparable<Contrast> {
 
     override fun compareTo(
@@ -15,14 +15,14 @@ value class Contrast(
     )
 
     inline fun map(
-        transform: (Int) -> Int,
+        transform: (Double) -> Double,
     ): Contrast = Contrast(
         contrast = transform(contrast),
     )
 
     inline fun combineWith(
         other: Contrast,
-        combine: (Int, Int) -> Int,
+        combine: (Double, Double) -> Double,
     ): Contrast = map { tone ->
         combine(tone, other.contrast)
     }
@@ -31,46 +31,46 @@ value class Contrast(
         other: Contrast,
     ): Contrast = combineWith(
         other = other,
-        combine = Int::plus,
+        combine = Double::plus,
     )
 
     operator fun minus(
         other: Contrast,
     ): Contrast = combineWith(
         other = other,
-        combine = Int::minus,
+        combine = Double::minus,
     )
 
     operator fun times(
         factor: Number,
     ): Contrast = map { tone ->
-        tone * factor.toInt()
+        tone * factor.toDouble()
     }
 
     operator fun div(
         factor: Number,
     ): Contrast = map { tone ->
-        tone / factor.toInt()
+        tone / factor.toDouble()
     }
 
     companion object {
 
         val zero: Contrast
-            get() = Contrast(0)
+            get() = Contrast(0.0)
 
         val min: Contrast
-            get() = Contrast(ContrastUtils.RATIO_MIN.toInt())
+            get() = Contrast(ContrastUtils.RATIO_MIN)
 
         val max: Contrast
-            get() = Contrast(ContrastUtils.RATIO_MAX.toInt())
+            get() = Contrast(ContrastUtils.RATIO_MAX)
 
         val c30: Contrast
-            get() = Contrast(ContrastUtils.RATIO_30.toInt())
+            get() = Contrast(ContrastUtils.RATIO_30)
 
         val c45: Contrast
-            get() = Contrast(ContrastUtils.RATIO_45.toInt())
+            get() = Contrast(ContrastUtils.RATIO_45)
 
         val c70: Contrast
-            get() = Contrast(ContrastUtils.RATIO_70.toInt())
+            get() = Contrast(ContrastUtils.RATIO_70)
     }
 }

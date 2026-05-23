@@ -122,8 +122,8 @@ private fun Tone.lighterOrDarkerWithError(
     ratio: Contrast,
 ): ToneWithError? = lighter
     .foldBoolean(
-        ifTrue = { ContrastUtils.lighter(raw.toDouble(), ratio.contrast.toDouble()) },
-        ifFalse = { ContrastUtils.darker(raw.toDouble(), ratio.contrast.toDouble()) }
+        ifTrue = { ContrastUtils.lighter(raw.toDouble(), ratio.contrast) },
+        ifFalse = { ContrastUtils.darker(raw.toDouble(), ratio.contrast) }
     )
     ?.toInt()
     ?.let(Tone.Companion::create)
