@@ -21,7 +21,11 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.uikit.table.CellBox
+import org.hnau.commons.app.projector.uikit.table.Subtable
+import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.utils.Drawable
+import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.ActionModel
 import org.hnau.commons.kotlin.KeyValue
@@ -72,28 +76,27 @@ class ActionProjector(
                                                 type = SizeType.Large,
                                             )
                                         }
-                                        STable(
-                                            columnToFill = ForceFill.Last,
-                                            rows = configItems
+                                        Table(
+                                            orientation = Orientation.Horizontal,
+                                        ) {
+                                            val rows = configItems
                                                 .collectAsState()
-                                                .value,
-                                            columns = remember {
-                                                listOf(
-                                                    Column(
-                                                        saturation = Saturation.Neutral,
-                                                    ) { (title) ->
+                                                .value
+                                            Subtable {
+                                                rows.forEach { (title) ->
+                                                    CellBox {
                                                         SText(title)
-                                                    },
-                                                    Column(
-                                                        saturation = Saturation.Active,
-                                                    ) { (_, value) ->
-                                                        SText(
-                                                            text = value,
-                                                        )
                                                     }
-                                                )
+                                                }
                                             }
-                                        )
+                                            Subtable {
+                                                rows.forEach { (_, value) ->
+                                                    CellBox {
+                                                        SText(value)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 },
                                 actions = {

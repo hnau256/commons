@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.constrain
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,7 @@ import org.hnau.commons.kotlin.it
 fun Line(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    arrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(0.dp),
+    separation: Dp = 0.dp,
     content: @Composable LineScope.() -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -58,12 +59,12 @@ fun Line(
         modifier = modifier,
         measurePolicy = remember(
             orientation,
-            arrangement,
+            separation,
             layoutDirection,
         ) {
             LineMeasurePolicy(
                 orientation = orientation,
-                arrangement = arrangement,
+                separation = separation,
                 layoutDirection = layoutDirection,
             )
         },
@@ -75,7 +76,7 @@ private val lineScopeImpl: LineScope = object : LineScope {}
 
 private data class LineMeasurePolicy(
     private val orientation: Orientation,
-    private val arrangement: Arrangement.HorizontalOrVertical,
+    private val separation: Dp,
     private val layoutDirection: LayoutDirection,
 ) : MeasurePolicy {
 
@@ -120,36 +121,30 @@ private data class LineMeasurePolicy(
             along = placeables.sumOf { placeable -> placeable.along } + measurables.separationsSum(),
         ).let(constraints::constrain)
 
-        val sizes = placeables.map { placeable -> placeable.along }.toIntArray()
-        val alongPositions = IntArray(measurables.size)
-
-        with(arrangement) {
-            arrangeForCorrectOrientation(
-                totalSize = size.along,
-                sizes = sizes,
-                outPositions = alongPositions,
-                layoutDirection = layoutDirection,
-            )
-        }
-
+        val separationPixels = separationPixels
         layout(
             width = size.width,
             height = size.height,
         ) {
-            placeables.forEachIndexed { i, placeable ->
+            var along = 0
+            placeables.forEach { placeable ->
                 placeable.placeRelativeA(
-                    along = alongPositions[i],
+                    along = along,
                     across = 0,
                 )
+                along += placeable.along + separationPixels
             }
         }
     }
 
+
     context(density: Density)
-    private fun Collection<IntrinsicMeasurable>.separationsSum(): Int = with(density) {
-        val separation = arrangement.spacing.roundToPx()
-        (size - 1) * separation
-    }
+    private val separationPixels: Int
+        get() = with(density) { separation.roundToPx() }
+
+    context(density: Density)
+    private fun Collection<IntrinsicMeasurable>.separationsSum(): Int =
+        (size - 1) * separationPixels
 
     context(orientation: Orientation)
     private fun <I : IntrinsicMeasurable, O> IntrinsicMeasureScope.measure(

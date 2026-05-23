@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.utils.opposite
-import org.hnau.commons.kotlin.it
 
 @Composable
 fun TableScope.Subtable(
@@ -28,17 +27,17 @@ fun TableScope.Subtable(
 
 @Composable
 fun TableScope.CellBox(
-    configModifier: (Modifier) -> Modifier = ::it,
+    modifier: Modifier = Modifier,
     backgroundColor: Color = TableDefaults.cellColor,
     contentAlignment: Alignment = Alignment.Center,
     propagateMinConstraints: Boolean = false,
     content: @Composable BoxScope.(Shape) -> Unit,
 ) {
-    Cell { modifier ->
+    Cell { cellModifier ->
         val shape = shape
         Box(
-            modifier = modifier
-                .let(configModifier)
+            modifier = cellModifier
+                .then(modifier)
                 .background(
                     color = backgroundColor,
                     shape = shape,
