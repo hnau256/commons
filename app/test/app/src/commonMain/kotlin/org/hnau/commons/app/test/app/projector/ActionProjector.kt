@@ -2,6 +2,7 @@ package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Deblur
 import androidx.compose.material.icons.filled.Edit
@@ -63,8 +64,9 @@ class ActionProjector(
         SScreen(
             contentPadding = contentPadding,
             title = { SText("Action") },
-        ) {
+        ) { contentPadding ->
             SContentWithActions(
+                modifier = Modifier.padding(contentPadding),
                 content = {
                     SMainWithAdditional(
                         main = { Box {} },

@@ -1,6 +1,7 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.CropDin
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SContentWithActions
@@ -99,8 +101,9 @@ class FormProjector(
         SScreen(
             contentPadding = contentPadding,
             title = { SText("Form") },
-        ) {
+        ) {contentPadding ->
             SContentWithActions(
+                modifier = Modifier.padding(contentPadding),
                 content = {
                     SElements {
                         flag.Content()
