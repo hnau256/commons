@@ -20,13 +20,13 @@ fun TableCorners.Provider.rememberCellShape(
 ): Shape = rememberLet(cornerRadii) { tableCorners ->
     CellShape(
         tableCorners = tableCorners,
-        cornerRadiuses = cornerRadii,
+        cornerRadii = cornerRadii,
     )
 }
 
 private class CellShape(
     private val tableCorners: TableCorners.Provider,
-    private val cornerRadiuses: ClosedRange<Dp>,
+    private val cornerRadii: ClosedRange<Dp>,
 ) : Shape {
 
     override fun createOutline(
@@ -41,8 +41,8 @@ private class CellShape(
             CornerRadius(
                 with(density) {
                     isOpened.foldBoolean(
-                        ifTrue = { cornerRadiuses.endInclusive },
-                        ifFalse = { cornerRadiuses.start },
+                        ifTrue = { cornerRadii.endInclusive },
+                        ifFalse = { cornerRadii.start },
                     ).toPx()
                 }
             )
