@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -49,7 +48,7 @@ object SActionsScope {
         mood: Mood = Mood.Primary,
     ) {
         UpdateFContext(
-            update = { copy(mood = mood) }
+            mood = mood,
         ) {
             SButton(
                 actionOrElseOrDisabled = actionOrElseOrDisabled,

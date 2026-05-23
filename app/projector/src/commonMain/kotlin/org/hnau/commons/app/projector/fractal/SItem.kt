@@ -32,11 +32,7 @@ fun SItem(
     content: @Composable () -> Unit,
 ) {
     UpdateFContext(
-        update = {
-            copy(
-                saturation = Saturation.Active,
-            )
-        }
+        saturation = Saturation.Active,
     ) {
         Row(
             modifier = modifier
@@ -92,11 +88,7 @@ private fun Accessory(
     accessory: @Composable (() -> Unit)?
 ) {
     UpdateFContext(
-        update = {
-            copy(
-                saturation = saturation,
-            )
-        }
+        saturation = saturation,
     ) {
         val align = side.fold(
             ifStart = { Alignment.CenterEnd },

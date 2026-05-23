@@ -61,11 +61,7 @@ fun STextField(
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
     UpdateFContext(
-        update = {
-            copy(
-                saturation = Saturation.get(isFocused)
-            )
-        }
+        saturation = Saturation.get(isFocused),
     ) {
 
         val internalState = rememberSaveable(saver = TextFieldState.Saver) {

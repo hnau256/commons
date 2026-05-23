@@ -1,6 +1,5 @@
 package org.hnau.commons.app.test.app.projector
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
@@ -8,8 +7,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SCellBox
@@ -21,7 +18,6 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.uikit.table.CellBox
 import org.hnau.commons.app.projector.uikit.table.Subtable
 import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.utils.Drawable
@@ -67,9 +63,7 @@ class ActionProjector(
                                 content = {
                                     SElements {
                                         UpdateFContext(
-                                            update = {
-                                                copy(saturation = Saturation.Active)
-                                            }
+                                            saturation = Saturation.Active,
                                         ) {
                                             SText(
                                                 text = "Config",
@@ -93,11 +87,7 @@ class ActionProjector(
                                                 rows.forEach { (_, value) ->
                                                     SCellBox {
                                                         UpdateFContext(
-                                                            update = {
-                                                                copy(
-                                                                    saturation = Saturation.Active,
-                                                                )
-                                                            }
+                                                            saturation = Saturation.Active,
                                                         ) {
                                                             SText(value)
                                                         }
