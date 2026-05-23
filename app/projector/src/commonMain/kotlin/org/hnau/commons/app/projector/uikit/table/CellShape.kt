@@ -9,17 +9,18 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.rememberLet
 import org.hnau.commons.kotlin.foldBoolean
 
-val CellScope.shape: Shape
+val TableCorners.Provider.shape: Shape
     @Composable
-    get() = rememberLet { cellScope ->
-        CellShape(cellScope = cellScope)
+    get() = rememberLet { cornersProvider ->
+        CellShape(tableCorners = cornersProvider)
     }
 
 private class CellShape(
-    private val cellScope: CellScope,
+    private val tableCorners: TableCorners.Provider,
 ) : Shape {
 
     override fun createOutline(
@@ -28,14 +29,14 @@ private class CellShape(
         density: Density
     ): Outline {
 
-        val corners = cellScope.corners.getTableCorners()
+        val corners = tableCorners.getTableCorners()
 
         val radius: (Boolean) -> CornerRadius = { isOpened ->
             CornerRadius(
                 with(density) {
                     isOpened.foldBoolean(
-                        ifTrue = { cellScope.cornerRadius.endInclusive },
-                        ifFalse = { cellScope.cornerRadius.start },
+                        ifTrue = { Dimens.cornerRadius },
+                        ifFalse = { Dimens.cornerRadiusMin },
                     ).toPx()
                 }
             )

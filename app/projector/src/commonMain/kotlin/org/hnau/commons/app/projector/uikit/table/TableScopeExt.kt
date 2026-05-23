@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,13 +19,7 @@ fun TableScope.Subtable(
         Table(
             modifier = cellModifier.then(modifier),
             orientation = orientation.opposite,
-            config = remember(separation, cornerRadius) {
-                TableConfig(
-                    separation = separation,
-                    cornerRadius = cornerRadius,
-                )
-            },
-            corners = corners,
+            corners = this,
             content = content,
         )
     }
