@@ -34,7 +34,7 @@ fun TableScope.CellBox(
     content: @Composable BoxScope.(Shape) -> Unit,
 ) {
     Cell { cellModifier ->
-        val shape = shape
+        val shape = rememberCellShape()
         Box(
             modifier = cellModifier
                 .then(modifier)
