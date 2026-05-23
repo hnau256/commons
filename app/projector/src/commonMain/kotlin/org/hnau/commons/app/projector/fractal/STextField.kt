@@ -140,7 +140,7 @@ private data class Decorator(
         SLine(
             modifier = Modifier,
             orientation = Orientation.Vertical,
-            separation = SizeType.ExtraSmall,
+            separation = LocalFContext.current.distance.units.padding.along.extraSmall,
         ) {
             innerTextField()
             Spacer(

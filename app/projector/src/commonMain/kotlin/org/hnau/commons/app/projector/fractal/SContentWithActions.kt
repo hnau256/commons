@@ -3,7 +3,8 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable
@@ -16,7 +17,7 @@ fun SContentWithActions(
         modifier = modifier.fillMaxWidth(),
         orientation = Orientation.Vertical,
         forceFill = ForceFill.First,
-        separation = SizeType.Medium,
+        separation = LocalFContext.current.distance.units.padding.along.medium,
     ) {
         content()
         SActions(

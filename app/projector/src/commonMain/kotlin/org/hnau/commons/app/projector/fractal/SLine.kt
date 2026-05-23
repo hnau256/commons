@@ -22,35 +22,11 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.size.SizeType
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.LocalSContentPadding
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
-
-@Composable
-fun SLine(
-    orientation: Orientation,
-    modifier: Modifier = Modifier,
-    separation: SizeType,
-    alignment: Alignment.Horizontal = Alignment.Start,
-    reverseOrdering: Boolean = false,
-    forceFill: ForceFill? = null,
-    content: @Composable () -> Unit,
-) {
-    SLine(
-        orientation = orientation,
-        modifier = modifier,
-        separation = LocalFContext.current.distance.units.padding.along[separation],
-        alignment = alignment,
-        reverseOrdering = reverseOrdering,
-        forceFill = forceFill,
-        content = content
-    )
-}
 
 @Composable
 fun SLine(

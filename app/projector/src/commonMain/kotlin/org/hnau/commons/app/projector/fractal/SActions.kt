@@ -5,7 +5,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -17,15 +17,16 @@ fun SActions(
     modifier: Modifier = Modifier,
     block: @Composable SActionsScope.() -> Unit,
 ) {
+    val fContext = LocalFContext.current
     SLine(
         modifier = modifier,
-        orientation = when (LocalFContext.current.distance.distance) {
+        orientation = when (fContext.distance.distance) {
             0 -> Orientation.Vertical
             else -> Orientation.Horizontal
         },
         reverseOrdering = true,
         alignment = Alignment.End,
-        separation = SizeType.Small,
+        separation = fContext.distance.units.padding.along.small,
     ) {
         SActionsScope.block()
     }

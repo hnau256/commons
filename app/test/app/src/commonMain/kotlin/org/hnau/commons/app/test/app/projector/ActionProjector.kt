@@ -7,16 +7,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.Column
-import org.hnau.commons.app.projector.fractal.ForceFill
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SScreen
-import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType

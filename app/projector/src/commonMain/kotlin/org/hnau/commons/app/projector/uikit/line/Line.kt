@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.uikit.line
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,7 +24,6 @@ import arrow.core.right
 import org.hnau.commons.app.projector.uikit.line.ext.Constraints
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.along
-import org.hnau.commons.app.projector.uikit.line.ext.arrangeForCorrectOrientation
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.maxAcross
