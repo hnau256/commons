@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -62,7 +63,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                         .ifTrue {
                             {
                                 SIcon(
-                                    drawable = Drawable.Vector(Icons.Default.Cancel),
+                                    drawable = Drawable.Vector(Icons.Default.Close),
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .clickable { updateState("") }

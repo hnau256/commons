@@ -4,8 +4,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -44,11 +42,8 @@ import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.contrast
-import org.hnau.commons.app.projector.uikit.line.Line
-import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.fractal.utils.containerLow
 
 @Composable
 fun STextField(
@@ -143,7 +138,7 @@ private data class Decorator(
         UpdateFContext(
             update = {
                 overlay(
-                    contrast = containerContrast,
+                    contrast = Contrast.containerLow,
                 )
             }
         ) {
@@ -162,13 +157,5 @@ private data class Decorator(
                 innerTextField()
             }
         }
-    }
-
-    companion object {
-
-        private val containerContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
-            initial = Contrast(1.1),
-            decay = 0.8,
-        )
     }
 }

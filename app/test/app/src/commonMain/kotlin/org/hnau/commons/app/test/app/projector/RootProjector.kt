@@ -4,6 +4,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
 import org.hnau.commons.app.projector.uikit.state.LoadableContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
@@ -45,6 +52,9 @@ class RootProjector(
         BackButtonHost(
             contentPadding = contentPadding,
             goBackHandler = model.goBackHandler,
+            backButtonBackgroundColor = LocalFContext.current
+                .run { copy(distance = distance + 1) }
+                .containerColor,
         ) { contentPadding ->
             stack
                 .collectAsState()

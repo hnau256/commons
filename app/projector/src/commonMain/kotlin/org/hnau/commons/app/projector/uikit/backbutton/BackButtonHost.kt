@@ -13,6 +13,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -27,6 +28,7 @@ import org.hnau.commons.kotlin.foldNullable
 fun BackButtonHost(
     contentPadding: PaddingValues,
     goBackHandler: GoBackHandler,
+    backButtonBackgroundColor: Color = TopBarDefaults.itemContainerColor,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val goBackState: State<(() -> Unit)?> = goBackHandler.collectAsState()
@@ -64,6 +66,7 @@ fun BackButtonHost(
                     .roundToPx()
             )
         },
+        backgroundColor = backButtonBackgroundColor,
         onClick = { goBackHandler.value?.invoke() },
     ) {
         Icon(

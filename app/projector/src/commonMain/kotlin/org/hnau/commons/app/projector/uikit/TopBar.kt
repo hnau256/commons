@@ -82,6 +82,7 @@ fun RowScope.TopBarTitle(
 fun TopBarAction(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)?,
+    backgroundColor: Color = TopBarDefaults.itemContainerColor,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
@@ -91,7 +92,7 @@ fun TopBarAction(
                 onClick = { onClick?.invoke() },
                 enabled = onClick != null,
             )
-            .background(TopBarDefaults.itemContainerColor)
+            .background(backgroundColor)
             .size(TopBarDefaults.height),
         contentAlignment = Alignment.Center,
         content = content,
