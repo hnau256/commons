@@ -70,7 +70,7 @@ fun SScreen(
                             title()
                         }
                     }
-                    Table(
+                    STable(
                         orientation = Orientation.Horizontal,
                         reverseOrdering = true,
                     ) {

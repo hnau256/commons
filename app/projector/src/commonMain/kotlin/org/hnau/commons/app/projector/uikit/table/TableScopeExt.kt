@@ -22,6 +22,7 @@ fun TableScope.Subtable(
             orientation = orientation.opposite,
             corners = this,
             content = content,
+            separation = separation,
             reverseOrdering = reverseOrdering,
         )
     }

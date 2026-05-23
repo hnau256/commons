@@ -30,10 +30,14 @@ fun Table(
         val scope = remember(
             orientation,
             corners,
-            lineScope
+            lineScope,
+            separation,
         ) {
             TableScopeImpl(
-                orientation, corners, lineScope
+                orientation = orientation,
+                separation = separation,
+                corners = corners,
+                lineScope = lineScope,
             )
         }
         scope.content()

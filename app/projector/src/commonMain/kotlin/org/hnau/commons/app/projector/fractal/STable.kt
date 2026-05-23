@@ -8,16 +8,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.plus
+import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableCorners
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.table.rememberCellShape
+import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.Orientation
+
+@Composable
+fun STable(
+    orientation: Orientation,
+    modifier: Modifier = Modifier,
+    corners: TableCorners.Provider = TableCorners.Provider.opened,
+    reverseOrdering: Boolean = false,
+    content: @Composable TableScope.() -> Unit,
+) {
+    Table(
+        orientation = orientation,
+        modifier = modifier,
+        separation = LocalFContext.current.distance.units.borderWidth,
+        corners = corners,
+        reverseOrdering = reverseOrdering,
+        content = content,
+    )
+}
 
 @Composable
 fun TableScope.SCell(

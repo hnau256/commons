@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.uikit.line.LinePosition
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.onPositionInLineChanged
@@ -16,6 +17,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 
 internal class TableScopeImpl(
     override val orientation: Orientation,
+    override val separation: Dp,
     override val corners: TableCorners.Provider,
     private val lineScope: LineScope,
 ) : TableScope, LineScope by lineScope {

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Deblur
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
@@ -20,15 +19,13 @@ import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SScreen
+import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.table.Subtable
-import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -37,7 +34,6 @@ import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
-import org.hnau.commons.kotlin.coroutines.noAction
 
 class ActionProjector(
     scope: CoroutineScope,
@@ -72,8 +68,7 @@ class ActionProjector(
                         main = { Box {} },
                         additional = {
                             SElements {
-                                Table(
-                                    separation = LocalFContext.current.distance.units.borderWidth,
+                                STable(
                                     orientation = Orientation.Vertical,
                                 ) {
                                     SCellBox(
