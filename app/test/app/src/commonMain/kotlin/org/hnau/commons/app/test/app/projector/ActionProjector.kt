@@ -63,16 +63,6 @@ class ActionProjector(
         SScreen(
             contentPadding = contentPadding,
             title = { SText("Action") },
-            actions = {
-                SCell { modifier, shape ->
-                    SButton(
-                        modifier = modifier,
-                        shape = shape,
-                        actionOrElseOrDisabled = ActionOrElse.noAction,
-                        titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Deblur))
-                    )
-                }
-            }
         ) {
             SContentWithActions(
                 content = {

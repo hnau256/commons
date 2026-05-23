@@ -19,6 +19,7 @@ import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
+import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableScope
@@ -45,9 +46,8 @@ fun SScreen(
         SOvercompose(
             modifier = Modifier.padding(fullPadding),
             top = {
-                Table(
+                Line(
                     orientation = Orientation.Horizontal,
-                    reverseOrdering = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -57,21 +57,26 @@ fun SScreen(
                         )
                         .height(TopBarDefaults.height),
                 ) {
-                    actions()
-                    SCellBox(
-                        modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterStart,
+                    UpdateFContext(
+                        update = {
+                            copy(
+                                mood = Mood.Primary,
+                                saturation = Saturation.Active,
+                            )
+                        }
                     ) {
-                        UpdateFContext(
-                            update = {
-                                copy(
-                                    mood = Mood.Primary,
-                                    saturation = Saturation.Active,
-                                )
-                            }
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.CenterStart,
                         ) {
                             title()
                         }
+                    }
+                    Table(
+                        orientation = Orientation.Horizontal,
+                        reverseOrdering = true,
+                    ) {
+                        actions()
                     }
                 }
             },
