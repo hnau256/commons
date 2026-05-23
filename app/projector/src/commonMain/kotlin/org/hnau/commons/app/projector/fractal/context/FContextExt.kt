@@ -64,7 +64,7 @@ private fun FContext.getColor(
 private val backgroundToneCalculators: ThemeBrightnessValues<(Distance) -> Tone> =
     ThemeBrightnessValues(
         dark = 6 to 4,
-        light = 98 to -12,
+        light = 92 to -8,
     ).map { (start, step) ->
         { distance: Distance -> (start + (step * distance.distance)).let(Tone::create) }
     }
