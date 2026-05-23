@@ -113,6 +113,7 @@ private data class LineMeasurePolicy(
         val across = constraints.constrainAcross(childrenAcross)
 
         val placeables = measure(
+            useWeight = true,
             measurables = orderedMeasurables,
             constraints = constraints.copy(
                 minAcross = across,
@@ -154,11 +155,12 @@ private data class LineMeasurePolicy(
         (size - 1) * separationPixels
 
     context(orientation: Orientation)
-    private fun <I : IntrinsicMeasurable, O> IntrinsicMeasureScope.measure(
+    private inline fun <I : IntrinsicMeasurable, O> IntrinsicMeasureScope.measure(
+        useWeight: Boolean,
         measurables: List<I>,
         constraints: Constraints,
         measure: I.(Constraints) -> O,
-        extractParentData: I.() -> Any?,
+        crossinline extractParentData: I.() -> Any?,
         extractAlong: O.() -> Int,
     ): List<O> {
 
@@ -166,11 +168,16 @@ private data class LineMeasurePolicy(
             return emptyList()
         }
 
-        fun I.extractLineParentData(): LineParentData =
-            extractParentData().castOrElse<LineParentData> { emptyLineParentData }
+        val extractLineParentData: (
+            measurable: I,
+        ) -> LineParentData = { measurable ->
+            measurable
+                .extractParentData()
+                .castOrElse<LineParentData> { emptyLineParentData }
+        }
 
         val hasAtLeastOneWeight = measurables
-            .any { measurable -> measurable.extractLineParentData().weight > 0f }
+            .any { measurable -> measurable.let(extractLineParentData).weight > 0f }
 
         var totalWeight = 0f
         val separationsSum = measurables.separationsSum()
@@ -178,7 +185,10 @@ private data class LineMeasurePolicy(
 
         val firstStepResult: List<Either<Float, O>> = measurables.mapIndexed { i, measurable ->
 
-            val weight = measurable.extractLineParentData().weight
+            val weight = useWeight.foldBoolean(
+                ifTrue = { measurable.let(extractLineParentData).weight },
+                ifFalse = { 0f }
+            )
             if (weight > 0f) {
                 totalWeight += weight
                 return@mapIndexed weight.left()
@@ -188,7 +198,7 @@ private data class LineMeasurePolicy(
                 .offset(along = -(usedAlong + separationsSum))
 
             val isLast = i >= measurables.lastIndex
-            if (hasAtLeastOneWeight || !isLast) {
+            if (hasAtLeastOneWeight || !isLast || !useWeight) {
                 childConstraints = childConstraints.withoutMinAlong()
             }
 
@@ -229,6 +239,7 @@ private data class LineMeasurePolicy(
         across: Int
     ): Int = with(orientation) {
         measure(
+            useWeight = false,
             measurables = measurables,
             constraints = with(orientation) {
                 Constraints(
