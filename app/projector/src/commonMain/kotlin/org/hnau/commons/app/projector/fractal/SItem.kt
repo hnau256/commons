@@ -1,6 +1,5 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.plus
@@ -28,22 +28,13 @@ fun SItem(
     topAccessory: @Composable (() -> Unit)? = null,
     endAccessory: @Composable (() -> Unit)? = null,
     bottomAccessory: @Composable (() -> Unit)? = null,
-    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     UpdateFContext(
         saturation = Saturation.Active,
     ) {
         Row(
-            modifier = modifier
-                .then(
-                    onClick.foldNullable(
-                        ifNull = { Modifier },
-                        ifNotNull = { onClickNotNull ->
-                            Modifier.clickable(onClick = onClickNotNull)
-                        }
-                    )
-                ),
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Accessory(
@@ -113,18 +104,19 @@ private fun Accessory(
                         }
                     ) {
                         val units = LocalFContext.current.distance.units
+                        val paddingSize = SizeType.Small
                         val accessoryPadding = side.fold(
                             ifStart = {
-                                PaddingValues(end = units.padding.along.extraSmall)
+                                PaddingValues(end = units.padding.along[paddingSize])
                             },
                             ifTop = {
-                                PaddingValues(bottom = units.padding.across.extraSmall)
+                                PaddingValues(bottom = units.padding.across[paddingSize])
                             },
                             ifEnd = {
-                                PaddingValues(start = units.padding.along.extraSmall)
+                                PaddingValues(start = units.padding.along[paddingSize])
                             },
                             ifBottom = {
-                                PaddingValues(top = units.padding.across.extraSmall)
+                                PaddingValues(top = units.padding.across[paddingSize])
                             }
                         )
                         Box(modifier = Modifier.padding(accessoryPadding)) {

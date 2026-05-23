@@ -3,8 +3,10 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -34,12 +36,17 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.contrast
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.utils.Orientation
 
@@ -133,18 +140,35 @@ private data class Decorator(
     override fun Decoration(
         innerTextField: @Composable (() -> Unit),
     ) {
-        val units = LocalFContext.current.distance.units
-        Line(
-            modifier = Modifier,
-            orientation = Orientation.Vertical,
-            separation = LocalFContext.current.distance.units.padding.along.extraSmall,
+        UpdateFContext(
+            update = {
+                overlay(
+                    contrast = containerContrast,
+                )
+            }
         ) {
-            innerTextField()
-            Spacer(
+            val fContext = LocalFContext.current
+            Box(
                 modifier = Modifier
-                    .height(units.borderWidth)
-                    .background(color),
-            )
+                    .background(
+                        color = fContext.containerColor,
+                        shape = fContext.distance.units.shape
+                    )
+                    .padding(
+                        paddingValues = fContext.distance.units.paddingValues.vertical.small,
+                    ),
+                propagateMinConstraints = true,
+            ) {
+                innerTextField()
+            }
         }
+    }
+
+    companion object {
+
+        private val containerContrast: BaseWithDecay<Contrast> = BaseWithDecay.contrast(
+            initial = Contrast(3),
+            decay = 0.8,
+        )
     }
 }

@@ -28,22 +28,23 @@ data class TextInputProjectorConfig(
     val capitalization: KeyboardCapitalization,
 )
 
-fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorConfig = when (this) {
-    InputType.Edit.ContentType.Text -> TextInputProjectorConfig(
-        keyboardType = KeyboardType.Text,
-        capitalization = KeyboardCapitalization.Sentences,
-    )
+fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorConfig =
+    when (this) {
+        InputType.Edit.ContentType.Text -> TextInputProjectorConfig(
+            keyboardType = KeyboardType.Text,
+            capitalization = KeyboardCapitalization.Sentences,
+        )
 
-    InputType.Edit.ContentType.Integer -> TextInputProjectorConfig(
-        keyboardType = KeyboardType.Number,
-        capitalization = KeyboardCapitalization.None,
-    )
+        InputType.Edit.ContentType.Integer -> TextInputProjectorConfig(
+            keyboardType = KeyboardType.Number,
+            capitalization = KeyboardCapitalization.None,
+        )
 
-    InputType.Edit.ContentType.Decimal -> TextInputProjectorConfig(
-        keyboardType = KeyboardType.Decimal,
-        capitalization = KeyboardCapitalization.None,
-    )
-}
+        InputType.Edit.ContentType.Decimal -> TextInputProjectorConfig(
+            keyboardType = KeyboardType.Decimal,
+            capitalization = KeyboardCapitalization.None,
+        )
+    }
 
 @JvmName("toEditInputProjectorPrototype")
 fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
@@ -53,33 +54,35 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
-            itemDrawer.Item(
-                endAccessory = value
-                    .isNotEmpty()
-                    .and(enabled)
-                    .ifTrue {
-                        {
-                            SIcon(
-                                drawable = Drawable.Vector(Icons.Default.Cancel),
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .clickable { updateState("") }
-                            )
+            with(itemDrawer) {
+                Item(
+                    endAccessory = value
+                        .isNotEmpty()
+                        .and(enabled)
+                        .ifTrue {
+                            {
+                                SIcon(
+                                    drawable = Drawable.Vector(Icons.Default.Cancel),
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .clickable { updateState("") }
+                                )
+                            }
                         }
-                    }
-            ) {
-                val config = type.contentType.toTextInputProjectorConfig()
-                STextField(
-                    value = value,
-                    onValueChanged = updateState,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = config.capitalization,
-                        imeAction = imeAction,
-                        keyboardType = config.keyboardType,
-                    ),
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    enabled = enabled,
-                )
+                ) {
+                    val config = type.contentType.toTextInputProjectorConfig()
+                    STextField(
+                        value = value,
+                        onValueChanged = updateState,
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = config.capitalization,
+                            imeAction = imeAction,
+                            keyboardType = config.keyboardType,
+                        ),
+                        lineLimits = TextFieldLineLimits.SingleLine,
+                        enabled = enabled,
+                    )
+                }
             }
         }
     }

@@ -18,15 +18,17 @@ fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype
         InputContentProjector.WithTitle { title, itemDrawer ->
             val enabled by enabled.collectAsState()
             val isChecked by state.collectAsState()
-            itemDrawer.Item(
-                onClick = enabled.ifTrue { { updateState(!isChecked) } },
-                endAccessory = {
-                    SCheckBox(
-                        isChecked = isChecked
-                    )
+            with(itemDrawer) {
+                Item(
+                    onClick = enabled.ifTrue { { updateState(!isChecked) } },
+                    endAccessory = {
+                        SCheckBox(
+                            isChecked = isChecked
+                        )
+                    }
+                ) {
+                    SText(title)
                 }
-            ) {
-                SText(title)
             }
         }
     }

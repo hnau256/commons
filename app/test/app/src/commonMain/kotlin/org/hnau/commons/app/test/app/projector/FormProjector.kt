@@ -16,11 +16,13 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SScreen
+import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.input.InputProjector
 import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
+import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.Config
@@ -101,15 +103,17 @@ class FormProjector(
         SScreen(
             contentPadding = contentPadding,
             title = { SText("Form") },
-        ) {contentPadding ->
+        ) { contentPadding ->
             SContentWithActions(
                 modifier = Modifier.padding(contentPadding),
                 content = {
-                    SElements {
-                        flag.Content()
-                        decimal.Content()
-                        integer.Content()
-                        text.Content()
+                    STable(
+                        orientation = Orientation.Vertical,
+                    ) {
+                        with(flag) { Content() }
+                        with(decimal) { Content() }
+                        with(integer) { Content() }
+                        with(text) { Content() }
                     }
                 },
                 actions = {
