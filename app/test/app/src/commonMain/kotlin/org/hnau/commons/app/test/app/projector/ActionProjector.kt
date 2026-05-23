@@ -3,6 +3,7 @@ package org.hnau.commons.app.test.app.projector
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Deblur
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
+import org.hnau.commons.kotlin.coroutines.noAction
 
 class ActionProjector(
     scope: CoroutineScope,
@@ -60,6 +62,17 @@ class ActionProjector(
     ) {
         SScreen(
             contentPadding = contentPadding,
+            title = { SText("Action") },
+            actions = {
+                SCell { modifier, shape ->
+                    SButton(
+                        modifier = modifier,
+                        shape = shape,
+                        actionOrElseOrDisabled = ActionOrElse.noAction,
+                        titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.Deblur))
+                    )
+                }
+            }
         ) {
             SContentWithActions(
                 content = {

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.horizontalDisplayPadding
+import org.hnau.commons.app.projector.utils.verticalDisplayPadding
 
 @Composable
 fun TopBar(
@@ -38,7 +39,11 @@ fun TopBar(
         modifier = modifier
             .height(TopBarDefaults.height)
             .fillMaxWidth()
-            .padding(horizontal = TopBarDefaults.separation)
+            .padding(
+                start = TopBarDefaults.separationHorizontal,
+                end = TopBarDefaults.separationHorizontal,
+                top = TopBarDefaults.separationTop,
+            )
             .padding(start = LocalBackButtonWidth.current),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
@@ -102,7 +107,7 @@ private fun Modifier.topBarItemBackground(): Modifier = background(
 data object TopBarDefaults {
 
     val itemShape: Shape = RoundedCornerShape(
-        percent = 100,
+        size = Dimens.separation,
     )
 
     val itemContainerColor: Color
@@ -113,8 +118,11 @@ data object TopBarDefaults {
         @Composable
         get() = MaterialTheme.colorScheme.onSurface
 
-    val separation: Dp
+    val separationHorizontal: Dp
         get() = Dimens.horizontalDisplayPadding
+
+    val separationTop: Dp
+        get() = Dimens.verticalDisplayPadding
 
     val height: Dp = 48.dp
 }

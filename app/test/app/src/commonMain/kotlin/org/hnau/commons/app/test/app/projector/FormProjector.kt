@@ -98,6 +98,7 @@ class FormProjector(
     ) {
         SScreen(
             contentPadding = contentPadding,
+            title = { SText("Form") },
         ) {
             SContentWithActions(
                 content = {

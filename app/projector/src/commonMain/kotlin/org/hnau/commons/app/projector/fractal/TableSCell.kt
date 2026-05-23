@@ -52,7 +52,7 @@ fun TableScope.SCellBox(
     contentAlignment: Alignment = Alignment.Center,
     contentOrientation: Orientation = Orientation.Horizontal,
     propagateMinConstraints: Boolean = false,
-    content: @Composable BoxScope.(Shape) -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     SCell { cellModifier, shape ->
         val fContext = LocalFContext.current
@@ -69,7 +69,7 @@ fun TableScope.SCellBox(
             contentAlignment = contentAlignment,
             propagateMinConstraints = propagateMinConstraints,
         ) {
-            content(shape)
+            content()
         }
     }
 }

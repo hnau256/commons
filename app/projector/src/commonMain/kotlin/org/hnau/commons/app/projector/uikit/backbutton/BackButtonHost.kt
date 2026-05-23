@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.model.goback.GoBackHandler
 import org.hnau.commons.app.projector.uikit.TopBarAction
@@ -33,7 +34,7 @@ fun BackButtonHost(
     val targetWidth: Dp by remember {
         derivedStateOf {
             goBackState.value.foldNullable(
-                ifNotNull = { TopBarDefaults.separation + TopBarDefaults.height },
+                ifNotNull = { TopBarDefaults.separationHorizontal + TopBarDefaults.height },
                 ifNull = { 0.dp },
             )
         }
@@ -49,12 +50,20 @@ fun BackButtonHost(
         content(contentPadding)
     }
 
+    val layoutDirection = LocalLayoutDirection.current
     TopBarAction(
-        modifier = Modifier.offset(
-            x = width - TopBarDefaults.height +
-                    contentPadding.calculateLeftPadding(LocalLayoutDirection.current),
-            y = contentPadding.calculateTopPadding(),
-        ),
+        modifier = Modifier.offset {
+            IntOffset(
+                x = width
+                    .minus(TopBarDefaults.height)
+                    .plus(contentPadding.calculateLeftPadding(layoutDirection))
+                    .roundToPx(),
+                y = contentPadding
+                    .calculateTopPadding()
+                    .plus(TopBarDefaults.separationTop)
+                    .roundToPx()
+            )
+        },
         onClick = { goBackHandler.value?.invoke() },
     ) {
         Icon(
