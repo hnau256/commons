@@ -56,15 +56,15 @@ private fun FContext.calcTone(
 private fun FContext.getColor(
     tone: Tone,
 ): Color = palettes.palettes[palette]
-    .getHct(tone.raw.toDouble())
+    .getHct(tone.raw)
     .toInt()
     .let(::Color)
 
 
 private val backgroundToneCalculators: ThemeBrightnessValues<(Distance) -> Tone> =
     ThemeBrightnessValues(
-        dark = 6 to 4,
-        light = 92 to -8,
+        dark = 6.0 to 4.0,
+        light = 92.0 to -8.0,
     ).map { (start, step) ->
         { distance: Distance -> (start + (step * distance.distance)).let(Tone::create) }
     }
@@ -122,10 +122,9 @@ private fun Tone.lighterOrDarkerWithError(
     ratio: Contrast,
 ): ToneWithError? = lighter
     .foldBoolean(
-        ifTrue = { ContrastUtils.lighter(raw.toDouble(), ratio.contrast) },
-        ifFalse = { ContrastUtils.darker(raw.toDouble(), ratio.contrast) }
+        ifTrue = { ContrastUtils.lighter(raw, ratio.contrast) },
+        ifFalse = { ContrastUtils.darker(raw, ratio.contrast) }
     )
-    ?.toInt()
     ?.let(Tone.Companion::create)
     ?.let { tone ->
         val rawTone = tone.raw
@@ -135,7 +134,7 @@ private fun Tone.lighterOrDarkerWithError(
                 val argb = HctSolver.solveToInt(
                     hueDegrees = palette.hue,
                     chroma = palette.chroma,
-                    lstar = rawTone.toDouble(),
+                    lstar = rawTone,
                 )
                 val actualHct = Hct.fromInt(argb)
                 val toneError = (rawTone - actualHct.tone).absoluteValue
