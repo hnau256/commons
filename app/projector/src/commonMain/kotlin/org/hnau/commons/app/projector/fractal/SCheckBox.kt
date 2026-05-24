@@ -60,16 +60,16 @@ fun SCheckBox(
 
         Box(
             modifier = modifier
+                .clip(units.shape)
                 .border(
-                    width = units.borderWidth,
+                    width = units.borderWidth * 2,
                     color = lerp(
                         start = inactiveState.borderColor,
                         stop = activeState.borderColor,
                         fraction = activePercentage,
                     ),
-                    shape = units.borderShape,
+                    shape = units.shape,
                 )
-                .clip(units.shape)
                 .clickableOption(onClick)
                 .background(
                     color = lerp(

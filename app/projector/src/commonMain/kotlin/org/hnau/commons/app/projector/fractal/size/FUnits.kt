@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.utils.DeflatedRoundedCornerShape
 import org.hnau.commons.app.projector.utils.DirectionValues
 import org.hnau.commons.app.projector.utils.OrientationValues
 import org.hnau.commons.app.projector.utils.compareWith
@@ -19,7 +18,6 @@ class FUnits private constructor(
     val padding: DirectionValues<SizeTypeValues<Dp>>,
     val cornerRadius: Dp,
     val shape: Shape,
-    val borderShape: Shape,
     val borderWidth: Dp,
     val textStyle: SizeTypeValues<TextStyle>,
     val iconSize: Dp,
@@ -93,10 +91,6 @@ class FUnits private constructor(
                     },
                 cornerRadius = cornerRadius,
                 shape = RoundedCornerShape(size = cornerRadius),
-                borderShape = DeflatedRoundedCornerShape(
-                    topStart = CornerSize(cornerRadius),
-                    deflation = borderWidth / 2,
-                ),
                 borderWidth = borderWidth,
                 textStyle = textStyleConfigs.map { config ->
                     config.toTextStyle(distance)

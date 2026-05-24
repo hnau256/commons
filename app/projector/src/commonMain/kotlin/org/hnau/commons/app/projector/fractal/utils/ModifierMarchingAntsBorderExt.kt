@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Modifier.fractalDashBorder(
     color: Color,
     shape: Shape,
-    strokeWidth: Dp = LocalFContext.current.distance.units.borderWidth,
+    strokeWidth: Dp = LocalFContext.current.distance.units.borderWidth * 2,
     dashLength: Dp = LocalFContext.current.distance.units.iconSize / 2,
     gapLength: Dp = LocalFContext.current.distance.units.iconSize / 3,
 ): Modifier {
