@@ -157,8 +157,8 @@ object Score {
 
     private class ScoredComparator : Comparator<ScoredHCT> {
         override fun compare(
-            entry1: ScoredHCT,
-            entry2: ScoredHCT,
-        ): Int = entry2.score.compareTo(entry1.score)
+            a: ScoredHCT,
+            b: ScoredHCT,
+        ): Int = b.score.compareTo(a.score)
     }
 }

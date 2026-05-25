@@ -35,13 +35,12 @@ fun TonalPalette.Companion.create(
     val mainHtc = Hct.from(
         hue = hue.degrees.toDouble(),
         chroma = config.chroma.raw.toDouble(),
-        tone = Tone.avg.raw.toDouble(),
+        tone = Tone.avg.raw,
     )
 
     val contrastLevel = config
         .contrast
         .contrast
-        .toDouble()
     
     val spec = when (config.spec) {
         ColorSpec.SpecVersion.SPEC_2021 -> ColorSpec2021()

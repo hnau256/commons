@@ -48,6 +48,7 @@ fun <I, K, O> StateFlow<List<I>>.mapListReusable(
     }
 }
 
+@Suppress("DEPRECATION")
 fun <I, K, ITEM, O> StateFlow<I>.mapReusable(
     scope: CoroutineScope,
     buildState: ReusableStateScope<K, ITEM>.(I) -> O,

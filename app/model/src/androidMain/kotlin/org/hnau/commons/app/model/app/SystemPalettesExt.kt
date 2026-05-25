@@ -182,11 +182,11 @@ private class SystemPalette(
         }
         val (fromTone, fromColor) = this[insertionPoint - 1]
         val (toTone, toColor) = this[insertionPoint]
-        val fraction = (tone.raw - fromTone.raw).toDouble() / (toTone.raw - fromTone.raw)
+        val fraction = (tone.raw - fromTone.raw) / (toTone.raw - fromTone.raw)
         return Hct.from(
             hue = lerp(fromColor.hue, toColor.hue, fraction),
             chroma = lerp(fromColor.chroma, toColor.chroma, fraction),
-            tone = tone.raw.toDouble(),
+            tone = tone.raw,
         )
     }
 }
