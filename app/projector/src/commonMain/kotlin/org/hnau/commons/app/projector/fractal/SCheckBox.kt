@@ -35,75 +35,72 @@ fun SCheckBox(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    Box {
+    val inactiveState = StateInfo.remember(
+        checked = false,
+    )
 
-        val inactiveState = StateInfo.remember(
-            checked = false,
+    val activeState = StateInfo.remember(
+        checked = true,
+    )
+
+    val activePercentage: Float by animateFloatAsState(
+        isChecked.foldBoolean(
+            ifTrue = { 1f },
+            ifFalse = { 0f },
         )
+    )
 
-        val activeState = StateInfo.remember(
-            checked = true,
-        )
+    val distance = LocalFContext.current.distance
+    val units = distance.units
+    val handleSize = 24.dp.scale(distance.scale.space)
+    val maxOffset = activeState.handleOffset - inactiveState.handleOffset
+    val separation = units.padding.across.extraSmall
 
-        val activePercentage: Float by animateFloatAsState(
-            isChecked.foldBoolean(
-                ifTrue = { 1f },
-                ifFalse = { 0f },
+    Box(
+        modifier = modifier
+            .clip(units.shape)
+            .border(
+                width = units.borderWidth * 2,
+                color = lerp(
+                    start = inactiveState.borderColor,
+                    stop = activeState.borderColor,
+                    fraction = activePercentage,
+                ),
+                shape = units.shape,
             )
-        )
-
-        val distance = LocalFContext.current.distance
-        val units = distance.units
-        val handleSize = 24.dp.scale(distance.scale.space)
-        val maxOffset = activeState.handleOffset - inactiveState.handleOffset
-        val separation = units.padding.across.extraSmall
-
+            .clickableOption(onClick)
+            .background(
+                color = lerp(
+                    start = inactiveState.containerColor,
+                    stop = activeState.containerColor,
+                    fraction = activePercentage,
+                ),
+            )
+            .padding(separation)
+            .size(
+                width = maxOffset + handleSize,
+                height = handleSize,
+            ),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
         Box(
-            modifier = modifier
-                .clip(units.shape)
-                .border(
-                    width = units.borderWidth * 2,
-                    color = lerp(
-                        start = inactiveState.borderColor,
-                        stop = activeState.borderColor,
-                        fraction = activePercentage,
-                    ),
-                    shape = units.shape,
-                )
-                .clickableOption(onClick)
+            modifier = Modifier
+                .graphicsLayer {
+                    translationX = maxOffsetPx * activePercentage
+                }
+                .size(handleSize)
                 .background(
                     color = lerp(
-                        start = inactiveState.containerColor,
-                        stop = activeState.containerColor,
+                        start = inactiveState.contentColor,
+                        stop = activeState.contentColor,
                         fraction = activePercentage,
                     ),
-                )
-                .padding(separation)
-                .size(
-                    width = maxOffset + handleSize,
-                    height = handleSize,
-                ),
-            contentAlignment = Alignment.CenterStart,
-        ) {
-            val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        translationX = maxOffsetPx * activePercentage
-                    }
-                    .size(handleSize)
-                    .background(
-                        color = lerp(
-                            start = inactiveState.contentColor,
-                            stop = activeState.contentColor,
-                            fraction = activePercentage,
-                        ),
-                        shape = RoundedCornerShape(
-                            size = units.cornerRadius - separation,
-                        )
+                    shape = RoundedCornerShape(
+                        size = units.cornerRadius - separation,
                     )
-            )
-        }
+                )
+        )
     }
 }
 

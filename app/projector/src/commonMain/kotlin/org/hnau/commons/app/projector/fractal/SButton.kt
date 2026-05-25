@@ -69,20 +69,16 @@ fun <E : CancelOrInProgress> SButton(
                 .background(fContext.containerColor)
                 .then(
                     when {
-                        isInProgress -> Modifier
-                            .clip(shape)
-                            .fractalDashBorder(
-                                color = foregroundColor,
-                                shape = shape,
-                            )
+                        isInProgress -> Modifier.fractalDashBorder(
+                            color = foregroundColor,
+                            shape = shape,
+                        )
 
-                        isSelected -> Modifier
-                            .clip(shape)
-                            .border(
-                                width = units.borderWidth * 2,
-                                color = foregroundColor,
-                                shape = shape,
-                            )
+                        isSelected -> Modifier.border(
+                            width = units.borderWidth * 2,
+                            color = foregroundColor,
+                            shape = shape,
+                        )
 
                         else -> Modifier
                     }
