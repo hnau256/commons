@@ -9,11 +9,11 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
+import org.hnau.commons.app.projector.uikit.table.Subtable
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.fold
-import org.hnau.commons.app.projector.utils.rememberLet
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import androidx.compose.runtime.remember as rememberInCompose
@@ -69,7 +69,18 @@ private data object SActionsScopeImpl : SActionsScope {
             )
         }
     }
+}
 
+@Composable
+fun TableScope.SActions(
+    actions: @Composable STableActionsScope.() -> Unit,
+) {
+    Subtable(
+        reverseOrdering = true,
+    ) {
+        val scope = STableActionsScope.remember(this)
+        scope.actions()
+    }
 }
 
 data class STableActionsScope(

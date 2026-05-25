@@ -19,7 +19,6 @@ import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
-import org.hnau.commons.app.projector.uikit.table.Subtable
 import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
@@ -66,12 +65,9 @@ fun SDialog(
                         orientation = Orientation.Vertical,
                     ) {
                         with(info) { content() }
-                        Subtable(
-                            reverseOrdering = true,
-                        ) {
-                            val scope = STableActionsScope.remember(this)
-                            with(info) { scope.actions() }
-                        }
+                        SActions(
+                            actions = info.actions,
+                        )
                     }
                 }
             }

@@ -12,8 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.SButton
-import org.hnau.commons.app.projector.fractal.SCell
+import org.hnau.commons.app.projector.fractal.SActions
 import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
@@ -112,15 +111,13 @@ class ActionProjector(
                                             }
                                         }
                                     }
-                                    SCell { modifier, shape ->
-                                        SButton(
-                                            modifier = modifier,
+                                    SActions {
+                                        Action(
                                             actionOrElseOrDisabled = ActionOrElse.instant(model.editConfig),
                                             titleOrIcon = TitleOrIcon.Both(
                                                 title = "Edit",
                                                 icon = Drawable.Vector(Icons.Default.Edit),
                                             ),
-                                            shape = shape,
                                         )
                                     }
                                 }
