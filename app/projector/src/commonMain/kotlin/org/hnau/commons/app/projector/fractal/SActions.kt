@@ -9,11 +9,14 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
+import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.fold
+import org.hnau.commons.app.projector.utils.rememberLet
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
+import androidx.compose.runtime.remember as rememberInCompose
 
 @Composable
 fun SActions(
@@ -31,7 +34,7 @@ fun SActions(
         reverseOrdering = true,
         separation = fContext.distance.units.padding.along.small,
     ) {
-        SActionsScope.block()
+        SActionsScopeImpl.block()
         orientation.fold(
             ifHorizontal = { Spacer(Modifier.weight(1f)) },
             ifVertical = {},
@@ -39,7 +42,51 @@ fun SActions(
     }
 }
 
-object SActionsScope {
+interface SActionsScope {
+
+    @Composable
+    fun <E : CancelOrInProgress> Action(
+        actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
+        titleOrIcon: TitleOrIcon,
+        mood: Mood = Mood.Primary,
+    )
+}
+
+private data object SActionsScopeImpl : SActionsScope {
+
+    @Composable
+    override fun <E : CancelOrInProgress> Action(
+        actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
+        titleOrIcon: TitleOrIcon,
+        mood: Mood
+    ) {
+        UpdateFContext(
+            mood = mood,
+        ) {
+            SButton(
+                actionOrElseOrDisabled = actionOrElseOrDisabled,
+                titleOrIcon = titleOrIcon,
+            )
+        }
+    }
+
+}
+
+data class STableActionsScope(
+    private val tableScope: TableScope,
+) {
+
+    companion object {
+
+        @Composable
+        fun remember(
+            tableScope: TableScope,
+        ): STableActionsScope = rememberInCompose(tableScope) {
+            STableActionsScope(
+                tableScope = tableScope,
+            )
+        }
+    }
 
     @Composable
     fun <E : CancelOrInProgress> Action(
@@ -50,10 +97,14 @@ object SActionsScope {
         UpdateFContext(
             mood = mood,
         ) {
-            SButton(
-                actionOrElseOrDisabled = actionOrElseOrDisabled,
-                titleOrIcon = titleOrIcon,
-            )
+            tableScope.SCell { modifier, shape ->
+                SButton(
+                    modifier = modifier,
+                    shape = shape,
+                    actionOrElseOrDisabled = actionOrElseOrDisabled,
+                    titleOrIcon = titleOrIcon,
+                )
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -16,9 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.size.SizeType
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.plus
@@ -31,7 +27,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 
 data class DialogContentInfo(
     val content: @Composable TableScope.() -> Unit,
-    val actions: @Composable TableScope.() -> Unit,
+    val actions: @Composable STableActionsScope.() -> Unit,
     val cancel: (() -> Unit)?,
 )
 
@@ -73,7 +69,8 @@ fun SDialog(
                         Subtable(
                             reverseOrdering = true,
                         ) {
-                            with(info) { actions() }
+                            val scope = STableActionsScope.remember(this)
+                            with(info) { scope.actions() }
                         }
                     }
                 }
