@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SScreen
@@ -21,6 +22,7 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.input.InputProjector
 import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
+import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
@@ -87,9 +89,12 @@ class FormProjector(
         scope = scope,
         model = model.savableDelegate,
         notSaved = {
-            SText(
-                text = "Config is not saved",
-            )
+            SCellBox {
+                SText(
+                    text = "Config is not saved",
+                    type = SizeType.Large,
+                )
+            }
         },
         save = "Save",
         edit = "Edit",

@@ -10,8 +10,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.utils.ModelSavableDelegate
 import org.hnau.commons.app.projector.fractal.DialogContentInfo
+import org.hnau.commons.app.projector.fractal.SButton
+import org.hnau.commons.app.projector.fractal.SCell
 import org.hnau.commons.app.projector.fractal.SDialog
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
@@ -19,7 +23,7 @@ import org.hnau.commons.kotlin.coroutines.instant
 class ProjectorSavableDelegate<T>(
     scope: CoroutineScope,
     model: ModelSavableDelegate<T>,
-    notSaved: @Composable () -> Unit,
+    notSaved: @Composable TableScope.() -> Unit,
     save: String,
     edit: String,
     reset: String,
@@ -35,31 +39,52 @@ class ProjectorSavableDelegate<T>(
                     cancel = cancel,
                     actions = {
                         dialog.saveAndExitIfPossible?.let { saveAndExitIfPossible ->
-                            Action(
-                                actionOrElseOrDisabled = saveAndExitIfPossible.collectAsState().value,
-                                titleOrIcon = TitleOrIcon.Both(
-                                    title = save,
-                                    icon = Drawable.Vector(Icons.Default.Save),
-                                ),
+                            UpdateFContext(
                                 mood = Mood.Primary,
-                            )
+                            ) {
+                                SCell { modifier, shape ->
+                                    SButton(
+                                        modifier = modifier,
+                                        shape = shape,
+                                        actionOrElseOrDisabled = saveAndExitIfPossible.collectAsState().value,
+                                        titleOrIcon = TitleOrIcon.Both(
+                                            title = save,
+                                            icon = Drawable.Vector(Icons.Default.Save),
+                                        ),
+                                    )
+                                }
+                            }
                         }
-                        Action(
-                            actionOrElseOrDisabled = ActionOrElse.instant(cancel),
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = edit,
-                                icon = Drawable.Vector(Icons.Default.Edit),
-                            ),
+                        UpdateFContext(
                             mood = Mood.Tertiary,
-                        )
-                        Action(
-                            actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = reset,
-                                icon = Drawable.Vector(Icons.Default.Clear),
-                            ),
+                        ) {
+                            SCell { modifier, shape ->
+                                SButton(
+                                    modifier = modifier,
+                                    shape = shape,
+                                    actionOrElseOrDisabled = ActionOrElse.instant(cancel),
+                                    titleOrIcon = TitleOrIcon.Both(
+                                        title = edit,
+                                        icon = Drawable.Vector(Icons.Default.Edit),
+                                    ),
+                                )
+                            }
+                        }
+                        UpdateFContext(
                             mood = Mood.Error,
-                        )
+                        ) {
+                            SCell { modifier, shape ->
+                                SButton(
+                                    modifier = modifier,
+                                    shape = shape,
+                                    actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
+                                    titleOrIcon = TitleOrIcon.Both(
+                                        title = reset,
+                                        icon = Drawable.Vector(Icons.Default.Clear),
+                                    ),
+                                )
+                            }
+                        }
                     }
                 )
             }

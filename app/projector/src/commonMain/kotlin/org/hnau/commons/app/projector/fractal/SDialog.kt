@@ -23,11 +23,15 @@ import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
+import org.hnau.commons.app.projector.uikit.table.Subtable
+import org.hnau.commons.app.projector.uikit.table.Table
+import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
+import org.hnau.commons.app.projector.utils.Orientation
 
 data class DialogContentInfo(
-    val content: @Composable () -> Unit,
-    val actions: @Composable SActionsScope.() -> Unit,
+    val content: @Composable TableScope.() -> Unit,
+    val actions: @Composable TableScope.() -> Unit,
     val cancel: (() -> Unit)?,
 )
 
@@ -62,20 +66,15 @@ fun SDialog(
                         )
                     }
                 ) {
-                    val fContext = LocalFContext.current
-                    Box(
-                        modifier = Modifier
-                            .noIndicationClickable {}
-                            .background(
-                                color = fContext.containerColor,
-                                shape = fContext.distance.units.shape,
-                            )
-                            .padding(fContext.distance.units.paddingValues.vertical[SizeType.default])
+                    Table(
+                        orientation = Orientation.Vertical,
                     ) {
-                        SContentWithActions(
-                            content = info.content,
-                            actions = info.actions
-                        )
+                        with(info) { content() }
+                        Subtable(
+                            reverseOrdering = true,
+                        ) {
+                            with(info) { actions() }
+                        }
                     }
                 }
             }
