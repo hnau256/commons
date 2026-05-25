@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.fractal.size
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle

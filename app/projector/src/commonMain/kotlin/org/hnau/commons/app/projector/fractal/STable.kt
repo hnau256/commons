@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
@@ -19,7 +18,6 @@ import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableCorners
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.table.rememberCellShape
-import org.hnau.commons.app.projector.uikit.utils.Dimens
 import org.hnau.commons.app.projector.utils.Orientation
 
 @Composable

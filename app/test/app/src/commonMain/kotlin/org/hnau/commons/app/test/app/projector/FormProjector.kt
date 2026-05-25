@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
-import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText

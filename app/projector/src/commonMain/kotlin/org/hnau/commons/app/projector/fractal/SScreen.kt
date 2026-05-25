@@ -20,7 +20,6 @@ import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
-import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.Overcompose
