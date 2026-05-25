@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.size.units
@@ -27,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Modifier.fractalDashBorder(
     color: Color,
     shape: Shape,
-    strokeWidth: Dp = LocalFContext.current.distance.units.borderWidth * 2,
+    strokeWidth: Dp = LocalFContext.current.distance.units.borderWidth,
     dashLength: Dp = LocalFContext.current.distance.units.iconSize / 2,
     gapLength: Dp = LocalFContext.current.distance.units.iconSize / 3,
 ): Modifier {
@@ -50,6 +51,9 @@ fun Modifier.fractalDashBorder(
         pathMeasure.setPath(path, false)
         val perimeter = pathMeasure.length
 
+        val desiredWidthPx = strokeWidth.toPx()
+        val doubleWidthPx = desiredWidthPx * 2
+
         val patternLength = (dashLength + gapLength).toPx()
         val count = (perimeter / patternLength).roundToInt().coerceAtLeast(1)
         val actualStep = perimeter / count
@@ -58,16 +62,21 @@ fun Modifier.fractalDashBorder(
         val finalDash = actualStep * dashRatio
         val finalGap = actualStep * (1f - dashRatio)
 
-        onDrawBehind {
-            val stroke = Stroke(
-                width = strokeWidth.toPx(),
-                pathEffect = PathEffect.dashPathEffect(
-                    intervals = floatArrayOf(finalDash, finalGap),
-                    phase = progress * actualStep
+        onDrawWithContent {
+            drawContent()
+            clipPath(path) {
+                drawPath(
+                    path = path,
+                    color = color,
+                    style = Stroke(
+                        width = doubleWidthPx,
+                        pathEffect = PathEffect.dashPathEffect(
+                            intervals = floatArrayOf(finalDash, finalGap),
+                            phase = progress * actualStep
+                        )
+                    )
                 )
-            )
-
-            drawPath(path, color, style = stroke)
+            }
         }
     }
 }
