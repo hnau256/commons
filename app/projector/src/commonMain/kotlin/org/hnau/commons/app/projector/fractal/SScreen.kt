@@ -20,7 +20,6 @@ import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.uikit.backbutton.LocalBackButtonWidth
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.weight
-import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.Overcompose
 import org.hnau.commons.app.projector.utils.copy
@@ -30,7 +29,7 @@ import org.hnau.commons.app.projector.utils.plus
 fun SScreen(
     contentPadding: PaddingValues,
     title: @Composable () -> Unit,
-    actions: @Composable TableScope.() -> Unit = {},
+    actions: @Composable STableActionsScope.() -> Unit = {},
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
     val fContext = LocalFContext.current
@@ -73,7 +72,9 @@ fun SScreen(
                         orientation = Orientation.Horizontal,
                         reverseOrdering = true,
                     ) {
-                        actions()
+                        SActions(
+                            actions = actions,
+                        )
                     }
                 }
             },
