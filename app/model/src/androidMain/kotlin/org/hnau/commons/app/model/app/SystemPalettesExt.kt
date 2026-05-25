@@ -141,7 +141,7 @@ private fun getResourcesByTones(): PaletteTypeValues<List<KeyValue<Tone, Int>>?>
         resourcesWithTone1000
             ?.asReversed()
             ?.map { (resource, tone1000) ->
-                val tone = Tone.create(100 - tone1000 / 10)
+                val tone = Tone.create(100.0 - tone1000 / 10.0)
                 KeyValue(tone, resource)
             }
     }
@@ -155,7 +155,6 @@ private class SystemPalette(
     override fun getHct(
         tone: Double,
     ): Hct = tone
-        .toInt()
         .let(Tone::create)
         .let { tone ->
             cache.getOrPut(
