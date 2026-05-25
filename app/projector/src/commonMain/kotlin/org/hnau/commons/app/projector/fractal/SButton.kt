@@ -75,7 +75,7 @@ fun <E : CancelOrInProgress> SButton(
                         )
 
                         isSelected -> Modifier.border(
-                            width = units.borderWidth * 2,
+                            width = units.borderWidth,
                             color = foregroundColor,
                             shape = shape,
                         )

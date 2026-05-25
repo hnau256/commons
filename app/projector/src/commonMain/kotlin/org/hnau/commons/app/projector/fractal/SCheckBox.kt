@@ -54,13 +54,13 @@ fun SCheckBox(
     val units = distance.units
     val handleSize = 24.dp.scale(distance.scale.space)
     val maxOffset = activeState.handleOffset - inactiveState.handleOffset
-    val separation = units.padding.across.extraSmall
+    val separation = units.borderWidth * 3
 
     Box(
         modifier = modifier
             .clip(units.shape)
             .border(
-                width = units.borderWidth * 2,
+                width = units.borderWidth,
                 color = lerp(
                     start = inactiveState.borderColor,
                     stop = activeState.borderColor,
