@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.CropDin
 import androidx.compose.material.icons.filled.Earbuds
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Schema
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -84,6 +85,17 @@ class FormProjector(
             "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
         }
 
+    private val variant: InputProjector = model
+        .variant
+        .toInputProjectorPrototype {
+            SText(it.name)
+        }
+        .createInputProjector(
+            scope = scope,
+            title = "Variant",
+            icon = Drawable.Vector(Icons.Default.Schema),
+        )
+
     private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(
         scope = scope,
         model = model.savableDelegate,
@@ -118,6 +130,7 @@ class FormProjector(
                         with(decimal) { Content() }
                         with(integer) { Content() }
                         with(text) { Content() }
+                        with(variant) { Content() }
                     }
                 },
                 actions = {

@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -34,6 +33,7 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
@@ -43,9 +43,10 @@ import kotlin.math.floor
 @Composable
 fun <T> STabs(
     items: List<T>,
-    selected: T,
-    onSelectedChanged: (T) -> Unit,
+    selection: T,
+    onClick: ((T) -> Unit)?,
     modifier: Modifier = Modifier,
+    mood: Mood = Mood.Primary,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
     itemPaddingValues: PaddingValues = LocalFContext.current.distance.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
@@ -65,8 +66,8 @@ fun <T> STabs(
 
         val selectedFContext = fContext.rememberRun {
             copy(
-                saturation = Saturation.Active,
-                mood = Mood.Primary,
+                saturation = Saturation.get(onClick != null),
+                mood = mood,
             ).overlay()
         }
 
@@ -75,7 +76,7 @@ fun <T> STabs(
         }
 
 
-        val selectedIndex = items.indexOf(selected).takeIf { it >= 0 } ?: 0
+        val selectedIndex = items.indexOf(selection).takeIf { it >= 0 } ?: 0
         val animatedSelectedIndex: State<Float> = animateFloatAsState(
             targetValue = selectedIndex.toFloat(),
         )
@@ -134,9 +135,12 @@ fun <T> STabs(
                     modifier = Modifier
                         .fillMaxHeight()
                         .clip(itemShape)
-                        .clickable(
-                            enabled = !isSelected,
-                            onClick = { onSelectedChanged(items[i]) }
+                        .clickableOption(
+                            onClick = onClick
+                                .takeIf { !isSelected }
+                                ?.let { onClickNotNull ->
+                                    { onClickNotNull(item) }
+                                }
                         )
                         .onGloballyPositioned { coordinates ->
                             childrenPositions[i].value = coordinates.boundsInParent()

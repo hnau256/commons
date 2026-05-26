@@ -58,6 +58,7 @@ class ActionProjector(
                 "Decimal" to config.decimal.toStringExpanded(),
                 "Integer" to config.integer.toString(),
                 "Text" to config.text,
+                "Scheme" to config.scheme.name,
             ).map { (title, value) ->
                 KeyValue(title, value)
             }
@@ -74,8 +75,8 @@ class ActionProjector(
                 var selected by remember { mutableStateOf(items.first()) }
                 STabs(
                     items = items,
-                    selected = selected,
-                    onSelectedChanged = { selected = it },
+                    selection = selected,
+                    onClick = { selected = it },
                 ) { item ->
                     SText(item)
                 }

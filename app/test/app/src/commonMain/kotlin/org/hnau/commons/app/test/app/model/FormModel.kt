@@ -6,6 +6,8 @@
 package org.hnau.commons.app.test.app.model
 
 import arrow.core.plus
+import arrow.core.toNonEmptyListOrThrow
+import arrow.core.toNonEmptySetOrThrow
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +26,7 @@ import org.hnau.commons.app.model.input.factory.type.StringIsTooShort
 import org.hnau.commons.app.model.input.factory.type.UnableParseStringToDecimalError
 import org.hnau.commons.app.model.input.factory.type.UnableParseStringToIntegerError
 import org.hnau.commons.app.model.input.factory.type.createStringMinLengthValidator
+import org.hnau.commons.app.model.input.factory.type.createVariant
 import org.hnau.commons.app.model.input.factory.type.editDecimal
 import org.hnau.commons.app.model.input.factory.type.editInteger
 import org.hnau.commons.app.model.input.factory.type.editText
@@ -48,6 +51,7 @@ class FormModel(
         val decimal: InputSkeleton<String, BigDecimal>,
         val integer: InputSkeleton<String, BigInteger>,
         val text: InputSkeleton<String, String>,
+        val variant: InputSkeleton<Config.Scheme, Config.Scheme>,
         val savableDelegate: ModelSavableDelegate.Skeleton<Config> = ModelSavableDelegate.Skeleton(),
     ) {
 
@@ -68,6 +72,9 @@ class FormModel(
 
             text = textInputModelFactory
                 .createSkeletonForEdit(initial.text),
+
+            variant = variantInputModelFactory
+                .createSkeletonForEdit(initial.scheme),
         )
     }
 
@@ -105,6 +112,14 @@ class FormModel(
                 skeleton = skeleton.text,
             )
 
+
+    val variant: InputModel<Config.Scheme, Nothing, Config.Scheme, InputType.Variant<Config.Scheme>> =
+        variantInputModelFactory
+            .createModel(
+                scope = scope,
+                skeleton = skeleton.variant,
+            )
+
     val savableDelegate: ModelSavableDelegate<Config> = ModelSavableDelegate(
         scope = scope,
         result = flag
@@ -122,12 +137,18 @@ class FormModel(
             .combineEditableWith(
                 scope = scope,
                 other = text.editable,
-            ) { (flag, decimal, integer), text ->
+                combine = Triple<Boolean, BigDecimal, BigInteger>::plus,
+            )
+            .combineEditableWith(
+                scope = scope,
+                other = variant.editable,
+            ) { (flag, decimal, integer, text), variant ->
                 Config(
                     flag = flag,
                     decimal = decimal,
                     integer = integer,
                     text = text,
+                    scheme = variant,
                 )
             },
         skeleton = skeleton.savableDelegate,
@@ -148,5 +169,11 @@ class FormModel(
                 ) { initialParser ->
                     initialParser + InputParser.createStringMinLengthValidator(3)
                 }
+
+        private val variantInputModelFactory: InputModelFactory<Config.Scheme, Nothing, Config.Scheme, InputType.Variant<Config.Scheme>> =
+            InputModelFactory
+                .createVariant(
+                    variants = Config.Scheme.entries.toNonEmptyListOrThrow(),
+                )
     }
 }

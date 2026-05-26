@@ -18,7 +18,10 @@ data class Config(
     val decimal: BigDecimal,
     val integer: BigInteger,
     val text: String,
+    val scheme: Scheme,
 ) {
+
+    enum class Scheme { Http, Https }
 
     companion object {
 
@@ -26,7 +29,8 @@ data class Config(
             flag = false,
             decimal = BigDecimal.fromDouble(456.789),
             integer = BigInteger.fromInt(123),
-            text = "QWERTY"
+            text = "QWERTY",
+            scheme = Scheme.Https,
         )
     }
 }

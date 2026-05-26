@@ -1,5 +1,7 @@
 package org.hnau.commons.app.model.input
 
+import arrow.core.NonEmptyList
+
 sealed interface InputType<S> {
 
     data object Flag : InputType<Boolean>
@@ -11,5 +13,9 @@ sealed interface InputType<S> {
 
         enum class ContentType { Text, Integer, Decimal }
     }
+
+    data class Variant<S>(
+        val variants: NonEmptyList<S>,
+    ) : InputType<S>
 }
 
