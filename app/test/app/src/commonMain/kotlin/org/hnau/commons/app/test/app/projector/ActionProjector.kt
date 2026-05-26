@@ -87,7 +87,10 @@ class ActionProjector(
                 )
                 Action(
                     actionOrElseOrDisabled = fakeAction.collectAsState().value,
-                    titleOrIcon = TitleOrIcon.Icon(Drawable.Text("Bank of Cyprus"))
+                    titleOrIcon = TitleOrIcon.Both(
+                        icon = Drawable.Text("Bank of Cyprus"),
+                        title = "BoC",
+                    )
                 )
             }
         ) { contentPadding ->

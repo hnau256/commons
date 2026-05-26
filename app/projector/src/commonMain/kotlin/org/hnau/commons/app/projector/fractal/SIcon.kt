@@ -2,7 +2,7 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
@@ -14,14 +14,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
 import org.hnau.commons.app.projector.fractal.context.contentColor
-import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
-
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -85,7 +81,7 @@ private fun TextIcon(
                 color = fContext.contentColor,
                 shape = CircleShape,
             )
-            .size(units.iconSize),
+            .padding(units.paddingValues.horizontal.extraSmall),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(
