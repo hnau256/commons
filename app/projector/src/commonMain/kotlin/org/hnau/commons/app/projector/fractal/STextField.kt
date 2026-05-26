@@ -136,11 +136,7 @@ private data class Decorator(
         innerTextField: @Composable (() -> Unit),
     ) {
         UpdateFContext(
-            update = {
-                overlay(
-                    contrast = Contrast.containerLow,
-                )
-            }
+            update = { overlay(Contrast.containerLow) },
         ) {
             val fContext = LocalFContext.current
             Box(

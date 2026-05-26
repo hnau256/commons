@@ -8,6 +8,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +23,7 @@ import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.STable
+import org.hnau.commons.app.projector.fractal.STabs
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
@@ -58,7 +63,17 @@ class ActionProjector(
     ) {
         SScreen(
             contentPadding = contentPadding,
-            title = { SText("Action") },
+            title = {
+                val items = remember { listOf("One", "Two", "Three") }
+                var selected by remember { mutableStateOf(items.first()) }
+                STabs(
+                    items = items,
+                    selected = selected,
+                    onSelectedChanged = { selected = it },
+                ) { item ->
+                    SText(item)
+                }
+            },
         ) { contentPadding ->
             SContentWithActions(
                 modifier = Modifier.padding(contentPadding),

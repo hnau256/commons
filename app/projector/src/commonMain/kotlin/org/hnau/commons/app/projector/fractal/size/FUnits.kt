@@ -16,11 +16,13 @@ import org.hnau.commons.app.projector.utils.compareWith
 class FUnits private constructor(
     val padding: DirectionValues<SizeTypeValues<Dp>>,
     val cornerRadius: Dp,
-    val shape: Shape,
     val borderWidth: Dp,
     val textStyle: SizeTypeValues<TextStyle>,
     val iconSize: Dp,
 ) {
+
+    val shape: Shape =
+        RoundedCornerShape(size = cornerRadius)
 
     val paddingValues: OrientationValues<SizeTypeValues<PaddingValues>> =
         OrientationValues.create { containerOrientation ->
@@ -89,7 +91,6 @@ class FUnits private constructor(
                         )
                     },
                 cornerRadius = cornerRadius,
-                shape = RoundedCornerShape(size = cornerRadius),
                 borderWidth = borderWidth,
                 textStyle = textStyleConfigs.map { config ->
                     config.toTextStyle(distance)
