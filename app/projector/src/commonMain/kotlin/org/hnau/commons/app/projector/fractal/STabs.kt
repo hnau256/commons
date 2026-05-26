@@ -28,7 +28,6 @@ import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
@@ -46,16 +45,17 @@ fun <T> STabs(
     selected: T,
     onSelectedChanged: (T) -> Unit,
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(
-        space = 0.dp,
-        alignment = Alignment.CenterHorizontally,
-    ),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     itemPaddingValues: PaddingValues = LocalFContext.current.distance.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
 ) {
     UpdateFContext(
-        update = { overlay(Contrast.containerLow) },
+        update = {
+            overlay(Contrast.containerLow).copy(
+                saturation = Saturation.Neutral,
+            )
+        },
     ) {
         val fContext = LocalFContext.current
         val itemMargin = fContext.distance.units.borderWidth
@@ -114,7 +114,11 @@ fun <T> STabs(
                     )
                     drawRoundRect(
                         color = selectedFContext.containerColor,
-                        topLeft = rect.topLeft,
+                        topLeft = rect.topLeft + with(density) {
+                            itemMargin.toPx().let { offset ->
+                                Offset(offset, offset)
+                            }
+                        },
                         size = rect.size,
                         cornerRadius = with(density) { itemCornerRadius.toPx() }.let(::CornerRadius),
                     )
@@ -125,7 +129,7 @@ fun <T> STabs(
         ) {
             val itemShape = RoundedCornerShape(itemCornerRadius)
             items.forEachIndexed { i, item ->
-                val isSelected = item == selectedIndex
+                val isSelected = i == selectedIndex
                 Box(
                     modifier = Modifier
                         .clip(itemShape)
