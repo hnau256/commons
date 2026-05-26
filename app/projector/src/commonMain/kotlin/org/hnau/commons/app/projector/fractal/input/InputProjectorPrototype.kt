@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
+import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
@@ -21,8 +22,10 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
         scope: CoroutineScope,
         title: String,
         icon: Drawable?,
+        mood: Mood = Mood.Primary,
         crossinline displayError: (S, E) -> String,
     ): InputProjector = InputProjector(
+        mood = mood,
         title = title,
         icon = icon,
         errorMessage = stateHolder
@@ -53,10 +56,12 @@ fun <S, I : InputType<S>> InputProjectorPrototype<S, Nothing, I>.createInputProj
     scope: CoroutineScope,
     title: String,
     icon: Drawable?,
+    mood: Mood = Mood.Primary,
 ): InputProjector = createInputProjector(
     scope = scope,
     title = title,
     icon = icon,
+    mood = mood,
     displayError = { _, _ -> "" }
 )
 

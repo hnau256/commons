@@ -8,8 +8,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,8 +58,10 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
+            var isFocused: Boolean by remember { mutableStateOf(false) }
             with(itemDrawer) {
                 Item(
+                    isFocused = isFocused,
                     endAccessory = value
                         .isNotEmpty()
                         .and(enabled)
@@ -72,6 +78,10 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                 ) {
                     val config = type.contentType.toTextInputProjectorConfig()
                     STextField(
+                        modifier = Modifier
+                            .onFocusChanged { focusState ->
+                                isFocused = focusState.isFocused
+                            },
                         value = value,
                         onValueChanged = updateState,
                         keyboardOptions = KeyboardOptions(

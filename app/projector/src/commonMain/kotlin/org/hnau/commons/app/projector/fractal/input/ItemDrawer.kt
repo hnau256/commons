@@ -9,6 +9,7 @@ interface ItemDrawer {
     fun TableScope.Item(
         onClick: (() -> Unit)? = null,
         endAccessory: (@Composable () -> Unit)? = null,
+        isFocused: Boolean = false,
         content: @Composable () -> Unit,
     )
 }

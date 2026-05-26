@@ -27,6 +27,7 @@ class InputProjector(
     private val title: String,
     private val icon: Drawable?,
     contentProjector: InputContentProjector,
+    mood: Mood,
     private val errorMessage: StateFlow<String?>,
 ) {
 
@@ -49,24 +50,30 @@ class InputProjector(
         override fun TableScope.Item(
             onClick: (() -> Unit)?,
             endAccessory: @Composable (() -> Unit)?,
+            isFocused: Boolean,
             content: @Composable (() -> Unit)
         ) {
 
             val errorMessage by errorMessage.collectAsState()
-            UpdateFContext(
-                update = {
-                    errorMessage.foldNullable(
-                        ifNull = { this },
-                        ifNotNull = {
-                            copy(
-                                mood = Mood.Error,
-                                saturation = Saturation.Active,
-                            )
-                        }
-                    )
-                }
-            ) {
-                SCell { cellModifier, shape ->
+            SCell { cellModifier, shape ->
+                UpdateFContext(
+                    update = {
+                        errorMessage.foldNullable(
+                            ifNull = {
+                                copy(
+                                    mood = mood,
+                                    saturation = Saturation.get(isFocused),
+                                )
+                            },
+                            ifNotNull = {
+                                copy(
+                                    mood = Mood.Error,
+                                    saturation = Saturation.Active,
+                                )
+                            }
+                        )
+                    }
+                ) {
                     val fContext = LocalFContext.current
                     Box(
                         modifier = cellModifier
