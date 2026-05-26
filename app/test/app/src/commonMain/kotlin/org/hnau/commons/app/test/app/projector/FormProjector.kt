@@ -49,6 +49,7 @@ class FormProjector(
         .decimal
         .toInputProjectorPrototype(
             imeAction = ImeAction.Next,
+            requestFocusOnStart = true,
         )
         .createInputProjector(
             scope = scope,

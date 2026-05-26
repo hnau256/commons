@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -53,14 +56,20 @@ fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorC
 @JvmName("toEditInputProjectorPrototype")
 fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
     imeAction: ImeAction = ImeAction.Default,
+    requestFocusOnStart: Boolean = false,
 ): InputProjectorPrototype<String, E, InputType.Edit> =
     toInputProjectorPrototype { type, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
             var isFocused: Boolean by remember { mutableStateOf(false) }
+            val focusRequester = remember { FocusRequester() }
+            if (requestFocusOnStart) {
+                LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
+            }
             with(itemDrawer) {
                 Item(
+                    onClick = { focusRequester.requestFocus() },
                     isFocused = isFocused,
                     endAccessory = value
                         .isNotEmpty()
@@ -79,6 +88,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                     val config = type.contentType.toTextInputProjectorConfig()
                     STextField(
                         modifier = Modifier
+                            .focusRequester(focusRequester)
                             .onFocusChanged { focusState ->
                                 isFocused = focusState.isFocused
                             },
