@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
@@ -75,29 +77,25 @@ private fun TextIcon(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    UpdateFContext(
-        update = { overlay() }
-    ) {
-        val fContext = LocalFContext.current
-        val units = fContext.distance.units
-        Box(
-            modifier = modifier
-                .size(units.iconSize)
-                .background(
-                    color = fContext.containerColor,
-                    shape = CircleShape,
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            BasicText(
-                text = text.rememberRun { extractNChars(2) },
-                maxLines = 1,
-                minLines = 1,
-                style = units.textStyle.small.merge(
-                    color = fContext.contentColor,
-                )
+    val fContext = LocalFContext.current
+    val units = fContext.distance.units
+    Box(
+        modifier = modifier
+            .background(
+                color = fContext.contentColor,
+                shape = CircleShape,
             )
-        }
+            .size(units.iconSize),
+        contentAlignment = Alignment.Center,
+    ) {
+        BasicText(
+            text = text.rememberRun { extractNChars(2) },
+            maxLines = 1,
+            minLines = 1,
+            style = units.textStyle.extraSmall.merge(
+                color = fContext.containerColor,
+            )
+        )
     }
 }
 

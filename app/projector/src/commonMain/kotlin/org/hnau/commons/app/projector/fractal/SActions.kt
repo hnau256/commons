@@ -72,6 +72,20 @@ private data object SActionsScopeImpl : SActionsScope {
 }
 
 @Composable
+fun SActions(
+    orientation: Orientation,
+    actions: @Composable STableActionsScope.() -> Unit,
+) {
+    STable(
+        orientation = orientation,
+        reverseOrdering = true,
+    ) {
+        val scope = STableActionsScope.remember(this)
+        scope.actions()
+    }
+}
+
+@Composable
 fun TableScope.SActions(
     actions: @Composable STableActionsScope.() -> Unit,
 ) {

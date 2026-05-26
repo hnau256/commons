@@ -68,14 +68,10 @@ fun SScreen(
                             title()
                         }
                     }
-                    STable(
+                    SActions(
                         orientation = Orientation.Horizontal,
-                        reverseOrdering = true,
-                    ) {
-                        SActions(
-                            actions = actions,
-                        )
-                    }
+                        actions = actions,
+                    )
                 }
             },
             content = content,

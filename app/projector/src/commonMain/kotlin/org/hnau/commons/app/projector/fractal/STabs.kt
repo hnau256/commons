@@ -4,8 +4,11 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -23,7 +26,7 @@ import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntSize
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
@@ -46,7 +49,6 @@ fun <T> STabs(
     onSelectedChanged: (T) -> Unit,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     itemPaddingValues: PaddingValues = LocalFContext.current.distance.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
 ) {
@@ -83,6 +85,7 @@ fun <T> STabs(
 
         Row(
             modifier = modifier
+                .height(IntrinsicSize.Max)
                 .drawBehind {
 
                     drawRoundRect(
@@ -125,13 +128,13 @@ fun <T> STabs(
                 }
                 .padding(itemMargin),
             horizontalArrangement = horizontalArrangement,
-            verticalAlignment = verticalAlignment,
         ) {
             val itemShape = RoundedCornerShape(itemCornerRadius)
             items.forEachIndexed { i, item ->
                 val isSelected = i == selectedIndex
                 Box(
                     modifier = Modifier
+                        .fillMaxHeight()
                         .clip(itemShape)
                         .clickable(
                             enabled = !isSelected,
@@ -141,6 +144,7 @@ fun <T> STabs(
                             childrenPositions[i].value = coordinates.boundsInParent()
                         }
                         .padding(itemPaddingValues),
+                    propagateMinConstraints = true,
                 ) {
                     CompositionLocalProvider(
                         LocalFContext provides isSelected.foldBoolean(

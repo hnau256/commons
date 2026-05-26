@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SActions
 import org.hnau.commons.app.projector.fractal.SCellBox
@@ -36,13 +38,17 @@ import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.ActionModel
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
+import kotlin.time.Duration.Companion.seconds
 
 class ActionProjector(
     scope: CoroutineScope,
     private val model: ActionModel,
 ) {
+
+    private val fakeAction = actionOrCancelIfExecuting(scope) { delay(3.seconds) }
 
     private val configItems: StateFlow<List<KeyValue<String, String>>> = model
         .config
@@ -74,6 +80,16 @@ class ActionProjector(
                     SText(item)
                 }
             },
+            actions = {
+                Action(
+                    actionOrElseOrDisabled = fakeAction.collectAsState().value,
+                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.OpenInFull))
+                )
+                Action(
+                    actionOrElseOrDisabled = fakeAction.collectAsState().value,
+                    titleOrIcon = TitleOrIcon.Icon(Drawable.Text("Bank of Cyprus"))
+                )
+            }
         ) { contentPadding ->
             SContentWithActions(
                 modifier = Modifier.padding(contentPadding),
