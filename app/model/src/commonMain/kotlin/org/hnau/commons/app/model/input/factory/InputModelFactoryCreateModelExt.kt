@@ -7,14 +7,14 @@ import org.hnau.commons.app.model.input.InputSkeleton
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 
-fun <S, E, V, I : InputType<S>> InputModelFactory<S, E, V, I>.createModel(
+fun <S, V, E, I : InputType<S>> InputModelFactory<S, V, E, I>.createModel(
     scope: CoroutineScope,
     skeleton: InputSkeleton<S, V>,
     enabled: StateFlow<Boolean> = true.toMutableStateFlowAsInitial(),
-): InputModel<S, E, V, I> = InputModel(
+): InputModel<S, V, E, I> = InputModel(
     scope = scope,
     enabled = enabled,
     skeleton = skeleton,
     type = type,
-    parser = parser,
+    parse = parsingMapper.parse,
 )

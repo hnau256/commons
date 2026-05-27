@@ -30,35 +30,14 @@ import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.ifTrue
 
-data class TextInputProjectorConfig(
-    val keyboardType: KeyboardType,
-    val capitalization: KeyboardCapitalization,
-)
-
-fun InputType.Edit.ContentType.toTextInputProjectorConfig(): TextInputProjectorConfig =
-    when (this) {
-        InputType.Edit.ContentType.Text -> TextInputProjectorConfig(
-            keyboardType = KeyboardType.Text,
-            capitalization = KeyboardCapitalization.Sentences,
-        )
-
-        InputType.Edit.ContentType.Integer -> TextInputProjectorConfig(
-            keyboardType = KeyboardType.Number,
-            capitalization = KeyboardCapitalization.None,
-        )
-
-        InputType.Edit.ContentType.Decimal -> TextInputProjectorConfig(
-            keyboardType = KeyboardType.Decimal,
-            capitalization = KeyboardCapitalization.None,
-        )
-    }
 
 @JvmName("toEditInputProjectorPrototype")
 fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
     imeAction: ImeAction = ImeAction.Default,
+    keyboardType: KeyboardType,
     requestFocusOnStart: Boolean = false,
 ): InputProjectorPrototype<String, E, InputType.Edit> =
-    toInputProjectorPrototype { type, state, updateState ->
+    toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val enabled by enabled.collectAsState()
             val value by state.collectAsState()
@@ -85,7 +64,6 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                             }
                         }
                 ) {
-                    val config = type.contentType.toTextInputProjectorConfig()
                     STextField(
                         modifier = Modifier
                             .focusRequester(focusRequester)
@@ -95,9 +73,9 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                         value = value,
                         onValueChanged = updateState,
                         keyboardOptions = KeyboardOptions(
-                            capitalization = config.capitalization,
+                            capitalization = KeyboardCapitalization.Sentences,
                             imeAction = imeAction,
-                            keyboardType = config.keyboardType,
+                            keyboardType = keyboardType,
                         ),
                         lineLimits = TextFieldLineLimits.SingleLine,
                         enabled = enabled,

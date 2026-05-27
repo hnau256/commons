@@ -16,18 +16,18 @@ import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.serialization.MutableStateFlowSerializer
 
-class InputModel<S, E, V, I : InputType<S>>(
+class InputModel<S, V, E, I : InputType<S>>(
     scope: CoroutineScope,
     private val skeleton: InputSkeleton<S, V>,
     override val type: I,
-    private val parser: InputParser<S, E, V>,
+    private val parse: (S) -> Either<E, V>,
     override val enabled: StateFlow<Boolean>,
 ) : InputStateHolder<S, E, I> {
 
     private val stateWithValueOrError: StateFlow<KeyValue<S, Either<E, V>>> = skeleton
         .state
         .mapState(scope) { state ->
-            val valueOrError = parser.parse(state)
+            val valueOrError = parse(state)
             KeyValue(state, valueOrError)
         }
 

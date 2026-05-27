@@ -55,7 +55,7 @@ class ActionProjector(
         .mapState(scope) { config ->
             listOf(
                 "Flag" to config.flag.toString(),
-                "Decimal" to config.decimal.toStringExpanded(),
+                "Decimal" to config.decimal.toString(),
                 "Integer" to config.integer.toString(),
                 "Text" to config.text,
                 "Scheme" to config.scheme.name,

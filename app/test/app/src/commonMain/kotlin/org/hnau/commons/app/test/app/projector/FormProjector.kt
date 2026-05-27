@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
@@ -49,6 +50,7 @@ class FormProjector(
         .decimal
         .toInputProjectorPrototype(
             imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Decimal,
             requestFocusOnStart = true,
         )
         .createInputProjector(
@@ -64,6 +66,7 @@ class FormProjector(
         .integer
         .toInputProjectorPrototype(
             imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Number,
         )
         .createInputProjector(
             scope = scope,
@@ -77,14 +80,13 @@ class FormProjector(
         .text
         .toInputProjectorPrototype(
             imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Text,
         )
         .createInputProjector(
             scope = scope,
             title = "Text",
             icon = Drawable.Vector(Icons.Default.Chair),
-        ) { state, error ->
-            "String '$state' is too short: expected at least ${error.expectedMinLength} characters, got ${error.actualLength}"
-        }
+        ) { state, _ -> "String '$state' is too short" }
 
     private val variant: InputProjector = model
         .variant

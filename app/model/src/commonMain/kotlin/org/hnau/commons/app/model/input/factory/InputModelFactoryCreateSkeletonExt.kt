@@ -7,7 +7,7 @@ import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.kotlin.coroutines.flow.state.mutable.toMutableStateFlowAsInitial
 import org.hnau.commons.kotlin.foldBoolean
 
-fun <S, E, V, I : InputType<S>> InputModelFactory<S, E, V, I>.createSkeleton(
+fun <S, V, E, I : InputType<S>> InputModelFactory<S, V, E, I>.createSkeleton(
     value: V,
     useValueAsInitial: Boolean,
 ): InputSkeleton<S, V> = InputSkeleton(
@@ -16,20 +16,6 @@ fun <S, E, V, I : InputType<S>> InputModelFactory<S, E, V, I>.createSkeleton(
         ifFalse = { None },
     ),
     state = value
-        .let(encoder)
+        .let(parsingMapper.encode)
         .toMutableStateFlowAsInitial(),
-)
-
-fun <S, E, V, I : InputType<S>> InputModelFactory<S, E, V, I>.createSkeletonForEdit(
-    initialValue: V,
-): InputSkeleton<S, V> = createSkeleton(
-    value = initialValue,
-    useValueAsInitial = true,
-)
-
-fun <S, E, V, I : InputType<S>> InputModelFactory<S, E, V, I>.createSkeletonForNew(
-    defaultValue: V,
-): InputSkeleton<S, V> = createSkeleton(
-    value = defaultValue,
-    useValueAsInitial = false,
 )

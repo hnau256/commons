@@ -1,12 +1,11 @@
 package org.hnau.commons.app.model.input.factory
 
-import org.hnau.commons.app.model.input.InputParser
+import org.hnau.commons.app.model.input.parser.ParsingMapper
 import org.hnau.commons.app.model.input.InputType
 
-data class InputModelFactory<S, E, V, I : InputType<S>>(
+data class InputModelFactory<S, V, E, I : InputType<S>>(
     val type: I,
-    val encoder: (V) -> S,
-    val parser: InputParser<S, E, V>,
+    val parsingMapper: ParsingMapper<S, V, E>,
 ) {
 
     companion object

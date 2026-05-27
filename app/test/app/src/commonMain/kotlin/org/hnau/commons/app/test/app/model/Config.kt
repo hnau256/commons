@@ -15,8 +15,8 @@ import org.hnau.commons.kotlin.serialization.BigIntegerSerializer
 @Serializable
 data class Config(
     val flag: Boolean,
-    val decimal: BigDecimal,
-    val integer: BigInteger,
+    val decimal: Float,
+    val integer: Int,
     val text: String,
     val scheme: Scheme,
 ) {
@@ -27,8 +27,8 @@ data class Config(
 
         val default = Config(
             flag = false,
-            decimal = BigDecimal.fromDouble(456.789),
-            integer = BigInteger.fromInt(123),
+            decimal = 456.789f,
+            integer = 123,
             text = "QWERTY",
             scheme = Scheme.Https,
         )
