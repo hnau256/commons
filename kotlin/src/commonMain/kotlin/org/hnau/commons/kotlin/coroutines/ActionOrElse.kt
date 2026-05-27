@@ -53,7 +53,7 @@ fun ActionOrElse.Else<CancelOrInProgress.Cancel>.cancel() {
 
 fun <A> operationOrCancelIfExecuting(
     scope: CoroutineScope,
-    operation: suspend (A) -> Unit,
+    operation: suspend (scope: CoroutineScope, A) -> Unit,
 ): StateFlow<ActionOrElse<A, CancelOrInProgress.Cancel>> =
     operationOrElseIfExecuting<A, CancelOrInProgress.Cancel>(
         scope = scope,
@@ -62,15 +62,15 @@ fun <A> operationOrCancelIfExecuting(
 
 fun actionOrCancelIfExecuting(
     scope: CoroutineScope,
-    operation: suspend () -> Unit,
+    operation: suspend (scope: CoroutineScope) -> Unit,
 ): StateFlow<ActionOrElse<Unit, CancelOrInProgress.Cancel>> = operationOrCancelIfExecuting(
     scope = scope,
-    operation = { _: Unit -> operation() },
+    operation = { scope, _: Unit -> operation(scope) },
 )
 
 fun <A> operationOrInProgressIfExecuting(
     scope: CoroutineScope,
-    operation: suspend (A) -> Unit,
+    operation: suspend (scope: CoroutineScope, A) -> Unit,
 ): StateFlow<ActionOrElse<A, CancelOrInProgress.InProgress>> =
     operationOrElseIfExecuting<A, CancelOrInProgress.InProgress>(
         scope = scope,
@@ -79,15 +79,15 @@ fun <A> operationOrInProgressIfExecuting(
 
 fun actionOrInProgressIfExecuting(
     scope: CoroutineScope,
-    operation: suspend () -> Unit,
+    operation: suspend (scope: CoroutineScope) -> Unit,
 ): StateFlow<ActionOrElse<Unit, CancelOrInProgress.InProgress>> = operationOrInProgressIfExecuting(
     scope = scope,
-    operation = { _: Unit -> operation() },
+    operation = { scope, _: Unit -> operation(scope) },
 )
 
 private inline fun <A, reified E : CancelOrInProgress> operationOrElseIfExecuting(
     scope: CoroutineScope,
-    noinline operation: suspend (A) -> Unit,
+    noinline operation: suspend (scope: CoroutineScope, A) -> Unit,
 ): StateFlow<ActionOrElse<A, E>> = MutableStateFlow<CoroutineScope?>(null)
     .let { operationScopeStateFlow ->
         operationScopeStateFlow.mapState(scope) { operationScopeOrNull ->
@@ -105,7 +105,7 @@ private inline fun <A, reified E : CancelOrInProgress> operationOrElseIfExecutin
                         operationScopeStateFlow.value = operationScope
                         operationScope.launch {
                             try {
-                                operation(argument)
+                                operation(this, argument)
                             } finally {
                                 operationScopeStateFlow.value = null
                             }
