@@ -40,9 +40,12 @@ fun STable(
 
 @Composable
 fun TableScope.SCell(
-    content: @Composable TableCorners.Provider.(Modifier, Shape) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable TableCorners.Provider.(Shape) -> Unit,
 ) {
-    Cell { modifier ->
+    Cell(
+        modifier = modifier,
+    ) {
         val shape = rememberSCellShape()
         UpdateFContext(
             update = {
@@ -53,7 +56,7 @@ fun TableScope.SCell(
                 )
             }
         ) {
-            content(modifier, shape)
+            content(shape)
         }
     }
 }
@@ -73,11 +76,12 @@ fun TableScope.SCellBox(
     propagateMinConstraints: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    SCell { cellModifier, shape ->
+    SCell(
+        modifier = modifier,
+    ) { shape ->
         val fContext = LocalFContext.current
         Box(
-            modifier = cellModifier
-                .then(modifier)
+            modifier = Modifier
                 .background(
                     color = fContext.containerColor,
                     shape = shape,

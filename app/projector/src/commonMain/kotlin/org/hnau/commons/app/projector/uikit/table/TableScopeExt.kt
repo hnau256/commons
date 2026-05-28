@@ -16,9 +16,10 @@ fun TableScope.Subtable(
     reverseOrdering: Boolean = false,
     content: @Composable TableScope.() -> Unit,
 ) {
-    Cell { cellModifier ->
+    Cell(
+        modifier = modifier,
+    ) {
         Table(
-            modifier = cellModifier.then(modifier),
             orientation = orientation.opposite,
             corners = this,
             content = content,
@@ -36,15 +37,15 @@ fun TableScope.CellBox(
     propagateMinConstraints: Boolean = false,
     content: @Composable BoxScope.(Shape) -> Unit,
 ) {
-    Cell { cellModifier ->
+    Cell(
+        modifier = modifier,
+    ) {
         val shape = rememberCellShape()
         Box(
-            modifier = cellModifier
-                .then(modifier)
-                .background(
-                    color = backgroundColor,
-                    shape = shape,
-                ),
+            modifier = modifier.background(
+                color = backgroundColor,
+                shape = shape,
+            ),
             contentAlignment = contentAlignment,
             propagateMinConstraints = propagateMinConstraints,
         ) {

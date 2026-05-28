@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.uikit.table.utils
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -23,7 +24,8 @@ internal class TableScopeImpl(
 
     @Composable
     override fun Cell(
-        content: @Composable (TableCorners.Provider.(Modifier) -> Unit),
+        modifier: Modifier,
+        content: @Composable (TableCorners.Provider.() -> Unit),
     ) {
         val positionHolder = remember {
             Mutable(
@@ -47,11 +49,16 @@ internal class TableScopeImpl(
                 }
             }
         }
-        content(
-            corners,
-            Modifier.onPositionInLineChanged { newPosition ->
-                positionHolder.value = newPosition
-            },
-        )
+        Box(
+            modifier = modifier
+                .onPositionInLineChanged { newPosition ->
+                    positionHolder.value = newPosition
+                },
+            propagateMinConstraints = true,
+        ) {
+            content(
+                corners,
+            )
+        }
     }
 }

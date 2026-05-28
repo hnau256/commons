@@ -117,14 +117,16 @@ data class STableActionsScope(
     fun <E : CancelOrInProgress> Action(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
+        modifier: Modifier = Modifier,
         mood: Mood = Mood.Primary,
     ) {
         UpdateFContext(
             mood = mood,
         ) {
-            tableScope.SCell { modifier, shape ->
+            tableScope.SCell(
+                modifier = modifier,
+            ) { shape ->
                 SButton(
-                    modifier = modifier,
                     shape = shape,
                     actionOrElseOrDisabled = actionOrElseOrDisabled,
                     titleOrIcon = titleOrIcon,

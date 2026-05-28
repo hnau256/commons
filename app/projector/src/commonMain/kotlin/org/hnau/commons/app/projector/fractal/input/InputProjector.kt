@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SCell
@@ -55,7 +56,7 @@ class InputProjector(
         ) {
 
             val errorMessage by errorMessage.collectAsState()
-            SCell { cellModifier, shape ->
+            SCell { shape ->
                 UpdateFContext(
                     update = {
                         errorMessage.foldNullable(
@@ -76,7 +77,7 @@ class InputProjector(
                 ) {
                     val fContext = LocalFContext.current
                     Box(
-                        modifier = cellModifier
+                        modifier = Modifier
                             .clip(shape)
                             .clickableOption(
                                 onClick = onClick,

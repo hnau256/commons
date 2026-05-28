@@ -16,7 +16,8 @@ interface TableScope : LineScope {
 
     @Composable
     fun Cell(
-        content: @Composable TableCorners.Provider.(Modifier) -> Unit,
+        modifier: Modifier = Modifier,
+        content: @Composable TableCorners.Provider.() -> Unit,
     )
 
     companion object
