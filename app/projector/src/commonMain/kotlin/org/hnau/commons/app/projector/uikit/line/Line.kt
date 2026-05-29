@@ -236,7 +236,7 @@ private data class LineMeasurePolicy(
     private fun IntrinsicMeasureScope.calcIntrinsicAlong(
         measurables: List<IntrinsicMeasurable>,
         max: Boolean,
-        across: Int
+        across: Int?
     ): Int = with(orientation) {
         measure(
             useWeight = false,
@@ -286,7 +286,7 @@ private data class LineMeasurePolicy(
         direction: Direction,
         measurables: List<IntrinsicMeasurable>,
         max: Boolean,
-        oppositeSize: Int
+        oppositeSize: Int?
     ): Int = direction.fold(
         ifAlong = {
             calcIntrinsicAlong(
@@ -311,7 +311,7 @@ private data class LineMeasurePolicy(
         direction = Orientation.Horizontal.compareWith(orientation),
         measurables = measurables,
         max = true,
-        oppositeSize = height,
+        oppositeSize = height.nullIfInfinity,
     )
 
     override fun IntrinsicMeasureScope.minIntrinsicWidth(
@@ -321,7 +321,7 @@ private data class LineMeasurePolicy(
         direction = Orientation.Horizontal.compareWith(orientation),
         measurables = measurables,
         max = false,
-        oppositeSize = height,
+        oppositeSize = height.nullIfInfinity,
     )
 
     override fun IntrinsicMeasureScope.maxIntrinsicHeight(
@@ -331,7 +331,7 @@ private data class LineMeasurePolicy(
         direction = Orientation.Vertical.compareWith(orientation),
         measurables = measurables,
         max = true,
-        oppositeSize = width,
+        oppositeSize = width.nullIfInfinity,
     )
 
     override fun IntrinsicMeasureScope.minIntrinsicHeight(
@@ -341,9 +341,12 @@ private data class LineMeasurePolicy(
         direction = Orientation.Vertical.compareWith(orientation),
         measurables = measurables,
         max = false,
-        oppositeSize = width,
+        oppositeSize = width.nullIfInfinity,
     )
 }
+
+private val Int.nullIfInfinity: Int?
+    get() = takeIf { it < Constraints.Infinity }
 
 private val emptyLineParentData: LineParentData =
     LineParentData.createEmpty()
