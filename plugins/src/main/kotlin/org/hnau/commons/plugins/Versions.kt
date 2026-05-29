@@ -63,6 +63,9 @@ internal object Versions {
         val vanniktech =
             PluginId("com.vanniktech.maven.publish") withVersion Version.VanniktechPlugin withAlias "vanniktech"
 
+        val application: PluginId =
+            PluginId("application")
+
         val signing: PluginId =
             PluginId("signing")
 

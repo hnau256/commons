@@ -3,6 +3,8 @@ package org.hnau.commons.plugins.project.utils
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.findByType
+import org.hnau.commons.plugins.Versions
+import org.hnau.commons.plugins.project.projectext.hasPlugin
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.compose.desktop.DesktopExtension
 
@@ -18,7 +20,7 @@ sealed interface ModuleType {
 
         override fun disablePublicationBeforeOrAfterEvaluate(
             project: Project,
-        ): Boolean = isAndroidApp
+        ): Boolean = isAndroidApp || project.hasPlugin(Versions.Plugins.application)
     }
 
     data class Kmp(
