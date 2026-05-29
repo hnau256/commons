@@ -8,6 +8,7 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.Line
+import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.table.Subtable
 import org.hnau.commons.app.projector.uikit.table.TableScope
@@ -99,7 +100,7 @@ fun TableScope.SActions(
 
 data class STableActionsScope(
     private val tableScope: TableScope,
-) {
+): LineScope by tableScope {
 
     companion object {
 
