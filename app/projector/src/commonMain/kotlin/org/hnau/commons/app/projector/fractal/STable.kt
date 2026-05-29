@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
@@ -19,6 +20,7 @@ import org.hnau.commons.app.projector.uikit.table.TableCorners
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.table.rememberCellShape
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.clickableOption
 
 @Composable
 fun STable(
@@ -74,6 +76,7 @@ fun TableScope.SCellBox(
     contentAlignment: Alignment = Alignment.Center,
     contentOrientation: Orientation = Orientation.Horizontal,
     propagateMinConstraints: Boolean = false,
+    onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
     SCell(
@@ -82,13 +85,10 @@ fun TableScope.SCellBox(
         val fContext = LocalFContext.current
         Box(
             modifier = Modifier
-                .background(
-                    color = fContext.containerColor,
-                    shape = shape,
-                )
-                .padding(
-                    fContext.distance.units.paddingValues[contentOrientation].medium,
-                ),
+                .clip(shape)
+                .clickableOption(onClick)
+                .background(fContext.containerColor)
+                .padding(fContext.distance.units.paddingValues[contentOrientation].medium),
             contentAlignment = contentAlignment,
             propagateMinConstraints = propagateMinConstraints,
         ) {

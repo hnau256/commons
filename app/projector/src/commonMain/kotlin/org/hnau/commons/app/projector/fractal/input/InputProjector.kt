@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SCell
+import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SText
@@ -56,54 +57,40 @@ class InputProjector(
         ) {
 
             val errorMessage by errorMessage.collectAsState()
-            SCell { shape ->
-                UpdateFContext(
-                    update = {
-                        errorMessage.foldNullable(
-                            ifNull = {
-                                copy(
-                                    mood = mood,
-                                    saturation = Saturation.get(isFocused),
-                                )
-                            },
-                            ifNotNull = {
-                                copy(
-                                    mood = Mood.Error,
-                                    saturation = Saturation.Active,
-                                )
-                            }
-                        )
-                    }
+            UpdateFContext(
+                update = {
+                    errorMessage.foldNullable(
+                        ifNull = {
+                            copy(
+                                mood = mood,
+                                saturation = Saturation.get(isFocused),
+                            )
+                        },
+                        ifNotNull = {
+                            copy(
+                                mood = Mood.Error,
+                                saturation = Saturation.Active,
+                            )
+                        }
+                    )
+                }
+            ) {
+                SCellBox(
+                    onClick = onClick,
                 ) {
-                    val fContext = LocalFContext.current
-                    Box(
-                        modifier = Modifier
-                            .clip(shape)
-                            .clickableOption(
-                                onClick = onClick,
-                            )
-                            .background(
-                                color = fContext.containerColor,
-                            )
-                            .padding(
-                                fContext.distance.units.paddingValues.horizontal.medium,
-                            ),
-                        propagateMinConstraints = true,
-                    ) {
-                        SItem(
-                            startAccessory = icon?.let { iconNotNull ->
-                                { SIcon(iconNotNull) }
-                            },
-                            endAccessory = endAccessory,
-                            topAccessory = itemTitleWithContent.first?.let { title ->
-                                { SText(title) }
-                            },
-                            bottomAccessory = errorMessage?.let { message ->
-                                { SText(message) }
-                            },
-                            content = content,
-                        )
-                    }
+                    SItem(
+                        startAccessory = icon?.let { iconNotNull ->
+                            { SIcon(iconNotNull) }
+                        },
+                        endAccessory = endAccessory,
+                        topAccessory = itemTitleWithContent.first?.let { title ->
+                            { SText(title) }
+                        },
+                        bottomAccessory = errorMessage?.let { message ->
+                            { SText(message) }
+                        },
+                        content = content,
+                    )
                 }
             }
         }
