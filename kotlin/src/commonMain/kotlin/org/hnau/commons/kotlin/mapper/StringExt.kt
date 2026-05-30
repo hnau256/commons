@@ -5,6 +5,8 @@ import arrow.core.Option
 import arrow.core.Some
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.integer.BigInteger
+import kotlin.time.Instant
+import kotlin.time.Instant.Companion.parse
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -73,3 +75,11 @@ fun Mapper.Companion.stringSplit(
     direct = { string -> string.split(separator) },
     reverse = { strings -> strings.joinToString(separator = separator.toString()) },
 )
+
+private val stringToInstantMapper: Mapper<String, Instant> = Mapper(
+    direct = Instant::parse,
+    reverse = Instant::toString,
+)
+
+val Mapper.Companion.stringToInstant: Mapper<String, Instant>
+    get() = stringToInstantMapper
