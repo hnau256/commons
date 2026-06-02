@@ -28,46 +28,47 @@ fun SItem(
     topAccessory: @Composable (() -> Unit)? = null,
     endAccessory: @Composable (() -> Unit)? = null,
     bottomAccessory: @Composable (() -> Unit)? = null,
+    saturation: Saturation = Saturation.Active,
     content: @Composable () -> Unit,
 ) {
-    UpdateFContext(
-        saturation = Saturation.Active,
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
+        Accessory(
+            side = Side.Start,
+            accessory = startAccessory,
+            distanceOffset = 0,
+            saturation = saturation,
+        )
+        Line(
+            modifier = Modifier.weight(1f),
+            orientation = Orientation.Vertical,
         ) {
             Accessory(
-                side = Side.Start,
-                accessory = startAccessory,
-                distanceOffset = 0,
-                saturation = Saturation.Active,
+                side = Side.Top,
+                accessory = topAccessory,
+                distanceOffset = 1,
+                saturation = Saturation.Neutral,
             )
-            Line(
-                modifier = Modifier.weight(1f),
-                orientation = Orientation.Vertical,
+            UpdateFContext(
+                saturation = saturation,
             ) {
-                Accessory(
-                    side = Side.Top,
-                    accessory = topAccessory,
-                    distanceOffset = 1,
-                    saturation = Saturation.Neutral,
-                )
                 content()
-                Accessory(
-                    side = Side.Bottom,
-                    accessory = bottomAccessory,
-                    distanceOffset = 1,
-                    saturation = Saturation.Neutral,
-                )
             }
             Accessory(
-                side = Side.End,
-                accessory = endAccessory,
-                distanceOffset = 0,
-                saturation = Saturation.Active,
+                side = Side.Bottom,
+                accessory = bottomAccessory,
+                distanceOffset = 1,
+                saturation = Saturation.Neutral,
             )
         }
+        Accessory(
+            side = Side.End,
+            accessory = endAccessory,
+            distanceOffset = 0,
+            saturation = saturation,
+        )
     }
 }
 
