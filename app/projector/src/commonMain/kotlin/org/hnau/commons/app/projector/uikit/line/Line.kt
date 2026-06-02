@@ -176,7 +176,7 @@ private data class LineMeasurePolicy(
                 .castOrElse<LineParentData> { emptyLineParentData }
         }
 
-        val hasAtLeastOneWeight = measurables
+        val hasAtLeastOneWeight = useWeight && measurables
             .any { measurable -> measurable.let(extractLineParentData).weight > 0f }
 
         var totalWeight = 0f
@@ -280,7 +280,7 @@ private data class LineMeasurePolicy(
             },
             extractAlong = {
                 val (measurable, across) = this
-                measurable.minIntrinsicAlong(across)
+                measurable.maxIntrinsicAlong(across)
             },
             extractParentData = IntrinsicMeasurable::parentData,
         ).maxOfOrNull { (_, across) ->
