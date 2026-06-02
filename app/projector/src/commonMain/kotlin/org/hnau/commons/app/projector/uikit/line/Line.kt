@@ -263,19 +263,29 @@ private data class LineMeasurePolicy(
         max: Boolean,
         along: Int?,
     ): Int = with(orientation) {
-        if (measurables.isEmpty()) {
-            return@with 0
-        }
-        val alongWithoutSeparations = along
-            ?.let { alongNotNull -> alongNotNull - measurables.separationsSum() }
-            ?.coerceAtLeast(0)
-        val alongWithoutSeparationsNotNull = alongWithoutSeparations ?: Constraints.Infinity
-        measurables.maxOf { measurable ->
-            max.foldBoolean(
-                ifTrue = { measurable.maxIntrinsicAcross(alongWithoutSeparationsNotNull) },
-                ifFalse = { measurable.minIntrinsicAcross(alongWithoutSeparationsNotNull) },
-            )
-        }
+        measure(
+            useWeight = true,
+            measurables = measurables,
+            constraints = Constraints(
+                maxAlong = along,
+            ),
+            measure = { constraints ->
+                val along = constraints.maxAlong ?: Constraints.Infinity
+                val across = max.foldBoolean(
+                    ifTrue = { maxIntrinsicAcross(along) },
+                    ifFalse = { minIntrinsicAcross(along) },
+                )
+                val measurable = this
+                measurable to across
+            },
+            extractAlong = {
+                val (measurable, across) = this
+                measurable.minIntrinsicAlong(across)
+            },
+            extractParentData = IntrinsicMeasurable::parentData,
+        ).maxOfOrNull { (_, across) ->
+            across
+        } ?: 0
     }
 
     private fun IntrinsicMeasureScope.calcIntrinsic(
