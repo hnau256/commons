@@ -241,11 +241,9 @@ private data class LineMeasurePolicy(
         measure(
             useWeight = false,
             measurables = measurables,
-            constraints = with(orientation) {
-                Constraints(
-                    maxAcross = across,
-                )
-            },
+            constraints = Constraints(
+                maxAcross = across,
+            ),
             measure = { constraints ->
                 val across = constraints.maxAcross ?: Constraints.Infinity
                 max.foldBoolean(
@@ -269,15 +267,13 @@ private data class LineMeasurePolicy(
             return@with 0
         }
         val alongWithoutSeparations = along
-            .foldNullable(
-                ifNull = { Constraints.Infinity },
-                ifNotNull = { alongNotNull -> alongNotNull - measurables.separationsSum() },
-            )
-            .coerceAtLeast(0)
+            ?.let { alongNotNull -> alongNotNull - measurables.separationsSum() }
+            ?.coerceAtLeast(0)
+        val alongWithoutSeparationsNotNull = alongWithoutSeparations ?: Constraints.Infinity
         measurables.maxOf { measurable ->
             max.foldBoolean(
-                ifTrue = { measurable.maxIntrinsicAcross(alongWithoutSeparations) },
-                ifFalse = { measurable.minIntrinsicAcross(alongWithoutSeparations) },
+                ifTrue = { measurable.maxIntrinsicAcross(alongWithoutSeparationsNotNull) },
+                ifFalse = { measurable.minIntrinsicAcross(alongWithoutSeparationsNotNull) },
             )
         }
     }
