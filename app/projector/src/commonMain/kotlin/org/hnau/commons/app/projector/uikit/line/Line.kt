@@ -182,6 +182,7 @@ private data class LineMeasurePolicy(
         var totalWeight = 0f
         val separationsSum = measurables.separationsSum()
         var usedAlong = 0
+        var lastWeightedIndex: Int? = null
 
         val firstStepResult: List<Either<Float, O>> = measurables.mapIndexed { i, measurable ->
 
@@ -191,6 +192,7 @@ private data class LineMeasurePolicy(
             )
             if (weight > 0f) {
                 totalWeight += weight
+                lastWeightedIndex = i
                 return@mapIndexed weight.left()
             }
 
@@ -210,17 +212,23 @@ private data class LineMeasurePolicy(
         }
 
         val allWeighedElementsAlong = lazy(LazyThreadSafetyMode.NONE) {
-            constraints
-                .offset(along = -usedAlong - separationsSum)
-                .maxAlong
+            val available = constraints.maxAlong
                 ?: error("Unable use weight for infinity size")
+            (available - usedAlong - separationsSum).coerceAtLeast(0)
         }
+
+        var allocatedWeightedAlong = 0
 
         return firstStepResult.mapIndexed { i, resultOrWeight ->
             resultOrWeight.getOrElse { weight ->
-                val along = weight.takeIf { it > 0f }.foldNullable(
-                    ifNull = { 0 },
-                    ifNotNull = { (allWeighedElementsAlong.value * weight / totalWeight).toInt() }
+                val remaining = allWeighedElementsAlong.value
+                val along = (i == lastWeightedIndex).foldBoolean(
+                    ifTrue = { remaining - allocatedWeightedAlong },
+                    ifFalse = {
+                        val size = (remaining * weight / totalWeight).toInt()
+                        allocatedWeightedAlong += size
+                        size
+                    }
                 )
                 val measurable = measurables[i]
                 measurable.measure(
