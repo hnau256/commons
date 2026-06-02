@@ -28,12 +28,11 @@ import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.iconOrNull
 import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
-import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.foldNullable
 
 @Composable
-fun <E : CancelOrInProgress> SButton(
-    actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
+fun SButton(
+    actionOrElseOrDisabled: ActionOrElse<Unit, *>?,
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
     shape: Shape = LocalFContext.current.distance.units.shape,

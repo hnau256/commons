@@ -39,9 +39,10 @@ fun <I> ActionOrElse.Companion.instant(
 )
 
 fun ActionOrElse.Companion.instant(
-    instantAction: () -> Unit,
-): ActionOrElse<Unit, CancelOrInProgress.Cancel> =
-    ActionOrElse.instant { _ -> instantAction() }
+    instantAction: (() -> Unit)?,
+): ActionOrElse<Unit, CancelOrInProgress.Cancel>? = instantAction?.let { action ->
+    ActionOrElse.instant { _ -> action() }
+}
 
 val ActionOrElse.Companion.noAction: ActionOrElse<Unit, CancelOrInProgress.Cancel>?
     get() = null

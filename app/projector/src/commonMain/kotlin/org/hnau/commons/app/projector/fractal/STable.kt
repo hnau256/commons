@@ -1,6 +1,8 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
@@ -12,15 +14,20 @@ import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.contentColor
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.plus
+import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.uikit.table.Table
 import org.hnau.commons.app.projector.uikit.table.TableCorners
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.table.rememberCellShape
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.app.projector.utils.clickableOption
+import org.hnau.commons.app.projector.utils.orNoAction
+import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 
 @Composable
 fun STable(
@@ -76,17 +83,48 @@ fun TableScope.SCellBox(
     contentAlignment: Alignment = Alignment.Center,
     contentOrientation: Orientation = Orientation.Horizontal,
     propagateMinConstraints: Boolean = false,
-    onClick: (() -> Unit)? = null,
+    actionOrElseOrDisabled: ActionOrElse<Unit, *>? = null,
+    isSelected: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
     SCell(
         modifier = modifier,
     ) { shape ->
+
+        val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
+
+
+        val isInProgress = when (actionOrElseOrDisabled) {
+            is ActionOrElse.Else -> true
+            is ActionOrElse.Action, null -> false
+        }
+
         val fContext = LocalFContext.current
+        val units = fContext.distance.units
+        val foregroundColor = fContext.contentColor
         Box(
             modifier = Modifier
                 .clip(shape)
-                .clickableOption(onClick)
+                .clickable(
+                    enabled = actionOrCancel?.onClick != null,
+                    onClick = actionOrCancel?.onClick.orNoAction,
+                )
+                .then(
+                    when {
+                        isInProgress -> Modifier.fractalDashBorder(
+                            color = foregroundColor,
+                            shape = shape,
+                        )
+
+                        isSelected -> Modifier.border(
+                            width = units.borderWidth,
+                            color = foregroundColor,
+                            shape = shape,
+                        )
+
+                        else -> Modifier
+                    }
+                )
                 .background(fContext.containerColor)
                 .padding(fContext.distance.units.paddingValues[contentOrientation].medium),
             contentAlignment = contentAlignment,

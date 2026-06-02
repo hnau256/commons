@@ -1,28 +1,20 @@
 package org.hnau.commons.app.projector.fractal.input
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.SCell
 import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Drawable
-import org.hnau.commons.app.projector.utils.clickableOption
+import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.coroutines.instant
 import org.hnau.commons.kotlin.foldNullable
 
 class InputProjector(
@@ -76,7 +68,7 @@ class InputProjector(
                 }
             ) {
                 SCellBox(
-                    onClick = onClick,
+                    actionOrElseOrDisabled = ActionOrElse.instant(onClick),
                 ) {
                     SItem(
                         startAccessory = icon?.let { iconNotNull ->
