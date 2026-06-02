@@ -8,6 +8,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 import org.hnau.commons.gen.pipe.processor.data.Argument
+import org.hnau.commons.gen.pipe.processor.ext.commonType
 import org.hnau.commons.gen.pipe.processor.utils.PipeAnnotationClassInfo
 
 internal fun InterfaceToImplement.Companion.create(
@@ -57,7 +58,7 @@ private fun KSPropertyDeclaration.toProperty(
 ): Argument {
     val name = simpleName.asString()
     val type = type.resolve()
-    val previousPropertyWithSameType = alreadyCollectedProperties.firstOrNull { it.type == type }
+    val previousPropertyWithSameType = alreadyCollectedProperties.firstOrNull { commonType(it.type, type) != null }
     if (previousPropertyWithSameType != null) {
         error("Properties '${previousPropertyWithSameType.name}' and '$name' of interface ${interfaceClassInfo.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}")
     }
@@ -104,7 +105,7 @@ private fun KSValueParameter.toFactoryMethodArgument(
 ): Argument {
     val name = name!!.asString()
     val type = type.resolve()
-    val previousArgumentWithSameType = previousArguments.firstOrNull { it.type == type }
+    val previousArgumentWithSameType = previousArguments.firstOrNull { commonType(it.type, type) != null }
     if (previousArgumentWithSameType != null) {
         error("Arguments '${previousArgumentWithSameType.name}' and '$name' of factory method `$factoryMethodName` of interface ${declaration.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}")
     }

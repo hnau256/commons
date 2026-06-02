@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import org.hnau.commons.gen.pipe.processor.data.Argument
+import org.hnau.commons.gen.pipe.processor.ext.commonType
 import org.hnau.commons.gen.pipe.processor.ext.log
 import org.hnau.commons.gen.pipe.processor.ext.qualifiedNameOrThrow
 
@@ -120,7 +121,7 @@ private fun InterfaceToImplement.FactoryMethod.implement(
                 val key = dependentConstructorArgument.name
                 val factoryMethodParameter =
                     factoryMethodsParameters.firstOrNull { parameterInfo ->
-                        parameterInfo.type == dependentConstructorArgument.type
+                        commonType(parameterInfo.type, dependentConstructorArgument.type) == parameterInfo.type
                     }
                 if (factoryMethodParameter != null) {
                     factoryMethodsParameters.remove(factoryMethodParameter)
@@ -128,24 +129,33 @@ private fun InterfaceToImplement.FactoryMethod.implement(
                 }
                 val overrideConstructorProperty =
                     overrideConstructorProperties.firstOrNull { parameterInfo ->
-                        parameterInfo.type == dependentConstructorArgument.type
+                        commonType(parameterInfo.type, dependentConstructorArgument.type) == parameterInfo.type
                     }
                 if (overrideConstructorProperty != null) {
                     return@map key to overrideConstructorProperty.name
                 }
                 val existencePrivateConstructorProperty =
                     privateConstructorProperties.firstOrNull { parameterInfo ->
-                        parameterInfo.type == dependentConstructorArgument.type
+                        commonType(parameterInfo.type, dependentConstructorArgument.type) == parameterInfo.type
                     }
                 if (existencePrivateConstructorProperty != null) {
                     return@map key to existencePrivateConstructorProperty.name
                 }
-                privateConstructorProperties.add(
-                    Argument(
-                        name = key,
-                        type = dependentConstructorArgument.type,
+                val existingByName = privateConstructorProperties
+                    .firstOrNull { it.name == key }
+                if (existingByName != null) {
+                    val reconciled = commonType(existingByName.type, dependentConstructorArgument.type)
+                        ?: error("Conflicting types for constructor parameter '$key': ${existingByName.type.declaration.qualifiedName?.asString()} vs ${dependentConstructorArgument.type.declaration.qualifiedName?.asString()}")
+                    val index = privateConstructorProperties.indexOf(existingByName)
+                    privateConstructorProperties[index] = existingByName.copy(type = reconciled)
+                } else {
+                    privateConstructorProperties.add(
+                        Argument(
+                            name = key,
+                            type = dependentConstructorArgument.type,
+                        )
                     )
-                )
+                }
                 key to key
             }
     )
