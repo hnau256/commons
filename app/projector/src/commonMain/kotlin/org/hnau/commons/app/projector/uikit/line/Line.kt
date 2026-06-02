@@ -10,11 +10,9 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.constrain
 import androidx.compose.ui.unit.dp
 import arrow.core.Either
@@ -42,7 +40,6 @@ import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.castOrElse
 import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.it
 
 @Composable
@@ -53,19 +50,16 @@ fun Line(
     reverseOrdering: Boolean = false,
     content: @Composable LineScope.() -> Unit,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
     Layout(
         modifier = modifier,
         measurePolicy = remember(
             orientation,
             separation,
-            layoutDirection,
             reverseOrdering,
         ) {
             LineMeasurePolicy(
                 orientation = orientation,
                 separation = separation,
-                layoutDirection = layoutDirection,
                 reverseOrdering = reverseOrdering,
             )
         },
@@ -78,7 +72,6 @@ private val lineScopeImpl: LineScope = object : LineScope {}
 private data class LineMeasurePolicy(
     private val orientation: Orientation,
     private val separation: Dp,
-    private val layoutDirection: LayoutDirection,
     private val reverseOrdering: Boolean,
 ) : MeasurePolicy {
 
