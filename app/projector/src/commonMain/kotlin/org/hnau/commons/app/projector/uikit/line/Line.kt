@@ -154,7 +154,7 @@ private data class LineMeasurePolicy(
         constraints: Constraints,
         measure: I.(Constraints) -> O,
         crossinline extractParentData: I.() -> Any?,
-        extractAlong: O.() -> Int,
+        extractAlong: O.(Int) -> Int,
     ): List<O> {
 
         if (measurables.isEmpty()) {
@@ -198,7 +198,7 @@ private data class LineMeasurePolicy(
             }
 
             val measureResult = measurable.measure(childConstraints)
-            val measuredResultAlong = measureResult.extractAlong()
+            val measuredResultAlong = measureResult.extractAlong(i)
             usedAlong += measuredResultAlong
 
             measureResult.right()
@@ -252,7 +252,7 @@ private data class LineMeasurePolicy(
                     ifFalse = { minIntrinsicAlong(across) },
                 )
             },
-            extractAlong = ::it,
+            extractAlong = { this },
             extractParentData = IntrinsicMeasurable::parentData,
         )
             .sum()
@@ -272,21 +272,18 @@ private data class LineMeasurePolicy(
             ),
             measure = { constraints ->
                 val along = constraints.maxAlong ?: Constraints.Infinity
-                val across = max.foldBoolean(
+                max.foldBoolean(
                     ifTrue = { maxIntrinsicAcross(along) },
                     ifFalse = { minIntrinsicAcross(along) },
                 )
-                val measurable = this
-                measurable to across
             },
-            extractAlong = {
-                val (measurable, across) = this
-                measurable.maxIntrinsicAlong(across)
+            extractAlong = { index ->
+                measurables[index].maxIntrinsicAlong(this)
             },
             extractParentData = IntrinsicMeasurable::parentData,
-        ).maxOfOrNull { (_, across) ->
-            across
-        } ?: 0
+        )
+            .maxOrNull()
+            ?: 0
     }
 
     private fun IntrinsicMeasureScope.calcIntrinsic(
