@@ -111,7 +111,7 @@ internal object Versions {
         }
 
         val gen: List<AnnotationWithProcessor<Versioned<LibraryId>>> = listOf(
-            "pipe", "loggable", "sealup", "enumvalues",
+            "pipe", "loggable", "sealup", "enumvalues", "fold",
         ).map { type ->
             AnnotationWithProcessor(
                 annotation = "annotations",
