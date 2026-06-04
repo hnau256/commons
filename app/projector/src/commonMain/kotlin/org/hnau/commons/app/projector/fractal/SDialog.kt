@@ -15,17 +15,17 @@ import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.state.NullableStateContent
-import org.hnau.commons.app.projector.uikit.table.Table
-import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
 
 data class DialogContentInfo(
-    val content: @Composable TableScope.() -> Unit,
+    val content: @Composable STableScope.() -> Unit,
     val actions: @Composable STableActionsScope.() -> Unit,
     val cancel: (() -> Unit)?,
 )
@@ -61,7 +61,7 @@ fun SDialog(
                         )
                     }
                 ) {
-                    Table(
+                    STable(
                         orientation = Orientation.Vertical,
                     ) {
                         with(info) { content() }

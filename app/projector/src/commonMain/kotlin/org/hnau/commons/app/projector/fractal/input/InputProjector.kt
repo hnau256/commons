@@ -4,14 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SItem
+import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.table.SCellScope
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.uikit.table.TableScope
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.instant
@@ -25,7 +26,7 @@ class InputProjector(
     private val errorMessage: StateFlow<String?>,
 ) {
 
-    private val itemTitleWithContent: Pair<String?, @Composable TableScope.(ItemDrawer) -> Unit> =
+    private val itemTitleWithContent: Pair<String?, @Composable SCellScope.(ItemDrawer) -> Unit> =
         contentProjector.fold(
             ifWithTitle = { content ->
                 null to @Composable { itemDrawer: ItemDrawer ->
@@ -41,7 +42,7 @@ class InputProjector(
 
 
         @Composable
-        override fun TableScope.Item(
+        override fun SCellScope.Item(
             onClick: (() -> Unit)?,
             endAccessory: @Composable (() -> Unit)?,
             isFocused: Boolean,
@@ -67,7 +68,7 @@ class InputProjector(
                     )
                 }
             ) {
-                SCellBox(
+                SPanel(
                     actionOrElseOrDisabled = ActionOrElse.instant(onClick),
                 ) {
                     SItem(
@@ -89,7 +90,7 @@ class InputProjector(
     }
 
     @Composable
-    fun TableScope.Content() {
+    fun SCellScope.Content() {
         with(itemTitleWithContent) {
             second(itemDrawer)
         }

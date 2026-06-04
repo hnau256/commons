@@ -15,15 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
+import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
-import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.input.InputProjector
 import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
@@ -103,11 +103,13 @@ class FormProjector(
         scope = scope,
         model = model.savableDelegate,
         notSaved = {
-            SCellBox {
-                SText(
-                    text = "Config is not saved",
-                    type = SizeType.Large,
-                )
+            SCell {
+                SPanel {
+                    SText(
+                        text = "Config is not saved",
+                        type = SizeType.Large,
+                    )
+                }
             }
         },
         save = "Save",
@@ -129,11 +131,11 @@ class FormProjector(
                     STable(
                         orientation = Orientation.Vertical,
                     ) {
-                        with(flag) { Content() }
-                        with(decimal) { Content() }
-                        with(integer) { Content() }
-                        with(text) { Content() }
-                        with(variant) { Content() }
+                        SCell { with(flag) { Content() } }
+                        SCell { with(decimal) { Content() } }
+                        SCell { with(integer) { Content() } }
+                        SCell { with(text) { Content() } }
+                        SCell { with(variant) { Content() } }
                     }
                 },
                 actions = {

@@ -12,7 +12,7 @@ import org.hnau.commons.app.model.utils.ModelSavableDelegate
 import org.hnau.commons.app.projector.fractal.DialogContentInfo
 import org.hnau.commons.app.projector.fractal.SDialog
 import org.hnau.commons.app.projector.fractal.utils.Mood
-import org.hnau.commons.app.projector.uikit.table.TableScope
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
@@ -20,7 +20,7 @@ import org.hnau.commons.kotlin.coroutines.instant
 class ProjectorSavableDelegate<T>(
     scope: CoroutineScope,
     model: ModelSavableDelegate<T>,
-    notSaved: @Composable TableScope.() -> Unit,
+    notSaved: @Composable STableScope.() -> Unit,
     save: String,
     edit: String,
     reset: String,

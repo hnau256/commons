@@ -7,7 +7,7 @@ import org.hnau.commons.app.model.utils.ModelBlockBackDelegate
 import org.hnau.commons.app.projector.fractal.DialogContentInfo
 import org.hnau.commons.app.projector.fractal.SDialog
 import org.hnau.commons.app.projector.fractal.STableActionsScope
-import org.hnau.commons.app.projector.uikit.table.TableScope
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
@@ -16,7 +16,7 @@ class ProjectorBlockBackDelegate<B>(
     scope: CoroutineScope,
     model: ModelBlockBackDelegate<B>,
     closeInfo: TitleOrIcon,
-    content: @Composable TableScope.(blockReason: B) -> Unit,
+    content: @Composable STableScope.(blockReason: B) -> Unit,
     actions: @Composable STableActionsScope.(blockReason: B) -> Unit,
 ) {
 

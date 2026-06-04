@@ -6,12 +6,13 @@ import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.Subtable
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.weight
-import org.hnau.commons.app.projector.uikit.table.Subtable
-import org.hnau.commons.app.projector.uikit.table.TableScope
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.fold
@@ -87,7 +88,7 @@ fun SActions(
 }
 
 @Composable
-fun TableScope.SActions(
+fun STableScope.SActions(
     actions: @Composable STableActionsScope.() -> Unit,
 ) {
     Subtable(
@@ -99,14 +100,14 @@ fun TableScope.SActions(
 }
 
 data class STableActionsScope(
-    private val tableScope: TableScope,
-): LineScope by tableScope {
+    private val tableScope: STableScope,
+) : LineScope by tableScope {
 
     companion object {
 
         @Composable
         fun remember(
-            tableScope: TableScope,
+            tableScope: STableScope,
         ): STableActionsScope = rememberInCompose(tableScope) {
             STableActionsScope(
                 tableScope = tableScope,
@@ -126,7 +127,7 @@ data class STableActionsScope(
         ) {
             tableScope.SCell(
                 modifier = modifier,
-            ) { shape ->
+            ) {
                 SButton(
                     shape = shape,
                     actionOrElseOrDisabled = actionOrElseOrDisabled,

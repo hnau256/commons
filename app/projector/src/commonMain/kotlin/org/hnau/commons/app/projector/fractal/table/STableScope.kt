@@ -1,23 +1,20 @@
-package org.hnau.commons.app.projector.uikit.table
+package org.hnau.commons.app.projector.fractal.table
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.utils.Orientation
 
-interface TableScope : LineScope {
+interface STableScope : LineScope {
 
     val orientation: Orientation
 
-    val corners: TableCorners.Provider
-
-    val separation: Dp
+    val corners: STableCorners.Provider
 
     @Composable
-    fun Cell(
+    fun SCell(
         modifier: Modifier = Modifier,
-        content: @Composable TableCorners.Provider.() -> Unit,
+        content: @Composable SCellScope.() -> Unit,
     )
 
     companion object

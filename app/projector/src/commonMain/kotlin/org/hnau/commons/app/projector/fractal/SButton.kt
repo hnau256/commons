@@ -37,7 +37,7 @@ fun SButton(
     modifier: Modifier = Modifier,
     shape: Shape = LocalFContext.current.distance.units.shape,
     isSelected: Boolean = false,
-) {
+) { //TODO use SPanel
     UpdateFContext(
         update = {
             copy(

@@ -1,19 +1,19 @@
-package org.hnau.commons.app.projector.uikit.table
+package org.hnau.commons.app.projector.fractal.table
 
 import org.hnau.commons.app.projector.utils.Orientation
 
 @JvmInline
-value class TableCorners private constructor(
+value class STableCorners private constructor(
     private val packed: Byte,
 ) {
 
     fun interface Provider {
 
-        fun getTableCorners(): TableCorners
+        fun getTableCorners(): STableCorners
 
         companion object {
 
-            val opened = Provider { TableCorners.opened }
+            val opened = Provider { STableCorners.opened }
         }
     }
 
@@ -46,7 +46,7 @@ value class TableCorners private constructor(
         closeStartBottom: Boolean,
         closeEndTop: Boolean,
         closeEndBottom: Boolean,
-    ): TableCorners = TableCorners(
+    ): STableCorners = STableCorners(
         startTopIsOpened = startTopIsOpened && !closeStartTop,
         startBottomIsOpened = startBottomIsOpened && !closeStartBottom,
         endTopIsOpened = endTopIsOpened && !closeEndTop,
@@ -57,7 +57,7 @@ value class TableCorners private constructor(
         orientation: Orientation,
         startOrTop: Boolean,
         endOrBottom: Boolean,
-    ): TableCorners = closePartially(
+    ): STableCorners = closePartially(
         closeStartTop = startOrTop,
         closeStartBottom = when (orientation) {
             Orientation.Vertical -> endOrBottom
@@ -89,14 +89,14 @@ value class TableCorners private constructor(
         private const val END_TOP = 0b0100
         private const val END_BOTTOM = 0b1000
 
-        val opened: TableCorners = TableCorners(
+        val opened: STableCorners = STableCorners(
             startTopIsOpened = true,
             startBottomIsOpened = true,
             endTopIsOpened = true,
             endBottomIsOpened = true,
         )
 
-        val closed: TableCorners = TableCorners(
+        val closed: STableCorners = STableCorners(
             startTopIsOpened = false,
             startBottomIsOpened = false,
             endTopIsOpened = false,

@@ -1,6 +1,5 @@
-package org.hnau.commons.app.projector.uikit.table
+package org.hnau.commons.app.projector.fractal.table
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -10,22 +9,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import org.hnau.commons.app.projector.uikit.utils.Dimens
-import org.hnau.commons.app.projector.utils.rememberLet
 import org.hnau.commons.kotlin.foldBoolean
 
-@Composable
-fun TableCorners.Provider.rememberCellShape(
-    cornerRadii: ClosedRange<Dp> = Dimens.cornerRadiusMin..Dimens.cornerRadius,
-): Shape = rememberLet(cornerRadii) { tableCorners ->
-    CellShape(
-        tableCorners = tableCorners,
-        cornerRadii = cornerRadii,
-    )
-}
-
-private class CellShape(
-    private val tableCorners: TableCorners.Provider,
+internal class SCellShape(
+    private val tableCorners: STableCorners.Provider,
     private val cornerRadii: ClosedRange<Dp>,
 ) : Shape {
 

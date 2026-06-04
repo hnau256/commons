@@ -19,19 +19,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SActions
-import org.hnau.commons.app.projector.fractal.SCellBox
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
+import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
-import org.hnau.commons.app.projector.fractal.STable
 import org.hnau.commons.app.projector.fractal.STabs
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.line.weight
-import org.hnau.commons.app.projector.uikit.table.Subtable
+import org.hnau.commons.app.projector.fractal.table.Subtable
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -105,16 +105,16 @@ class ActionProjector(
                                 STable(
                                     orientation = Orientation.Vertical,
                                 ) {
-                                    SCellBox(
-                                        contentAlignment = Alignment.CenterStart,
-                                    ) {
-                                        UpdateFContext(
-                                            saturation = Saturation.Active,
-                                        ) {
-                                            SText(
-                                                text = "Config",
-                                                type = SizeType.Large,
-                                            )
+                                    SCell {
+                                        SPanel {
+                                            UpdateFContext(
+                                                saturation = Saturation.Active,
+                                            ) {
+                                                SText(
+                                                    text = "Config",
+                                                    type = SizeType.Large,
+                                                )
+                                            }
                                         }
                                     }
                                     Subtable {
@@ -123,10 +123,10 @@ class ActionProjector(
                                             .value
                                         Subtable {
                                             rows.forEach { (title) ->
-                                                SCellBox(
-                                                    contentAlignment = Alignment.CenterStart,
-                                                ) {
-                                                    SText(title)
+                                                SCell {
+                                                    SPanel {
+                                                        SText(title)
+                                                    }
                                                 }
                                             }
                                         }
@@ -134,13 +134,13 @@ class ActionProjector(
                                             modifier = Modifier.weight(1f),
                                         ) {
                                             rows.forEach { (_, value) ->
-                                                SCellBox(
-                                                    contentAlignment = Alignment.CenterEnd,
-                                                ) {
-                                                    UpdateFContext(
-                                                        saturation = Saturation.Active,
-                                                    ) {
-                                                        SText(value)
+                                                SCell {
+                                                    SPanel {
+                                                        UpdateFContext(
+                                                            saturation = Saturation.Active,
+                                                        ) {
+                                                            SText(value)
+                                                        }
                                                     }
                                                 }
                                             }

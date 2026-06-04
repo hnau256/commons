@@ -60,19 +60,7 @@ class RootProjector(
                 .run { copy(distance = distance + 1) }
                 .containerColor,
         ) { contentPadding ->
-            Box {
-                Line(
-                    modifier = Modifier.fillMaxWidth(),
-                    orientation = Orientation.Horizontal,
-                ) {
-                    Text(
-                        text = "qwerty ".repeat(10),
-                        modifier = Modifier.weight(1f),
-                    )
-                    Text("QWERTY")
-                }
-            }
-            /*stack
+            stack
                 .collectAsState()
                 .value
                 .LoadableContent(
@@ -81,7 +69,7 @@ class RootProjector(
                     stack.Content(
                         contentPadding = contentPadding
                     )
-                }*/
+                }
         }
     }
 }
