@@ -1,7 +1,9 @@
 package org.hnau.commons.app.model.theme
 
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
+import org.hnau.commons.gen.fold.annotations.Fold
 
+@Fold
 @EnumValues
 enum class ThemeBrightness {
     Light,
@@ -9,14 +11,6 @@ enum class ThemeBrightness {
     ;
 
     companion object
-}
-
-inline fun <R> ThemeBrightness.fold(
-    ifLight: () -> R,
-    ifDark: () -> R,
-): R = when (this) {
-    ThemeBrightness.Light -> ifLight()
-    ThemeBrightness.Dark -> ifDark()
 }
 
 val ThemeBrightness.isDark: Boolean

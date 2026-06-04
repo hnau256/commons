@@ -1,7 +1,9 @@
 package org.hnau.commons.app.projector.utils
 
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
+import org.hnau.commons.gen.fold.annotations.Fold
 
+@Fold
 @EnumValues
 enum class Side {
     Start, Top, End, Bottom;
@@ -24,15 +26,3 @@ val Side.opposite: Side
         ifEnd = { Side.Start },
         ifBottom = { Side.Top }
     )
-
-inline fun <R> Side.fold(
-    ifStart: () -> R,
-    ifTop: () -> R,
-    ifEnd: () -> R,
-    ifBottom: () -> R,
-): R = when (this) {
-    Side.Start -> ifStart()
-    Side.Top -> ifTop()
-    Side.End -> ifEnd()
-    Side.Bottom -> ifBottom()
-}

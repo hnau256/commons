@@ -1,7 +1,9 @@
 package org.hnau.commons.app.projector.utils
 
+import org.hnau.commons.gen.fold.annotations.Fold
 import org.hnau.commons.kotlin.it
 
+@Fold
 sealed interface TitleOrIcon {
 
     data class Title(
@@ -16,16 +18,6 @@ sealed interface TitleOrIcon {
         val title: String,
         val icon: Drawable,
     ) : TitleOrIcon
-}
-
-inline fun <R> TitleOrIcon.fold(
-    ifTitle: (title: String) -> R,
-    ifIcon: (icon: Drawable) -> R,
-    ifBoth: (title: String, icon: Drawable) -> R,
-): R = when (this) {
-    is TitleOrIcon.Title -> ifTitle(title)
-    is TitleOrIcon.Icon -> ifIcon(icon)
-    is TitleOrIcon.Both -> ifBoth(title, icon)
 }
 
 val TitleOrIcon.titleOrNull: String?
