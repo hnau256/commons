@@ -1,7 +1,9 @@
 package org.hnau.commons.app.projector.utils
 
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
+import org.hnau.commons.gen.fold.annotations.Fold
 
+@Fold
 @EnumValues
 enum class Orientation {
     Horizontal, Vertical;
@@ -14,11 +16,3 @@ val Orientation.opposite: Orientation
         ifHorizontal = { Orientation.Vertical },
         ifVertical = { Orientation.Horizontal },
     )
-
-inline fun <R> Orientation.fold(
-    ifHorizontal: () -> R,
-    ifVertical: () -> R,
-): R = when (this) {
-    Orientation.Horizontal -> ifHorizontal()
-    Orientation.Vertical -> ifVertical()
-}

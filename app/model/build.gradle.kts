@@ -12,6 +12,7 @@ kotlin {
                 implementation(hnau.kotlinx.io)
                 implementation(hnau.kotlinx.serialization.json)
                 implementation(project(":gen:enumvalues:annotations"))
+                implementation(project(":gen:fold:annotations"))
             }
         }
     }
@@ -19,4 +20,5 @@ kotlin {
 
 dependencies {
     kspCommonMainMetadata(project(":gen:enumvalues:processor"))
+    kspCommonMainMetadata(project(":gen:fold:processor"))
 }

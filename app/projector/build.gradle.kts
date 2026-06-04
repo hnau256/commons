@@ -11,6 +11,7 @@ kotlin {
                 implementation(project(":kotlin"))
                 implementation(project(":app:model"))
                 implementation(project(":gen:enumvalues:annotations"))
+                implementation(project(":gen:fold:annotations"))
             }
         }
     }
@@ -18,4 +19,5 @@ kotlin {
 
 dependencies {
     kspCommonMainMetadata(project(":gen:enumvalues:processor"))
+    kspCommonMainMetadata(project(":gen:fold:processor"))
 }
