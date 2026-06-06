@@ -12,9 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
@@ -43,8 +44,10 @@ fun SScreen(
         propagateMinConstraints = true,
     ) {
         Overcompose(
-            contentPadding = contentPadding + fContext.distance.units.paddingValues.vertical.medium.copy(top = TopBarDefaults.separationTop),
-            top = {contentPadding ->
+            contentPadding = contentPadding + LocalDistance.current.units.paddingValues.vertical.medium.copy(
+                top = TopBarDefaults.separationTop
+            ),
+            top = { contentPadding ->
                 Line(
                     orientation = Orientation.Horizontal,
                     modifier = Modifier
@@ -52,16 +55,15 @@ fun SScreen(
                         .padding(contentPadding)
                         .padding(
                             start = LocalBackButtonWidth.current,
-                            bottom = LocalFContext.current.distance.units.padding.across.medium,
+                            bottom = LocalDistance.current.units.padding.across.medium,
                         )
                         .height(TopBarDefaults.height),
                 ) {
-                    UpdateFContext(
+                    FContext(
                         update = {
                             copy(
-                                mood = Mood.Primary,
-                                saturation = Saturation.Active,
-                            ).overlay(Contrast.content)
+                                mood = Mood.Active.default,
+                            )
                         }
                     ) {
                         Box(

@@ -1,4 +1,4 @@
-package org.hnau.commons.app.projector.fractal.utils
+package org.hnau.commons.app.projector.fractal.distance
 
 @JvmInline
 value class Distance(

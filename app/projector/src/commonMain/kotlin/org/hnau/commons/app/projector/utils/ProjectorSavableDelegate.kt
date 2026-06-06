@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.utils.ModelSavableDelegate
 import org.hnau.commons.app.projector.fractal.DialogContentInfo
 import org.hnau.commons.app.projector.fractal.SDialog
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.table.STableScope
+import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 import org.hnau.commons.kotlin.coroutines.instant
@@ -42,25 +44,32 @@ class ProjectorSavableDelegate<T>(
                                     title = save,
                                     icon = Drawable.Vector(Icons.Default.Save),
                                 ),
-                                mood = Mood.Primary,
+                                importance = Importance.Primary,
                             )
                         }
                         Action(
-                            mood = Mood.Tertiary,
+                            importance = Importance.Tertiary,
                             actionOrElseOrDisabled = ActionOrElse.instant(cancel),
                             titleOrIcon = TitleOrIcon.Both(
                                 title = edit,
                                 icon = Drawable.Vector(Icons.Default.Edit),
                             ),
                         )
-                        Action(
-                            mood = Mood.Error,
-                            actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
-                            titleOrIcon = TitleOrIcon.Both(
-                                title = reset,
-                                icon = Drawable.Vector(Icons.Default.Clear),
-                            ),
-                        )
+                        FContext(
+                            update = {
+                                copy(
+                                    mood = Mood.Error,
+                                )
+                            }
+                        ) {
+                            Action(
+                                actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
+                                titleOrIcon = TitleOrIcon.Both(
+                                    title = reset,
+                                    icon = Drawable.Vector(Icons.Default.Clear),
+                                ),
+                            )
+                        }
                     }
                 )
             }

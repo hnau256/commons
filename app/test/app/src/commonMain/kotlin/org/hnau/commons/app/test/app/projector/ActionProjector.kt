@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -26,12 +25,13 @@ import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.STabs
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.fractal.table.Subtable
+import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -109,8 +109,12 @@ class ActionProjector(
                                         SPanel(
                                             shape = shape,
                                         ) {
-                                            UpdateFContext(
-                                                saturation = Saturation.Active,
+                                            FContext(
+                                                update = {
+                                                    copy(
+                                                        mood = Mood.Active.default,
+                                                    )
+                                                },
                                             ) {
                                                 SText(
                                                     text = "Config",
@@ -142,8 +146,12 @@ class ActionProjector(
                                                     SPanel(
                                                         shape = shape,
                                                     ) {
-                                                        UpdateFContext(
-                                                            saturation = Saturation.Active,
+                                                        FContext(
+                                                            update = {
+                                                                copy(
+                                                                    mood = Mood.Active.default,
+                                                                )
+                                                            },
                                                         ) {
                                                             SText(value)
                                                         }

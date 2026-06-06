@@ -6,7 +6,7 @@ import org.hnau.commons.app.model.theme.color.Chroma
 import org.hnau.commons.app.model.theme.color.Hue
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.themeBrightness
 
@@ -33,7 +33,7 @@ fun SwitchHue(
     MaterialTheme(
         colorScheme = palettesWithColorScheme.colorScheme,
     ) {
-        UpdateFContext(
+        FContext(
             update = {
                 copy(
                     palettes = palettesWithColorScheme.palettes,

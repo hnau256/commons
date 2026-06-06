@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
@@ -22,7 +23,7 @@ fun STable(
     Line(
         modifier = modifier,
         orientation = orientation,
-        separation = LocalFContext.current.distance.units.borderWidth,
+        separation = LocalDistance.current.units.borderWidth,
         reverseOrdering = reverseOrdering,
     ) {
         val lineScope: LineScope = this

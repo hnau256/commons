@@ -3,13 +3,12 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
-import org.hnau.commons.app.projector.fractal.table.Subtable
 import org.hnau.commons.app.projector.fractal.table.STableScope
-import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.fractal.table.Subtable
+import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.weight
@@ -25,8 +24,8 @@ fun SActions(
     modifier: Modifier = Modifier,
     block: @Composable SActionsScope.() -> Unit,
 ) {
-    val fContext = LocalFContext.current
-    val orientation = when (fContext.distance.distance) {
+    val distance = LocalDistance.current
+    val orientation = when (distance.distance) {
         0 -> Orientation.Vertical
         else -> Orientation.Horizontal
     }
@@ -34,7 +33,7 @@ fun SActions(
         modifier = modifier,
         orientation = orientation,
         reverseOrdering = true,
-        separation = fContext.distance.units.padding.along.small,
+        separation = distance.units.padding.along.small,
     ) {
         SActionsScopeImpl.block()
         orientation.fold(
@@ -50,7 +49,7 @@ interface SActionsScope {
     fun <E : CancelOrInProgress> Action(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
-        mood: Mood = Mood.Primary,
+        importance: Importance = Importance.default,
     )
 }
 
@@ -60,16 +59,13 @@ private data object SActionsScopeImpl : SActionsScope {
     override fun <E : CancelOrInProgress> Action(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
-        mood: Mood
+        importance: Importance,
     ) {
-        UpdateFContext(
-            mood = mood,
-        ) {
-            SButton(
-                actionOrElseOrDisabled = actionOrElseOrDisabled,
-                titleOrIcon = titleOrIcon,
-            )
-        }
+        SButton(
+            actionOrElseOrDisabled = actionOrElseOrDisabled,
+            titleOrIcon = titleOrIcon,
+            importance = importance,
+        )
     }
 }
 
@@ -120,20 +116,17 @@ data class STableActionsScope(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
         modifier: Modifier = Modifier,
-        mood: Mood = Mood.Primary,
+        importance: Importance = Importance.default,
     ) {
-        UpdateFContext(
-            mood = mood,
+        tableScope.SCell(
+            modifier = modifier,
         ) {
-            tableScope.SCell(
-                modifier = modifier,
-            ) {
-                SButton(
-                    shape = shape,
-                    actionOrElseOrDisabled = actionOrElseOrDisabled,
-                    titleOrIcon = titleOrIcon,
-                )
-            }
+            SButton(
+                shape = shape,
+                actionOrElseOrDisabled = actionOrElseOrDisabled,
+                titleOrIcon = titleOrIcon,
+                importance = importance,
+            )
         }
     }
 }

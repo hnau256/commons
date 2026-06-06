@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.line.LinePosition
 import org.hnau.commons.app.projector.uikit.line.LineScope
@@ -17,8 +17,6 @@ import org.hnau.commons.app.projector.fractal.table.SCellScope
 import org.hnau.commons.app.projector.fractal.table.SCellShape
 import org.hnau.commons.app.projector.fractal.table.STableCorners
 import org.hnau.commons.app.projector.fractal.table.STableScope
-import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 
@@ -41,7 +39,7 @@ internal class STableScopeImpl(
                 )
             )
         }
-        val cornerRadius = LocalFContext.current.distance.units.cornerRadius
+        val cornerRadius = LocalDistance.current.units.cornerRadius
         val sCellScope by remember {
             derivedStateOf {
                 object : SCellScope {

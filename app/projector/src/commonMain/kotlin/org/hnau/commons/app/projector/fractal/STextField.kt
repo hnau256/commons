@@ -37,14 +37,16 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.kotlin.ifTrue
 
 @Composable
 fun STextField(
@@ -61,6 +63,7 @@ fun STextField(
     interactionSource: MutableInteractionSource? = null,
     outputTransformation: OutputTransformation? = null,
     scrollState: ScrollState = rememberScrollState(),
+    importanceToActivate: Importance? = Importance.default,
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
 
@@ -81,14 +84,16 @@ fun STextField(
     }
 
     val fContext = LocalFContext.current
-    val units = fContext.distance.units
+    val units = LocalDistance.current.units
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
 
     val overlayFContext = fContext.copy(
-        saturation = Saturation.get(isFocused),
-    ).overlay(Contrast.containerLow)
+        mood = fContext.mood.activateIfNeed(
+            importance = isFocused.ifTrue { importanceToActivate },
+        ),
+    ).containerOverlay()
     val contentFContext = overlayFContext.overlay(Contrast.content)
 
     BasicTextField(
@@ -136,21 +141,21 @@ private data class Decorator(
     override fun Decoration(
         innerTextField: @Composable (() -> Unit),
     ) {
-        UpdateFContext(
-            update = { overlay(Contrast.containerLow) },
+        FContext(
+            update = { containerOverlay() },
         ) {
             Box(
                 modifier = Modifier
                     .background(
                         color = color,
-                        shape = distance.units.shape
+                        shape = LocalDistance.current.units.shape
                     )
                     .padding(
-                        paddingValues = distance.units.paddingValues.vertical.small,
+                        paddingValues = LocalDistance.current.units.paddingValues.vertical.small,
                     ),
                 propagateMinConstraints = true,
             ) {
-                UpdateFContext(
+                FContext(
                     update = { overlay(Contrast.content) },
                 ) {
                     innerTextField()

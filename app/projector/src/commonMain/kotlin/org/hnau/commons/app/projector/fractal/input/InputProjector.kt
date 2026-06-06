@@ -8,20 +8,23 @@ import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.FContext
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.table.SCellScope
+import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
-import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.instant
 import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.ifTrue
 
 class InputProjector(
     private val title: String,
     private val icon: Drawable?,
     contentProjector: InputContentProjector,
-    mood: Mood,
+    importanceToActivate: Importance? = Importance.default,
     private val errorMessage: StateFlow<String?>,
 ) {
 
@@ -49,7 +52,7 @@ class InputProjector(
         ) {
 
             val errorMessage by errorMessage.collectAsState()
-            UpdateFContext(
+            FContext(
                 update = {
                     errorMessage.foldNullable(
                         ifNull = {
@@ -65,24 +68,34 @@ class InputProjector(
                     )
                 }
             ) {
-                SPanel(
-                    actionOrElseOrDisabled = ActionOrElse.instant(onClick),
-                    shape = shape,
-                    saturation = Saturation.get(isFocused),
+                FContext(
+                    update = {
+                        copy(
+                            mood = mood.activateIfNeed(
+                                importance = isFocused.ifTrue { importanceToActivate },
+                            ),
+                        )
+                    }
                 ) {
-                    SItem(
-                        startAccessory = icon?.let { iconNotNull ->
-                            { SIcon(iconNotNull) }
-                        },
-                        endAccessory = endAccessory,
-                        topAccessory = itemTitleWithContent.first?.let { title ->
-                            { SText(title) }
-                        },
-                        bottomAccessory = errorMessage?.let { message ->
-                            { SText(message) }
-                        },
-                        content = content,
-                    )
+                    SPanel(
+                        actionOrElseOrDisabled = ActionOrElse.instant(onClick),
+                        shape = shape,
+                        importanceToActivate = null,
+                    ) {
+                        SItem(
+                            startAccessory = icon?.let { iconNotNull ->
+                                { SIcon(iconNotNull) }
+                            },
+                            endAccessory = endAccessory,
+                            topAccessory = itemTitleWithContent.first?.let { title ->
+                                { SText(title) }
+                            },
+                            bottomAccessory = errorMessage?.let { message ->
+                                { SText(message) }
+                            },
+                            content = content,
+                        )
+                    }
                 }
             }
         }

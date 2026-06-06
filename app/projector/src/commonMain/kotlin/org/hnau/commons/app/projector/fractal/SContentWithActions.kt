@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 
 @Composable
@@ -28,7 +28,7 @@ fun SContentWithActions(
             content()
         }
         Spacer(
-            Modifier.height(LocalFContext.current.distance.units.padding.along.medium)
+            Modifier.height(LocalDistance.current.units.padding.along.medium)
         )
         SActions(
             modifier = Modifier.fillMaxWidth(),

@@ -6,7 +6,8 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.utils.plus
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
+import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
 import org.hnau.commons.app.projector.uikit.state.LoadableContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
@@ -48,9 +49,7 @@ class RootProjector(
         BackButtonHost(
             contentPadding = contentPadding,
             goBackHandler = model.goBackHandler,
-            backButtonBackgroundColor = LocalFContext.current
-                .run { copy(distance = distance + 1) }
-                .color,
+            backButtonBackgroundColor = LocalFContext.current.containerOverlay().color,
         ) { contentPadding ->
             stack
                 .collectAsState()

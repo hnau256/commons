@@ -15,10 +15,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.Drawable
@@ -30,26 +32,30 @@ fun SIcon(
     drawable: Drawable,
     modifier: Modifier = Modifier,
 ) {
-    drawable.fold(
-        ifPainter = { painter ->
-            PainterIcon(
-                painter = painter,
-                modifier = modifier,
-            )
-        },
-        ifVector = { vector ->
-            PainterIcon(
-                painter = rememberVectorPainter(vector),
-                modifier = modifier,
-            )
-        },
-        ifText = { text ->
-            TextIcon(
-                text = text,
-                modifier = modifier,
-            )
-        }
-    )
+    FContext(
+        update = { contentOverlay() }
+    ) {
+        drawable.fold(
+            ifPainter = { painter ->
+                PainterIcon(
+                    painter = painter,
+                    modifier = modifier,
+                )
+            },
+            ifVector = { vector ->
+                PainterIcon(
+                    painter = rememberVectorPainter(vector),
+                    modifier = modifier,
+                )
+            },
+            ifText = { text ->
+                TextIcon(
+                    text = text,
+                    modifier = modifier,
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -60,7 +66,7 @@ private fun PainterIcon(
     val fContext = LocalFContext.current
     Box(
         modifier = modifier
-            .size(fContext.distance.units.iconSize)
+            .size(LocalDistance.current.units.iconSize)
             .toolingGraphicsLayer()
             .paint(
                 painter = painter,
@@ -77,7 +83,7 @@ private fun TextIcon(
     modifier: Modifier = Modifier,
 ) {
     val fContext = LocalFContext.current
-    val units = fContext.distance.units
+    val units = LocalDistance.current.units
     Box(
         modifier = modifier
             .background(
@@ -87,13 +93,11 @@ private fun TextIcon(
             .padding(units.paddingValues.horizontal.extraSmall),
         contentAlignment = Alignment.Center,
     ) {
-        UpdateFContext(
-            update = {
-                overlay(contrast = Contrast.content)
-            }
+        FContext(
+            update = { contentOverlay() }
         ) {
             val fContext = LocalFContext.current
-            val units = fContext.distance.units
+            val units = LocalDistance.current.units
             BasicText(
                 text = text.rememberRun { extractNChars(2) },
                 maxLines = 1,

@@ -2,7 +2,7 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
@@ -16,7 +16,7 @@ fun SElements(
     Line(
         modifier = modifier,//.verticalScroll(rememberScrollState()),
         orientation = Orientation.Vertical,
-        separation = LocalFContext.current.distance.units.padding.along.medium,
+        separation = LocalDistance.current.units.padding.along.medium,
         content = content,
     )
 }

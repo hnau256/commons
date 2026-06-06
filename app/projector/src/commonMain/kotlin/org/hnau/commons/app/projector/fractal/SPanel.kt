@@ -9,19 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
+import org.hnau.commons.app.projector.fractal.context.contentOverlay
+import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.containerLow
-import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
-import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.orNoAction
@@ -31,42 +29,35 @@ import org.hnau.commons.kotlin.coroutines.ActionOrElse
 fun SPanel(
     modifier: Modifier = Modifier,
     actionOrElseOrDisabled: ActionOrElse<Unit, *>? = null,
-    saturation: Saturation = Saturation.get(actionOrElseOrDisabled != null),
     isSelected: Boolean = false,
     contentOrientation: Orientation = Orientation.Vertical,
-    shape: Shape = LocalFContext.current.distance.units.shape,
-    contrast: BaseWithDecay<Contrast> = Contrast.containerLow,
+    shape: Shape = LocalDistance.current.units.shape,
+    importanceToActivate: Importance? = Importance.default,
     content: @Composable () -> Unit,
 ) {
-    UpdateFContext(
+    FContext(
         update = {
             copy(
-                saturation = saturation,
-            ).overlay(
-                contrast = contrast,
-            )
+                mood = mood.activateIfNeed(
+                    importance = actionOrElseOrDisabled?.let { importanceToActivate },
+                ),
+            ).containerOverlay()
         }
     ) {
 
-        val backgroundColor = color
+        val backgroundColor = LocalFContext.current.color
 
-        UpdateFContext(
-            update = {
-                copy(
-                    distance = distance + 1,
-                ).overlay(
-                    contrast = Contrast.content,
-                )
-            }
-        ) {
+        DistanceOffset {
 
-            val units = distance.units
+            val units = LocalDistance.current.units
 
             val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
             val isInProgress = when (actionOrElseOrDisabled) {
                 is ActionOrElse.Else -> true
                 is ActionOrElse.Action, null -> false
             }
+
+            val foregroundColor = LocalFContext.current.contentOverlay().color
 
             Box(
                 propagateMinConstraints = true,
@@ -80,13 +71,13 @@ fun SPanel(
                     .then(
                         when {
                             isInProgress -> Modifier.fractalDashBorder(
-                                color = color,
+                                color = foregroundColor,
                                 shape = shape,
                             )
 
                             isSelected -> Modifier.border(
                                 width = units.borderWidth,
-                                color = color,
+                                color = foregroundColor,
                                 shape = shape,
                             )
 
@@ -94,10 +85,13 @@ fun SPanel(
                         }
                     )
             ) {
-                val contentPadding =
-                    LocalFContext.current.distance.units.paddingValues[contentOrientation].medium
                 Box(
-                    modifier = Modifier.padding(contentPadding),
+                    modifier = Modifier.padding(
+                        paddingValues = LocalDistance.current
+                            .units
+                            .paddingValues[contentOrientation]
+                            .medium
+                    ),
                 ) {
                     content()
                 }

@@ -25,15 +25,16 @@ import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
+import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.Mood
-import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -48,31 +49,27 @@ fun <T> STabs(
     selection: T,
     onClick: ((T) -> Unit)?,
     modifier: Modifier = Modifier,
-    mood: Mood = Mood.Primary,
+    importanceToActivate: Importance? = Importance.default,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
-    itemPaddingValues: PaddingValues = LocalFContext.current.distance.units.paddingValues.horizontal.small,
+    itemPaddingValues: PaddingValues = LocalDistance.current.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
 ) {
-    UpdateFContext(
-        update = {
-            overlay(Contrast.containerLow).copy(
-                saturation = Saturation.Neutral,
-            )
-        },
+    FContext(
+        update = { containerOverlay() },
     ) {
+        val distance = LocalDistance.current
         val itemMargin = distance.units.borderWidth
         val cornerRadius = distance.units.cornerRadius
         val itemCornerRadius = cornerRadius - itemMargin
         val density = LocalDensity.current
 
-        val selectedFContext = rememberRun {
+        val selectedFContext = LocalFContext.current.rememberRun {
             copy(
-                saturation = Saturation.get(onClick != null),
-                mood = mood,
-            ).overlay(
-                contrast = Contrast.container,
+                mood = mood.activateIfNeed(
+                    importance = onClick?.let { importanceToActivate },
+                ),
             )
-        }
+        }.contentOverlay()
 
         val childrenPositions: List<Mutable<Rect>> = remember(items) {
             items.map { Mutable(Rect.Zero) }
@@ -85,6 +82,7 @@ fun <T> STabs(
         )
 
 
+        val color = LocalFContext.current.color
         Row(
             modifier = modifier
                 .height(IntrinsicSize.Max)
@@ -153,16 +151,10 @@ fun <T> STabs(
                     CompositionLocalProvider(
                         LocalFContext provides isSelected.foldBoolean(
                             ifTrue = { selectedFContext },
-                            ifFalse = { this@UpdateFContext },
+                            ifFalse = { LocalFContext.current },
                         )
                     ) {
-                        UpdateFContext(
-                            update = {
-                                overlay(Contrast.content)
-                            }
-                        ) {
-                            item(item)
-                        }
+                        item(item)
                     }
                 }
             }

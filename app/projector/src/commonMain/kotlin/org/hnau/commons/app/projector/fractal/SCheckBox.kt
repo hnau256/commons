@@ -21,14 +21,17 @@ import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.overlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.utils.container
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifTrue
 import androidx.compose.runtime.remember as rememberInComposer
 
 @Composable
@@ -52,7 +55,7 @@ fun SCheckBox(
         )
     )
 
-    val distance = LocalFContext.current.distance
+    val distance = LocalDistance.current
     val units = distance.units
     val handleSize = 24.dp.scale(distance.scale.space)
     val maxOffset = activeState.handleOffset - inactiveState.handleOffset
@@ -122,18 +125,20 @@ private data class StateInfo(
 
             val fContext = LocalFContext.current
 
-            val containerFContext = fContext.copy(
-                saturation = Saturation.get(checked),
-            ).overlay(
-                contrast = Contrast.container,
-            )
+            val containerFContext = fContext
+                .copy(
+                    mood = fContext.mood.activateIfNeed(
+                        importance = checked.ifTrue { Importance.default },
+                    )
+                )
+                .containerOverlay()
 
             val containerColor = containerFContext.color
             val contentColor = containerFContext
                 .overlay(contrast = Contrast.content)
                 .color
 
-            val distance = fContext.distance
+            val distance = LocalDistance.current
             return rememberInComposer(
                 containerColor,
                 contentColor,

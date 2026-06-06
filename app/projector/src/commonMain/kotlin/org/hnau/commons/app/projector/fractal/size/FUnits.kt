@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.distance.Distance
 import org.hnau.commons.app.projector.utils.DirectionValues
 import org.hnau.commons.app.projector.utils.OrientationValues
 import org.hnau.commons.app.projector.utils.compareWith

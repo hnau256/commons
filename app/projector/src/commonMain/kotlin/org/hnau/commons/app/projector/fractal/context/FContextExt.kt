@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal.context
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
 import org.hnau.commons.app.model.color.dynamic.hct.HctSolver
@@ -8,8 +9,12 @@ import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.model.theme.palette.PaletteType
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.resolve
+import org.hnau.commons.app.projector.fractal.utils.SaturationValues
+import org.hnau.commons.app.projector.fractal.utils.container
+import org.hnau.commons.app.projector.fractal.utils.content
+import org.hnau.commons.app.projector.fractal.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
@@ -17,24 +22,43 @@ import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUti
 val FContext.color: Color
     get() = getColor(this@color.tone)
 
+@Composable
 fun FContext.overlay(
-    contrast: BaseWithDecay<Contrast>,
+    contrast: SaturationValues<BaseWithDecay<Contrast>>,
 ): FContext = copy(
     tone = calcTone(
-        contrast = contrast,
+        contrast = contrast[mood.saturation],
     ),
 )
 
+@Composable
+fun FContext.contentOverlay(): FContext = overlay(
+    contrast = Contrast.content,
+)
+
+@Composable
+fun FContext.containerOverlay(): FContext = overlay(
+    contrast = Contrast.container,
+)
+
 private val FContext.palette: PaletteType
-    get() = PaletteType.resolve(
-        mood = mood,
-        saturation = saturation,
+    get() = mood.fold(
+        ifActive = { importance ->
+            importance.fold(
+                ifPrimary = { PaletteType.Primary },
+                ifSecondary = { PaletteType.Secondary },
+                ifTertiary = { PaletteType.Tertiary },
+            )
+        },
+        ifNeutral = { PaletteType.Neutral },
+        ifError = { PaletteType.Error }
     )
 
+@Composable
 private fun FContext.calcTone(
     contrast: BaseWithDecay<Contrast>,
 ): Tone = findContrastedTone(
-    contrast = contrast[distance],
+    contrast = contrast[LocalDistance.current],
 )
 
 private fun FContext.getColor(
@@ -43,8 +67,6 @@ private fun FContext.getColor(
     .getHct(tone.raw)
     .toInt()
     .let(::Color)
-
-
 
 
 private fun FContext.findContrastedTone(

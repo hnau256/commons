@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.Distance
+import org.hnau.commons.app.projector.fractal.distance.Distance
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.map
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
