@@ -71,17 +71,7 @@ internal class STableScopeImpl(
                 },
             propagateMinConstraints = true,
         ) {
-            UpdateFContext(
-                update = {
-                    copy(
-                        distance = distance + 1,
-                        saturation = Saturation.Neutral,
-                        customContainerTone = null,
-                    )
-                }
-            ) {
-                sCellScope.content()
-            }
+            sCellScope.content()
         }
     }
 }

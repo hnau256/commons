@@ -106,7 +106,9 @@ class ActionProjector(
                                     orientation = Orientation.Vertical,
                                 ) {
                                     SCell {
-                                        SPanel {
+                                        SPanel(
+                                            shape = shape,
+                                        ) {
                                             UpdateFContext(
                                                 saturation = Saturation.Active,
                                             ) {
@@ -124,7 +126,9 @@ class ActionProjector(
                                         Subtable {
                                             rows.forEach { (title) ->
                                                 SCell {
-                                                    SPanel {
+                                                    SPanel(
+                                                        shape = shape,
+                                                    ) {
                                                         SText(title)
                                                     }
                                                 }
@@ -135,7 +139,9 @@ class ActionProjector(
                                         ) {
                                             rows.forEach { (_, value) ->
                                                 SCell {
-                                                    SPanel {
+                                                    SPanel(
+                                                        shape = shape,
+                                                    ) {
                                                         UpdateFContext(
                                                             saturation = Saturation.Active,
                                                         ) {

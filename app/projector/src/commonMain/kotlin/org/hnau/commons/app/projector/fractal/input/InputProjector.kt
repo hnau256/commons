@@ -70,6 +70,7 @@ class InputProjector(
             ) {
                 SPanel(
                     actionOrElseOrDisabled = ActionOrElse.instant(onClick),
+                    shape = shape,
                 ) {
                     SItem(
                         startAccessory = icon?.let { iconNotNull ->

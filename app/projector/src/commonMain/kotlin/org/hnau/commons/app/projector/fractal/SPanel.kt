@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.context.containerColor
@@ -28,12 +29,12 @@ fun SPanel(
     actionOrElseOrDisabled: ActionOrElse<Unit, *>? = null,
     isSelected: Boolean = false,
     contentOrientation: Orientation = Orientation.Vertical,
+    shape: Shape = LocalFContext.current.distance.units.shape,
     content: @Composable () -> Unit,
 ) {
     val fContext = LocalFContext.current
     val units = fContext.distance.units
     val foregroundColor = fContext.contentColor
-    val shape = fContext.distance.units.shape
 
     val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
     val isInProgress = when (actionOrElseOrDisabled) {
