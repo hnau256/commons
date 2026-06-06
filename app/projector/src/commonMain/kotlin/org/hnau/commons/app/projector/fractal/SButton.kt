@@ -1,6 +1,7 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
@@ -27,6 +28,7 @@ fun SButton(
         isSelected = isSelected,
         importanceToActivate = importance,
         contentOrientation = Orientation.Horizontal,
+        contentAlignment = Alignment.Center,
     ) {
         STitleOrIcon(
             titleOrIcon = titleOrIcon.withActionOrElse(

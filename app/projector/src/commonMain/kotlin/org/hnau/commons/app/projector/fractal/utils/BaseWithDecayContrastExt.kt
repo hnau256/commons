@@ -19,7 +19,7 @@ private val containerContrast: SaturationValues<BaseWithDecay<Contrast>> = Satur
         decay = 0.8,
     ),
     active = BaseWithDecay.contrast(
-        initial = Contrast(3.0),
+        initial = Contrast(2.0),
         decay = 0.8,
     ),
 )
@@ -29,7 +29,7 @@ val Contrast.Companion.container: SaturationValues<BaseWithDecay<Contrast>>
 
 private val contentContrast: SaturationValues<BaseWithDecay<Contrast>> = SaturationValues(
     neutral = BaseWithDecay.contrast(
-        initial = Contrast(5.0),
+        initial = Contrast(7.0),
         decay = 0.9,
     ),
     active = BaseWithDecay.contrast(

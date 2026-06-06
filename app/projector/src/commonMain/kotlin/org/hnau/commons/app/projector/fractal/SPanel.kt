@@ -34,7 +34,7 @@ fun SPanel(
     contentOrientation: Orientation = Orientation.Vertical,
     shape: Shape = LocalDistance.current.units.shape,
     importanceToActivate: Importance? = Importance.default,
-    contentAlignment: Alignment = Alignment.Center,
+    contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable () -> Unit,
 ) {
     FContext(

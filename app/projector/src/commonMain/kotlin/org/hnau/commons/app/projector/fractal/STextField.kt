@@ -39,6 +39,7 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
+import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.SizeType
@@ -94,7 +95,7 @@ fun STextField(
             importance = isFocused.ifTrue { importanceToActivate },
         ),
     ).containerOverlay()
-    val contentFContext = overlayFContext.overlay(Contrast.content)
+    val contentFContext = overlayFContext.contentOverlay()
 
     BasicTextField(
         state = internalState,
