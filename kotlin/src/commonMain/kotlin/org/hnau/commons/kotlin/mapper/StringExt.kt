@@ -6,7 +6,6 @@ import arrow.core.Some
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlin.time.Instant
-import kotlin.time.Instant.Companion.parse
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 

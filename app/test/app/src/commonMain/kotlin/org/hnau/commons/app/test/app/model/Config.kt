@@ -5,8 +5,6 @@
 
 package org.hnau.commons.app.test.app.model
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
-import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import org.hnau.commons.kotlin.serialization.BigDecimalSerializer

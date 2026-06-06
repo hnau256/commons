@@ -34,19 +34,16 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
-import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
-import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.kotlin.ifTrue
 
 @Composable
@@ -157,7 +154,7 @@ private data class Decorator(
                 propagateMinConstraints = true,
             ) {
                 FContext(
-                    update = { overlay(Contrast.content) },
+                    update = { contentOverlay() },
                 ) {
                     innerTextField()
                 }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
-import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
 import org.hnau.commons.app.projector.uikit.state.LoadableContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec

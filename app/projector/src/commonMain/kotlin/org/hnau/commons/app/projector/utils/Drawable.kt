@@ -1,8 +1,8 @@
 package org.hnau.commons.app.projector.utils
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.painter.Painter as ComposePainter
 import org.hnau.commons.gen.fold.annotations.Fold
+import androidx.compose.ui.graphics.painter.Painter as ComposePainter
 
 @Fold
 sealed interface Drawable {

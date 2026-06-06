@@ -40,7 +40,6 @@ import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.castOrElse
 import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.it
 
 @Composable
 fun Line(

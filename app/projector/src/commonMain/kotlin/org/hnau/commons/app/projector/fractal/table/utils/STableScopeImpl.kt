@@ -7,16 +7,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.uikit.line.LinePosition
-import org.hnau.commons.app.projector.uikit.line.LineScope
-import org.hnau.commons.app.projector.uikit.line.onPositionInLineChanged
 import org.hnau.commons.app.projector.fractal.table.SCellScope
 import org.hnau.commons.app.projector.fractal.table.SCellShape
 import org.hnau.commons.app.projector.fractal.table.STableCorners
 import org.hnau.commons.app.projector.fractal.table.STableScope
+import org.hnau.commons.app.projector.uikit.line.LinePosition
+import org.hnau.commons.app.projector.uikit.line.LineScope
+import org.hnau.commons.app.projector.uikit.line.onPositionInLineChanged
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 

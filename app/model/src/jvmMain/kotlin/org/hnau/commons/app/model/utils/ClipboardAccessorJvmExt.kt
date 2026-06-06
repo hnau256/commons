@@ -1,7 +1,6 @@
 package org.hnau.commons.app.model.utils
 
 import java.awt.Toolkit
-import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
 
 
