@@ -1,5 +1,7 @@
 package org.hnau.commons.app.projector.fractal.table
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -9,9 +11,22 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.kotlin.foldBoolean
 
-internal class SCellShape(
+@Composable
+fun SCellScope.rememberCellShape(): Shape {
+    val cornerRadius = LocalDistance.current.units.cornerRadius
+    return remember(corners, cornerRadius) {
+        SCellShape(
+            tableCorners = corners,
+            cornerRadii = (cornerRadius / 3)..cornerRadius,
+        )
+    }
+}
+
+private class SCellShape(
     private val tableCorners: STableCorners.Provider,
     private val cornerRadii: ClosedRange<Dp>,
 ) : Shape {

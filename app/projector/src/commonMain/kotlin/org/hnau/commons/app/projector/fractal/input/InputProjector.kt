@@ -10,6 +10,7 @@ import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.table.SCellScope
+import org.hnau.commons.app.projector.fractal.table.rememberCellShape
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
@@ -78,7 +79,7 @@ class InputProjector(
                 ) {
                     SPanel(
                         actionOrElseOrDisabled = ActionOrElse.instant(onClick),
-                        shape = shape,
+                        shape = rememberCellShape(),
                         importanceToActivate = null,
                     ) {
                         SItem(

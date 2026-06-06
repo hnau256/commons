@@ -6,11 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
-import org.hnau.commons.app.projector.fractal.distance.LocalDistance
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.SCellScope
-import org.hnau.commons.app.projector.fractal.table.SCellShape
 import org.hnau.commons.app.projector.fractal.table.STableCorners
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.uikit.line.LinePosition
@@ -38,7 +34,7 @@ internal class STableScopeImpl(
                 )
             )
         }
-        val cornerRadius = LocalDistance.current.units.cornerRadius
+
         val sCellScope by remember {
             derivedStateOf {
                 object : SCellScope {
@@ -53,11 +49,6 @@ internal class STableScopeImpl(
                                 endOrBottom = !position.isLast,
                             )
                     }
-
-                    override val shape: Shape = SCellShape(
-                        tableCorners = corners,
-                        cornerRadii = (cornerRadius / 3)..cornerRadius,
-                    )
                 }
             }
         }

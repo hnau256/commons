@@ -29,6 +29,7 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.Subtable
+import org.hnau.commons.app.projector.fractal.table.rememberCellShape
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
@@ -106,7 +107,7 @@ class ActionProjector(
                                 ) {
                                     SCell {
                                         SPanel(
-                                            shape = shape,
+                                            shape = rememberCellShape(),
                                         ) {
                                             FContext(
                                                 update = {
@@ -130,7 +131,7 @@ class ActionProjector(
                                             rows.forEach { (title) ->
                                                 SCell {
                                                     SPanel(
-                                                        shape = shape,
+                                                        shape = rememberCellShape(),
                                                     ) {
                                                         SText(title)
                                                     }
@@ -143,7 +144,7 @@ class ActionProjector(
                                             rows.forEach { (_, value) ->
                                                 SCell {
                                                     SPanel(
-                                                        shape = shape,
+                                                        shape = rememberCellShape(),
                                                     ) {
                                                         FContext(
                                                             update = {
