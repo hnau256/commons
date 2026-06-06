@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
@@ -33,6 +34,7 @@ fun SPanel(
     contentOrientation: Orientation = Orientation.Vertical,
     shape: Shape = LocalDistance.current.units.shape,
     importanceToActivate: Importance? = Importance.default,
+    contentAlignment: Alignment = Alignment.Center,
     content: @Composable () -> Unit,
 ) {
     FContext(
@@ -83,7 +85,7 @@ fun SPanel(
 
                             else -> Modifier
                         }
-                    )
+                    ),
             ) {
                 Box(
                     modifier = Modifier.padding(
@@ -92,6 +94,7 @@ fun SPanel(
                             .paddingValues[contentOrientation]
                             .medium
                     ),
+                    contentAlignment = contentAlignment,
                 ) {
                     content()
                 }
