@@ -27,12 +27,14 @@ import androidx.compose.ui.platform.LocalDensity
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.container
 import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.Mutable
@@ -58,17 +60,18 @@ fun <T> STabs(
             )
         },
     ) {
-        val fContext = LocalFContext.current
-        val itemMargin = fContext.distance.units.borderWidth
-        val cornerRadius = fContext.distance.units.cornerRadius
+        val itemMargin = distance.units.borderWidth
+        val cornerRadius = distance.units.cornerRadius
         val itemCornerRadius = cornerRadius - itemMargin
         val density = LocalDensity.current
 
-        val selectedFContext = fContext.rememberRun {
+        val selectedFContext = rememberRun {
             copy(
                 saturation = Saturation.get(onClick != null),
                 mood = mood,
-            ).overlay()
+            ).overlay(
+                contrast = Contrast.container,
+            )
         }
 
         val childrenPositions: List<Mutable<Rect>> = remember(items) {
@@ -86,9 +89,8 @@ fun <T> STabs(
             modifier = modifier
                 .height(IntrinsicSize.Max)
                 .drawBehind {
-
                     drawRoundRect(
-                        color = fContext.containerColor,
+                        color = color,
                         size = size,
                         cornerRadius = with(density) { cornerRadius.toPx() }.let(::CornerRadius),
                     )
@@ -115,7 +117,7 @@ fun <T> STabs(
                         }
                     )
                     drawRoundRect(
-                        color = selectedFContext.containerColor,
+                        color = selectedFContext.color,
                         topLeft = rect.topLeft + with(density) {
                             itemMargin.toPx().let { offset ->
                                 Offset(offset, offset)
@@ -151,10 +153,16 @@ fun <T> STabs(
                     CompositionLocalProvider(
                         LocalFContext provides isSelected.foldBoolean(
                             ifTrue = { selectedFContext },
-                            ifFalse = { fContext },
+                            ifFalse = { this@UpdateFContext },
                         )
                     ) {
-                        item(item)
+                        UpdateFContext(
+                            update = {
+                                overlay(Contrast.content)
+                            }
+                        ) {
+                            item(item)
+                        }
                     }
                 }
             }

@@ -12,7 +12,6 @@ import org.hnau.commons.app.projector.fractal.context.UpdateFContext
 import org.hnau.commons.app.projector.fractal.table.SCellScope
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.Saturation
-import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.instant
@@ -56,13 +55,11 @@ class InputProjector(
                         ifNull = {
                             copy(
                                 mood = mood,
-                                saturation = Saturation.get(isFocused),
                             )
                         },
                         ifNotNull = {
                             copy(
                                 mood = Mood.Error,
-                                saturation = Saturation.Active,
                             )
                         }
                     )
@@ -71,6 +68,7 @@ class InputProjector(
                 SPanel(
                     actionOrElseOrDisabled = ActionOrElse.instant(onClick),
                     shape = shape,
+                    saturation = Saturation.get(isFocused),
                 ) {
                     SItem(
                         startAccessory = icon?.let { iconNotNull ->

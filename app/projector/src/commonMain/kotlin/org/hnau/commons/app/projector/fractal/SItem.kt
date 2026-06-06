@@ -104,7 +104,7 @@ private fun Accessory(
                             )
                         }
                     ) {
-                        val units = LocalFContext.current.distance.units
+                        val units = distance.units
                         val paddingSize = SizeType.Small
                         val accessoryPadding = side.fold(
                             ifStart = {

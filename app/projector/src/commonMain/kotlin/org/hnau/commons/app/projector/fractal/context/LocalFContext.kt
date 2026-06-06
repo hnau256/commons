@@ -13,13 +13,13 @@ val LocalFContext: ProvidableCompositionLocal<FContext> =
 @Composable
 fun UpdateFContext(
     update: FContext.() -> FContext,
-    content: @Composable () -> Unit,
+    content: @Composable FContext.() -> Unit,
 ) {
     val current = LocalFContext.current
     val updated = update(current)
     CompositionLocalProvider(
         value = LocalFContext provides updated,
-        content = content,
+        content = { updated.content() },
     )
 }
 
@@ -27,7 +27,7 @@ fun UpdateFContext(
 fun UpdateFContext(
     mood: Mood = LocalFContext.current.mood,
     saturation: Saturation = LocalFContext.current.saturation,
-    content: @Composable () -> Unit,
+    content: @Composable FContext.() -> Unit,
 ) {
     UpdateFContext(
         update = {

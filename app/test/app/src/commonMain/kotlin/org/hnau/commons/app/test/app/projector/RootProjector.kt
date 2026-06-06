@@ -1,23 +1,15 @@
 package org.hnau.commons.app.test.app.projector
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
+import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.utils.plus
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
-import org.hnau.commons.app.projector.uikit.line.Line
-import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.uikit.state.LoadableContent
 import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
-import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
@@ -58,7 +50,7 @@ class RootProjector(
             goBackHandler = model.goBackHandler,
             backButtonBackgroundColor = LocalFContext.current
                 .run { copy(distance = distance + 1) }
-                .containerColor,
+                .color,
         ) { contentPadding ->
             stack
                 .collectAsState()

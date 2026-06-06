@@ -18,13 +18,15 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
+import org.hnau.commons.app.projector.fractal.utils.container
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
 import androidx.compose.runtime.remember as rememberInComposer
@@ -120,12 +122,16 @@ private data class StateInfo(
 
             val fContext = LocalFContext.current
 
-            val overlayFContext = fContext.copy(
+            val containerFContext = fContext.copy(
                 saturation = Saturation.get(checked),
-            ).overlay()
+            ).overlay(
+                contrast = Contrast.container,
+            )
 
-            val containerColor = overlayFContext.containerColor
-            val contentColor = overlayFContext.contentColor
+            val containerColor = containerFContext.color
+            val contentColor = containerFContext
+                .overlay(contrast = Contrast.content)
+                .color
 
             val distance = fContext.distance
             return rememberInComposer(

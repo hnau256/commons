@@ -4,42 +4,26 @@ import androidx.compose.ui.graphics.Color
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
 import org.hnau.commons.app.model.color.dynamic.hct.HctSolver
 import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
-import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.model.theme.color.Tone
 import org.hnau.commons.app.model.theme.fold
 import org.hnau.commons.app.model.theme.palette.PaletteType
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
-import org.hnau.commons.app.projector.fractal.utils.Distance
-import org.hnau.commons.app.projector.fractal.utils.container
-import org.hnau.commons.app.projector.fractal.utils.contentBySaturation
 import org.hnau.commons.app.projector.fractal.utils.resolve
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.ifNull
 import kotlin.math.absoluteValue
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
-val FContext.containerColor: Color
-    get() = getColor(containerTone)
-
-val FContext.contentColor: Color
-    get() = getColor(
-        tone = calcTone(
-            contrast = Contrast.contentBySaturation[saturation],
-        )
-    )
+val FContext.color: Color
+    get() = getColor(this@color.tone)
 
 fun FContext.overlay(
-    contrast: BaseWithDecay<Contrast> = Contrast.container,
+    contrast: BaseWithDecay<Contrast>,
 ): FContext = copy(
-    customContainerTone = calcTone(
+    tone = calcTone(
         contrast = contrast,
     ),
 )
-
-private val FContext.containerTone: Tone
-    get() = customContainerTone
-        .ifNull { backgroundToneCalculators[palettes.brightness](distance) }
 
 private val FContext.palette: PaletteType
     get() = PaletteType.resolve(
@@ -61,13 +45,7 @@ private fun FContext.getColor(
     .let(::Color)
 
 
-private val backgroundToneCalculators: ThemeBrightnessValues<(Distance) -> Tone> =
-    ThemeBrightnessValues(
-        dark = 6.0 to 4.0,
-        light = 92.0 to -8.0,
-    ).map { (start, step) ->
-        { distance: Distance -> (start + (step * distance.distance)).let(Tone::create) }
-    }
+
 
 private fun FContext.findContrastedTone(
     contrast: Contrast,
@@ -75,7 +53,7 @@ private fun FContext.findContrastedTone(
 
     val palette = palettes.palettes[palette]
 
-    val baseResult = containerTone.lighterOrDarkerWithError(
+    val baseResult = this@findContrastedTone.tone.lighterOrDarkerWithError(
         lighter = palettes.brightness.fold(
             ifLight = { false },
             ifDark = { true },
@@ -88,7 +66,7 @@ private fun FContext.findContrastedTone(
         return baseResult.tone
     }
 
-    val oppositeResult = containerTone.lighterOrDarkerWithError(
+    val oppositeResult = this@findContrastedTone.tone.lighterOrDarkerWithError(
         lighter = palettes.brightness.fold(
             ifLight = { true },
             ifDark = { false },
@@ -107,7 +85,7 @@ private fun FContext.findContrastedTone(
 
         oppositeResult != null -> oppositeResult.tone
 
-        else -> (containerTone > averageTone).foldBoolean(
+        else -> (this@findContrastedTone.tone > averageTone).foldBoolean(
             ifTrue = { Tone.min },
             ifFalse = { Tone.max },
         )

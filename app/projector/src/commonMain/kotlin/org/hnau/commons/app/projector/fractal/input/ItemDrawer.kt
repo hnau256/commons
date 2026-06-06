@@ -2,7 +2,6 @@ package org.hnau.commons.app.projector.fractal.input
 
 import androidx.compose.runtime.Composable
 import org.hnau.commons.app.projector.fractal.table.SCellScope
-import org.hnau.commons.app.projector.fractal.table.STableScope
 
 interface ItemDrawer {
 

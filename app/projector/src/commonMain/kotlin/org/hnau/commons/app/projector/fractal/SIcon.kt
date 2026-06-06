@@ -14,10 +14,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toolingGraphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.UpdateFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.rememberRun
@@ -62,7 +65,7 @@ private fun PainterIcon(
             .paint(
                 painter = painter,
                 colorFilter = ColorFilter.tint(
-                    color = fContext.contentColor,
+                    color = fContext.color,
                 )
             )
     )
@@ -78,20 +81,28 @@ private fun TextIcon(
     Box(
         modifier = modifier
             .background(
-                color = fContext.contentColor,
+                color = fContext.color,
                 shape = CircleShape,
             )
             .padding(units.paddingValues.horizontal.extraSmall),
         contentAlignment = Alignment.Center,
     ) {
-        BasicText(
-            text = text.rememberRun { extractNChars(2) },
-            maxLines = 1,
-            minLines = 1,
-            style = units.textStyle.extraSmall.merge(
-                color = fContext.containerColor,
+        UpdateFContext(
+            update = {
+                overlay(contrast = Contrast.content)
+            }
+        ) {
+            val fContext = LocalFContext.current
+            val units = fContext.distance.units
+            BasicText(
+                text = text.rememberRun { extractNChars(2) },
+                maxLines = 1,
+                minLines = 1,
+                style = units.textStyle.extraSmall.merge(
+                    color = fContext.color,
+                )
             )
-        )
+        }
     }
 }
 

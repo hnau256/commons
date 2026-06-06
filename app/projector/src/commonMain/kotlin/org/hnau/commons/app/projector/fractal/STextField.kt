@@ -35,15 +35,16 @@ import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.model.theme.color.Contrast
+import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.UpdateFContext
-import org.hnau.commons.app.projector.fractal.context.containerColor
-import org.hnau.commons.app.projector.fractal.context.contentColor
+import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Saturation
 import org.hnau.commons.app.projector.fractal.utils.containerLow
+import org.hnau.commons.app.projector.fractal.utils.content
 
 @Composable
 fun STextField(
@@ -62,69 +63,69 @@ fun STextField(
     scrollState: ScrollState = rememberScrollState(),
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
-    UpdateFContext(
-        saturation = Saturation.get(isFocused),
-    ) {
 
-        val internalState = rememberSaveable(saver = TextFieldState.Saver) {
-            TextFieldState(value)
-        }
-
-        LaunchedEffect(internalState) {
-            snapshotFlow { internalState.text }.collect { newUiText ->
-                onValueChanged(newUiText.toString())
-            }
-        }
-
-        LaunchedEffect(value) {
-            if (value != internalState.text.toString()) {
-                internalState.setTextAndPlaceCursorAtEnd(value)
-            }
-        }
-
-        val fContext = LocalFContext.current
-        val units = fContext.distance.units
-        val color = fContext.contentColor
-
-        val bringIntoViewRequester = remember { BringIntoViewRequester() }
-        val coroutineScope = rememberCoroutineScope()
-
-        BasicTextField(
-            state = internalState,
-            modifier = modifier
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                    if (isFocused) {
-                        coroutineScope.launch {
-                            delay(100)
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            enabled = enabled,
-            readOnly = !enabled,
-            textStyle = units.textStyle[textStyle].merge(
-                color = color,
-            ),
-            keyboardOptions = keyboardOptions,
-            lineLimits = lineLimits,
-            inputTransformation = inputTransformation,
-            outputTransformation = outputTransformation,
-            onKeyboardAction = onKeyboardAction,
-            onTextLayout = onTextLayout,
-            interactionSource = interactionSource,
-            scrollState = scrollState,
-            cursorBrush = SolidColor(color),
-            decorator = remember(
-                color,
-            ) {
-                Decorator(
-                    color = color,
-                )
-            },
-        )
+    val internalState = rememberSaveable(saver = TextFieldState.Saver) {
+        TextFieldState(value)
     }
+
+    LaunchedEffect(internalState) {
+        snapshotFlow { internalState.text }.collect { newUiText ->
+            onValueChanged(newUiText.toString())
+        }
+    }
+
+    LaunchedEffect(value) {
+        if (value != internalState.text.toString()) {
+            internalState.setTextAndPlaceCursorAtEnd(value)
+        }
+    }
+
+    val fContext = LocalFContext.current
+    val units = fContext.distance.units
+
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
+    val overlayFContext = fContext.copy(
+        saturation = Saturation.get(isFocused),
+    ).overlay(Contrast.containerLow)
+    val contentFContext = overlayFContext.overlay(Contrast.content)
+
+    BasicTextField(
+        state = internalState,
+        modifier = modifier
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .onFocusChanged { focusState ->
+                isFocused = focusState.isFocused
+                if (isFocused) {
+                    coroutineScope.launch {
+                        delay(100)
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            },
+        enabled = enabled,
+        readOnly = !enabled,
+        textStyle = units.textStyle[textStyle].merge(
+            color = contentFContext.color,
+        ),
+        keyboardOptions = keyboardOptions,
+        lineLimits = lineLimits,
+        inputTransformation = inputTransformation,
+        outputTransformation = outputTransformation,
+        onKeyboardAction = onKeyboardAction,
+        onTextLayout = onTextLayout,
+        interactionSource = interactionSource,
+        scrollState = scrollState,
+        cursorBrush = SolidColor(contentFContext.color),
+        decorator = remember(
+            overlayFContext.color,
+        ) {
+            Decorator(
+                color = overlayFContext.color,
+            )
+        },
+    )
 }
 
 private data class Decorator(
@@ -138,19 +139,22 @@ private data class Decorator(
         UpdateFContext(
             update = { overlay(Contrast.containerLow) },
         ) {
-            val fContext = LocalFContext.current
             Box(
                 modifier = Modifier
                     .background(
-                        color = fContext.containerColor,
-                        shape = fContext.distance.units.shape
+                        color = color,
+                        shape = distance.units.shape
                     )
                     .padding(
-                        paddingValues = fContext.distance.units.paddingValues.vertical.small,
+                        paddingValues = distance.units.paddingValues.vertical.small,
                     ),
                 propagateMinConstraints = true,
             ) {
-                innerTextField()
+                UpdateFContext(
+                    update = { overlay(Contrast.content) },
+                ) {
+                    innerTextField()
+                }
             }
         }
     }
