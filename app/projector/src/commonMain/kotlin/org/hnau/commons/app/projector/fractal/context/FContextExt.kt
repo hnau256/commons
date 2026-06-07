@@ -136,7 +136,7 @@ private fun Tone.lighterOrDarkerWithError(
                 val actualHct = Hct.fromInt(argb)
                 val toneError = (rawTone - actualHct.tone).absoluteValue
                 val chromaError = (palette.chroma - actualHct.chroma).absoluteValue
-                toneError * 10.0 + chromaError
+                toneError * 0.9 + chromaError * 0.1
             }
         )
     }
