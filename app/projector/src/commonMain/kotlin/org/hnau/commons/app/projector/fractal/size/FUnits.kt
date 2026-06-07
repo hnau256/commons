@@ -1,8 +1,6 @@
 package org.hnau.commons.app.projector.fractal.size
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -20,9 +18,6 @@ class FUnits private constructor(
     val textStyle: SizeTypeValues<TextStyle>,
     val iconSize: Dp,
 ) {
-
-    val shape: Shape =
-        RoundedCornerShape(size = cornerRadius)
 
     val paddingValues: OrientationValues<SizeTypeValues<PaddingValues>> =
         OrientationValues.create { containerOrientation ->

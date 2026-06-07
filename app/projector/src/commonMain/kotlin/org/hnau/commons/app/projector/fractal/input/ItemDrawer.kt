@@ -1,12 +1,11 @@
 package org.hnau.commons.app.projector.fractal.input
 
 import androidx.compose.runtime.Composable
-import org.hnau.commons.app.projector.fractal.table.SCellScope
 
 interface ItemDrawer {
 
     @Composable
-    fun SCellScope.Item(
+    fun Item(
         onClick: (() -> Unit)? = null,
         endAccessory: (@Composable () -> Unit)? = null,
         isFocused: Boolean = false,

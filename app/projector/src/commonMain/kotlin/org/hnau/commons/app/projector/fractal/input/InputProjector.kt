@@ -9,8 +9,7 @@ import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.FContext
-import org.hnau.commons.app.projector.fractal.table.SCellScope
-import org.hnau.commons.app.projector.fractal.table.rememberCellShape
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
@@ -28,7 +27,7 @@ class InputProjector(
     private val errorMessage: StateFlow<String?>,
 ) {
 
-    private val itemTitleWithContent: Pair<String?, @Composable SCellScope.(ItemDrawer) -> Unit> =
+    private val itemTitleWithContent: Pair<String?, @Composable (ItemDrawer) -> Unit> =
         contentProjector.fold(
             ifWithTitle = { content ->
                 null to @Composable { itemDrawer: ItemDrawer ->
@@ -44,7 +43,7 @@ class InputProjector(
 
 
         @Composable
-        override fun SCellScope.Item(
+        override fun Item(
             onClick: (() -> Unit)?,
             endAccessory: @Composable (() -> Unit)?,
             isFocused: Boolean,
@@ -79,7 +78,6 @@ class InputProjector(
                 ) {
                     SPanel(
                         actionOrElseOrDisabled = ActionOrElse.instant(onClick),
-                        shape = rememberCellShape(),
                         importanceToActivate = null,
                     ) {
                         SItem(
@@ -102,7 +100,7 @@ class InputProjector(
     }
 
     @Composable
-    fun SCellScope.Content() {
+    fun Content() {
         with(itemTitleWithContent) {
             second(itemDrawer)
         }

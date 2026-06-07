@@ -44,6 +44,7 @@ import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.kotlin.ifTrue
 
 @Composable
@@ -146,7 +147,7 @@ private data class Decorator(
                 modifier = Modifier
                     .background(
                         color = color,
-                        shape = LocalDistance.current.units.shape
+                        shape = rememberFShape(),
                     )
                     .padding(
                         paddingValues = LocalDistance.current.units.paddingValues.vertical.small,

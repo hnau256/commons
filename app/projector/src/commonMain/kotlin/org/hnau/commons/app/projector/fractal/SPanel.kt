@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,8 +20,11 @@ import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
+import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.orNoAction
@@ -32,7 +36,7 @@ fun SPanel(
     actionOrElseOrDisabled: ActionOrElse<Unit, *>? = null,
     isSelected: Boolean = false,
     contentOrientation: Orientation = Orientation.Vertical,
-    shape: Shape = LocalDistance.current.units.shape,
+    shape: Shape = rememberFShape(),
     importanceToActivate: Importance? = Importance.default,
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable () -> Unit,
@@ -96,7 +100,10 @@ fun SPanel(
                     ),
                     contentAlignment = contentAlignment,
                 ) {
-                    content()
+                    CompositionLocalProvider(
+                        value = LocalShapeCorners provides ShapeCorners.Provider.opened,
+                        content = content,
+                    )
                 }
             }
         }

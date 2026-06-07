@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.utils.STableScopeImpl
+import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
+import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.utils.Orientation
@@ -15,7 +17,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 fun STable(
     orientation: Orientation,
     modifier: Modifier = Modifier,
-    corners: STableCorners.Provider = STableCorners.Provider.opened,
+    corners: ShapeCorners.Provider = LocalShapeCorners.current,
     reverseOrdering: Boolean = false,
     content: @Composable STableScope.() -> Unit,
 ) {

@@ -15,7 +15,6 @@ fun STableScope.Subtable(
     ) {
         STable(
             orientation = orientation.opposite,
-            corners = corners,
             content = content,
             reverseOrdering = reverseOrdering,
         )

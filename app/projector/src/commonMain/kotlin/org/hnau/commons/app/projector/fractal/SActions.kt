@@ -8,7 +8,7 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.table.Subtable
-import org.hnau.commons.app.projector.fractal.table.rememberCellShape
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
@@ -123,7 +123,6 @@ data class STableActionsScope(
             modifier = modifier,
         ) {
             SButton(
-                shape = rememberCellShape(),
                 actionOrElseOrDisabled = actionOrElseOrDisabled,
                 titleOrIcon = titleOrIcon,
                 importance = importance,

@@ -4,9 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import org.hnau.commons.app.projector.fractal.distance.LocalDistance
-import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.withActionOrElse
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
@@ -17,7 +16,7 @@ fun SButton(
     actionOrElseOrDisabled: ActionOrElse<Unit, *>?,
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
-    shape: Shape = LocalDistance.current.units.shape,
+    shape: Shape = rememberFShape(),
     importance: Importance = Importance.default,
     isSelected: Boolean = false,
 ) {

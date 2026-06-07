@@ -9,12 +9,10 @@ interface STableScope : LineScope {
 
     val orientation: Orientation
 
-    val corners: STableCorners.Provider
-
     @Composable
     fun SCell(
         modifier: Modifier = Modifier,
-        content: @Composable SCellScope.() -> Unit,
+        content: @Composable () -> Unit,
     )
 
     companion object

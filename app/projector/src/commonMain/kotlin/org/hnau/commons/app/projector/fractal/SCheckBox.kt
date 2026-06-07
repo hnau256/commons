@@ -26,7 +26,9 @@ import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifTrue
@@ -59,9 +61,13 @@ fun SCheckBox(
     val maxOffset = activeState.handleOffset - inactiveState.handleOffset
     val separation = units.borderWidth * 3
 
+    val shape = rememberFShape(
+        corners = ShapeCorners.Provider.opened,
+    )
+
     Box(
         modifier = modifier
-            .clip(units.shape)
+            .clip(shape)
             .border(
                 width = units.borderWidth,
                 color = lerp(
@@ -69,7 +75,7 @@ fun SCheckBox(
                     stop = activeState.borderColor,
                     fraction = activePercentage,
                 ),
-                shape = units.shape,
+                shape = shape,
             )
             .clickableOption(onClick)
             .background(

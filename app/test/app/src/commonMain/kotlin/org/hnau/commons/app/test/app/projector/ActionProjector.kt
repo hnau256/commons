@@ -29,7 +29,7 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.Subtable
-import org.hnau.commons.app.projector.fractal.table.rememberCellShape
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
@@ -106,9 +106,7 @@ class ActionProjector(
                                     orientation = Orientation.Vertical,
                                 ) {
                                     SCell {
-                                        SPanel(
-                                            shape = rememberCellShape(),
-                                        ) {
+                                        SPanel {
                                             FContext(
                                                 update = {
                                                     copy(
@@ -130,9 +128,7 @@ class ActionProjector(
                                         Subtable {
                                             rows.forEach { (title) ->
                                                 SCell {
-                                                    SPanel(
-                                                        shape = rememberCellShape(),
-                                                    ) {
+                                                    SPanel {
                                                         SText(title)
                                                     }
                                                 }
@@ -143,9 +139,7 @@ class ActionProjector(
                                         ) {
                                             rows.forEach { (_, value) ->
                                                 SCell {
-                                                    SPanel(
-                                                        shape = rememberCellShape(),
-                                                    ) {
+                                                    SPanel {
                                                         FContext(
                                                             update = {
                                                                 copy(

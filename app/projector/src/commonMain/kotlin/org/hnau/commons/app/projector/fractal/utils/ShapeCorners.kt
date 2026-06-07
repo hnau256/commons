@@ -1,19 +1,19 @@
-package org.hnau.commons.app.projector.fractal.table
+package org.hnau.commons.app.projector.fractal.utils
 
 import org.hnau.commons.app.projector.utils.Orientation
 
 @JvmInline
-value class STableCorners private constructor(
+value class ShapeCorners private constructor(
     private val packed: Byte,
 ) {
 
     fun interface Provider {
 
-        fun getTableCorners(): STableCorners
+        fun getTableCorners(): ShapeCorners
 
         companion object {
 
-            val opened = Provider { STableCorners.opened }
+            val opened = Provider { ShapeCorners.opened }
         }
     }
 
@@ -46,7 +46,7 @@ value class STableCorners private constructor(
         closeStartBottom: Boolean,
         closeEndTop: Boolean,
         closeEndBottom: Boolean,
-    ): STableCorners = STableCorners(
+    ): ShapeCorners = ShapeCorners(
         startTopIsOpened = startTopIsOpened && !closeStartTop,
         startBottomIsOpened = startBottomIsOpened && !closeStartBottom,
         endTopIsOpened = endTopIsOpened && !closeEndTop,
@@ -57,7 +57,7 @@ value class STableCorners private constructor(
         orientation: Orientation,
         startOrTop: Boolean,
         endOrBottom: Boolean,
-    ): STableCorners = closePartially(
+    ): ShapeCorners = closePartially(
         closeStartTop = startOrTop,
         closeStartBottom = when (orientation) {
             Orientation.Vertical -> endOrBottom
@@ -89,18 +89,11 @@ value class STableCorners private constructor(
         private const val END_TOP = 0b0100
         private const val END_BOTTOM = 0b1000
 
-        val opened: STableCorners = STableCorners(
+        val opened: ShapeCorners = ShapeCorners(
             startTopIsOpened = true,
             startBottomIsOpened = true,
             endTopIsOpened = true,
             endBottomIsOpened = true,
-        )
-
-        val closed: STableCorners = STableCorners(
-            startTopIsOpened = false,
-            startBottomIsOpened = false,
-            endTopIsOpened = false,
-            endBottomIsOpened = false,
         )
     }
 }
