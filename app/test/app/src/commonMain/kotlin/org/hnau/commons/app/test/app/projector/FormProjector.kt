@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
@@ -140,7 +141,7 @@ class FormProjector(
                     }
                 },
                 actions = {
-                    Action(
+                    SButton(
                         actionOrElseOrDisabled = model
                             .savableDelegate
                             .saveOrInactive

@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SActions
+import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
@@ -29,7 +30,6 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.Subtable
-import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
@@ -155,7 +155,7 @@ class ActionProjector(
                                         }
                                     }
                                     SActions {
-                                        Action(
+                                        SButton(
                                             actionOrElseOrDisabled = ActionOrElse.instant(model.editConfig),
                                             titleOrIcon = TitleOrIcon.Both(
                                                 title = "Edit",
@@ -169,7 +169,7 @@ class ActionProjector(
                     )
                 },
                 actions = {
-                    Action(
+                    SButton(
                         actionOrElseOrDisabled = model.doAction.collectAsState().value,
                         titleOrIcon = TitleOrIcon.Both(
                             title = "Do action",

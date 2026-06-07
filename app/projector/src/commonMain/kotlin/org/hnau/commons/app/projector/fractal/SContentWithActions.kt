@@ -15,7 +15,7 @@ import org.hnau.commons.app.projector.fractal.size.units
 fun SContentWithActions(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
-    actions: @Composable SActionsScope.() -> Unit,
+    actions: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -32,7 +32,7 @@ fun SContentWithActions(
         )
         SActions(
             modifier = Modifier.fillMaxWidth(),
-            block = actions,
+            content = actions,
         )
     }
 }

@@ -8,7 +8,6 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.table.Subtable
-import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
@@ -23,7 +22,7 @@ import androidx.compose.runtime.remember as rememberInCompose
 @Composable
 fun SActions(
     modifier: Modifier = Modifier,
-    block: @Composable SActionsScope.() -> Unit,
+    content: @Composable () -> Unit,
 ) {
     val distance = LocalDistance.current
     val orientation = when (distance.distance) {
@@ -36,36 +35,10 @@ fun SActions(
         reverseOrdering = true,
         separation = distance.units.padding.along.small,
     ) {
-        SActionsScopeImpl.block()
+        content()
         orientation.fold(
             ifHorizontal = { Spacer(Modifier.weight(1f)) },
             ifVertical = {},
-        )
-    }
-}
-
-interface SActionsScope {
-
-    @Composable
-    fun <E : CancelOrInProgress> Action(
-        actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
-        titleOrIcon: TitleOrIcon,
-        importance: Importance = Importance.default,
-    )
-}
-
-private data object SActionsScopeImpl : SActionsScope {
-
-    @Composable
-    override fun <E : CancelOrInProgress> Action(
-        actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
-        titleOrIcon: TitleOrIcon,
-        importance: Importance,
-    ) {
-        SButton(
-            actionOrElseOrDisabled = actionOrElseOrDisabled,
-            titleOrIcon = titleOrIcon,
-            importance = importance,
         )
     }
 }
