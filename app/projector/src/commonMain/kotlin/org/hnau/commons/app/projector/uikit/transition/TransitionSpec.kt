@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import org.hnau.commons.app.projector.utils.opposite
 import org.hnau.commons.kotlin.foldNullable
 import androidx.compose.runtime.remember as rememberInComposer
 
@@ -57,7 +58,7 @@ object TransitionSpec {
     @Composable
     fun <S> remember(
         showAlignment: Alignment?,
-        hideAlignment: Alignment?,
+        hideAlignment: Alignment? = showAlignment?.opposite,
     ): AnimatedContentTransitionScope<S>.() -> ContentTransform {
         val layoutDirection = LocalLayoutDirection.current
         return rememberInComposer(
