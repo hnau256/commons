@@ -25,6 +25,8 @@ import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.lazy.SLazyTable
+import org.hnau.commons.app.projector.fractal.table.lazy.cells
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
@@ -101,6 +103,14 @@ class FormProjector(
             icon = Drawable.Vector(Icons.Default.Schema),
         )
 
+    private val items: List<InputProjector> = listOf(
+        flag,
+        decimal,
+        integer,
+        text,
+        variant,
+    )
+
     private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(
         scope = scope,
         model = model.savableDelegate,
@@ -130,14 +140,14 @@ class FormProjector(
             SContentWithActions(
                 modifier = Modifier.padding(contentPadding),
                 content = {
-                    STable(
+                    SLazyTable(
                         orientation = Orientation.Vertical,
                     ) {
-                        SCell { with(flag) { Content() } }
-                        SCell { with(decimal) { Content() } }
-                        SCell { with(integer) { Content() } }
-                        SCell { with(text) { Content() } }
-                        SCell { with(variant) { Content() } }
+                        cells(
+                            items = items,
+                        ) { inputProjector ->
+                            inputProjector.Content()
+                        }
                     }
                 },
                 actions = {
