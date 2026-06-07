@@ -20,7 +20,11 @@ import kotlin.math.absoluteValue
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 val FContext.color: Color
-    get() = getColor(this@color.tone)
+    get() = palettes
+        .palettes[palette]
+        .getHct(tone.raw)
+        .toInt()
+        .let(::Color)
 
 @Composable
 fun FContext.overlay(
@@ -60,13 +64,6 @@ private fun FContext.calcTone(
 ): Tone = findContrastedTone(
     contrast = contrast[LocalDistance.current],
 )
-
-private fun FContext.getColor(
-    tone: Tone,
-): Color = palettes.palettes[palette]
-    .getHct(tone.raw)
-    .toInt()
-    .let(::Color)
 
 
 private fun FContext.findContrastedTone(

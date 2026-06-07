@@ -24,6 +24,7 @@ import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.rememberCellShape
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
@@ -104,7 +105,9 @@ class FormProjector(
         model = model.savableDelegate,
         notSaved = {
             SCell {
-                SPanel {
+                SPanel(
+                    shape = rememberCellShape(),
+                ) {
                     SText(
                         text = "Config is not saved",
                         type = SizeType.Large,
