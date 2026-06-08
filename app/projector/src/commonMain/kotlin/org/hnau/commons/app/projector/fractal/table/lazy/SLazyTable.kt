@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -16,16 +18,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
+import org.hnau.commons.app.projector.utils.opposite
 import org.hnau.commons.kotlin.foldBoolean
+import androidx.compose.runtime.remember as rememberInCompose
 
 @Composable
 fun SLazyTable(
@@ -91,17 +96,22 @@ interface SLazyTableScope : LazyListScope {
         count: Int,
         key: ((index: Int) -> Any)? = null,
         contentType: (index: Int) -> Any? = { null },
-        cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
+        cellContent: @Composable SLazyCellScope.(index: Int) -> Unit,
     )
 
     companion object
+}
+
+interface SLazyCellScope : LazyItemScope {
+
+    val orientation: Orientation
 }
 
 fun <T> SLazyTableScope.cells(
     items: List<T>,
     key: ((T) -> Any)? = null,
     contentType: (T) -> Any? = { null },
-    cellContent: @Composable (LazyItemScope.(T) -> Unit)
+    cellContent: @Composable (SLazyCellScope.(T) -> Unit)
 ) {
     cells(
         count = items.size,
@@ -114,11 +124,33 @@ fun <T> SLazyTableScope.cells(
 }
 
 fun SLazyTableScope.cell(
-    cellContent: @Composable (LazyItemScope.() -> Unit)
+    cellContent: @Composable (SLazyCellScope.() -> Unit)
 ) {
     cells(
         count = 1,
         cellContent = { cellContent() },
+    )
+}
+
+@Composable
+fun SLazyCellScope.Subtable(
+    modifier: Modifier = Modifier,
+    corners: ShapeCorners.Provider = LocalShapeCorners.current,
+    reverseOrdering: Boolean = false,
+    content: @Composable STableScope.() -> Unit,
+) {
+    val subtableOrientation = orientation.opposite
+    STable(
+        orientation = subtableOrientation,
+        content = content,
+        modifier = modifier.then(
+            subtableOrientation.fold(
+                ifHorizontal = { Modifier.fillMaxWidth() },
+                ifVertical = { Modifier.fillMaxHeight() },
+            )
+        ),
+        corners = corners,
+        reverseOrdering = reverseOrdering,
     )
 }
 
@@ -135,7 +167,7 @@ private class SLazyTableScopeImpl(
         count: Int,
         key: ((index: Int) -> Any)?,
         contentType: (index: Int) -> Any?,
-        cellContent: @Composable (LazyItemScope.(index: Int) -> Unit)
+        cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit)
     ) {
 
         val isFirstCells = this@SLazyTableScopeImpl.isFirstCells
@@ -150,9 +182,15 @@ private class SLazyTableScopeImpl(
             key = key,
             contentType = contentType,
         ) { index ->
+
+            val cellScope = SLazyCellScopeImpl.remember(
+                orientation = orientation,
+                lazyItemScope = this,
+            )
+
             val isFirst = index == 0
             val isLast = index == count - 1
-            val cornersProvider = remember(
+            val cornersProvider = rememberInCompose(
                 isFirst,
                 isLast,
                 corners,
@@ -171,12 +209,12 @@ private class SLazyTableScopeImpl(
             ) {
                 val separation = LocalDistance.current.units.padding.along.medium
                 Box(
-                    modifier = remember(
+                    modifier = rememberInCompose(
                         separation,
                         orientation,
                         reverseOrdering,
                         isFirstCells,
-                        ) {
+                    ) {
                         when {
                             isFirst && !isFirstCells -> reverseOrdering.foldBoolean(
                                 ifFalse = {
@@ -198,10 +236,32 @@ private class SLazyTableScopeImpl(
                     },
                     propagateMinConstraints = true,
                 ) {
-                    cellContent(index)
+                    cellScope.cellContent(index)
                 }
-
             }
+        }
+    }
+}
+
+private class SLazyCellScopeImpl(
+    private val lazyItemScope: LazyItemScope,
+    override val orientation: Orientation,
+) : LazyItemScope by lazyItemScope, SLazyCellScope {
+
+    companion object {
+
+        @Composable
+        fun remember(
+            lazyItemScope: LazyItemScope,
+            orientation: Orientation,
+        ): SLazyCellScopeImpl = rememberInCompose(
+            lazyItemScope,
+            orientation,
+        ) {
+            SLazyCellScopeImpl(
+                lazyItemScope = lazyItemScope,
+                orientation = orientation,
+            )
         }
     }
 }
