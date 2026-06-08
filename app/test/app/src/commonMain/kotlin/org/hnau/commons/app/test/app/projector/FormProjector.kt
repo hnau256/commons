@@ -26,8 +26,10 @@ import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototy
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.lazy.SLazyTable
+import org.hnau.commons.app.projector.fractal.table.lazy.Subtable
 import org.hnau.commons.app.projector.fractal.table.lazy.cells
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
@@ -142,11 +144,6 @@ class FormProjector(
                     SLazyTable(
                         orientation = Orientation.Vertical,
                     ) {
-                        cells(
-                            items = items,
-                        ) { inputProjector ->
-                            inputProjector.Content()
-                        }
                         cells(
                             items = items,
                         ) { inputProjector ->
