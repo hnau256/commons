@@ -136,13 +136,17 @@ class FormProjector(
         SScreen(
             contentPadding = contentPadding,
             title = { SText("Form") },
-        ) { contentPadding ->
+        ) {
             SContentWithActions(
-                modifier = Modifier.padding(contentPadding),
                 content = {
                     SLazyTable(
                         orientation = Orientation.Vertical,
                     ) {
+                        cells(
+                            items = items,
+                        ) { inputProjector ->
+                            inputProjector.Content()
+                        }
                         cells(
                             items = items,
                         ) { inputProjector ->

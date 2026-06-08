@@ -30,6 +30,7 @@ import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
@@ -51,107 +52,109 @@ fun <T> STabs(
     itemPaddingValues: PaddingValues = LocalDistance.current.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
 ) {
-    FContext(
-        update = { containerOverlay() },
-    ) {
-        val distance = LocalDistance.current
-        val itemMargin = distance.units.borderWidth
-        val cornerRadius = distance.units.cornerRadius
-        val itemCornerRadius = cornerRadius - itemMargin
-        val density = LocalDensity.current
-
-        val selectedFContext = LocalFContext.current.rememberRun {
-            copy(
-                mood = mood.activateIfNeed(
-                    importance = onClick?.let { importanceToActivate },
-                ),
-            )
-        }.contentOverlay()
-
-        val childrenPositions: List<Mutable<Rect>> = remember(items) {
-            items.map { Mutable(Rect.Zero) }
-        }
-
-
-        val selectedIndex = items.indexOf(selection).takeIf { it >= 0 } ?: 0
-        val animatedSelectedIndex: State<Float> = animateFloatAsState(
-            targetValue = selectedIndex.toFloat(),
-        )
-
-
-        val color = LocalFContext.current.color
-        Row(
-            modifier = modifier
-                .height(IntrinsicSize.Max)
-                .drawBehind {
-                    drawRoundRect(
-                        color = color,
-                        size = size,
-                        cornerRadius = with(density) { cornerRadius.toPx() }.let(::CornerRadius),
-                    )
-
-                    val index = animatedSelectedIndex.value
-                    val fromIndex = floor(index).toInt()
-                    val toIndex = ceil(index).toInt()
-                    val fromRect = childrenPositions
-                        .getOrNull(fromIndex)
-                        ?.value
-                        ?: return@drawBehind
-                    val rect = (fromIndex == toIndex).foldBoolean(
-                        ifTrue = { fromRect },
-                        ifFalse = {
-                            val toRect = childrenPositions
-                                .getOrNull(toIndex)
-                                ?.value
-                                ?: return@drawBehind
-                            lerp(
-                                start = fromRect,
-                                stop = toRect,
-                                fraction = index - fromIndex
-                            )
-                        }
-                    )
-                    drawRoundRect(
-                        color = selectedFContext.color,
-                        topLeft = rect.topLeft + with(density) {
-                            itemMargin.toPx().let { offset ->
-                                Offset(offset, offset)
-                            }
-                        },
-                        size = rect.size,
-                        cornerRadius = with(density) { itemCornerRadius.toPx() }.let(::CornerRadius),
-                    )
-                }
-                .padding(itemMargin),
-            horizontalArrangement = horizontalArrangement,
+    LocalContentPaddingBox {
+        FContext(
+            update = { containerOverlay() },
         ) {
-            val itemShape = RoundedCornerShape(itemCornerRadius)
-            items.forEachIndexed { i, item ->
-                val isSelected = i == selectedIndex
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .clip(itemShape)
-                        .clickableOption(
-                            onClick = onClick
-                                .takeIf { !isSelected }
-                                ?.let { onClickNotNull ->
-                                    { onClickNotNull(item) }
+            val distance = LocalDistance.current
+            val itemMargin = distance.units.borderWidth
+            val cornerRadius = distance.units.cornerRadius
+            val itemCornerRadius = cornerRadius - itemMargin
+            val density = LocalDensity.current
+
+            val selectedFContext = LocalFContext.current.rememberRun {
+                copy(
+                    mood = mood.activateIfNeed(
+                        importance = onClick?.let { importanceToActivate },
+                    ),
+                )
+            }.contentOverlay()
+
+            val childrenPositions: List<Mutable<Rect>> = remember(items) {
+                items.map { Mutable(Rect.Zero) }
+            }
+
+
+            val selectedIndex = items.indexOf(selection).takeIf { it >= 0 } ?: 0
+            val animatedSelectedIndex: State<Float> = animateFloatAsState(
+                targetValue = selectedIndex.toFloat(),
+            )
+
+
+            val color = LocalFContext.current.color
+            Row(
+                modifier = modifier
+                    .height(IntrinsicSize.Max)
+                    .drawBehind {
+                        drawRoundRect(
+                            color = color,
+                            size = size,
+                            cornerRadius = with(density) { cornerRadius.toPx() }.let(::CornerRadius),
+                        )
+
+                        val index = animatedSelectedIndex.value
+                        val fromIndex = floor(index).toInt()
+                        val toIndex = ceil(index).toInt()
+                        val fromRect = childrenPositions
+                            .getOrNull(fromIndex)
+                            ?.value
+                            ?: return@drawBehind
+                        val rect = (fromIndex == toIndex).foldBoolean(
+                            ifTrue = { fromRect },
+                            ifFalse = {
+                                val toRect = childrenPositions
+                                    .getOrNull(toIndex)
+                                    ?.value
+                                    ?: return@drawBehind
+                                lerp(
+                                    start = fromRect,
+                                    stop = toRect,
+                                    fraction = index - fromIndex
+                                )
+                            }
+                        )
+                        drawRoundRect(
+                            color = selectedFContext.color,
+                            topLeft = rect.topLeft + with(density) {
+                                itemMargin.toPx().let { offset ->
+                                    Offset(offset, offset)
                                 }
+                            },
+                            size = rect.size,
+                            cornerRadius = with(density) { itemCornerRadius.toPx() }.let(::CornerRadius),
                         )
-                        .onGloballyPositioned { coordinates ->
-                            childrenPositions[i].value = coordinates.boundsInParent()
-                        }
-                        .padding(itemPaddingValues),
-                    propagateMinConstraints = true,
-                ) {
-                    CompositionLocalProvider(
-                        LocalFContext provides isSelected.foldBoolean(
-                            ifTrue = { selectedFContext },
-                            ifFalse = { LocalFContext.current },
-                        )
+                    }
+                    .padding(itemMargin),
+                horizontalArrangement = horizontalArrangement,
+            ) {
+                val itemShape = RoundedCornerShape(itemCornerRadius)
+                items.forEachIndexed { i, item ->
+                    val isSelected = i == selectedIndex
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .clip(itemShape)
+                            .clickableOption(
+                                onClick = onClick
+                                    .takeIf { !isSelected }
+                                    ?.let { onClickNotNull ->
+                                        { onClickNotNull(item) }
+                                    }
+                            )
+                            .onGloballyPositioned { coordinates ->
+                                childrenPositions[i].value = coordinates.boundsInParent()
+                            }
+                            .padding(itemPaddingValues),
+                        propagateMinConstraints = true,
                     ) {
-                        item(item)
+                        CompositionLocalProvider(
+                            LocalFContext provides isSelected.foldBoolean(
+                                ifTrue = { selectedFContext },
+                                ifFalse = { LocalFContext.current },
+                            )
+                        ) {
+                            item(item)
+                        }
                     }
                 }
             }

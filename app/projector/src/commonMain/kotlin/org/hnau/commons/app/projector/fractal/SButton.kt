@@ -9,6 +9,8 @@ import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.withActionOrElse
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
+import org.hnau.commons.app.projector.utils.iconOrNull
+import org.hnau.commons.app.projector.utils.titleOrNull
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 
 @Composable
@@ -29,10 +31,17 @@ fun SButton(
         contentOrientation = Orientation.Horizontal,
         contentAlignment = Alignment.Center,
     ) {
-        STitleOrIcon(
-            titleOrIcon = titleOrIcon.withActionOrElse(
-                actionOrElseOrDisabled = actionOrElseOrDisabled,
-            )
+        val titleOrIcon = titleOrIcon.withActionOrElse(
+            actionOrElseOrDisabled = actionOrElseOrDisabled,
+        )
+        SItem(
+            startAccessory = titleOrIcon.iconOrNull?.let { icon ->
+                { SIcon(icon) }
+            },
+            content = titleOrIcon.titleOrNull?.let { title ->
+                { SText(title) }
+            },
+            expandHorizontally = false,
         )
     }
 }

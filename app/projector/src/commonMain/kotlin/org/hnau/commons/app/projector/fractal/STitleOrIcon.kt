@@ -22,7 +22,7 @@ import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.it
 
-@Composable
+/*@Composable
 fun STitleOrIcon(
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
@@ -95,4 +95,4 @@ private fun <T : Any> Side(
                 }
             )
         }
-}
+}*/

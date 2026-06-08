@@ -11,6 +11,7 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 @Composable
@@ -25,22 +26,24 @@ fun SText(
     minLines: Int = 1,
     autoSize: TextAutoSize? = null,
 ) {
-    FContext(
-        update = { contentOverlay() }
-    ) {
-        val fContext = LocalFContext.current
-        BasicText(
-            text = text,
-            style = LocalDistance.current.units.textStyle[type].merge(
-                color = fContext.color,
-            ),
-            modifier = modifier,
-            onTextLayout = onTextLayout,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            minLines = minLines,
-            autoSize = autoSize,
-        )
+    LocalContentPaddingBox {
+        FContext(
+            update = { contentOverlay() }
+        ) {
+            val fContext = LocalFContext.current
+            BasicText(
+                text = text,
+                style = LocalDistance.current.units.textStyle[type].merge(
+                    color = fContext.color,
+                ),
+                modifier = modifier,
+                onTextLayout = onTextLayout,
+                overflow = overflow,
+                softWrap = softWrap,
+                maxLines = maxLines,
+                minLines = minLines,
+                autoSize = autoSize,
+            )
+        }
     }
 }

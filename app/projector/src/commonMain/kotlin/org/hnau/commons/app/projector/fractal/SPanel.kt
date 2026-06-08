@@ -18,6 +18,7 @@ import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
@@ -41,69 +42,71 @@ fun SPanel(
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable () -> Unit,
 ) {
-    FContext(
-        update = {
-            copy(
-                mood = mood.activateIfNeed(
-                    importance = actionOrElseOrDisabled?.let { importanceToActivate },
-                ),
-            ).containerOverlay()
-        }
-    ) {
-
-        val backgroundColor = LocalFContext.current.color
-
-        DistanceOffset {
-
-            val units = LocalDistance.current.units
-
-            val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
-            val isInProgress = when (actionOrElseOrDisabled) {
-                is ActionOrElse.Else -> true
-                is ActionOrElse.Action, null -> false
+    LocalContentPaddingBox {
+        FContext(
+            update = {
+                copy(
+                    mood = mood.activateIfNeed(
+                        importance = actionOrElseOrDisabled?.let { importanceToActivate },
+                    ),
+                ).containerOverlay()
             }
+        ) {
 
-            val foregroundColor = LocalFContext.current.contentOverlay().color
+            val backgroundColor = LocalFContext.current.color
 
-            Box(
-                propagateMinConstraints = true,
-                modifier = modifier
-                    .clip(shape)
-                    .clickable(
-                        enabled = actionOrCancel?.onClick != null,
-                        onClick = actionOrCancel?.onClick.orNoAction,
-                    )
-                    .background(backgroundColor)
-                    .then(
-                        when {
-                            isInProgress -> Modifier.fractalDashBorder(
-                                color = foregroundColor,
-                                shape = shape,
-                            )
+            DistanceOffset {
 
-                            isSelected -> Modifier.border(
-                                width = units.borderWidth,
-                                color = foregroundColor,
-                                shape = shape,
-                            )
+                val units = LocalDistance.current.units
 
-                            else -> Modifier
-                        }
-                    ),
-            ) {
+                val actionOrCancel = actionOrElseOrDisabled?.rememberActionOrCancel()
+                val isInProgress = when (actionOrElseOrDisabled) {
+                    is ActionOrElse.Else -> true
+                    is ActionOrElse.Action, null -> false
+                }
+
+                val foregroundColor = LocalFContext.current.contentOverlay().color
+
                 Box(
-                    modifier = Modifier.padding(
-                        paddingValues = LocalDistance.current
-                            .units
-                            .paddingValues[contentOrientation]
-                            .medium
-                    ),
-                    contentAlignment = contentAlignment,
+                    propagateMinConstraints = true,
+                    modifier = modifier
+                        .clip(shape)
+                        .clickable(
+                            enabled = actionOrCancel?.onClick != null,
+                            onClick = actionOrCancel?.onClick.orNoAction,
+                        )
+                        .background(backgroundColor)
+                        .then(
+                            when {
+                                isInProgress -> Modifier.fractalDashBorder(
+                                    color = foregroundColor,
+                                    shape = shape,
+                                )
+
+                                isSelected -> Modifier.border(
+                                    width = units.borderWidth,
+                                    color = foregroundColor,
+                                    shape = shape,
+                                )
+
+                                else -> Modifier
+                            }
+                        ),
                 ) {
-                    CompositionLocalProvider(
-                        value = LocalShapeCorners provides ShapeCorners.Provider.opened,
-                        content = content,
-                    )
+                    Box(
+                        modifier = Modifier.padding(
+                            paddingValues = LocalDistance.current
+                                .units
+                                .paddingValues[contentOrientation]
+                                .medium
+                        ),
+                        contentAlignment = contentAlignment,
+                    ) {
+                        CompositionLocalProvider(
+                            value = LocalShapeCorners provides ShapeCorners.Provider.opened,
+                            content = content,
+                        )
+                    }
                 }
             }
         }

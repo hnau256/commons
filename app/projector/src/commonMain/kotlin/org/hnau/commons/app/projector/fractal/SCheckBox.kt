@@ -23,6 +23,7 @@ import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
@@ -40,76 +41,78 @@ fun SCheckBox(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    val inactiveState = StateInfo.remember(
-        checked = false,
-    )
-
-    val activeState = StateInfo.remember(
-        checked = true,
-    )
-
-    val activePercentage: Float by animateFloatAsState(
-        isChecked.foldBoolean(
-            ifTrue = { 1f },
-            ifFalse = { 0f },
+    LocalContentPaddingBox {
+        val inactiveState = StateInfo.remember(
+            checked = false,
         )
-    )
 
-    val distance = LocalDistance.current
-    val units = distance.units
-    val handleSize = 24.dp.scale(distance.scale.space)
-    val maxOffset = activeState.handleOffset - inactiveState.handleOffset
-    val separation = units.borderWidth * 3
+        val activeState = StateInfo.remember(
+            checked = true,
+        )
 
-    val shape = rememberFShape(
-        corners = ShapeCorners.Provider.opened,
-    )
-
-    Box(
-        modifier = modifier
-            .clip(shape)
-            .border(
-                width = units.borderWidth,
-                color = lerp(
-                    start = inactiveState.borderColor,
-                    stop = activeState.borderColor,
-                    fraction = activePercentage,
-                ),
-                shape = shape,
+        val activePercentage: Float by animateFloatAsState(
+            isChecked.foldBoolean(
+                ifTrue = { 1f },
+                ifFalse = { 0f },
             )
-            .clickableOption(onClick)
-            .background(
-                color = lerp(
-                    start = inactiveState.containerColor,
-                    stop = activeState.containerColor,
-                    fraction = activePercentage,
-                ),
-            )
-            .padding(separation)
-            .size(
-                width = maxOffset + handleSize,
-                height = handleSize,
-            ),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
+        )
+
+        val distance = LocalDistance.current
+        val units = distance.units
+        val handleSize = 24.dp.scale(distance.scale.space)
+        val maxOffset = activeState.handleOffset - inactiveState.handleOffset
+        val separation = units.borderWidth * 3
+
+        val shape = rememberFShape(
+            corners = ShapeCorners.Provider.opened,
+        )
+
         Box(
-            modifier = Modifier
-                .graphicsLayer {
-                    translationX = maxOffsetPx * activePercentage
-                }
-                .size(handleSize)
-                .background(
+            modifier = modifier
+                .clip(shape)
+                .border(
+                    width = units.borderWidth,
                     color = lerp(
-                        start = inactiveState.contentColor,
-                        stop = activeState.contentColor,
+                        start = inactiveState.borderColor,
+                        stop = activeState.borderColor,
                         fraction = activePercentage,
                     ),
-                    shape = RoundedCornerShape(
-                        size = units.cornerRadius - separation,
-                    )
+                    shape = shape,
                 )
-        )
+                .clickableOption(onClick)
+                .background(
+                    color = lerp(
+                        start = inactiveState.containerColor,
+                        stop = activeState.containerColor,
+                        fraction = activePercentage,
+                    ),
+                )
+                .padding(separation)
+                .size(
+                    width = maxOffset + handleSize,
+                    height = handleSize,
+                ),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
+            Box(
+                modifier = Modifier
+                    .graphicsLayer {
+                        translationX = maxOffsetPx * activePercentage
+                    }
+                    .size(handleSize)
+                    .background(
+                        color = lerp(
+                            start = inactiveState.contentColor,
+                            stop = activeState.contentColor,
+                            fraction = activePercentage,
+                        ),
+                        shape = RoundedCornerShape(
+                            size = units.cornerRadius - separation,
+                        )
+                    )
+            )
+        }
     }
 }
 

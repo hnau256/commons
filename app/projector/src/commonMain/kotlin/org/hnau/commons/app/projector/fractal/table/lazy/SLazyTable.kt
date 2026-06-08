@@ -19,14 +19,19 @@ import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.PaddingValues
+import org.hnau.commons.app.projector.utils.acrossFrom
+import org.hnau.commons.app.projector.utils.acrossTo
+import org.hnau.commons.app.projector.utils.alongFrom
+import org.hnau.commons.app.projector.utils.alongTo
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.opposite
 import org.hnau.commons.kotlin.foldBoolean
@@ -39,53 +44,69 @@ fun SLazyTable(
     corners: ShapeCorners.Provider = LocalShapeCorners.current,
     reverseOrdering: Boolean = false,
     state: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
     overscrollEffect: OverscrollEffect? = rememberOverscrollEffect(),
     content: SLazyTableScope.() -> Unit,
 ) {
 
-    val arrangement = Arrangement.spacedBy(LocalDistance.current.units.borderWidth)
+    with(orientation) {
 
-    val lazyListContent: LazyListScope.() -> Unit = {
-        val scope: SLazyTableScope = SLazyTableScopeImpl(
-            lazyListScope = this,
-            orientation = orientation,
-            corners = corners,
-            reverseOrdering = reverseOrdering,
+        val arrangement = Arrangement.spacedBy(LocalDistance.current.units.borderWidth)
+
+        val contentPadding = LocalContentPadding.current
+
+        val cellContentPadding = PaddingValues(
+            acrossFrom = contentPadding.acrossFrom,
+            acrossTo = contentPadding.acrossTo,
         )
-        scope.content()
-    }
+        
+        val lazyListContentPadding = PaddingValues(
+            alongFrom = contentPadding.alongFrom,
+            alongTo = contentPadding.alongTo,
+        )
 
-    orientation.fold(
-        ifHorizontal = {
-            LazyRow(
-                modifier = modifier,
-                state = state,
-                contentPadding = contentPadding,
-                reverseLayout = reverseOrdering,
-                horizontalArrangement = arrangement,
-                flingBehavior = flingBehavior,
-                userScrollEnabled = userScrollEnabled,
-                overscrollEffect = overscrollEffect,
-                content = lazyListContent,
+        val lazyListContent: LazyListScope.() -> Unit = {
+            val scope: SLazyTableScope = SLazyTableScopeImpl(
+                lazyListScope = this,
+                orientation = orientation,
+                corners = corners,
+                reverseOrdering = reverseOrdering,
+                cellContentPadding = cellContentPadding,
             )
-        },
-        ifVertical = {
-            LazyColumn(
-                modifier = modifier,
-                state = state,
-                contentPadding = contentPadding,
-                reverseLayout = reverseOrdering,
-                verticalArrangement = arrangement,
-                flingBehavior = flingBehavior,
-                userScrollEnabled = userScrollEnabled,
-                overscrollEffect = overscrollEffect,
-                content = lazyListContent,
-            )
+            scope.content()
         }
-    )
+
+
+        orientation.fold(
+            ifHorizontal = {
+                LazyRow(
+                    modifier = modifier,
+                    state = state,
+                    contentPadding = lazyListContentPadding,
+                    reverseLayout = reverseOrdering,
+                    horizontalArrangement = arrangement,
+                    flingBehavior = flingBehavior,
+                    userScrollEnabled = userScrollEnabled,
+                    overscrollEffect = overscrollEffect,
+                    content = lazyListContent,
+                )
+            },
+            ifVertical = {
+                LazyColumn(
+                    modifier = modifier,
+                    state = state,
+                    contentPadding = lazyListContentPadding,
+                    reverseLayout = reverseOrdering,
+                    verticalArrangement = arrangement,
+                    flingBehavior = flingBehavior,
+                    userScrollEnabled = userScrollEnabled,
+                    overscrollEffect = overscrollEffect,
+                    content = lazyListContent,
+                )
+            }
+        )
+    }
 }
 
 interface SLazyTableScope : LazyListScope {
@@ -158,6 +179,7 @@ private class SLazyTableScopeImpl(
     private val lazyListScope: LazyListScope,
     override val orientation: Orientation,
     private val corners: ShapeCorners.Provider,
+    private val cellContentPadding: PaddingValues,
     private val reverseOrdering: Boolean,
 ) : LazyListScope by lazyListScope, SLazyTableScope {
 
@@ -176,6 +198,7 @@ private class SLazyTableScopeImpl(
         val corners = this@SLazyTableScopeImpl.corners
         val orientation = this@SLazyTableScopeImpl.orientation
         val reverseOrdering = this@SLazyTableScopeImpl.reverseOrdering
+        val cellContentPadding = this@SLazyTableScopeImpl.cellContentPadding
 
         items(
             count = count,
@@ -236,7 +259,11 @@ private class SLazyTableScopeImpl(
                     },
                     propagateMinConstraints = true,
                 ) {
-                    cellScope.cellContent(index)
+                    CompositionLocalProvider(
+                        value = LocalContentPadding provides cellContentPadding,
+                    ) {
+                        cellScope.cellContent(index)
+                    }
                 }
             }
         }

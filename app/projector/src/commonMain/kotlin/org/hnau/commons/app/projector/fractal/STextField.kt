@@ -40,6 +40,7 @@ import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
@@ -64,72 +65,74 @@ fun STextField(
     scrollState: ScrollState = rememberScrollState(),
     importanceToActivate: Importance? = Importance.default,
 ) {
-    var isFocused: Boolean by remember { mutableStateOf(false) }
+    LocalContentPaddingBox {
+        var isFocused: Boolean by remember { mutableStateOf(false) }
 
-    val internalState = rememberSaveable(saver = TextFieldState.Saver) {
-        TextFieldState(value)
-    }
-
-    LaunchedEffect(internalState) {
-        snapshotFlow { internalState.text }.collect { newUiText ->
-            onValueChanged(newUiText.toString())
+        val internalState = rememberSaveable(saver = TextFieldState.Saver) {
+            TextFieldState(value)
         }
-    }
 
-    LaunchedEffect(value) {
-        if (value != internalState.text.toString()) {
-            internalState.setTextAndPlaceCursorAtEnd(value)
+        LaunchedEffect(internalState) {
+            snapshotFlow { internalState.text }.collect { newUiText ->
+                onValueChanged(newUiText.toString())
+            }
         }
-    }
 
-    val fContext = LocalFContext.current
-    val units = LocalDistance.current.units
+        LaunchedEffect(value) {
+            if (value != internalState.text.toString()) {
+                internalState.setTextAndPlaceCursorAtEnd(value)
+            }
+        }
 
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
+        val fContext = LocalFContext.current
+        val units = LocalDistance.current.units
 
-    val overlayFContext = fContext.copy(
-        mood = fContext.mood.activateIfNeed(
-            importance = isFocused.ifTrue { importanceToActivate },
-        ),
-    ).containerOverlay()
-    val contentFContext = overlayFContext.contentOverlay()
+        val bringIntoViewRequester = remember { BringIntoViewRequester() }
+        val coroutineScope = rememberCoroutineScope()
 
-    BasicTextField(
-        state = internalState,
-        modifier = modifier
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .onFocusChanged { focusState ->
-                isFocused = focusState.isFocused
-                if (isFocused) {
-                    coroutineScope.launch {
-                        delay(100)
-                        bringIntoViewRequester.bringIntoView()
+        val overlayFContext = fContext.copy(
+            mood = fContext.mood.activateIfNeed(
+                importance = isFocused.ifTrue { importanceToActivate },
+            ),
+        ).containerOverlay()
+        val contentFContext = overlayFContext.contentOverlay()
+
+        BasicTextField(
+            state = internalState,
+            modifier = modifier
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                    if (isFocused) {
+                        coroutineScope.launch {
+                            delay(100)
+                            bringIntoViewRequester.bringIntoView()
+                        }
                     }
-                }
+                },
+            enabled = enabled,
+            readOnly = !enabled,
+            textStyle = units.textStyle[textStyle].merge(
+                color = contentFContext.color,
+            ),
+            keyboardOptions = keyboardOptions,
+            lineLimits = lineLimits,
+            inputTransformation = inputTransformation,
+            outputTransformation = outputTransformation,
+            onKeyboardAction = onKeyboardAction,
+            onTextLayout = onTextLayout,
+            interactionSource = interactionSource,
+            scrollState = scrollState,
+            cursorBrush = SolidColor(contentFContext.color),
+            decorator = remember(
+                overlayFContext.color,
+            ) {
+                Decorator(
+                    color = overlayFContext.color,
+                )
             },
-        enabled = enabled,
-        readOnly = !enabled,
-        textStyle = units.textStyle[textStyle].merge(
-            color = contentFContext.color,
-        ),
-        keyboardOptions = keyboardOptions,
-        lineLimits = lineLimits,
-        inputTransformation = inputTransformation,
-        outputTransformation = outputTransformation,
-        onKeyboardAction = onKeyboardAction,
-        onTextLayout = onTextLayout,
-        interactionSource = interactionSource,
-        scrollState = scrollState,
-        cursorBrush = SolidColor(contentFContext.color),
-        decorator = remember(
-            overlayFContext.color,
-        ) {
-            Decorator(
-                color = overlayFContext.color,
-            )
-        },
-    )
+        )
+    }
 }
 
 private data class Decorator(

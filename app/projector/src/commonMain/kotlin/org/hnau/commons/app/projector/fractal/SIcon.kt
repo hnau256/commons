@@ -19,6 +19,7 @@ import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.fold
@@ -29,29 +30,31 @@ fun SIcon(
     drawable: Drawable,
     modifier: Modifier = Modifier,
 ) {
-    FContext(
-        update = { contentOverlay() }
-    ) {
-        drawable.fold(
-            ifPainter = { painter ->
-                PainterIcon(
-                    painter = painter,
-                    modifier = modifier,
-                )
-            },
-            ifVector = { vector ->
-                PainterIcon(
-                    painter = rememberVectorPainter(vector),
-                    modifier = modifier,
-                )
-            },
-            ifText = { text ->
-                TextIcon(
-                    text = text,
-                    modifier = modifier,
-                )
-            }
-        )
+    LocalContentPaddingBox {
+        FContext(
+            update = { contentOverlay() }
+        ) {
+            drawable.fold(
+                ifPainter = { painter ->
+                    PainterIcon(
+                        painter = painter,
+                        modifier = modifier,
+                    )
+                },
+                ifVector = { vector ->
+                    PainterIcon(
+                        painter = rememberVectorPainter(vector),
+                        modifier = modifier,
+                    )
+                },
+                ifText = { text ->
+                    TextIcon(
+                        text = text,
+                        modifier = modifier,
+                    )
+                }
+            )
+        }
     }
 }
 

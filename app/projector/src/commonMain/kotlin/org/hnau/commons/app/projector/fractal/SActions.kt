@@ -29,7 +29,7 @@ fun SActions(
         0 -> Orientation.Vertical
         else -> Orientation.Horizontal
     }
-    Line(
+    SLine(
         modifier = modifier,
         orientation = orientation,
         reverseOrdering = true,

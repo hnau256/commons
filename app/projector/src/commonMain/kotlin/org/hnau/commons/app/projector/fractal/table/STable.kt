@@ -3,6 +3,7 @@ package org.hnau.commons.app.projector.fractal.table
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.utils.STableScopeImpl
@@ -21,7 +22,7 @@ fun STable(
     reverseOrdering: Boolean = false,
     content: @Composable STableScope.() -> Unit,
 ) {
-    Line(
+    SLine(
         modifier = modifier,
         orientation = orientation,
         separation = LocalDistance.current.units.borderWidth,

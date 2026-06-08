@@ -94,9 +94,8 @@ class ActionProjector(
                     )
                 )
             }
-        ) { contentPadding ->
+        ) {
             SContentWithActions(
-                modifier = Modifier.padding(contentPadding),
                 content = {
                     SMainWithAdditional(
                         main = { Box {} },

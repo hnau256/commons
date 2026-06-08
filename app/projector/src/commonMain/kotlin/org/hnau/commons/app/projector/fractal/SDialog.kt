@@ -16,6 +16,7 @@ import org.hnau.commons.app.model.theme.ThemeBrightnessValues
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
@@ -54,14 +55,16 @@ fun SDialog(
                         )
                     )
             ) {
-                DistanceOffset {
-                    STable(
-                        orientation = Orientation.Vertical,
-                    ) {
-                        with(info) { content() }
-                        SActions(
-                            actions = info.actions,
-                        )
+                LocalContentPaddingBox {
+                    DistanceOffset {
+                        STable(
+                            orientation = Orientation.Vertical,
+                        ) {
+                            with(info) { content() }
+                            SActions(
+                                actions = info.actions,
+                            )
+                        }
                     }
                 }
             }
