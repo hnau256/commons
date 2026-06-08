@@ -25,6 +25,7 @@ import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
+import org.hnau.commons.kotlin.foldBoolean
 
 @Composable
 fun SLazyTable(
@@ -47,6 +48,7 @@ fun SLazyTable(
             lazyListScope = this,
             orientation = orientation,
             corners = corners,
+            reverseOrdering = reverseOrdering,
         )
         scope.content()
     }
@@ -124,6 +126,7 @@ private class SLazyTableScopeImpl(
     private val lazyListScope: LazyListScope,
     override val orientation: Orientation,
     private val corners: ShapeCorners.Provider,
+    private val reverseOrdering: Boolean,
 ) : LazyListScope by lazyListScope, SLazyTableScope {
 
     private var isFirstCells = true
@@ -140,6 +143,8 @@ private class SLazyTableScopeImpl(
 
         val corners = this@SLazyTableScopeImpl.corners
         val orientation = this@SLazyTableScopeImpl.orientation
+        val reverseOrdering = this@SLazyTableScopeImpl.reverseOrdering
+
         items(
             count = count,
             key = key,
@@ -166,11 +171,26 @@ private class SLazyTableScopeImpl(
             ) {
                 val separation = LocalDistance.current.units.padding.along.medium
                 Box(
-                    modifier = remember(separation, orientation) {
+                    modifier = remember(
+                        separation,
+                        orientation,
+                        reverseOrdering,
+                        isFirstCells,
+                        ) {
                         when {
-                            isFirst && !isFirstCells -> orientation.fold( //TODO check reverseOrdering
-                                ifHorizontal = { Modifier.padding(start = separation) },
-                                ifVertical = { Modifier.padding(top = separation) },
+                            isFirst && !isFirstCells -> reverseOrdering.foldBoolean(
+                                ifFalse = {
+                                    orientation.fold(
+                                        ifHorizontal = { Modifier.padding(start = separation) },
+                                        ifVertical = { Modifier.padding(top = separation) },
+                                    )
+                                },
+                                ifTrue = {
+                                    orientation.fold(
+                                        ifHorizontal = { Modifier.padding(end = separation) },
+                                        ifVertical = { Modifier.padding(bottom = separation) },
+                                    )
+                                }
                             )
 
                             else -> Modifier
