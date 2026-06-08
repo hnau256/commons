@@ -1,27 +1,5 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import org.hnau.commons.app.projector.fractal.distance.LocalDistance
-import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.uikit.state.NullableStateContent
-import org.hnau.commons.app.projector.uikit.state.StateContent
-import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
-import org.hnau.commons.app.projector.utils.TitleOrIcon
-import org.hnau.commons.app.projector.utils.iconOrNull
-import org.hnau.commons.app.projector.utils.option
-import org.hnau.commons.app.projector.utils.titleOrNull
-import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.foldNullable
-import org.hnau.commons.kotlin.it
-
 /*@Composable
 fun STitleOrIcon(
     titleOrIcon: TitleOrIcon,

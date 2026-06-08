@@ -9,7 +9,6 @@ import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.table.Subtable
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation

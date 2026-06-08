@@ -1,7 +1,6 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.CropDin
@@ -11,7 +10,6 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Schema
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
@@ -24,12 +22,8 @@ import org.hnau.commons.app.projector.fractal.input.InputProjector
 import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
-import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.lazy.SLazyTable
-import org.hnau.commons.app.projector.fractal.table.lazy.Subtable
 import org.hnau.commons.app.projector.fractal.table.lazy.cells
-import org.hnau.commons.app.projector.fractal.utils.rememberFShape
-import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate

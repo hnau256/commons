@@ -9,7 +9,6 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.utils.STableScopeImpl
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
-import org.hnau.commons.app.projector.uikit.line.Line
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.utils.Orientation
 
