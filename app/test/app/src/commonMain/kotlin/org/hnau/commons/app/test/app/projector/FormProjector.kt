@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Schema
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +24,10 @@ import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.lazy.SLazyTable
+import org.hnau.commons.app.projector.fractal.table.lazy.Subtable
+import org.hnau.commons.app.projector.fractal.table.lazy.cell
 import org.hnau.commons.app.projector.fractal.table.lazy.cells
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.ProjectorSavableDelegate
@@ -99,14 +103,6 @@ class FormProjector(
             icon = Drawable.Vector(Icons.Default.Schema),
         )
 
-    private val items: List<InputProjector> = listOf(
-        flag,
-        decimal,
-        integer,
-        text,
-        variant,
-    )
-
     private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(
         scope = scope,
         model = model.savableDelegate,
@@ -138,10 +134,25 @@ class FormProjector(
                     SLazyTable(
                         orientation = Orientation.Vertical,
                     ) {
-                        cells(
-                            items = items,
-                        ) { inputProjector ->
-                            inputProjector.Content()
+                        cell(key = "flag") { flag.Content() }
+                        cell(key = "decimal") { decimal.Content() }
+                        cell(key = "integer") { integer.Content() }
+                        separator()
+                        cell(key = "text") { text.Content() }
+                        cell(key = "variant") { variant.Content() }
+                        separator()
+                        cell(key = "custom_top") {
+                            Subtable {
+                                SCell(modifier = Modifier.weight(1f)) { SPanel { SText("A") } }
+                                SCell(modifier = Modifier.weight(1f)) { SPanel { SText("B") } }
+                                SCell(modifier = Modifier.weight(1f)) { SPanel { SText("C") } }
+                            }
+                        }
+                        cell(key = "custom_bottom") {
+                            Subtable {
+                                SCell(modifier = Modifier.weight(1f)) { SPanel { SText("D") } }
+                                SCell(modifier = Modifier.weight(1f)) { SPanel { SText("E") } }
+                            }
                         }
                     }
                 },
