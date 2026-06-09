@@ -247,7 +247,7 @@ private class SLazyTableScopeImpl(
                         val isLastCell = isLastCells && cellIndex == element.count - 1
                         val addSeparatorBefore = addSeparatorBefore && cellIndex == 0
 
-                        val cellScope = SLazyCellScopeImpl.remember(
+                        val cellScope = SLazyCellScopeImpl(
                             orientation = orientation,
                             lazyItemScope = this,
                         )
@@ -302,9 +302,7 @@ private class SLazyTableScopeImpl(
                                 CompositionLocalProvider(
                                     value = LocalContentPadding provides cellContentPadding,
                                 ) {
-                                    with(element) {
-                                        cellScope.cellContent(cellIndex)
-                                    }
+                                    element.cellContent(cellScope, cellIndex)
                                 }
                             }
                         }
@@ -318,22 +316,4 @@ private class SLazyTableScopeImpl(
 private class SLazyCellScopeImpl(
     private val lazyItemScope: LazyItemScope,
     override val orientation: Orientation,
-) : LazyItemScope by lazyItemScope, SLazyCellScope {
-
-    companion object {
-
-        @Composable
-        fun remember(
-            lazyItemScope: LazyItemScope,
-            orientation: Orientation,
-        ): SLazyCellScopeImpl = rememberInCompose(
-            lazyItemScope,
-            orientation,
-        ) {
-            SLazyCellScopeImpl(
-                lazyItemScope = lazyItemScope,
-                orientation = orientation,
-            )
-        }
-    }
-}
+) : LazyItemScope by lazyItemScope, SLazyCellScope
