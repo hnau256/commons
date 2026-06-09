@@ -9,8 +9,6 @@ import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.withActionOrElse
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
-import org.hnau.commons.app.projector.utils.iconOrNull
-import org.hnau.commons.app.projector.utils.titleOrNull
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 
 @Composable
@@ -19,7 +17,7 @@ fun SButton(
     titleOrIcon: TitleOrIcon,
     modifier: Modifier = Modifier,
     shape: Shape = rememberFShape(),
-    importance: Importance = Importance.default,
+    importanceToActivate: Importance? = Importance.default,
     isSelected: Boolean = false,
 ) {
     SPanel(
@@ -27,7 +25,7 @@ fun SButton(
         modifier = modifier,
         shape = shape,
         isSelected = isSelected,
-        importanceToActivate = importance,
+        importanceToActivate = importanceToActivate,
         contentOrientation = Orientation.Horizontal,
         contentAlignment = Alignment.Center,
     ) {

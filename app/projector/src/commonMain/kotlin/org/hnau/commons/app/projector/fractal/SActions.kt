@@ -89,7 +89,7 @@ data class STableActionsScope(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
         modifier: Modifier = Modifier,
-        importance: Importance = Importance.default,
+        importanceToActivate: Importance? = Importance.default,
     ) {
         tableScope.SCell(
             modifier = modifier,
@@ -97,7 +97,7 @@ data class STableActionsScope(
             SButton(
                 actionOrElseOrDisabled = actionOrElseOrDisabled,
                 titleOrIcon = titleOrIcon,
-                importance = importance,
+                importanceToActivate = importanceToActivate,
             )
         }
     }

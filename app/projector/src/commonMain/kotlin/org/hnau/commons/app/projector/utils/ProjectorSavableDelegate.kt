@@ -44,11 +44,11 @@ class ProjectorSavableDelegate<T>(
                                     title = save,
                                     icon = Drawable.Vector(Icons.Default.Save),
                                 ),
-                                importance = Importance.Primary,
+                                importanceToActivate = Importance.Primary,
                             )
                         }
                         Action(
-                            importance = Importance.Tertiary,
+                            importanceToActivate = Importance.Tertiary,
                             actionOrElseOrDisabled = ActionOrElse.instant(cancel),
                             titleOrIcon = TitleOrIcon.Both(
                                 title = edit,
