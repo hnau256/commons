@@ -252,19 +252,14 @@ private class SLazyTableScopeImpl(
                             lazyItemScope = this,
                         )
 
-                        val cornersProvider = rememberInCompose(
-                            isFirstCell,
-                            isLastCell,
-                            corners,
-                        ) {
-                            val corners = corners
+                        val cornersProvider = ShapeCorners.Provider {
+                            corners
                                 .getTableCorners()
                                 .close(
                                     orientation = orientation,
                                     startOrTop = !isFirstCell,
                                     endOrBottom = !isLastCell,
                                 )
-                            ShapeCorners.Provider { corners }
                         }
 
                         CompositionLocalProvider(
