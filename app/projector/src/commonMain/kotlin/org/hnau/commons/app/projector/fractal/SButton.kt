@@ -31,17 +31,10 @@ fun SButton(
         contentOrientation = Orientation.Horizontal,
         contentAlignment = Alignment.Center,
     ) {
-        val titleOrIcon = titleOrIcon.withActionOrElse(
-            actionOrElseOrDisabled = actionOrElseOrDisabled,
-        )
-        SItem(
-            startAccessory = titleOrIcon.iconOrNull?.let { icon ->
-                { SIcon(icon) }
-            },
-            content = titleOrIcon.titleOrNull?.let { title ->
-                { SText(title) }
-            },
-            expandHorizontally = false,
+        STitleOrIcon(
+            titleOrIcon = titleOrIcon.withActionOrElse(
+                actionOrElseOrDisabled = actionOrElseOrDisabled,
+            ),
         )
     }
 }

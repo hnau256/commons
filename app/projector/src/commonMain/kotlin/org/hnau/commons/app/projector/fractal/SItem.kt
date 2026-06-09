@@ -36,7 +36,6 @@ fun SItem(
     topAccessory: @Composable (() -> Unit)? = null,
     endAccessory: @Composable (() -> Unit)? = null,
     bottomAccessory: @Composable (() -> Unit)? = null,
-    expandHorizontally: Boolean = true,
     content: (@Composable () -> Unit)?,
 ) {
     Row(
@@ -53,11 +52,7 @@ fun SItem(
             ),
         )
         Line(
-            modifier = Modifier.option(
-                expandHorizontally.ifTrue {
-                    Modifier.weight(1f)
-                }
-            ),
+            modifier = Modifier.weight(1f),
             orientation = Orientation.Vertical,
         ) {
             Accessory(
