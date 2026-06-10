@@ -297,7 +297,15 @@ private class SLazyTableScopeImpl(
                                 CompositionLocalProvider(
                                     value = LocalContentPadding provides cellContentPadding,
                                 ) {
-                                    element.cellContent(cellScope, cellIndex)
+                                    Box(
+                                        modifier = orientation.fold(
+                                            ifHorizontal = { Modifier.fillMaxHeight() },
+                                            ifVertical = { Modifier.fillMaxWidth() },
+                                        ),
+                                        propagateMinConstraints = true,
+                                    ) {
+                                        element.cellContent(cellScope, cellIndex)
+                                    }
                                 }
                             }
                         }
