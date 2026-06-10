@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.table.STableScope
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
@@ -14,7 +16,6 @@ import org.hnau.commons.app.projector.uikit.line.LinePosition
 import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.onPositionInLineChanged
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.kotlin.Mutable
 
 internal class STableScopeImpl(
     override val orientation: Orientation,
@@ -27,33 +28,23 @@ internal class STableScopeImpl(
         modifier: Modifier,
         content: @Composable () -> Unit,
     ) {
-        val positionHolder = remember {
-            Mutable(
-                LinePosition(
-                    isFirst = false,
-                    isLast = false,
-                )
-            )
-        }
+        var position by remember { mutableStateOf(LinePosition(false, false)) }
+        val tableCorners = this.corners
 
-        val cornersProvider by remember {
-            derivedStateOf {
-                ShapeCorners.Provider {
-                    val position = positionHolder.value
-                    this@STableScopeImpl.corners
-                        .getTableCorners()
-                        .close(
-                            orientation = orientation,
-                            startOrTop = !position.isFirst,
-                            endOrBottom = !position.isLast,
-                        )
-                }
+        val cornersProvider = remember(tableCorners) {
+            ShapeCorners.Provider {
+                val pos = position
+                tableCorners
+                    .getTableCorners()
+                    .close(
+                        orientation = orientation,
+                        startOrTop = !pos.isFirst,
+                        endOrBottom = !pos.isLast,
+                    )
             }
         }
         Box(
-            modifier = modifier.onPositionInLineChanged { newPosition ->
-                positionHolder.value = newPosition
-            },
+            modifier = modifier.onPositionInLineChanged { position = it },
             propagateMinConstraints = true,
         ) {
             CompositionLocalProvider(
