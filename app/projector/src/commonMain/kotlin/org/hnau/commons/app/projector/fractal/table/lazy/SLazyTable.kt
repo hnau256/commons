@@ -195,10 +195,13 @@ fun SLazyTableScope.item(
     )
 }
 
-fun SLazyTableScope.separator() {
+fun SLazyTableScope.separator(
+    key: Any? = null,
+    contentType: Any? = null,
+) {
     item(
-        key = "separator",
-        contentType = "separator",
+        key = key,
+        contentType = contentType,
     ) {
         Spacer(
             modifier = Modifier.size(
