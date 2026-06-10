@@ -1,7 +1,9 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.OpenInFull
@@ -20,6 +22,7 @@ import org.hnau.commons.app.projector.fractal.SActions
 import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
 import org.hnau.commons.app.projector.fractal.SElements
+import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
@@ -28,6 +31,7 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
+import org.hnau.commons.app.projector.fractal.table.STableHeader
 import org.hnau.commons.app.projector.fractal.table.Subtable
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.uikit.line.weight
@@ -99,26 +103,13 @@ class ActionProjector(
                     SMainWithAdditional(
                         main = { Box {} },
                         additional = {
-                            SElements {
+                            SLine(
+                                orientation = Orientation.Vertical,
+                            ) {
+                                STableHeader { SText("Config") }
                                 STable(
                                     orientation = Orientation.Vertical,
                                 ) {
-                                    SCell {
-                                        SPanel {
-                                            FContext(
-                                                update = {
-                                                    copy(
-                                                        mood = Mood.Active.default,
-                                                    )
-                                                },
-                                            ) {
-                                                SText(
-                                                    text = "Config",
-                                                    type = SizeType.Large,
-                                                )
-                                            }
-                                        }
-                                    }
                                     Subtable {
                                         val rows = configItems
                                             .collectAsState()

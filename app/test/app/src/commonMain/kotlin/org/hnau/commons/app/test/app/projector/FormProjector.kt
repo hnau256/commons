@@ -23,10 +23,11 @@ import org.hnau.commons.app.projector.fractal.input.InputProjector
 import org.hnau.commons.app.projector.fractal.input.createInputProjector
 import org.hnau.commons.app.projector.fractal.input.type.toInputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.size.SizeType
+import org.hnau.commons.app.projector.fractal.table.STableHeader
 import org.hnau.commons.app.projector.fractal.table.lazy.SLazyTable
 import org.hnau.commons.app.projector.fractal.table.lazy.Subtable
 import org.hnau.commons.app.projector.fractal.table.lazy.cell
-import org.hnau.commons.app.projector.fractal.table.lazy.cells
+import org.hnau.commons.app.projector.fractal.table.lazy.item
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
@@ -137,10 +138,10 @@ class FormProjector(
                         cell(key = "flag") { flag.Content() }
                         cell(key = "decimal") { decimal.Content() }
                         cell(key = "integer") { integer.Content() }
-                        separator()
+                        item { STableHeader { SText("Subtitle") } }
                         cell(key = "text") { text.Content() }
                         cell(key = "variant") { variant.Content() }
-                        separator()
+                        item { STableHeader { SText("Subtitle") } }
                         cell(key = "custom_top") {
                             Subtable {
                                 SCell(modifier = Modifier.weight(1f)) { SPanel { SText("A") } }

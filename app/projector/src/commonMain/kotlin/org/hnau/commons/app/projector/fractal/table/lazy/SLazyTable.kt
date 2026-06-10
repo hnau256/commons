@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
@@ -19,6 +18,7 @@ import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
@@ -32,10 +32,10 @@ import org.hnau.commons.app.projector.utils.acrossFrom
 import org.hnau.commons.app.projector.utils.acrossTo
 import org.hnau.commons.app.projector.utils.alongFrom
 import org.hnau.commons.app.projector.utils.alongTo
+import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.opposite
-import org.hnau.commons.kotlin.foldBoolean
-import androidx.compose.runtime.remember as rememberInCompose
+import org.hnau.commons.app.projector.utils.plus
 
 @Composable
 fun SLazyTable(
@@ -71,7 +71,6 @@ fun SLazyTable(
                 lazyListScope = this,
                 orientation = orientation,
                 corners = corners,
-                reverseOrdering = reverseOrdering,
                 cellContentPadding = cellContentPadding,
             )
             scope.content()
@@ -114,7 +113,12 @@ interface SLazyTableScope {
 
     val orientation: Orientation
 
-    fun separator()
+    fun items(
+        count: Int,
+        key: ((index: Int) -> Any)? = null,
+        contentType: (index: Int) -> Any? = { null },
+        cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
+    )
 
     fun cells(
         count: Int,
@@ -160,6 +164,35 @@ fun SLazyTableScope.cell(
     )
 }
 
+fun <T> SLazyTableScope.items(
+    items: List<T>,
+    key: ((T) -> Any)? = null,
+    contentType: (T) -> Any? = { null },
+    cellContent: @Composable LazyItemScope.(T) -> Unit,
+) {
+    items(
+        count = items.size,
+        key = key?.let { keyNotNull ->
+            { index -> items[index].let(keyNotNull) }
+        },
+        contentType = { index -> items[index].let(contentType) },
+        cellContent = { index -> cellContent(items[index]) },
+    )
+}
+
+fun SLazyTableScope.item(
+    key: Any? = null,
+    contentType: Any? = null,
+    cellContent: @Composable LazyItemScope.() -> Unit
+) {
+    items(
+        count = 1,
+        key = key?.let { keyNotNull -> { keyNotNull } },
+        contentType = { contentType },
+        cellContent = { cellContent() },
+    )
+}
+
 @Composable
 fun SLazyCellScope.Subtable(
     modifier: Modifier = Modifier,
@@ -187,7 +220,6 @@ private class SLazyTableScopeImpl(
     override val orientation: Orientation,
     private val corners: ShapeCorners.Provider,
     private val cellContentPadding: PaddingValues,
-    private val reverseOrdering: Boolean,
 ) : SLazyTableScope {
 
     private sealed interface Element {
@@ -199,20 +231,21 @@ private class SLazyTableScopeImpl(
             val cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit)
         ) : Element
 
-        data object Separator : Element
+        data class Items(
+            val count: Int,
+            val key: ((index: Int) -> Any)?,
+            val contentType: (index: Int) -> Any?,
+            val cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
+        ) : Element
     }
 
     private val elements: MutableList<Element> = mutableListOf<Element>()
-
-    override fun separator() {
-        elements.add(Element.Separator)
-    }
 
     override fun cells(
         count: Int,
         key: ((index: Int) -> Any)?,
         contentType: (index: Int) -> Any?,
-        cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit)
+        cellContent: @Composable SLazyCellScope.(index: Int) -> Unit
     ) {
         elements.add(
             Element.Cells(
@@ -224,19 +257,47 @@ private class SLazyTableScopeImpl(
         )
     }
 
+    override fun items(
+        count: Int,
+        key: ((index: Int) -> Any)?,
+        contentType: (index: Int) -> Any?,
+        cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
+    ) {
+        elements.add(
+            Element.Items(
+                count = count,
+                key = key,
+                contentType = contentType,
+                cellContent = cellContent,
+            )
+        )
+    }
+
     fun apply() {
         elements.forEachIndexed { elementIndex, element ->
             when (element) {
-                Element.Separator -> Unit
+                is Element.Items -> {
+                    lazyListScope.items(
+                        count = element.count,
+                        contentType = element.contentType,
+                        key = element.key,
+                    ) { cellIndex ->
+                        CompositionLocalProvider(
+                            LocalContentPadding provides cellContentPadding,
+                        ) {
+                            element.cellContent(this, cellIndex)
+                        }
+                    }
+                }
+
                 is Element.Cells -> {
-                    val (addSeparatorBefore, isFirstCells) = when (elements.getOrNull(elementIndex - 1)) {
-                        null -> false to true
-                        is Element.Cells -> false to false
-                        Element.Separator -> true to true
+                    val isFirstCells = when (elements.getOrNull(elementIndex - 1)) {
+                        is Element.Cells -> false
+                        null, is Element.Items -> true
                     }
                     val isLastCells = when (elements.getOrNull(elementIndex + 1)) {
                         is Element.Cells -> false
-                        null, Element.Separator -> true
+                        null, is Element.Items -> true
                     }
                     lazyListScope.items(
                         count = element.count,
@@ -245,7 +306,6 @@ private class SLazyTableScopeImpl(
                     ) { cellIndex ->
                         val isFirstCell = isFirstCells && cellIndex == 0
                         val isLastCell = isLastCells && cellIndex == element.count - 1
-                        val addSeparatorBefore = addSeparatorBefore && cellIndex == 0
 
                         val cellScope = SLazyCellScopeImpl(
                             orientation = orientation,
@@ -263,50 +323,17 @@ private class SLazyTableScopeImpl(
                         }
 
                         CompositionLocalProvider(
-                            value = LocalShapeCorners provides cornersProvider,
+                            LocalShapeCorners provides cornersProvider,
+                            LocalContentPadding provides cellContentPadding,
                         ) {
-                            val separation = LocalDistance.current.units.padding.along.medium
                             Box(
-                                modifier = rememberInCompose(
-                                    separation,
-                                    orientation,
-                                    reverseOrdering,
-                                    addSeparatorBefore,
-                                ) {
-                                    when {
-                                        addSeparatorBefore -> reverseOrdering.foldBoolean(
-                                            ifFalse = {
-                                                orientation.fold(
-                                                    ifHorizontal = { Modifier.padding(start = separation) },
-                                                    ifVertical = { Modifier.padding(top = separation) },
-                                                )
-                                            },
-                                            ifTrue = {
-                                                orientation.fold(
-                                                    ifHorizontal = { Modifier.padding(end = separation) },
-                                                    ifVertical = { Modifier.padding(bottom = separation) },
-                                                )
-                                            }
-                                        )
-
-                                        else -> Modifier
-                                    }
-                                },
+                                modifier = orientation.fold(
+                                    ifHorizontal = { Modifier.fillMaxHeight() },
+                                    ifVertical = { Modifier.fillMaxWidth() },
+                                ),
                                 propagateMinConstraints = true,
                             ) {
-                                CompositionLocalProvider(
-                                    value = LocalContentPadding provides cellContentPadding,
-                                ) {
-                                    Box(
-                                        modifier = orientation.fold(
-                                            ifHorizontal = { Modifier.fillMaxHeight() },
-                                            ifVertical = { Modifier.fillMaxWidth() },
-                                        ),
-                                        propagateMinConstraints = true,
-                                    ) {
-                                        element.cellContent(cellScope, cellIndex)
-                                    }
-                                }
+                                element.cellContent(cellScope, cellIndex)
                             }
                         }
                     }
