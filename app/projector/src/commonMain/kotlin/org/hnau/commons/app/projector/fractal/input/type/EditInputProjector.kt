@@ -46,41 +46,39 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
             if (requestFocusOnStart) {
                 LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
             }
-            with(itemDrawer) {
-                Item(
-                    onClick = { focusRequester.requestFocus() },
-                    isFocused = isFocused,
-                    endAccessory = value
-                        .isNotEmpty()
-                        .and(enabled)
-                        .ifTrue {
-                            {
-                                SIcon(
-                                    drawable = Drawable.Vector(Icons.Default.Close),
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .clickable { updateState("") }
-                                )
-                            }
+            itemDrawer.Item(
+                onClick = { focusRequester.requestFocus() },
+                isFocused = isFocused,
+                endAccessory = value
+                    .isNotEmpty()
+                    .and(enabled)
+                    .ifTrue {
+                        {
+                            SIcon(
+                                drawable = Drawable.Vector(Icons.Default.Close),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable { updateState("") }
+                            )
                         }
-                ) {
-                    STextField(
-                        modifier = Modifier
-                            .focusRequester(focusRequester)
-                            .onFocusChanged { focusState ->
-                                isFocused = focusState.isFocused
-                            },
-                        value = value,
-                        onValueChanged = updateState,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            imeAction = imeAction,
-                            keyboardType = keyboardType,
-                        ),
-                        lineLimits = TextFieldLineLimits.SingleLine,
-                        enabled = enabled,
-                    )
-                }
+                    }
+            ) {
+                STextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .onFocusChanged { focusState ->
+                            isFocused = focusState.isFocused
+                        },
+                    value = value,
+                    onValueChanged = updateState,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = imeAction,
+                        keyboardType = keyboardType,
+                    ),
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    enabled = enabled,
+                )
             }
         }
     }

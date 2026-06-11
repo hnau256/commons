@@ -215,7 +215,7 @@ fun AlertDialogFlowRow(
                                 if (j < placeables.lastIndex) mainAxisSpacing.roundToPx() else 0
                     }
                 val arrangement = Arrangement.End
-                val mainAxisPositions = IntArray(childrenMainAxisSizes.size) { 0 }
+                val mainAxisPositions = IntArray(childrenMainAxisSizes.size)
                 with(arrangement) {
                     arrange(
                         mainAxisLayoutSize,

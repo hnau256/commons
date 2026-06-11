@@ -42,25 +42,3 @@ fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorProto
             }
         }
     }
-
-/*
-@JvmName("toVariantInputProjectorPrototype")
-fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorPrototype(
-    item: @Composable (S) -> Unit,
-): InputProjectorPrototype<S, Nothing, InputType.Variant<S>> =
-    toInputProjectorPrototype { inputType, state, updateState ->
-        InputContentProjector.WithoutTitle { itemDrawer ->
-            val enabled by enabled.collectAsState()
-            val selection by state.collectAsState()
-            with(itemDrawer) {
-                Item {
-                    STabs(
-                        items = inputType.variants,
-                        selection = selection,
-                        onClick = updateState.takeIf { enabled },
-                        item = item,
-                    )
-                }
-            }
-        }
-    }*/

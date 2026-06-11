@@ -60,7 +60,7 @@ fun SDialog(
                         STable(
                             orientation = Orientation.Vertical,
                         ) {
-                            with(info) { content() }
+                            info.content(this)
                             SActions(
                                 actions = info.actions,
                             )

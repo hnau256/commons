@@ -100,9 +100,7 @@ class InputProjector(
 
     @Composable
     fun Content() {
-        with(itemTitleWithContent) {
-            second(itemDrawer)
-        }
+        itemTitleWithContent.second(itemDrawer)
     }
 }
 

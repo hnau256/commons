@@ -44,10 +44,12 @@ private class FShape(
         val radius: (Boolean) -> CornerRadius = { isOpened ->
             CornerRadius(
                 with(density) {
-                    isOpened.foldBoolean(
-                        ifTrue = { cornerRadii.endInclusive },
-                        ifFalse = { cornerRadii.start },
-                    ).toPx()
+                    isOpened
+                        .foldBoolean(
+                            ifTrue = { cornerRadii.endInclusive },
+                            ifFalse = { cornerRadii.start },
+                        )
+                        .toPx()
                 }
             )
         }
