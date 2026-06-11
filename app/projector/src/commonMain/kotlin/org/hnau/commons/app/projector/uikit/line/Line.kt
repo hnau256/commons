@@ -140,7 +140,7 @@ private data class LineMeasurePolicy(
 
     context(density: Density)
     private val separationPixels: Int
-        get() = with(density) { density.roundToPx(separation) }
+        get() = with(density) { separation.roundToPx() }
 
     context(density: Density)
     private fun Collection<IntrinsicMeasurable>.separationsSum(): Int =
