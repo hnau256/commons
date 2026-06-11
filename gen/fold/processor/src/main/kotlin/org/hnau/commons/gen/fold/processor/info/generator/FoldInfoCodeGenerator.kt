@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeVariableName
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.gen.fold.processor.info.generator.utils.className
@@ -13,14 +14,19 @@ import org.hnau.commons.gen.kotlin.codeBlock
 
 fun FoldInfo.toFoldFunSpec(): FunSpec {
     val returnType = TypeVariableName("R")
+    val classTypeVars = this.typeVariables
     return FunSpec
         .builder("fold")
         .apply {
             modifiers += KModifier.INLINE
 
             typeVariables += returnType
+            classTypeVars.forEach { typeVariables += it }
 
-            receiver(className)
+            receiver(
+                if (classTypeVars.isEmpty()) className
+                else className.parameterizedBy(*classTypeVars.toTypedArray())
+            )
             returns(returnType)
 
             variants.forEach { variant ->

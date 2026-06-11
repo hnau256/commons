@@ -5,8 +5,12 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.validate
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.ksp.toClassName
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.kotlin.foldBoolean
@@ -36,6 +40,9 @@ fun FoldInfo.Companion.create(
         return null
     }
 
+    val typeVariables = classDeclaration.typeParameters
+        .map { TypeVariableName(it.simpleName.asString()) }
+
     val variantList = isEnum.foldBoolean(
         ifTrue = {
             val enumClassName = classDeclaration.toClassName()
@@ -63,7 +70,7 @@ fun FoldInfo.Companion.create(
                                 ?.mapNotNull { param ->
                                     param.type.resolve()
                                         .takeUnless { it.isError }
-                                        ?.toClassName()
+                                        ?.toTypeName()
                                         ?.let { typeName ->
                                             FoldInfo.Parameter(
                                                 name = param.name?.asString() ?: "value",
@@ -102,7 +109,19 @@ fun FoldInfo.Companion.create(
         ?.let { variants ->
             FoldInfo(
                 classDeclaration = classDeclaration,
+                typeVariables = typeVariables,
                 variants = variants,
             )
         }
+}
+
+private fun KSType.toTypeName(): TypeName = try {
+    toClassName()
+} catch (_: IllegalStateException) {
+    val decl = declaration
+    if (decl is KSTypeParameter) {
+        TypeVariableName(decl.simpleName.asString())
+    } else {
+        throw IllegalStateException("Cannot convert type to TypeName: $decl")
+    }
 }

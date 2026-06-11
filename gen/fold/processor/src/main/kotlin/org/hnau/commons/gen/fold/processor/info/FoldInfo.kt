@@ -3,8 +3,11 @@ package org.hnau.commons.gen.fold.processor.info
 import arrow.core.NonEmptyList
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeVariableName
 data class FoldInfo(
     val classDeclaration: KSClassDeclaration,
+    val typeVariables: List<TypeVariableName>,
     val variants: NonEmptyList<Variant>,
 ) {
     data class Variant(
@@ -19,7 +22,7 @@ data class FoldInfo(
         ) : Resolution
 
         data class Whole(
-            val type: ClassName,
+            val type: TypeName,
         ) : Resolution
 
         data object Object : Resolution
@@ -27,7 +30,7 @@ data class FoldInfo(
 
     data class Parameter(
         val name: String,
-        val type: ClassName,
+        val type: TypeName,
     )
 
     companion object
