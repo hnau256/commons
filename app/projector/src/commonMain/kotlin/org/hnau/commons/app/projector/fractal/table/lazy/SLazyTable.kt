@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -37,7 +38,10 @@ import org.hnau.commons.app.projector.utils.alongTo
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.opposite
+import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.app.projector.utils.plus
+import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifFalse
 
 @Composable
 fun SLazyTable(
@@ -53,8 +57,6 @@ fun SLazyTable(
 ) {
 
     with(orientation) {
-
-        val arrangement = Arrangement.spacedBy(LocalDistance.current.units.borderWidth)
 
         val contentPadding = LocalContentPadding.current
 
@@ -74,6 +76,7 @@ fun SLazyTable(
                 orientation = orientation,
                 corners = corners,
                 cellContentPadding = cellContentPadding,
+                reverseOrdering = reverseOrdering,
             )
             scope.content()
             scope.apply()
@@ -87,7 +90,6 @@ fun SLazyTable(
                     state = state,
                     contentPadding = lazyListContentPadding,
                     reverseLayout = reverseOrdering,
-                    horizontalArrangement = arrangement,
                     flingBehavior = flingBehavior,
                     userScrollEnabled = userScrollEnabled,
                     overscrollEffect = overscrollEffect,
@@ -100,7 +102,6 @@ fun SLazyTable(
                     state = state,
                     contentPadding = lazyListContentPadding,
                     reverseLayout = reverseOrdering,
-                    verticalArrangement = arrangement,
                     flingBehavior = flingBehavior,
                     userScrollEnabled = userScrollEnabled,
                     overscrollEffect = overscrollEffect,
@@ -238,6 +239,7 @@ private class SLazyTableScopeImpl(
     override val orientation: Orientation,
     private val corners: ShapeCorners.Provider,
     private val cellContentPadding: PaddingValues,
+    private val reverseOrdering: Boolean,
 ) : SLazyTableScope {
 
     private sealed interface Element {
@@ -344,11 +346,33 @@ private class SLazyTableScopeImpl(
                             LocalShapeCorners provides cornersProvider,
                             LocalContentPadding provides cellContentPadding,
                         ) {
+                            val separatorPadding = isFirstCell.ifFalse {
+                                val separation = LocalDistance.current.units.borderWidth
+                                orientation.fold(
+                                    ifHorizontal = {
+                                        reverseOrdering.foldBoolean(
+                                            ifFalse = { PaddingValues(start = separation) },
+                                            ifTrue = { PaddingValues(end = separation) },
+                                        )
+                                    },
+                                    ifVertical = {
+                                        reverseOrdering.foldBoolean(
+                                            ifFalse = { PaddingValues(top = separation) },
+                                            ifTrue = { PaddingValues(bottom = separation) },
+                                        )
+                                    },
+                                )
+                            }
                             Box(
-                                modifier = orientation.fold(
-                                    ifHorizontal = { Modifier.fillMaxHeight() },
-                                    ifVertical = { Modifier.fillMaxWidth() },
-                                ),
+                                modifier = orientation
+                                    .fold(
+                                        ifHorizontal = { Modifier.fillMaxHeight() },
+                                        ifVertical = { Modifier.fillMaxWidth() },
+                                    )
+                                    .option(
+                                        separatorPadding
+                                            ?.let(Modifier::padding)
+                                    ),
                                 propagateMinConstraints = true,
                             ) {
                                 element.cellContent(cellScope, cellIndex)
