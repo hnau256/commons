@@ -3,7 +3,6 @@ package org.hnau.commons.app.projector.fractal.table.lazy
 import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,7 @@ import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
@@ -35,11 +34,9 @@ import org.hnau.commons.app.projector.utils.acrossFrom
 import org.hnau.commons.app.projector.utils.acrossTo
 import org.hnau.commons.app.projector.utils.alongFrom
 import org.hnau.commons.app.projector.utils.alongTo
-import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.opposite
 import org.hnau.commons.app.projector.utils.option
-import org.hnau.commons.app.projector.utils.plus
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifFalse
 
@@ -346,23 +343,12 @@ private class SLazyTableScopeImpl(
                             LocalShapeCorners provides cornersProvider,
                             LocalContentPadding provides cellContentPadding,
                         ) {
-                            val separatorPadding = isFirstCell.ifFalse {
-                                val separation = LocalDistance.current.units.borderWidth
-                                orientation.fold(
-                                    ifHorizontal = {
-                                        reverseOrdering.foldBoolean(
-                                            ifFalse = { PaddingValues(start = separation) },
-                                            ifTrue = { PaddingValues(end = separation) },
-                                        )
-                                    },
-                                    ifVertical = {
-                                        reverseOrdering.foldBoolean(
-                                            ifFalse = { PaddingValues(top = separation) },
-                                            ifTrue = { PaddingValues(bottom = separation) },
-                                        )
-                                    },
-                                )
-                            }
+                            val separatorPadding: PaddingValues? = generateCellPaddings(
+                                orientation = orientation,
+                                separation = LocalDistance.current.units.borderWidth,
+                                reverseOrdering = reverseOrdering,
+                                isFirstCell = isFirstCell,
+                            )
                             Box(
                                 modifier = orientation
                                     .fold(
@@ -383,6 +369,28 @@ private class SLazyTableScopeImpl(
             }
         }
     }
+}
+
+private fun generateCellPaddings(
+    isFirstCell: Boolean,
+    reverseOrdering: Boolean,
+    orientation: Orientation,
+    separation: Dp,
+): PaddingValues? = isFirstCell.ifFalse {
+    orientation.fold(
+        ifHorizontal = {
+            reverseOrdering.foldBoolean(
+                ifFalse = { PaddingValues(start = separation) },
+                ifTrue = { PaddingValues(end = separation) },
+            )
+        },
+        ifVertical = {
+            reverseOrdering.foldBoolean(
+                ifFalse = { PaddingValues(top = separation) },
+                ifTrue = { PaddingValues(bottom = separation) },
+            )
+        },
+    )
 }
 
 private class SLazyCellScopeImpl(
