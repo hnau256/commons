@@ -17,7 +17,7 @@ fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorProto
     item: @Composable (S) -> Unit,
 ): InputProjectorPrototype<S, Nothing, InputType.Variant<S>> =
     toInputProjectorPrototype { inputType, state, updateState ->
-        InputContentProjector.WithTitle { title, itemDrawer ->
+        InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
             val enabled by enabled.collectAsState()
             val selection by state.collectAsState()
             val variants = inputType.variants
@@ -36,7 +36,10 @@ fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorProto
                     )
                 }
             ) {
-                SText(title)
+                SText(
+                    text = title,
+                    maxLines = titleMaxLines,
+                )
             }
         }
     }

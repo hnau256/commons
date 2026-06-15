@@ -23,8 +23,10 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
         title: String,
         icon: Drawable?,
         importanceToActivate: Importance? = Importance.default,
+        titleMaxLines: Int = 1,
         crossinline displayError: (S, E) -> String,
     ): InputProjector = InputProjector(
+        titleMaxLines = titleMaxLines,
         importanceToActivate = importanceToActivate,
         title = title,
         icon = icon,
@@ -56,11 +58,13 @@ fun <S, I : InputType<S>> InputProjectorPrototype<S, Nothing, I>.createInputProj
     scope: CoroutineScope,
     title: String,
     icon: Drawable?,
+    titleMaxLines: Int = 1,
     importanceToActivate: Importance? = Importance.default,
 ): InputProjector = createInputProjector(
     scope = scope,
     title = title,
     icon = icon,
+    titleMaxLines = titleMaxLines,
     importanceToActivate = importanceToActivate,
     displayError = { _, _ -> "" }
 )

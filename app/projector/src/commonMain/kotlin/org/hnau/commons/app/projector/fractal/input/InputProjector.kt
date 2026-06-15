@@ -23,6 +23,7 @@ class InputProjector(
     private val icon: Drawable?,
     contentProjector: InputContentProjector,
     importanceToActivate: Importance? = Importance.default,
+    titleMaxLines: Int = 1,
     private val errorMessage: StateFlow<String?>,
 ) {
 
@@ -30,7 +31,7 @@ class InputProjector(
         contentProjector.fold(
             ifWithTitle = { content ->
                 null to @Composable { itemDrawer: ItemDrawer ->
-                    content(title, itemDrawer)
+                    content(title, titleMaxLines, itemDrawer)
                 }
             },
             ifWithoutTitle = { content ->
@@ -85,7 +86,12 @@ class InputProjector(
                             },
                             endAccessory = endAccessory,
                             topAccessory = itemTitleWithContent.first?.let { title ->
-                                { SText(title) }
+                                {
+                                    SText(
+                                        text = title,
+                                        maxLines = titleMaxLines,
+                                    )
+                                }
                             },
                             bottomAccessory = errorMessage?.let { message ->
                                 { SText(message) }

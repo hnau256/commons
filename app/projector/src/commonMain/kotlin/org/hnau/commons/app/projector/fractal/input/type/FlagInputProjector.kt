@@ -15,7 +15,7 @@ import org.hnau.commons.kotlin.ifTrue
 @JvmName("toFlagInputProjectorPrototype")
 fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, Nothing, InputType.Flag> =
     toInputProjectorPrototype { _, state, updateState ->
-        InputContentProjector.WithTitle { title, itemDrawer ->
+        InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
             val enabled by enabled.collectAsState()
             val isChecked by state.collectAsState()
             itemDrawer.Item(
@@ -26,7 +26,10 @@ fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype
                     )
                 }
             ) {
-                SText(title)
+                SText(
+                    text = title,
+                    maxLines = titleMaxLines,
+                )
             }
         }
     }

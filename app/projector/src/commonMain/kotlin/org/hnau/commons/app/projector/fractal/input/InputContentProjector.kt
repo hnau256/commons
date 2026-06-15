@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 sealed interface InputContentProjector {
 
     data class WithTitle(
-        val content: @Composable (title: String, item: ItemDrawer) -> Unit,
+        val content: @Composable (title: String, titleMaxLines: Int, item: ItemDrawer) -> Unit,
     ) : InputContentProjector
 
     data class WithoutTitle(
@@ -16,7 +16,7 @@ sealed interface InputContentProjector {
 }
 
 inline fun <R> InputContentProjector.fold(
-    ifWithTitle: (content: @Composable (title: String, item: ItemDrawer) -> Unit) -> R,
+    ifWithTitle: (content: @Composable (title: String, titleMaxLines: Int, item: ItemDrawer) -> Unit) -> R,
     ifWithoutTitle: (content: @Composable (item: ItemDrawer) -> Unit) -> R,
 ): R = when (this) {
     is InputContentProjector.WithTitle -> ifWithTitle(content)
