@@ -36,6 +36,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
     imeAction: ImeAction = ImeAction.Default,
     keyboardType: KeyboardType,
     requestFocusOnStart: Boolean = false,
+    showClearButton: Boolean = true,
 ): InputProjectorPrototype<String, E, InputType.Edit> =
     toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
@@ -52,6 +53,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                 endAccessory = value
                     .isNotEmpty()
                     .and(enabled)
+                    .and(showClearButton)
                     .ifTrue {
                         {
                             SIcon(

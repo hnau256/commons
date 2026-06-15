@@ -31,6 +31,7 @@ import org.hnau.commons.app.projector.utils.top
 fun SScreen(
     contentPadding: PaddingValues,
     title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     actions: @Composable STableActionsScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -41,7 +42,7 @@ fun SScreen(
     ) {
         val fContext = LocalFContext.current
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(fContext.color),
             propagateMinConstraints = true,
