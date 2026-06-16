@@ -38,6 +38,8 @@ internal fun Project.configureJvm(
         true -> {
             applyPlugin(Versions.Plugins.googleServices.withoutAlias.withoutVersion)
             applyPlugin(Versions.Plugins.androidApplication.withoutAlias.withoutVersion)
+            //applyPlugin(Versions.Plugins.kotlinAndroid.withoutAlias.withoutVersion)
+            applyKotlinComposePlugin()
 
             project
                 .extensions
