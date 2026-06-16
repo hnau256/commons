@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
+import org.hnau.commons.app.projector.fractal.padding.localContentPaddingShadow
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
@@ -55,6 +56,8 @@ fun SLazyTable(
 
     with(orientation) {
 
+        val extendedModifier = modifier.localContentPaddingShadow()
+
         val contentPadding = LocalContentPadding.current
 
         val cellContentPadding = PaddingValues(
@@ -83,7 +86,7 @@ fun SLazyTable(
         orientation.fold(
             ifHorizontal = {
                 LazyRow(
-                    modifier = modifier,
+                    modifier = extendedModifier,
                     state = state,
                     contentPadding = lazyListContentPadding,
                     reverseLayout = reverseOrdering,
@@ -95,7 +98,7 @@ fun SLazyTable(
             },
             ifVertical = {
                 LazyColumn(
-                    modifier = modifier,
+                    modifier = extendedModifier,
                     state = state,
                     contentPadding = lazyListContentPadding,
                     reverseLayout = reverseOrdering,
