@@ -11,5 +11,9 @@ sealed interface InputType<S> {
     data class Variant<S>(
         val variants: NonEmptyList<S>,
     ) : InputType<S>
+
+    data class Fraction<T: Comparable<T>>(
+        val range: ClosedRange<T>,
+    ): InputType<T>
 }
 
