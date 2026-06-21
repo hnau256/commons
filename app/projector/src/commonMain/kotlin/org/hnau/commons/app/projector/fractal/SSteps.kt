@@ -1,6 +1,9 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -9,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -16,21 +20,26 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
+import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
@@ -42,13 +51,13 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
+import kotlin.time.Clock
 
 private data class Anchor(
     val weightBefore: Float,
     val rect: Mutable<Rect> = Mutable(Rect.Zero),
 )
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SSteps(
     orientation: Orientation,
@@ -129,53 +138,82 @@ fun SSteps(
         val scope = rememberCoroutineScope()
         var snapJob by remember { mutableStateOf<Job?>(null) }
 
+        val localPosition by rememberUpdatedState(position)
+
+        val velocityThreshold =
+            with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
+
         SStepsLayout(
             modifier = modifier
-                /*.onDrag(
-                    onDragStart = { offset ->
-                        snapJob?.cancel()
-                        velocityTracker.resetTracking()
-                        velocityTracker.addPosition(
-                            Clock.System.now().toEpochMilliseconds(),
-                            offset
-                        )
-                    },
-                    onDrag = { offset ->
-                        velocityTracker.addPosition(
-                            Clock.System.now().toEpochMilliseconds(),
-                            offset
-                        )
-                        val newAlong = positionToAlong(position) + offset.along
-                        onPositionChanged(alongToPosition(newAlong))
-                    },
-                    onDragEnd = {
-                        if (!snap) {
-                            return@onDrag
-                        }
-                        val currentAlong = positionToAlong(position)
-                        val velocity = velocityTracker.calculateVelocity().along
-                        val from = position.toInt()
-                        val offset = position - from
-                        val targetAlong = when {
-                            velocity > 400 -> from + 1
-                            velocity < -400 -> from
-                            offset > 0.5 -> from + 1
-                            else -> from
-                        }.coerceIn(0, anchors.lastIndex).toFloat().let(positionToAlong)
-                        snapJob = scope.launch {
-                            animate(
-                                initialValue = currentAlong,
-                                targetValue = targetAlong,
-                                initialVelocity = velocity,
-                                animationSpec = spring(),
-                            ) { along, _ ->
-                                onPositionChanged(alongToPosition(along))
+                .pointerInput(snap) {
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            snapJob?.cancel()
+                            velocityTracker.resetTracking()
+                            velocityTracker.addPosition(
+                                Clock.System.now().toEpochMilliseconds(),
+                                Offset(
+                                    along = offset.along,
+                                    across = 0f,
+                                )
+
+                            )
+                        },
+                        onDragCancel = {
+                            snapJob?.cancel()
+                            velocityTracker.resetTracking()
+                        },
+                        onDrag = { change, offset ->
+                            change.consume()
+                            val newAlong = positionToAlong(localPosition) + offset.along
+                            velocityTracker.addPosition(
+                                Clock.System.now().toEpochMilliseconds(),
+                                Offset(
+                                    along = newAlong,
+                                    across = 0f,
+                                )
+                            )
+
+                            onPositionChanged(alongToPosition(newAlong))
+                        },
+                        onDragEnd = {
+                            if (!snap) {
+                                return@detectDragGestures
+                            }
+                            val currentAlong = positionToAlong(localPosition)
+                            val velocity = velocityTracker.calculateVelocity().along
+                            val from = localPosition.toInt()
+                            val offset = localPosition - from
+                            val targetAlong = when {
+                                velocity > velocityThreshold -> from + 1
+                                velocity < -velocityThreshold -> from
+                                offset > 0.5 -> from + 1
+                                else -> from
+                            }
+                                .coerceIn(0, anchors.lastIndex)
+                                .toFloat()
+                                .let(positionToAlong)
+
+                            snapJob?.cancel()
+                            velocityTracker.resetTracking()
+                            snapJob = scope.launch {
+                                animate(
+                                    initialValue = currentAlong,
+                                    targetValue = targetAlong,
+                                    initialVelocity = velocity,
+                                    animationSpec = spring(
+                                        dampingRatio = Spring.DampingRatioLowBouncy,
+                                        stiffness = Spring.StiffnessMedium,
+                                    ),
+                                ) { along, _ ->
+                                    onPositionChanged(alongToPosition(along))
+                                }
                             }
                         }
-                    }
-                )*/
+                    )
+                }
                 .drawBehind {
-                    val rect = positionToRect(position)
+                    val rect = positionToRect(localPosition)
                     drawRoundRect(
                         color = cursorFContext.color,
                         topLeft = rect.topLeft,
@@ -188,7 +226,7 @@ fun SSteps(
                 listOf(false, true).forEach { selected ->
                     Box(
                         modifier = Modifier.graphicsLayer {
-                            val delta = (i - position).absoluteValue.coerceIn(0f, 1f)
+                            val delta = (i - localPosition).absoluteValue.coerceIn(0f, 1f)
                             alpha = selected.foldBoolean(
                                 ifTrue = { 1 - delta },
                                 ifFalse = { delta },
@@ -210,6 +248,8 @@ fun SSteps(
         )
     }
 }
+
+private val VELOCITY_THRESHOLD: Dp = 150.dp
 
 @Composable
 context(_: Orientation)
