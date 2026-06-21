@@ -69,7 +69,7 @@ fun SSteps(
     item: @Composable (Int) -> Unit,
 ) {
     with(orientation) {
-        val anchors = remember(weights) {
+        val anchors: NonEmptyList<Anchor> = remember(weights) {
             buildList {
                 add(
                     Anchor(
@@ -133,85 +133,20 @@ fun SSteps(
             }
         }
 
-        val velocityTracker = remember { VelocityTracker() }
-
-        val scope = rememberCoroutineScope()
-        var snapJob by remember { mutableStateOf<Job?>(null) }
-
         val localPosition by rememberUpdatedState(position)
 
-        val velocityThreshold =
-            with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
+
 
         SStepsLayout(
             modifier = modifier
-                .pointerInput(snap) {
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            snapJob?.cancel()
-                            velocityTracker.resetTracking()
-                            velocityTracker.addPosition(
-                                Clock.System.now().toEpochMilliseconds(),
-                                Offset(
-                                    along = offset.along,
-                                    across = 0f,
-                                )
-
-                            )
-                        },
-                        onDragCancel = {
-                            snapJob?.cancel()
-                            velocityTracker.resetTracking()
-                        },
-                        onDrag = { change, offset ->
-                            change.consume()
-                            val newAlong = positionToAlong(localPosition) + offset.along
-                            velocityTracker.addPosition(
-                                Clock.System.now().toEpochMilliseconds(),
-                                Offset(
-                                    along = newAlong,
-                                    across = 0f,
-                                )
-                            )
-
-                            onPositionChanged(alongToPosition(newAlong))
-                        },
-                        onDragEnd = {
-                            if (!snap) {
-                                return@detectDragGestures
-                            }
-                            val currentAlong = positionToAlong(localPosition)
-                            val velocity = velocityTracker.calculateVelocity().along
-                            val from = localPosition.toInt()
-                            val offset = localPosition - from
-                            val targetAlong = when {
-                                velocity > velocityThreshold -> from + 1
-                                velocity < -velocityThreshold -> from
-                                offset > 0.5 -> from + 1
-                                else -> from
-                            }
-                                .coerceIn(0, anchors.lastIndex)
-                                .toFloat()
-                                .let(positionToAlong)
-
-                            snapJob?.cancel()
-                            velocityTracker.resetTracking()
-                            snapJob = scope.launch {
-                                animate(
-                                    initialValue = currentAlong,
-                                    targetValue = targetAlong,
-                                    initialVelocity = velocity,
-                                    animationSpec = spring(
-                                        dampingRatio = Spring.DampingRatioLowBouncy,
-                                        stiffness = Spring.StiffnessMedium,
-                                    ),
-                                ) { along, _ ->
-                                    onPositionChanged(alongToPosition(along))
-                                }
-                            }
-                        }
-                    )
-                }
+                .draggable(
+                    snap = snap,
+                    anchors = anchors,
+                    positionToAlong = positionToAlong,
+                    alongToPosition = alongToPosition,
+                    getLocalPosition = { localPosition },
+                    onPositionChanged = onPositionChanged,
+                )
                 .drawBehind {
                     val rect = positionToRect(localPosition)
                     drawRoundRect(
@@ -249,7 +184,96 @@ fun SSteps(
     }
 }
 
-private val VELOCITY_THRESHOLD: Dp = 150.dp
+private val VELOCITY_THRESHOLD: Dp = 10.dp
+
+@Composable
+context(_: Orientation)
+private fun Modifier.draggable(
+    snap: Boolean,
+    anchors: NonEmptyList<Anchor>,
+    positionToAlong: (Float) -> Float,
+    alongToPosition: (Float) -> Float,
+    getLocalPosition: () -> Float,
+    onPositionChanged: (Float) -> Unit,
+): Modifier {
+
+    val velocityTracker = remember { VelocityTracker() }
+
+    val scope = rememberCoroutineScope()
+    var snapJob by remember { mutableStateOf<Job?>(null) }
+
+    val velocityThreshold =
+        with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
+
+    return pointerInput(snap) {
+        detectDragGestures(
+            onDragStart = { offset ->
+                snapJob?.cancel()
+                velocityTracker.resetTracking()
+                velocityTracker.addPosition(
+                    Clock.System.now().toEpochMilliseconds(),
+                    Offset(
+                        along = offset.along,
+                        across = 0f,
+                    )
+
+                )
+            },
+            onDragCancel = {
+                snapJob?.cancel()
+                velocityTracker.resetTracking()
+            },
+            onDrag = { change, offset ->
+                change.consume()
+                val newAlong = positionToAlong(getLocalPosition()) + offset.along
+                velocityTracker.addPosition(
+                    Clock.System.now().toEpochMilliseconds(),
+                    Offset(
+                        along = newAlong,
+                        across = 0f,
+                    )
+                )
+
+                onPositionChanged(alongToPosition(newAlong))
+            },
+            onDragEnd = {
+                if (!snap) {
+                    return@detectDragGestures
+                }
+                val positon = getLocalPosition()
+                val currentAlong = positionToAlong(positon)
+                val velocity = velocityTracker.calculateVelocity().along
+                val from = positon.toInt()
+                val offset = positon - from
+                val targetAlong = when {
+                    velocity > velocityThreshold -> from + 1
+                    velocity < -velocityThreshold -> from
+                    offset > 0.5 -> from + 1
+                    else -> from
+                }
+                    .coerceIn(0, anchors.lastIndex)
+                    .toFloat()
+                    .let(positionToAlong)
+
+                snapJob?.cancel()
+                velocityTracker.resetTracking()
+                snapJob = scope.launch {
+                    animate(
+                        initialValue = currentAlong,
+                        targetValue = targetAlong,
+                        initialVelocity = velocity,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessMedium,
+                        ),
+                    ) { along, _ ->
+                        onPositionChanged(alongToPosition(along))
+                    }
+                }
+            }
+        )
+    }
+}
 
 @Composable
 context(_: Orientation)
