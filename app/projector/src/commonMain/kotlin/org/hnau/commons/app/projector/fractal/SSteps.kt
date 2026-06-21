@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -11,12 +12,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
@@ -54,10 +55,13 @@ import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.absoluteValue
+import kotlin.math.floor
 import kotlin.time.Clock
 
 private data class Anchor(
@@ -150,9 +154,9 @@ private fun SStepsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
-        val positionToRect: (Float) -> Rect = remember(anchors) {
+        val positionToRect: (Position) -> Rect = remember(anchors) {
             { position ->
-                val fromIndex = position.toInt()
+                val fromIndex = position.position.toInt()
                 val from = anchors[fromIndex.coerceIn(0, anchors.lastIndex)].rect.value
                 val to = anchors[(fromIndex + 1).coerceIn(0, anchors.lastIndex)].rect.value
                 when {
@@ -160,41 +164,61 @@ private fun SStepsContent(
                     else -> lerp(
                         start = from,
                         stop = to,
-                        fraction = position - fromIndex
+                        fraction = position.position - fromIndex
                     )
                 }
             }
         }
 
-        val positionAlongMapper: Mapper<Float, Float> = remember(
+        val positionAlongMapper: Mapper<Position, Along> = remember(
             positionToRect,
             orientation,
             anchors,
         ) {
             Mapper(
                 direct = { position ->
-                    positionToRect(position).center.along
+                    position
+                        .let(positionToRect)
+                        .center
+                        .along
+                        .let(::Along)
                 },
                 reverse = { along ->
-                    var result: Float?
+                    var result: Position?
                     var i = 0
                     do {
-                        val from = anchors[i].rect.value.center.along
-                        val to = anchors[i + 1].rect.value.center.along
+                        val from = anchors[i].rect.value.center.along.let(::Along)
+                        val to = anchors[i + 1].rect.value.center.along.let(::Along)
                         result = when {
-                            along <= from -> i.toFloat()
-                            along <= to -> i + (along - from) / (to - from)
+                            along <= from -> i.toFloat().let(::Position)
+                            along <= to -> (i + (along - from).along / (to - from).along).let(::Position)
                             else -> null
                         }
                         i++
                     } while (result == null && i < anchors.lastIndex)
-                    result ?: anchors.lastIndex.toFloat()
+                    result ?: anchors.lastIndex.toFloat().let(::Position)
                 }
             )
         }
 
-        val localPosition by rememberUpdatedState(position)
+        val localPosition by rememberUpdatedState(position.let(::Position))
 
+        val positionUpdaterScope = rememberCoroutineScope()
+        val positionUpdater = remember(
+            onPositionChanged,
+            positionAlongMapper
+        ) {
+            onPositionChanged?.let { onPositionChanged ->
+                PositionUpdater(
+                    scope = positionUpdaterScope,
+                    getCurrentPosition = { localPosition },
+                    positionAlongMapper = positionAlongMapper,
+                    onPositionChanged = { position ->
+                        onPositionChanged(position.position)
+                    },
+                )
+            }
+        }
 
 
         SStepsLayout(
@@ -202,9 +226,7 @@ private fun SStepsContent(
                 .draggable(
                     snap = snap,
                     anchors = anchors,
-                    positionAlongMapper = positionAlongMapper,
-                    getLocalPosition = { localPosition },
-                    onPositionChangedOrNull = onPositionChanged,
+                    positionUpdater = positionUpdater,
                 )
                 .drawBehind {
                     val rect = positionToRect(localPosition)
@@ -219,13 +241,27 @@ private fun SStepsContent(
             item = { i ->
                 listOf(false, true).forEach { selected ->
                     Box(
-                        modifier = Modifier.graphicsLayer {
-                            val delta = (i - localPosition).absoluteValue.coerceIn(0f, 1f)
-                            alpha = selected.foldBoolean(
-                                ifTrue = { 1 - delta },
-                                ifFalse = { delta },
+                        modifier = Modifier
+                            .graphicsLayer {
+                                val delta =
+                                    (i - localPosition.position).absoluteValue.coerceIn(0f, 1f)
+                                alpha = selected.foldBoolean(
+                                    ifTrue = { 1 - delta },
+                                    ifFalse = { delta },
+                                )
+                            }
+                            .option(
+                                onPositionChanged
+                                    ?.takeIf { !selected }
+                                    ?.let { callback ->
+                                        Modifier
+                                            .clip(RoundedCornerShape(cornerRadius))
+                                            .clickable { callback(i.toFloat()) }
+                                    }
                             )
-                        },
+                            .padding(
+                                LocalDistance.current.units.paddingValues.horizontal.medium,
+                            ),
                         propagateMinConstraints = true,
                     ) {
                         CompositionLocalProvider(
@@ -251,16 +287,9 @@ context(_: Orientation)
 private fun Modifier.draggable(
     snap: Boolean,
     anchors: NonEmptyList<Anchor>,
-    positionAlongMapper: Mapper<Float, Float>,
-    getLocalPosition: () -> Float,
-    onPositionChangedOrNull: ((Float) -> Unit)?,
+    positionUpdater: PositionUpdater?,
 ): Modifier {
-    val onPositionChanged = onPositionChangedOrNull ?: return this
-
-    val velocityTracker = remember { VelocityTracker() }
-
-    val scope = rememberCoroutineScope()
-    var snapJob by remember { mutableStateOf<Job?>(null) }
+    val positionUpdater = positionUpdater ?: return this
 
     val velocityThreshold =
         with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
@@ -268,71 +297,129 @@ private fun Modifier.draggable(
     return pointerInput(snap) {
         detectDragGestures(
             onDragStart = { offset ->
-                snapJob?.cancel()
-                velocityTracker.resetTracking()
-                velocityTracker.addPosition(
-                    Clock.System.now().toEpochMilliseconds(),
-                    Offset(
-                        along = offset.along,
-                        across = 0f,
-                    )
-
-                )
+                positionUpdater.setAlong(offset.along.let(::Along))
             },
             onDragCancel = {
-                snapJob?.cancel()
-                velocityTracker.resetTracking()
+                positionUpdater.cancelAnimation()
             },
             onDrag = { change, offset ->
                 change.consume()
-                val newAlong = positionAlongMapper.direct(getLocalPosition()) + offset.along
-                velocityTracker.addPosition(
-                    Clock.System.now().toEpochMilliseconds(),
-                    Offset(
-                        along = newAlong,
-                        across = 0f,
-                    )
+                positionUpdater.offsetAlong(
+                    alongDelta = offset.along.let(::Along),
                 )
-
-                onPositionChanged(positionAlongMapper.reverse(newAlong))
             },
             onDragEnd = {
+
                 if (!snap) {
                     return@detectDragGestures
                 }
-                val positon = getLocalPosition()
-                val currentAlong = positionAlongMapper.direct(positon)
-                val velocity = velocityTracker.calculateVelocity().along
-                val from = positon.toInt()
+
+                val positon = positionUpdater.getCurrentPosition()
+                val velocity = positionUpdater.getVelocity()
+                val from = positon.transform(::floor)
                 val offset = positon - from
-                val targetAlong = when {
+
+                val target = when {
                     velocity > velocityThreshold -> from + 1
                     velocity < -velocityThreshold -> from
-                    offset > 0.5 -> from + 1
+                    offset > Position(0.5f) -> from + 1
                     else -> from
                 }
-                    .coerceIn(0, anchors.lastIndex)
-                    .toFloat()
-                    .let(positionAlongMapper.direct)
+                    .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
 
-                snapJob?.cancel()
-                velocityTracker.resetTracking()
-                snapJob = scope.launch {
-                    animate(
-                        initialValue = currentAlong,
-                        targetValue = targetAlong,
-                        initialVelocity = velocity,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioLowBouncy,
-                            stiffness = Spring.StiffnessMedium,
-                        ),
-                    ) { along, _ ->
-                        onPositionChanged(positionAlongMapper.reverse(along))
-                    }
-                }
+                positionUpdater.animateToPosition(
+                    target = target,
+                )
             }
         )
     }
+}
+
+private class PositionUpdater(
+    private val scope: CoroutineScope,
+    val getCurrentPosition: () -> Position,
+    private val positionAlongMapper: Mapper<Position, Along>,
+    private val onPositionChanged: (Position) -> Unit,
+) {
+
+
+    private val clock: Clock = Clock.System
+    private val velocityTracker = VelocityTracker()
+
+    private var animateJob: Job? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
+
+    val getCurrentAlong: () -> Along =
+        { positionAlongMapper.direct(getCurrentPosition()) }
+
+    fun cancelAnimation() {
+        animateJob = null
+    }
+
+    context(_: Orientation)
+    fun getVelocity(): Float =
+        velocityTracker.calculateVelocity().along
+
+    context(_: Orientation)
+    fun setAlong(
+        along: Along,
+    ) {
+        setAlongInternal(
+            along = along,
+        )
+    }
+
+    context(_: Orientation)
+    fun offsetAlong(
+        alongDelta: Along,
+    ) {
+        setAlong(
+            along = getCurrentAlong() + alongDelta
+        )
+    }
+
+    context(_: Orientation)
+    private fun setAlongInternal(
+        along: Along,
+        resetAnimateJob: Boolean = true,
+    ) {
+        resetAnimateJob.ifTrue { cancelAnimation() }
+        val position = along.let(positionAlongMapper.reverse)
+        onPositionChanged(position)
+        velocityTracker.addPosition(
+            timeMillis = clock.now().toEpochMilliseconds(),
+            position = Offset(
+                along = along.along,
+                across = 0f,
+            )
+        )
+    }
+
+    context(_: Orientation)
+    fun animateToPosition(
+        target: Position,
+    ) {
+        animateJob = scope.launch {
+            animate(
+                initialValue = positionAlongMapper.direct(getCurrentPosition()).along,
+                targetValue = positionAlongMapper.direct(target).along,
+                initialVelocity = getVelocity(),
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessMedium,
+                ),
+            ) { along, _ ->
+                setAlongInternal(
+                    along = along.let(::Along),
+                    resetAnimateJob = false,
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -350,10 +437,7 @@ private fun SStepsLayout(
                     modifier = Modifier
                         .onGloballyPositioned { coordinates ->
                             anchor.rect.value = coordinates.boundsInParent()
-                        }
-                        .padding(
-                            LocalDistance.current.units.paddingValues.horizontal.medium,
-                        ),
+                        },
                     propagateMinConstraints = true,
                 ) { item(index) }
             }
@@ -422,5 +506,89 @@ private fun SStepsLayout(
                 )
             }
         }
+    }
+}
+
+@JvmInline
+private value class Along(
+    val along: Float,
+) : Comparable<Along> {
+
+    override fun compareTo(
+        other: Along,
+    ): Int = along.compareTo(
+        other = other.along,
+    )
+
+    inline fun combine(
+        other: Along,
+        block: (Float, Float) -> Float,
+    ): Along = block(
+        along,
+        other.along,
+    ).let(::Along)
+
+    operator fun plus(
+        other: Along,
+    ): Along = combine(
+        other = other,
+        block = Float::plus,
+    )
+
+    operator fun minus(
+        other: Along,
+    ): Along = combine(
+        other = other,
+        block = Float::minus,
+    )
+}
+
+@JvmInline
+private value class Position(
+    val position: Float,
+) : Comparable<Position> {
+
+    override fun compareTo(
+        other: Position,
+    ): Int = position.compareTo(
+        other = other.position,
+    )
+
+    inline fun transform(
+        block: (Float) -> Float,
+    ): Position = block(position).let(::Position)
+
+    inline fun combine(
+        other: Position,
+        block: (Float, Float) -> Float,
+    ): Position = block(
+        position,
+        other.position,
+    ).let(::Position)
+
+    operator fun plus(
+        other: Position,
+    ): Position = combine(
+        other = other,
+        block = Float::plus,
+    )
+
+    operator fun minus(
+        other: Position,
+    ): Position = combine(
+        other = other,
+        block = Float::minus,
+    )
+
+    operator fun plus(
+        other: Number,
+    ): Position = transform { position ->
+        position + other.toFloat()
+    }
+
+    operator fun minus(
+        other: Number,
+    ): Position = transform { position ->
+        position - other.toFloat()
     }
 }
