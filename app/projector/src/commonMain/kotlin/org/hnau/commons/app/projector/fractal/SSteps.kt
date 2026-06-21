@@ -50,6 +50,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 
@@ -111,26 +112,31 @@ fun SSteps(
             }
         }
 
-        val positionToAlong: (Float) -> Float = remember(positionToRect, orientation) {
-            { position -> positionToRect(position).center.along }
-        }
-
-        val alongToPosition: (Float) -> Float = remember(anchors, orientation) {
-            { along ->
-                var result: Float?
-                var i = 0
-                do {
-                    val from = anchors[i].rect.value.center.along
-                    val to = anchors[i + 1].rect.value.center.along
-                    result = when {
-                        along <= from -> i.toFloat()
-                        along <= to -> i + (along - from) / (to - from)
-                        else -> null
-                    }
-                    i++
-                } while (result == null && i < anchors.lastIndex)
-                result ?: anchors.lastIndex.toFloat()
-            }
+        val positionAlongMapper: Mapper<Float, Float> = remember(
+            positionToRect,
+            orientation,
+            anchors,
+        ) {
+            Mapper(
+                direct = { position ->
+                    positionToRect(position).center.along
+                },
+                reverse = { along ->
+                    var result: Float?
+                    var i = 0
+                    do {
+                        val from = anchors[i].rect.value.center.along
+                        val to = anchors[i + 1].rect.value.center.along
+                        result = when {
+                            along <= from -> i.toFloat()
+                            along <= to -> i + (along - from) / (to - from)
+                            else -> null
+                        }
+                        i++
+                    } while (result == null && i < anchors.lastIndex)
+                    result ?: anchors.lastIndex.toFloat()
+                }
+            )
         }
 
         val localPosition by rememberUpdatedState(position)
@@ -142,8 +148,7 @@ fun SSteps(
                 .draggable(
                     snap = snap,
                     anchors = anchors,
-                    positionToAlong = positionToAlong,
-                    alongToPosition = alongToPosition,
+                    positionAlongMapper = positionAlongMapper,
                     getLocalPosition = { localPosition },
                     onPositionChanged = onPositionChanged,
                 )
@@ -191,8 +196,7 @@ context(_: Orientation)
 private fun Modifier.draggable(
     snap: Boolean,
     anchors: NonEmptyList<Anchor>,
-    positionToAlong: (Float) -> Float,
-    alongToPosition: (Float) -> Float,
+    positionAlongMapper: Mapper<Float, Float>,
     getLocalPosition: () -> Float,
     onPositionChanged: (Float) -> Unit,
 ): Modifier {
@@ -225,7 +229,7 @@ private fun Modifier.draggable(
             },
             onDrag = { change, offset ->
                 change.consume()
-                val newAlong = positionToAlong(getLocalPosition()) + offset.along
+                val newAlong = positionAlongMapper.direct(getLocalPosition()) + offset.along
                 velocityTracker.addPosition(
                     Clock.System.now().toEpochMilliseconds(),
                     Offset(
@@ -234,14 +238,14 @@ private fun Modifier.draggable(
                     )
                 )
 
-                onPositionChanged(alongToPosition(newAlong))
+                onPositionChanged(positionAlongMapper.reverse(newAlong))
             },
             onDragEnd = {
                 if (!snap) {
                     return@detectDragGestures
                 }
                 val positon = getLocalPosition()
-                val currentAlong = positionToAlong(positon)
+                val currentAlong = positionAlongMapper.direct(positon)
                 val velocity = velocityTracker.calculateVelocity().along
                 val from = positon.toInt()
                 val offset = positon - from
@@ -253,7 +257,7 @@ private fun Modifier.draggable(
                 }
                     .coerceIn(0, anchors.lastIndex)
                     .toFloat()
-                    .let(positionToAlong)
+                    .let(positionAlongMapper.direct)
 
                 snapJob?.cancel()
                 velocityTracker.resetTracking()
@@ -267,7 +271,7 @@ private fun Modifier.draggable(
                             stiffness = Spring.StiffnessMedium,
                         ),
                     ) { along, _ ->
-                        onPositionChanged(alongToPosition(along))
+                        onPositionChanged(positionAlongMapper.reverse(along))
                     }
                 }
             }
