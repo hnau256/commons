@@ -3,9 +3,11 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -35,9 +37,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.across
@@ -64,9 +70,58 @@ fun SSteps(
     orientation: Orientation,
     weights: NonEmptyList<Float>,
     position: Float,
-    onPositionChanged: (Float) -> Unit,
+    onPositionChanged: ((Float) -> Unit)?,
     modifier: Modifier = Modifier,
     snap: Boolean = true,
+    importanceToActivate: Importance? = Importance.default,
+    item: @Composable (Int) -> Unit,
+) {
+    val units = LocalDistance.current.units
+    val padding = units.borderWidth
+    val cornerRadius = units.cornerRadius
+    val containerFContext = LocalFContext
+        .current
+        .run {
+            copy(
+                mood = mood.activateIfNeed(
+                    importanceToActivate.takeIf { onPositionChanged != null }
+                )
+            )
+        }
+        .containerOverlay()
+    Box(
+        modifier = modifier
+            .background(
+                color = containerFContext.color,
+                shape = RoundedCornerShape(cornerRadius),
+            )
+            .padding(padding),
+        propagateMinConstraints = true,
+    ) {
+        CompositionLocalProvider(
+            value = LocalFContext provides containerFContext
+        ) {
+            SStepsContent(
+                orientation = orientation,
+                weights = weights,
+                position = position,
+                cornerRadius = cornerRadius - padding,
+                onPositionChanged = onPositionChanged,
+                snap = snap,
+                item = item,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SStepsContent(
+    orientation: Orientation,
+    weights: NonEmptyList<Float>,
+    position: Float,
+    cornerRadius: Dp,
+    onPositionChanged: ((Float) -> Unit)?,
+    snap: Boolean,
     item: @Composable (Int) -> Unit,
 ) {
     with(orientation) {
@@ -91,8 +146,7 @@ fun SSteps(
             }.toNonEmptyListOrThrow()
         }
 
-        val distance = LocalDistance.current
-        val cornerRadius = with(LocalDensity.current) { distance.units.cornerRadius.toPx() }
+        val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
@@ -144,13 +198,13 @@ fun SSteps(
 
 
         SStepsLayout(
-            modifier = modifier
+            modifier = Modifier
                 .draggable(
                     snap = snap,
                     anchors = anchors,
                     positionAlongMapper = positionAlongMapper,
                     getLocalPosition = { localPosition },
-                    onPositionChanged = onPositionChanged,
+                    onPositionChangedOrNull = onPositionChanged,
                 )
                 .drawBehind {
                     val rect = positionToRect(localPosition)
@@ -158,7 +212,7 @@ fun SSteps(
                         color = cursorFContext.color,
                         topLeft = rect.topLeft,
                         size = rect.size,
-                        cornerRadius = CornerRadius(cornerRadius),
+                        cornerRadius = CornerRadius(cornerRadiusPx),
                     )
                 },
             anchors = anchors,
@@ -175,10 +229,11 @@ fun SSteps(
                         propagateMinConstraints = true,
                     ) {
                         CompositionLocalProvider(
-                            value = LocalFContext provides selected.foldBoolean(
+                            LocalFContext provides selected.foldBoolean(
                                 ifTrue = { cursorFContext },
                                 ifFalse = { backgroundFContent }
-                            )
+                            ),
+                            LocalDistance provides LocalDistance.current + 1,
                         ) {
                             item(i)
                         }
@@ -198,8 +253,9 @@ private fun Modifier.draggable(
     anchors: NonEmptyList<Anchor>,
     positionAlongMapper: Mapper<Float, Float>,
     getLocalPosition: () -> Float,
-    onPositionChanged: (Float) -> Unit,
+    onPositionChangedOrNull: ((Float) -> Unit)?,
 ): Modifier {
+    val onPositionChanged = onPositionChangedOrNull ?: return this
 
     val velocityTracker = remember { VelocityTracker() }
 
