@@ -32,20 +32,20 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAlong
+import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
-import org.hnau.commons.app.projector.fractal.distance.LocalDistance
-import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.uikit.line.ext.copy
 import kotlin.time.Clock
 
 private data class Anchor(
