@@ -1,7 +1,12 @@
 package org.hnau.commons.app.projector.fractal
 
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.TwoWayConverter
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.animateValueAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,10 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -129,6 +135,9 @@ private fun SStepsContent(
     item: @Composable (Int) -> Unit,
 ) {
     with(orientation) {
+
+        val density = LocalDensity.current
+
         val anchors: NonEmptyList<Anchor> = remember(weights) {
             buildList {
                 add(
@@ -201,35 +210,47 @@ private fun SStepsContent(
             )
         }
 
-        val localPosition by rememberUpdatedState(position.let(::Position))
+        var isDragging by remember { mutableStateOf(false) }
 
-        val positionUpdaterScope = rememberCoroutineScope()
-        val positionUpdater = remember(
-            onPositionChanged,
-            positionAlongMapper
-        ) {
-            onPositionChanged?.let { onPositionChanged ->
-                PositionUpdater(
-                    scope = positionUpdaterScope,
-                    getCurrentPosition = { localPosition },
-                    positionAlongMapper = positionAlongMapper,
-                    onPositionChanged = { position ->
-                        onPositionChanged(position.position)
-                    },
+        val animatedAlong: Along by position
+            .let(::Position)
+            .let(positionAlongMapper.direct)
+            .let { along ->
+                animateValueAsState(
+                    targetValue = along,
+                    typeConverter = Along.twoWayConverter,
+                    animationSpec = isDragging.foldBoolean(
+                        ifTrue = { snap() },
+                        ifFalse = { spring(visibilityThreshold = Along.visibilityThreshold) },
+                    )
                 )
             }
+
+        val animatedPosition: Position by remember(positionAlongMapper) {
+            derivedStateOf { positionAlongMapper.reverse(animatedAlong) }
         }
 
+        val updateAlong: ((Along) -> Unit)? = remember(onPositionChanged, positionAlongMapper) {
+            onPositionChanged?.let { updatePosition ->
+                { along: Along ->
+                    val position = along.let(positionAlongMapper.reverse)
+                    updatePosition(position.position)
+                }
+            }
+        }
 
         SStepsLayout(
             modifier = Modifier
                 .draggable(
                     snap = snap,
                     anchors = anchors,
-                    positionUpdater = positionUpdater,
+                    getAlong = { animatedAlong },
+                    updateAlong = updateAlong,
+                    positionAlongMapper = positionAlongMapper,
+                    setIsDragging = { newIsDragging -> isDragging = newIsDragging },
                 )
                 .drawBehind {
-                    val rect = positionToRect(localPosition)
+                    val rect = positionToRect(animatedPosition)
                     drawRoundRect(
                         color = cursorFContext.color,
                         topLeft = rect.topLeft,
@@ -244,7 +265,7 @@ private fun SStepsContent(
                         modifier = Modifier
                             .graphicsLayer {
                                 val delta =
-                                    (i - localPosition.position).absoluteValue.coerceIn(0f, 1f)
+                                    (i - animatedPosition.position).absoluteValue.coerceIn(0f, 1f)
                                 alpha = selected.foldBoolean(
                                     ifTrue = { 1 - delta },
                                     ifFalse = { delta },
@@ -287,49 +308,73 @@ context(_: Orientation)
 private fun Modifier.draggable(
     snap: Boolean,
     anchors: NonEmptyList<Anchor>,
-    positionUpdater: PositionUpdater?,
+    positionAlongMapper: Mapper<Position, Along>,
+    setIsDragging: (Boolean) -> Unit,
+    getAlong: () -> Along,
+    updateAlong: ((Along) -> Unit)?,
 ): Modifier {
-    val positionUpdater = positionUpdater ?: return this
+    val updateAlong = updateAlong ?: return this
 
     val velocityThreshold =
         with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
 
     return pointerInput(snap) {
+
+        val clock: Clock = Clock.System
+        val velocityTracker = VelocityTracker()
+
         detectDragGestures(
             onDragStart = { offset ->
-                positionUpdater.setAlong(offset.along.let(::Along))
+                setIsDragging(true)
+
+                val along = offset.along.let(::Along)
+
+                velocityTracker.resetTracking()
+                velocityTracker.addPosition(
+                    timeMillis = clock.now().toEpochMilliseconds(),
+                    position = Offset(
+                        along = along.along,
+                        across = 0f,
+                    )
+                )
+
+                updateAlong(along)
             },
             onDragCancel = {
-                positionUpdater.cancelAnimation()
+                velocityTracker.resetTracking()
+                setIsDragging(false)
             },
             onDrag = { change, offset ->
                 change.consume()
-                positionUpdater.offsetAlong(
-                    alongDelta = offset.along.let(::Along),
+                val newAlong = getAlong() + offset.along.let(::Along)
+                velocityTracker.addPosition(
+                    timeMillis = clock.now().toEpochMilliseconds(),
+                    position = Offset(
+                        along = newAlong.along,
+                        across = 0f,
+                    )
                 )
+                updateAlong(newAlong)
             },
             onDragEnd = {
+                if (snap) {
+                    val positon = getAlong().let(positionAlongMapper.reverse)
+                    val velocity = velocityTracker.calculateVelocity().along
+                    val from = positon.transform(::floor)
+                    val offset = positon - from
 
-                if (!snap) {
-                    return@detectDragGestures
+                    val target = when {
+                        velocity > velocityThreshold -> from + 1
+                        velocity < -velocityThreshold -> from
+                        offset > Position(0.5f) -> from + 1
+                        else -> from
+                    }
+                        .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
+
+                    updateAlong.invoke(target.let(positionAlongMapper.direct))
                 }
 
-                val positon = positionUpdater.getCurrentPosition()
-                val velocity = positionUpdater.getVelocity()
-                val from = positon.transform(::floor)
-                val offset = positon - from
-
-                val target = when {
-                    velocity > velocityThreshold -> from + 1
-                    velocity < -velocityThreshold -> from
-                    offset > Position(0.5f) -> from + 1
-                    else -> from
-                }
-                    .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
-
-                positionUpdater.animateToPosition(
-                    target = target,
-                )
+                setIsDragging(false)
             }
         )
     }
@@ -541,6 +586,20 @@ private value class Along(
         other = other,
         block = Float::minus,
     )
+
+    companion object {
+
+        val visibilityThreshold: Along
+            @Composable
+            get() = with(LocalDensity.current) {
+                Dp.VisibilityThreshold.toPx().let(::Along)
+            }
+
+        val twoWayConverter: TwoWayConverter<Along, AnimationVector1D> = TwoWayConverter(
+            convertToVector = { AnimationVector1D(it.along) },
+            convertFromVector = { vector -> Along(vector.value) }
+        )
+    }
 }
 
 @JvmInline
