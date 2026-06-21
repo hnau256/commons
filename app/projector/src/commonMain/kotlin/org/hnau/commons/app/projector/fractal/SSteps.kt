@@ -1,9 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.onDrag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -28,7 +25,6 @@ import androidx.compose.ui.platform.LocalDensity
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
@@ -46,7 +42,6 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
-import kotlin.time.Clock
 
 private data class Anchor(
     val weightBefore: Float,
@@ -136,7 +131,7 @@ fun SSteps(
 
         SStepsLayout(
             modifier = modifier
-                .onDrag(
+                /*.onDrag(
                     onDragStart = { offset ->
                         snapJob?.cancel()
                         velocityTracker.resetTracking()
@@ -178,7 +173,7 @@ fun SSteps(
                             }
                         }
                     }
-                )
+                )*/
                 .drawBehind {
                     val rect = positionToRect(position)
                     drawRoundRect(

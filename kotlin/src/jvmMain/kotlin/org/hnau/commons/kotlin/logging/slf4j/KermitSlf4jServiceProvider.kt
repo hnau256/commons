@@ -21,7 +21,7 @@ class KermitSlf4jServiceProvider : SLF4JServiceProvider {
 
     override fun getMDCAdapter(): MDCAdapter = mdcAdapter
 
-    override fun getRequestedApiVersion(): String = "2.0.17"
+    override fun getRequestedApiVersion(): String = "2.0.18"
 
     override fun initialize() {
         // Nothing to initialize

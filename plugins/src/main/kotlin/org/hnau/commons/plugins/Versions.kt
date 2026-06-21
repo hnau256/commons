@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 internal object Versions {
 
     // Android SDK
-    val compileSdk = 36
+    val compileSdk = 37
     val minSdk = 23
 
     // JVM bytecode — single declaration, used for toolchain and compilerOptions
