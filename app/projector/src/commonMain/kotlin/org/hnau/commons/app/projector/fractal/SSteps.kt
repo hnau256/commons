@@ -5,8 +5,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateValueAsState
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,11 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -41,6 +42,7 @@ import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
@@ -212,19 +214,53 @@ private fun SStepsContent(
 
         var isDragging by remember { mutableStateOf(false) }
 
-        val animatedAlong: Along by position
+        val along = position
             .let(::Position)
             .let(positionAlongMapper.direct)
-            .let { along ->
-                animateValueAsState(
-                    targetValue = along,
-                    typeConverter = Along.twoWayConverter,
-                    animationSpec = isDragging.foldBoolean(
-                        ifTrue = { snap() },
-                        ifFalse = { spring(visibilityThreshold = Along.visibilityThreshold) },
+
+        var animatedAlong by remember { mutableStateOf(along) }
+
+        val velocityTracker = remember { VelocityTracker() }
+        LaunchedEffect(Unit) {
+            snapshotFlow { animatedAlong }.collectLatest { along ->
+                velocityTracker.addPosition(
+                    timeMillis = Clock.System.now().toEpochMilliseconds(),
+                    position = Offset(
+                        along = along.along,
+                        across = 0f,
                     )
                 )
             }
+        }
+
+        if (isDragging) {
+            animatedAlong = along
+        }
+
+
+        val getVelocity: () -> Along =
+            { velocityTracker.calculateVelocity().along.let(::Along) }
+
+        val alongVisibilityThreshold = Along.VisibilityThreshold
+        val alongState = rememberUpdatedState(along)
+        LaunchedEffect(Unit) {
+            snapshotFlow { alongState.value to isDragging }
+                .collectLatest { (targetAlong, dragging) ->
+                    if (!dragging && animatedAlong != targetAlong) {
+                        animate(
+                            initialValue = animatedAlong,
+                            targetValue = targetAlong,
+                            initialVelocity = getVelocity(),
+                            typeConverter = Along.twoWayConverter,
+                            animationSpec = spring(
+                                visibilityThreshold = alongVisibilityThreshold,
+                            ),
+                        ) { value, _ ->
+                            animatedAlong = value
+                        }
+                    }
+                }
+        }
 
         val animatedPosition: Position by remember(positionAlongMapper) {
             derivedStateOf { positionAlongMapper.reverse(animatedAlong) }
@@ -247,6 +283,7 @@ private fun SStepsContent(
                     getAlong = { animatedAlong },
                     updateAlong = updateAlong,
                     positionAlongMapper = positionAlongMapper,
+                    getVelosity = getVelocity,
                     setIsDragging = { newIsDragging -> isDragging = newIsDragging },
                 )
                 .drawBehind {
@@ -311,6 +348,7 @@ private fun Modifier.draggable(
     positionAlongMapper: Mapper<Position, Along>,
     setIsDragging: (Boolean) -> Unit,
     getAlong: () -> Along,
+    getVelosity: () -> Along,
     updateAlong: ((Along) -> Unit)?,
 ): Modifier {
     val updateAlong = updateAlong ?: return this
@@ -320,46 +358,22 @@ private fun Modifier.draggable(
 
     return pointerInput(snap) {
 
-        val clock: Clock = Clock.System
-        val velocityTracker = VelocityTracker()
-
         detectDragGestures(
             onDragStart = { offset ->
                 setIsDragging(true)
-
                 val along = offset.along.let(::Along)
-
-                velocityTracker.resetTracking()
-                velocityTracker.addPosition(
-                    timeMillis = clock.now().toEpochMilliseconds(),
-                    position = Offset(
-                        along = along.along,
-                        across = 0f,
-                    )
-                )
-
                 updateAlong(along)
             },
-            onDragCancel = {
-                velocityTracker.resetTracking()
-                setIsDragging(false)
-            },
+            onDragCancel = { setIsDragging(false) },
             onDrag = { change, offset ->
                 change.consume()
                 val newAlong = getAlong() + offset.along.let(::Along)
-                velocityTracker.addPosition(
-                    timeMillis = clock.now().toEpochMilliseconds(),
-                    position = Offset(
-                        along = newAlong.along,
-                        across = 0f,
-                    )
-                )
                 updateAlong(newAlong)
             },
             onDragEnd = {
                 if (snap) {
                     val positon = getAlong().let(positionAlongMapper.reverse)
-                    val velocity = velocityTracker.calculateVelocity().along
+                    val velocity = getVelosity().along
                     val from = positon.transform(::floor)
                     val offset = positon - from
 
@@ -589,7 +603,7 @@ private value class Along(
 
     companion object {
 
-        val visibilityThreshold: Along
+        val VisibilityThreshold: Along
             @Composable
             get() = with(LocalDensity.current) {
                 Dp.VisibilityThreshold.toPx().let(::Along)
