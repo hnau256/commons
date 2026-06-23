@@ -31,7 +31,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.maxIntrinsicAlong
 import org.hnau.commons.app.projector.uikit.line.ext.minIntrinsicAcross
 import org.hnau.commons.app.projector.uikit.line.ext.minIntrinsicAlong
 import org.hnau.commons.app.projector.uikit.line.ext.offset
-import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
+import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.uikit.line.ext.withoutMinAlong
 import org.hnau.commons.app.projector.utils.Direction
 import org.hnau.commons.app.projector.utils.Orientation
@@ -128,7 +128,7 @@ private data class LineMeasurePolicy(
         ) {
             var along = 0
             placeables.forEach { placeable ->
-                placeable.placeRelativeA(
+                placeable.placeRelative(
                     along = along,
                     across = 0,
                 )

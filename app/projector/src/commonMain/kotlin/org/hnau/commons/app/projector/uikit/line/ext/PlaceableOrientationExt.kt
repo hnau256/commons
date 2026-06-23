@@ -29,7 +29,7 @@ val Placeable.across: Int
     get() = get(Direction.Across)
 
 context(orientation: Orientation, scope: Placeable.PlacementScope)
-fun Placeable.placeRelativeA(
+fun Placeable.placeRelative(
     along: Int,
     across: Int,
     zIndex: Float = 0f,

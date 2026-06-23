@@ -59,7 +59,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAlong
 import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
-import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
+import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.observe
 import org.hnau.commons.app.projector.utils.option
@@ -516,7 +516,7 @@ private fun SAnchorsLayout(
                         result.toInt()
                     }
                 )
-                placeable.placeRelativeA(
+                placeable.placeRelative(
                     along = alongPosition,
                     across = (across - placeable.across) / 2,
                 )
