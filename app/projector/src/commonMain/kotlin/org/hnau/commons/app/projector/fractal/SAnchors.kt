@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animate
@@ -14,14 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -41,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
@@ -63,25 +61,23 @@ import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelativeA
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.observe
 import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.Mutable
+import org.hnau.commons.kotlin.coroutines.createChild
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.time.Clock
 
-private data class Anchor(
-    val weightBefore: Float,
-    val rect: Mutable<Rect> = Mutable(Rect.Zero),
-)
-
 @Composable
-fun SSteps(
+fun SAnchors(
     orientation: Orientation,
     weights: NonEmptyList<Float>,
-    position: Float,
+    getPosition: () -> Float,
     onPositionChanged: ((Float) -> Unit)?,
     modifier: Modifier = Modifier,
     snap: Boolean = true,
@@ -113,10 +109,10 @@ fun SSteps(
         CompositionLocalProvider(
             value = LocalFContext provides containerFContext
         ) {
-            SStepsContent(
+            SAnchorsContent(
                 orientation = orientation,
                 weights = weights,
-                position = position,
+                getPosition = getPosition,
                 cornerRadius = cornerRadius - padding,
                 onPositionChanged = onPositionChanged,
                 snap = snap,
@@ -126,19 +122,152 @@ fun SSteps(
     }
 }
 
+private class PositionHolder(
+    private val orientation: Orientation,
+    scope: CoroutineScope,
+    getPosition: () -> Position,
+    val setPosition: ((Position) -> Unit)?,
+    private val getAlongVisibilityThreshold: () -> Along,
+    private val anchors: NonEmptyList<Anchor>,
+) {
+
+    private fun getRect(
+        position: Position,
+    ): Rect {
+        val fromIndex = position.position.toInt()
+        val from = anchors[fromIndex.coerceIn(0, anchors.lastIndex)].rect
+        val to = anchors[(fromIndex + 1).coerceIn(0, anchors.lastIndex)].rect
+        return when {
+            from == to -> from
+            else -> lerp(
+                start = from,
+                stop = to,
+                fraction = position.position - fromIndex
+            )
+        }
+    }
+
+    val positionAlongMapper: Mapper<Position, Along> = Mapper(
+        direct = { position ->
+            with(orientation) {
+                position
+                    .let(::getRect)
+                    .center
+                    .along
+                    .let(::Along)
+            }
+        },
+        reverse = { along ->
+            with(orientation) {
+                var result: Position?
+                var i = 0
+                do {
+                    val from = anchors[i].rect.center.along.let(::Along)
+                    val to = anchors[i + 1].rect.center.along.let(::Along)
+                    result = when {
+                        along <= from -> i.toFloat().let(::Position)
+                        along <= to -> (i + (along - from).along / (to - from).along).let(::Position)
+                        else -> null
+                    }
+                    i++
+                } while (result == null && i < anchors.lastIndex)
+                result ?: anchors.lastIndex.toFloat().let(::Position)
+            }
+        }
+    )
+
+    var isDragging: Boolean by mutableStateOf(false)
+
+    private val alongRaw: Along
+            by derivedStateOf { getPosition().let(positionAlongMapper.direct) }
+
+    var along: Along by mutableStateOf(alongRaw)
+        private set
+
+    val position: Position by derivedStateOf {
+        along.let(positionAlongMapper.reverse)
+    }
+
+    val cursorRect: Rect
+        get() = getRect(position)
+
+    val setAlong: ((Along) -> Unit)? = setPosition?.let { set ->
+        { along: Along -> set(along.let(positionAlongMapper.reverse)) }
+    }
+
+    private val velocityTracker = VelocityTracker()
+
+    val velocity: Along
+        get() = with(orientation) {
+            velocityTracker.calculateVelocity().along.let(::Along)
+        }
+
+    init {
+        scope.launch {
+            derivedStateOf { isDragging.ifTrue { along } }.observe { alongOrNull ->
+                alongOrNull.foldNullable(
+                    ifNull = { velocityTracker.resetTracking() },
+                    ifNotNull = { along ->
+                        velocityTracker.addPosition(
+                            timeMillis = Clock.System.now().toEpochMilliseconds(),
+                            position = with(orientation) {
+                                Offset(
+                                    along = along.along,
+                                    across = 0f,
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        }
+        scope.launch {
+            val triggerState = derivedStateOf { getPosition() to isDragging }
+            triggerState.observe { (position, dragging) ->
+
+                val currentAlong = along
+
+                val targetAlong = positionAlongMapper
+                    .direct(position)
+                    .takeIf { it != currentAlong }
+                    ?: return@observe
+
+                if (dragging) {
+                    along = targetAlong
+                    return@observe
+                }
+
+                animate(
+                    initialValue = currentAlong,
+                    targetValue = targetAlong,
+                    typeConverter = Along.twoWayConverter,
+                    animationSpec = spring(
+                        visibilityThreshold = getAlongVisibilityThreshold(),
+                    ),
+                ) { value, _ ->
+                    along = value
+                }
+            }
+        }
+    }
+}
+
+private data class Anchor(
+    val weightBefore: Float,
+    var rect: Rect = Rect.Zero,
+)
+
 @Composable
-private fun SStepsContent(
+private fun SAnchorsContent(
     orientation: Orientation,
     weights: NonEmptyList<Float>,
-    position: Float,
+    getPosition: () -> Float,
     cornerRadius: Dp,
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
     item: @Composable (Int) -> Unit,
 ) {
     with(orientation) {
-
-        val density = LocalDensity.current
 
         val anchors: NonEmptyList<Anchor> = remember(weights) {
             buildList {
@@ -161,133 +290,46 @@ private fun SStepsContent(
             }.toNonEmptyListOrThrow()
         }
 
+
+        val alongVisibilityThreshold by rememberUpdatedState(Along.VisibilityThreshold)
+
+        val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
+        val positionHolderCoroutineScope = remember { Mutable<CoroutineScope?>(null) }
+
+        val positionHolder = remember(anchors) {
+            positionHolderCoroutineScope.value?.cancel()
+            val scope = coroutineScope.createChild()
+            positionHolderCoroutineScope.value = scope
+            PositionHolder(
+                orientation = orientation,
+                scope = scope,
+                getPosition = { getPosition().let(::Position) },
+                setPosition = onPositionChanged?.let { set ->
+                    { position -> position.position.let(set) }
+                },
+                getAlongVisibilityThreshold = { alongVisibilityThreshold },
+                anchors = anchors,
+            )
+        }
+
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
-        val positionToRect: (Position) -> Rect = remember(anchors) {
-            { position ->
-                val fromIndex = position.position.toInt()
-                val from = anchors[fromIndex.coerceIn(0, anchors.lastIndex)].rect.value
-                val to = anchors[(fromIndex + 1).coerceIn(0, anchors.lastIndex)].rect.value
-                when {
-                    from == to -> from
-                    else -> lerp(
-                        start = from,
-                        stop = to,
-                        fraction = position.position - fromIndex
-                    )
-                }
-            }
-        }
-
-        val positionAlongMapper: Mapper<Position, Along> = remember(
-            positionToRect,
-            orientation,
-            anchors,
-        ) {
-            Mapper(
-                direct = { position ->
-                    position
-                        .let(positionToRect)
-                        .center
-                        .along
-                        .let(::Along)
-                },
-                reverse = { along ->
-                    var result: Position?
-                    var i = 0
-                    do {
-                        val from = anchors[i].rect.value.center.along.let(::Along)
-                        val to = anchors[i + 1].rect.value.center.along.let(::Along)
-                        result = when {
-                            along <= from -> i.toFloat().let(::Position)
-                            along <= to -> (i + (along - from).along / (to - from).along).let(::Position)
-                            else -> null
-                        }
-                        i++
-                    } while (result == null && i < anchors.lastIndex)
-                    result ?: anchors.lastIndex.toFloat().let(::Position)
-                }
-            )
-        }
-
-        var isDragging by remember { mutableStateOf(false) }
-
-        val along = position
-            .let(::Position)
-            .let(positionAlongMapper.direct)
-
-        var animatedAlong by remember { mutableStateOf(along) }
-
-        val velocityTracker = remember { VelocityTracker() }
-        LaunchedEffect(Unit) {
-            snapshotFlow { animatedAlong }.collectLatest { along ->
-                velocityTracker.addPosition(
-                    timeMillis = Clock.System.now().toEpochMilliseconds(),
-                    position = Offset(
-                        along = along.along,
-                        across = 0f,
-                    )
-                )
-            }
-        }
-
-        if (isDragging) {
-            animatedAlong = along
-        }
-
-
-        val getVelocity: () -> Along =
-            { velocityTracker.calculateVelocity().along.let(::Along) }
-
-        val alongVisibilityThreshold = Along.VisibilityThreshold
-        val alongState = rememberUpdatedState(along)
-        LaunchedEffect(Unit) {
-            snapshotFlow { alongState.value to isDragging }
-                .collectLatest { (targetAlong, dragging) ->
-                    if (!dragging && animatedAlong != targetAlong) {
-                        animate(
-                            initialValue = animatedAlong,
-                            targetValue = targetAlong,
-                            initialVelocity = getVelocity(),
-                            typeConverter = Along.twoWayConverter,
-                            animationSpec = spring(
-                                visibilityThreshold = alongVisibilityThreshold,
-                            ),
-                        ) { value, _ ->
-                            animatedAlong = value
-                        }
-                    }
-                }
-        }
-
-        val animatedPosition: Position by remember(positionAlongMapper) {
-            derivedStateOf { positionAlongMapper.reverse(animatedAlong) }
-        }
-
-        val updateAlong: ((Along) -> Unit)? = remember(onPositionChanged, positionAlongMapper) {
-            onPositionChanged?.let { updatePosition ->
-                { along: Along ->
-                    val position = along.let(positionAlongMapper.reverse)
-                    updatePosition(position.position)
-                }
-            }
-        }
-
-        SStepsLayout(
+        SAnchorsLayout(
             modifier = Modifier
                 .draggable(
                     snap = snap,
                     anchors = anchors,
-                    getAlong = { animatedAlong },
-                    updateAlong = updateAlong,
-                    positionAlongMapper = positionAlongMapper,
-                    getVelosity = getVelocity,
-                    setIsDragging = { newIsDragging -> isDragging = newIsDragging },
+                    getAlong = positionHolder::along,
+                    getPosition = positionHolder::position,
+                    updateAlong = positionHolder.setAlong,
+                    updatePosition = positionHolder.setPosition,
+                    getVelocity = positionHolder::velocity,
+                    setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
-                    val rect = positionToRect(animatedPosition)
+                    val rect = positionHolder.cursorRect
                     drawRoundRect(
                         color = cursorFContext.color,
                         topLeft = rect.topLeft,
@@ -302,7 +344,7 @@ private fun SStepsContent(
                         modifier = Modifier
                             .graphicsLayer {
                                 val delta =
-                                    (i - animatedPosition.position).absoluteValue.coerceIn(0f, 1f)
+                                    (i - positionHolder.position.position).absoluteValue.coerceIn(0f, 1f)
                                 alpha = selected.foldBoolean(
                                     ifTrue = { 1 - delta },
                                     ifFalse = { delta },
@@ -345,13 +387,15 @@ context(_: Orientation)
 private fun Modifier.draggable(
     snap: Boolean,
     anchors: NonEmptyList<Anchor>,
-    positionAlongMapper: Mapper<Position, Along>,
     setIsDragging: (Boolean) -> Unit,
     getAlong: () -> Along,
-    getVelosity: () -> Along,
+    getPosition: () -> Position,
+    getVelocity: () -> Along,
     updateAlong: ((Along) -> Unit)?,
+    updatePosition: ((Position) -> Unit)?,
 ): Modifier {
     val updateAlong = updateAlong ?: return this
+    val updatePosition = updatePosition ?: return this
 
     val velocityThreshold =
         with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
@@ -372,8 +416,8 @@ private fun Modifier.draggable(
             },
             onDragEnd = {
                 if (snap) {
-                    val positon = getAlong().let(positionAlongMapper.reverse)
-                    val velocity = getVelosity().along
+                    val positon = getPosition()
+                    val velocity = getVelocity().along
                     val from = positon.transform(::floor)
                     val offset = positon - from
 
@@ -385,7 +429,7 @@ private fun Modifier.draggable(
                     }
                         .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
 
-                    updateAlong.invoke(target.let(positionAlongMapper.direct))
+                    updatePosition(target)
                 }
 
                 setIsDragging(false)
@@ -394,96 +438,9 @@ private fun Modifier.draggable(
     }
 }
 
-private class PositionUpdater(
-    private val scope: CoroutineScope,
-    val getCurrentPosition: () -> Position,
-    private val positionAlongMapper: Mapper<Position, Along>,
-    private val onPositionChanged: (Position) -> Unit,
-) {
-
-
-    private val clock: Clock = Clock.System
-    private val velocityTracker = VelocityTracker()
-
-    private var animateJob: Job? = null
-        set(value) {
-            field?.cancel()
-            field = value
-        }
-
-    val getCurrentAlong: () -> Along =
-        { positionAlongMapper.direct(getCurrentPosition()) }
-
-    fun cancelAnimation() {
-        animateJob = null
-    }
-
-    context(_: Orientation)
-    fun getVelocity(): Float =
-        velocityTracker.calculateVelocity().along
-
-    context(_: Orientation)
-    fun setAlong(
-        along: Along,
-    ) {
-        setAlongInternal(
-            along = along,
-        )
-    }
-
-    context(_: Orientation)
-    fun offsetAlong(
-        alongDelta: Along,
-    ) {
-        setAlong(
-            along = getCurrentAlong() + alongDelta
-        )
-    }
-
-    context(_: Orientation)
-    private fun setAlongInternal(
-        along: Along,
-        resetAnimateJob: Boolean = true,
-    ) {
-        resetAnimateJob.ifTrue { cancelAnimation() }
-        val position = along.let(positionAlongMapper.reverse)
-        onPositionChanged(position)
-        velocityTracker.addPosition(
-            timeMillis = clock.now().toEpochMilliseconds(),
-            position = Offset(
-                along = along.along,
-                across = 0f,
-            )
-        )
-    }
-
-    context(_: Orientation)
-    fun animateToPosition(
-        target: Position,
-    ) {
-        animateJob = scope.launch {
-            animate(
-                initialValue = positionAlongMapper.direct(getCurrentPosition()).along,
-                targetValue = positionAlongMapper.direct(target).along,
-                initialVelocity = getVelocity(),
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessMedium,
-                ),
-            ) { along, _ ->
-                setAlongInternal(
-                    along = along.let(::Along),
-                    resetAnimateJob = false,
-                )
-            }
-        }
-    }
-
-}
-
 @Composable
 context(_: Orientation)
-private fun SStepsLayout(
+private fun SAnchorsLayout(
     anchors: NonEmptyList<Anchor>,
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -495,7 +452,7 @@ private fun SStepsLayout(
                 Box(
                     modifier = Modifier
                         .onGloballyPositioned { coordinates ->
-                            anchor.rect.value = coordinates.boundsInParent()
+                            anchor.rect = coordinates.boundsInParent()
                         },
                     propagateMinConstraints = true,
                 ) { item(index) }

@@ -1,32 +1,23 @@
 package org.hnau.commons.app.test.app.projector
 
-import androidx.annotation.Dimension
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.projector.fractal.SSteps
+import org.hnau.commons.app.projector.fractal.SAnchors
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.context.LocalFContext
-import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
-import org.hnau.commons.app.projector.uikit.state.LoadableContent
-import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
@@ -70,11 +61,11 @@ class RootProjector(
                 .padding(LocalDistance.current.units.paddingValues.vertical.medium),
             contentAlignment = Alignment.Center,
         ) {
-            SSteps(
+            SAnchors(
                 modifier = Modifier.fillMaxWidth(),
                 orientation = Orientation.Horizontal,
                 weights = nonEmptyListOf(1f, 0.5f),
-                position = position,
+                getPosition = {position},
                 onPositionChanged = { position = it },
             ) { i ->
                 SText(
