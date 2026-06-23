@@ -1,6 +1,8 @@
 package org.hnau.commons.app.test.app.projector
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,11 +57,12 @@ class RootProjector(
         contentPadding: PaddingValues,
     ) {
         var position by remember { mutableFloatStateOf(0f) }
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(LocalDistance.current.units.paddingValues.vertical.medium),
-            contentAlignment = Alignment.Center,
+            verticalArrangement = Arrangement.spacedBy(LocalDistance.current.units.padding.along.medium),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SAnchors(
                 modifier = Modifier.fillMaxWidth(),
@@ -67,6 +70,17 @@ class RootProjector(
                 weights = nonEmptyListOf(1f, 0.5f),
                 getPosition = {position},
                 onPositionChanged = { position = it },
+            ) { i ->
+                SText(
+                    text = "Item$i"
+                )
+            }
+            SAnchors(
+                modifier = Modifier.fillMaxWidth(),
+                orientation = Orientation.Horizontal,
+                weights = nonEmptyListOf(1f, 0.5f),
+                getPosition = {position},
+                onPositionChanged = null,
             ) { i ->
                 SText(
                     text = "Item$i"

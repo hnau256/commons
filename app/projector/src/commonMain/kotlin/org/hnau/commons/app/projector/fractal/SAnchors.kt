@@ -91,9 +91,7 @@ fun SAnchors(
         .current
         .run {
             copy(
-                mood = mood.activateIfNeed(
-                    importanceToActivate.takeIf { onPositionChanged != null }
-                )
+                mood = mood.activateIfNeed(importanceToActivate)
             )
         }
         .containerOverlay()
@@ -268,6 +266,8 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
+        val isEnabled = onPositionChanged != null
+
         val anchors: NonEmptyList<Anchor> = remember(weights) {
             buildList {
                 add(
@@ -315,6 +315,13 @@ private fun SAnchorsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
+        val selectedLayers: List<Boolean> = remember(isEnabled) {
+            listOfNotNull(
+                false,
+                isEnabled.ifTrue { true }
+            )
+        }
+
         SAnchorsLayout(
             modifier = Modifier
                 .draggable(
@@ -328,28 +335,36 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
-                    val rect = positionHolder.cursorRect
-                    drawRoundRect(
-                        color = cursorFContext.color,
-                        topLeft = rect.topLeft,
-                        size = rect.size,
-                        cornerRadius = CornerRadius(cornerRadiusPx),
-                    )
+                    isEnabled.ifTrue {
+                        val rect = positionHolder.cursorRect
+                        drawRoundRect(
+                            color = cursorFContext.color,
+                            topLeft = rect.topLeft,
+                            size = rect.size,
+                            cornerRadius = CornerRadius(cornerRadiusPx),
+                        )
+                    }
                 },
             anchors = anchors,
             item = { i ->
-                listOf(false, true).forEach { selected ->
+                selectedLayers.forEach { selected ->
                     Box(
                         modifier = Modifier
                             .graphicsLayer {
-                                val delta =
-                                    (i - positionHolder.position.position).absoluteValue.coerceIn(
-                                        0f,
-                                        1f
-                                    )
-                                alpha = selected.foldBoolean(
-                                    ifTrue = { 1 - delta },
-                                    ifFalse = { delta },
+                                alpha = isEnabled.foldBoolean(
+                                    ifTrue = {
+
+                                        val delta = i
+                                            .minus(positionHolder.position.position)
+                                            .absoluteValue
+                                            .coerceIn(0f, 1f)
+
+                                        selected.foldBoolean(
+                                            ifTrue = { 1 - delta },
+                                            ifFalse = { delta },
+                                        )
+                                    },
+                                    ifFalse = { 1f },
                                 )
                             }
                             .option(
@@ -418,10 +433,10 @@ private fun Modifier.draggable(
             },
             onDragEnd = {
                 if (snap) {
-                    val positon = getPosition()
+                    val position = getPosition()
                     val velocity = getVelocity().along
-                    val from = positon.transform(::floor)
-                    val offset = positon - from
+                    val from = position.transform(::floor)
+                    val offset = position - from
 
                     val target = when {
                         velocity > velocityThreshold -> from + 1
