@@ -31,8 +31,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -48,11 +46,13 @@ import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.distance.plus
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.Offset
+import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
@@ -97,14 +97,13 @@ fun SAnchors(
             )
         }
         .containerOverlay()
-    Box(
+    LocalContentPaddingBox(
         modifier = modifier
             .background(
                 color = containerFContext.color,
                 shape = RoundedCornerShape(cornerRadius),
             )
             .padding(padding),
-        propagateMinConstraints = true,
     ) {
         CompositionLocalProvider(
             value = LocalFContext provides containerFContext
@@ -344,7 +343,10 @@ private fun SAnchorsContent(
                         modifier = Modifier
                             .graphicsLayer {
                                 val delta =
-                                    (i - positionHolder.position.position).absoluteValue.coerceIn(0f, 1f)
+                                    (i - positionHolder.position.position).absoluteValue.coerceIn(
+                                        0f,
+                                        1f
+                                    )
                                 alpha = selected.foldBoolean(
                                     ifTrue = { 1 - delta },
                                     ifFalse = { delta },
@@ -448,16 +450,14 @@ private fun SAnchorsLayout(
     Layout(
         modifier = modifier,
         content = {
-            anchors.forEachIndexed { index, anchor ->
+            repeat(anchors.size) { i ->
                 Box(
-                    modifier = Modifier
-                        .onGloballyPositioned { coordinates ->
-                            anchor.rect = coordinates.boundsInParent()
-                        },
                     propagateMinConstraints = true,
-                ) { item(index) }
+                ) {
+                    item(i)
+                }
             }
-        }
+        },
     ) { measurables, constraints ->
 
         val (placeables, _, totalWeight) = measurables
@@ -519,6 +519,16 @@ private fun SAnchorsLayout(
                 placeable.placeRelative(
                     along = alongPosition,
                     across = (across - placeable.across) / 2,
+                )
+                anchors[i].rect = Rect(
+                    offset = Offset(
+                        along = alongPosition.toFloat(),
+                        across = 0f,
+                    ),
+                    size = Size(
+                        along = placeable.along.toFloat(),
+                        across = size.across.toFloat(),
+                    )
                 )
             }
         }
