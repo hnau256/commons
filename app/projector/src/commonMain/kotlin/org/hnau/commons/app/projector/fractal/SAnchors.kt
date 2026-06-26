@@ -23,10 +23,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.lerp
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
@@ -69,7 +73,6 @@ import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.mapper.Mapper
-import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.time.Clock
 
@@ -315,13 +318,6 @@ private fun SAnchorsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
-        val selectedLayers: List<Boolean> = remember(isEnabled) {
-            listOfNotNull(
-                false,
-                isEnabled.ifTrue { true }
-            )
-        }
-
         SAnchorsLayout(
             modifier = Modifier
                 .draggable(
@@ -347,34 +343,29 @@ private fun SAnchorsContent(
                 },
             anchors = anchors,
             item = { i ->
-                selectedLayers.forEach { selected ->
+                Box(
+                    modifier = Modifier
+                        .option(
+                            onPositionChanged
+                                ?.let { callback ->
+                                    Modifier
+                                        .clip(RoundedCornerShape(cornerRadius))
+                                        .clickable { callback(i.toFloat()) }
+                                }
+                        ),
+                    propagateMinConstraints = true,
+                ) {
                     Box(
                         modifier = Modifier
-                            .graphicsLayer {
-                                alpha = isEnabled.foldBoolean(
-                                    ifTrue = {
-
-                                        val delta = i
-                                            .minus(positionHolder.position.position)
-                                            .absoluteValue
-                                            .coerceIn(0f, 1f)
-
-                                        selected.foldBoolean(
-                                            ifTrue = { 1 - delta },
-                                            ifFalse = { delta },
-                                        )
-                                    },
-                                    ifFalse = { 1f },
-                                )
-                            }
                             .option(
-                                onPositionChanged
-                                    ?.takeIf { !selected }
-                                    ?.let { callback ->
-                                        Modifier
-                                            .clip(RoundedCornerShape(cornerRadius))
-                                            .clickable { callback(i.toFloat()) }
-                                    }
+                                isEnabled.ifTrue {
+                                    Modifier.clipToCursorRect(
+                                        getAnchorRect = { anchors[i].rect },
+                                        getCursorRect = { positionHolder.cursorRect },
+                                        cornerRadiusPx = cornerRadiusPx,
+                                        clipOp = ClipOp.Difference,
+                                    )
+                                }
                             )
                             .padding(
                                 LocalDistance.current.units.paddingValues.horizontal.medium,
@@ -382,18 +373,71 @@ private fun SAnchorsContent(
                         propagateMinConstraints = true,
                     ) {
                         CompositionLocalProvider(
-                            LocalFContext provides selected.foldBoolean(
-                                ifTrue = { cursorFContext },
-                                ifFalse = { backgroundFContent }
-                            ),
+                            LocalFContext provides backgroundFContent,
                             LocalDistance provides LocalDistance.current + 1,
                         ) {
                             item(i)
                         }
                     }
+
+                    isEnabled.ifTrue {
+                        Box(
+                            modifier = Modifier
+                                .clipToCursorRect(
+                                    getAnchorRect = { anchors[i].rect },
+                                    getCursorRect = { positionHolder.cursorRect },
+                                    cornerRadiusPx = cornerRadiusPx,
+                                    clipOp = ClipOp.Intersect,
+                                )
+                                .padding(
+                                    LocalDistance.current.units.paddingValues.horizontal.medium,
+                                ),
+                            propagateMinConstraints = true,
+                        ) {
+                            CompositionLocalProvider(
+                                LocalFContext provides cursorFContext,
+                                LocalDistance provides LocalDistance.current + 1,
+                            ) {
+                                item(i)
+                            }
+                        }
+                    }
                 }
             },
         )
+    }
+}
+
+private fun Modifier.clipToCursorRect(
+    getAnchorRect: () -> Rect,
+    getCursorRect: () -> Rect,
+    cornerRadiusPx: Float,
+    clipOp: ClipOp,
+): Modifier = drawWithContent {
+
+    val anchorRect = getAnchorRect()
+    val cursorRect = getCursorRect()
+
+    val clipLeft = (cursorRect.left - anchorRect.left).coerceIn(0f, size.width)
+    val clipRight = (cursorRect.right - anchorRect.left).coerceIn(0f, size.width)
+
+    val path = Path().apply {
+        addRoundRect(
+            RoundRect(
+                left = clipLeft,
+                top = 0f,
+                right = clipRight.coerceAtLeast(clipLeft),
+                bottom = size.height,
+                radiusX = cornerRadiusPx,
+                radiusY = cornerRadiusPx,
+            )
+        )
+    }
+    clipPath(
+        path = path,
+        clipOp = clipOp,
+    ) {
+        this@drawWithContent.drawContent()
     }
 }
 
