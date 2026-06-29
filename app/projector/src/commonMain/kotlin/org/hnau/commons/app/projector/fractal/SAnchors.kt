@@ -318,6 +318,14 @@ private fun SAnchorsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
+
+        val selectionStates: List<Boolean> = remember(isEnabled) {
+            listOfNotNull(
+                false,
+                isEnabled.ifTrue { true },
+            )
+        }
+
         SAnchorsLayout(
             modifier = Modifier
                 .draggable(
@@ -355,47 +363,34 @@ private fun SAnchorsContent(
                         ),
                     propagateMinConstraints = true,
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .option(
-                                isEnabled.ifTrue {
-                                    Modifier.clipToCursorRect(
-                                        getAnchorRect = { anchors[i].rect },
-                                        getCursorRect = { positionHolder.cursorRect },
-                                        cornerRadiusPx = cornerRadiusPx,
-                                        clipOp = ClipOp.Difference,
-                                    )
-                                }
-                            )
-                            .padding(
-                                LocalDistance.current.units.paddingValues.horizontal.medium,
-                            ),
-                        propagateMinConstraints = true,
-                    ) {
-                        CompositionLocalProvider(
-                            LocalFContext provides backgroundFContent,
-                            LocalDistance provides LocalDistance.current + 1,
-                        ) {
-                            item(i)
-                        }
-                    }
 
-                    isEnabled.ifTrue {
+                    selectionStates.forEach { selected ->
                         Box(
                             modifier = Modifier
-                                .clipToCursorRect(
-                                    getAnchorRect = { anchors[i].rect },
-                                    getCursorRect = { positionHolder.cursorRect },
-                                    cornerRadiusPx = cornerRadiusPx,
-                                    clipOp = ClipOp.Intersect,
+                                .option(
+                                    isEnabled.ifTrue {
+                                        Modifier.clipToCursorRect(
+                                            getAnchorRect = { anchors[i].rect },
+                                            getCursorRect = { positionHolder.cursorRect },
+                                            cornerRadiusPx = cornerRadiusPx,
+                                            clipOp = selected.foldBoolean(
+                                                ifTrue = { ClipOp.Intersect },
+                                                ifFalse = { ClipOp.Difference },
+                                            ),
+                                        )
+                                    }
                                 )
                                 .padding(
                                     LocalDistance.current.units.paddingValues.horizontal.medium,
                                 ),
                             propagateMinConstraints = true,
                         ) {
+                            val itemContext = selected.foldBoolean(
+                                ifTrue = { cursorFContext },
+                                ifFalse = { backgroundFContent },
+                            )
                             CompositionLocalProvider(
-                                LocalFContext provides cursorFContext,
+                                LocalFContext provides itemContext,
                                 LocalDistance provides LocalDistance.current + 1,
                             ) {
                                 item(i)
