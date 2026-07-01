@@ -1,5 +1,6 @@
 package org.hnau.commons.app.model.theme.color
 
+import org.hnau.commons.kotlin.lerp
 import org.hnau.commons.kotlin.requireInRange
 import kotlin.jvm.JvmInline
 
@@ -85,3 +86,13 @@ value class Tone private constructor(
             get() = 100.0
     }
 }
+
+fun Tone.Companion.lerp(
+    start: Tone,
+    stop: Tone,
+    fraction: Double,
+): Tone = lerp(
+    start = start.raw,
+    stop = stop.raw,
+    fraction = fraction,
+).let(Tone::create)

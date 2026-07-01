@@ -30,10 +30,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -54,6 +51,7 @@ import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.distance.plus
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
@@ -71,36 +69,14 @@ import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.observe
 import org.hnau.commons.app.projector.utils.option
-import org.hnau.commons.gen.fold.annotations.Fold
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.coroutines.createChild
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
-import org.hnau.commons.kotlin.it
 import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.floor
 import kotlin.time.Clock
-import org.hnau.commons.app.model.color.gradient.Gradient as GradientStops
-import org.hnau.commons.app.model.color.gradient.export
-import org.hnau.commons.app.model.theme.color.Tone
-import org.hnau.commons.app.projector.utils.fold
-import org.hnau.commons.app.projector.utils.rememberRun
-import kotlin.invoke
-
-@Fold
-sealed interface SAnchorsContent {
-
-    data class Items(
-        val item: @Composable (Int) -> Unit,
-    ) : SAnchorsContent
-
-    data object Progress : SAnchorsContent
-
-    data class Gradient(
-        val gradient: GradientStops<Color>,
-    ) : SAnchorsContent
-}
 
 @Composable
 fun SAnchors(
@@ -111,15 +87,11 @@ fun SAnchors(
     modifier: Modifier = Modifier,
     snap: Boolean = true,
     importanceToActivate: Importance? = Importance.default,
-    content: SAnchorsContent,
+    item: (@Composable (Int) -> Unit)?,
 ) {
-
     val units = LocalDistance.current.units
-
     val padding = units.borderWidth
-
     val cornerRadius = units.cornerRadius
-
     val containerFContext = LocalFContext
         .current
         .run {
@@ -128,41 +100,27 @@ fun SAnchors(
             )
         }
         .containerOverlay()
-
-    val gradient = content.fold(
-        ifProgress = { null },
-        ifItems = { null },
-        ifGradient = { gradient -> gradient.rememberRun { export() } },
-    )
-
     LocalContentPaddingBox(
         modifier = modifier
             .background(
-                brush = gradient.foldNullable(
-                    ifNull = { SolidColor(containerFContext.color) },
-                    ifNotNull = { colors ->
-                        orientation.fold(
-                            ifHorizontal = { Brush.horizontalGradient(colorStops = colors) },
-                            ifVertical = { Brush.verticalGradient(colorStops = colors) },
-                        )
-                    }
-                ),
+                color = containerFContext.color,
                 shape = RoundedCornerShape(cornerRadius),
             )
             .padding(padding),
     ) {
-        SAnchorsContent(
-            orientation = orientation,
-            weights = weights,
-            getPosition = getPosition,
-            cornerRadius = cornerRadius - padding,
-            onPositionChanged = onPositionChanged,
-            snap = snap,
-            content = content,
-            getBackgroundTone = { along ->
-
-            }
-        )
+        CompositionLocalProvider(
+            value = LocalFContext provides containerFContext
+        ) {
+            SAnchorsContent(
+                orientation = orientation,
+                weights = weights,
+                getPosition = getPosition,
+                cornerRadius = cornerRadius - padding,
+                onPositionChanged = onPositionChanged,
+                snap = snap,
+                item = item,
+            )
+        }
     }
 }
 
@@ -309,8 +267,7 @@ private fun SAnchorsContent(
     cornerRadius: Dp,
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
-    content: SAnchorsContent,
-    getBackgroundTone: (along: Float) -> Tone,
+    item: (@Composable (Int) -> Unit)?,
 ) {
     with(orientation) {
 
@@ -362,7 +319,6 @@ private fun SAnchorsContent(
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
-        val progressColor = backgroundFContent.containerOverlay().color
 
 
         val selectionStates: List<Boolean> = remember(isEnabled) {
@@ -385,28 +341,13 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
-
-                    val cornerRadius = CornerRadius(cornerRadiusPx)
-
-                    content.fold(
-                        ifItems = {},
-                        ifGradient = {},
-                        ifProgress = {
-                            drawRoundRect(
-                                color = progressColor,
-                                size = size,
-                                cornerRadius = cornerRadius,
-                            )
-                        }
-                    )
-
                     isEnabled.ifTrue {
                         val rect = positionHolder.cursorRect
                         drawRoundRect(
                             color = cursorFContext.color,
                             topLeft = rect.topLeft,
                             size = rect.size,
-                            cornerRadius = cornerRadius,
+                            cornerRadius = CornerRadius(cornerRadiusPx),
                         )
                     }
                 },
@@ -416,6 +357,7 @@ private fun SAnchorsContent(
                     modifier = Modifier
                         .option(
                             onPositionChanged
+                                ?.takeIf { item != null }
                                 ?.let { callback ->
                                     Modifier
                                         .clip(RoundedCornerShape(cornerRadius))
@@ -424,55 +366,53 @@ private fun SAnchorsContent(
                         ),
                     propagateMinConstraints = true,
                 ) {
-                    content
-                        .fold(
-                            ifGradient = { null },
-                            ifProgress = { null },
-                            ifItems = ::it,
-                        )
-                        .foldNullable(
-                            ifNull = {
-                                Box(
-                                    modifier = Modifier.size(cornerRadius * 2)
-                                )
-                            },
-                            ifNotNull = { item ->
 
-                                selectionStates.forEach { selected ->
-                                    Box(
-                                        modifier = Modifier
-                                            .option(
-                                                isEnabled.ifTrue {
-                                                    Modifier.clipToCursorRect(
-                                                        getAnchorRect = { anchors[i].rect },
-                                                        getCursorRect = { positionHolder.cursorRect },
-                                                        cornerRadiusPx = cornerRadiusPx,
-                                                        clipOp = selected.foldBoolean(
-                                                            ifTrue = { ClipOp.Intersect },
-                                                            ifFalse = { ClipOp.Difference },
-                                                        ),
-                                                    )
-                                                }
-                                            )
-                                            .padding(
-                                                LocalDistance.current.units.paddingValues.horizontal.medium,
+                    selectionStates.forEach { selected ->
+                        Box(
+                            modifier = Modifier
+                                .option(
+                                    isEnabled.ifTrue {
+                                        Modifier.clipToCursorRect(
+                                            getAnchorRect = { anchors[i].rect },
+                                            getCursorRect = { positionHolder.cursorRect },
+                                            cornerRadiusPx = cornerRadiusPx,
+                                            clipOp = selected.foldBoolean(
+                                                ifTrue = { ClipOp.Intersect },
+                                                ifFalse = { ClipOp.Difference },
                                             ),
-                                        propagateMinConstraints = true,
-                                    ) {
-                                        val itemContext = selected.foldBoolean(
-                                            ifTrue = { cursorFContext },
-                                            ifFalse = { backgroundFContent },
                                         )
-                                        CompositionLocalProvider(
-                                            LocalFContext provides itemContext,
-                                            LocalDistance provides LocalDistance.current + 1,
-                                        ) {
-                                            item(i)
-                                        }
+                                    }
+                                ),
+                            propagateMinConstraints = true,
+                        ) {
+                            val itemContext = selected.foldBoolean(
+                                ifTrue = { cursorFContext },
+                                ifFalse = { backgroundFContent },
+                            )
+
+                            item.foldNullable(
+                                ifNull = {
+                                    Box(
+                                        modifier = Modifier.size(
+                                            LocalDistance
+                                                .current
+                                                .units
+                                                .run { iconSize + padding.across.extraSmall * 2 }
+                                        )
+                                    )
+                                },
+                                ifNotNull = { item ->
+                                    CompositionLocalProvider(
+                                        LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.medium,
+                                        LocalFContext provides itemContext,
+                                        LocalDistance provides LocalDistance.current + 1,
+                                    ) {
+                                        item(i)
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
+                    }
                 }
             },
         )
