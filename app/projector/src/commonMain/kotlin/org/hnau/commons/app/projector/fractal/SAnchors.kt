@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -29,6 +30,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
@@ -67,14 +70,32 @@ import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.observe
 import org.hnau.commons.app.projector.utils.option
+import org.hnau.commons.gen.fold.annotations.Fold
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.coroutines.createChild
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
+import org.hnau.commons.kotlin.it
 import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.floor
 import kotlin.time.Clock
+import org.hnau.commons.app.model.color.gradient.Gradient as GradientStops
+import org.hnau.commons.app.model.color.gradient.export
+
+@Fold
+sealed interface SAnchorsContent {
+
+    data class Items(
+        val item: @Composable (Int) -> Unit,
+    ) : SAnchorsContent
+
+    data object Progress : SAnchorsContent
+
+    data class Gradient(
+        val gradient: GradientStops<Color>,
+    ) : SAnchorsContent
+}
 
 @Composable
 fun SAnchors(
@@ -85,11 +106,24 @@ fun SAnchors(
     modifier: Modifier = Modifier,
     snap: Boolean = true,
     importanceToActivate: Importance? = Importance.default,
-    item: @Composable (Int) -> Unit,
+    content: SAnchorsContent,
 ) {
+
+    val useBorder = content.fold(
+        ifGradient = { false },
+        ifItems = { true },
+        ifProgress = { true }
+    )
+
     val units = LocalDistance.current.units
-    val padding = units.borderWidth
+
+    val padding = useBorder.foldBoolean(
+        ifTrue = { units.borderWidth },
+        ifFalse = { 0.dp },
+    )
+
     val cornerRadius = units.cornerRadius
+
     val containerFContext = LocalFContext
         .current
         .run {
@@ -97,12 +131,22 @@ fun SAnchors(
                 mood = mood.activateIfNeed(importanceToActivate)
             )
         }
-        .containerOverlay()
+        .let { withMood ->
+            useBorder.foldBoolean(
+                ifTrue = { withMood.containerOverlay() },
+                ifFalse = { withMood }
+            )
+        }
+
     LocalContentPaddingBox(
         modifier = modifier
-            .background(
-                color = containerFContext.color,
-                shape = RoundedCornerShape(cornerRadius),
+            .option(
+                useBorder.ifTrue {
+                    Modifier.background(
+                        color = containerFContext.color,
+                        shape = RoundedCornerShape(cornerRadius),
+                    )
+                }
             )
             .padding(padding),
     ) {
@@ -116,7 +160,7 @@ fun SAnchors(
                 cornerRadius = cornerRadius - padding,
                 onPositionChanged = onPositionChanged,
                 snap = snap,
-                item = item,
+                content = content,
             )
         }
     }
@@ -265,7 +309,7 @@ private fun SAnchorsContent(
     cornerRadius: Dp,
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
-    item: @Composable (Int) -> Unit,
+    content: SAnchorsContent,
 ) {
     with(orientation) {
 
@@ -317,6 +361,7 @@ private fun SAnchorsContent(
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
+        val progressColor = backgroundFContent.containerOverlay().color
 
 
         val selectionStates: List<Boolean> = remember(isEnabled) {
@@ -339,13 +384,36 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
+
+                    val cornerRadius = CornerRadius(cornerRadiusPx)
+
+                    content.fold(
+                        ifItems = {},
+                        ifGradient = { gradient ->
+                            drawRoundRect(
+                                brush = Brush.horizontalGradient(
+                                    colorStops = gradient.export(),
+                                ),
+                                size = size,
+                                cornerRadius = cornerRadius,
+                            )
+                        },
+                        ifProgress = {
+                            drawRoundRect(
+                                color = progressColor,
+                                size = size,
+                                cornerRadius = cornerRadius,
+                            )
+                        }
+                    )
+
                     isEnabled.ifTrue {
                         val rect = positionHolder.cursorRect
                         drawRoundRect(
                             color = cursorFContext.color,
                             topLeft = rect.topLeft,
                             size = rect.size,
-                            cornerRadius = CornerRadius(cornerRadiusPx),
+                            cornerRadius = cornerRadius,
                         )
                     }
                 },
@@ -363,40 +431,55 @@ private fun SAnchorsContent(
                         ),
                     propagateMinConstraints = true,
                 ) {
-
-                    selectionStates.forEach { selected ->
-                        Box(
-                            modifier = Modifier
-                                .option(
-                                    isEnabled.ifTrue {
-                                        Modifier.clipToCursorRect(
-                                            getAnchorRect = { anchors[i].rect },
-                                            getCursorRect = { positionHolder.cursorRect },
-                                            cornerRadiusPx = cornerRadiusPx,
-                                            clipOp = selected.foldBoolean(
-                                                ifTrue = { ClipOp.Intersect },
-                                                ifFalse = { ClipOp.Difference },
-                                            ),
-                                        )
-                                    }
+                    content
+                        .fold(
+                            ifGradient = { null },
+                            ifProgress = { null },
+                            ifItems = ::it,
+                        )
+                        .foldNullable(
+                            ifNull = {
+                                Box(
+                                    modifier = Modifier.size(cornerRadius * 2)
                                 )
-                                .padding(
-                                    LocalDistance.current.units.paddingValues.horizontal.medium,
-                                ),
-                            propagateMinConstraints = true,
-                        ) {
-                            val itemContext = selected.foldBoolean(
-                                ifTrue = { cursorFContext },
-                                ifFalse = { backgroundFContent },
-                            )
-                            CompositionLocalProvider(
-                                LocalFContext provides itemContext,
-                                LocalDistance provides LocalDistance.current + 1,
-                            ) {
-                                item(i)
+                            },
+                            ifNotNull = { item ->
+
+                                selectionStates.forEach { selected ->
+                                    Box(
+                                        modifier = Modifier
+                                            .option(
+                                                isEnabled.ifTrue {
+                                                    Modifier.clipToCursorRect(
+                                                        getAnchorRect = { anchors[i].rect },
+                                                        getCursorRect = { positionHolder.cursorRect },
+                                                        cornerRadiusPx = cornerRadiusPx,
+                                                        clipOp = selected.foldBoolean(
+                                                            ifTrue = { ClipOp.Intersect },
+                                                            ifFalse = { ClipOp.Difference },
+                                                        ),
+                                                    )
+                                                }
+                                            )
+                                            .padding(
+                                                LocalDistance.current.units.paddingValues.horizontal.medium,
+                                            ),
+                                        propagateMinConstraints = true,
+                                    ) {
+                                        val itemContext = selected.foldBoolean(
+                                            ifTrue = { cursorFContext },
+                                            ifFalse = { backgroundFContent },
+                                        )
+                                        CompositionLocalProvider(
+                                            LocalFContext provides itemContext,
+                                            LocalDistance provides LocalDistance.current + 1,
+                                        ) {
+                                            item(i)
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    }
+                        )
                 }
             },
         )

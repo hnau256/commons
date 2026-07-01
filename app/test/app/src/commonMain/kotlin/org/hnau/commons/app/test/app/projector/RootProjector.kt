@@ -14,9 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.model.color.gradient.Gradient
+import org.hnau.commons.app.model.color.gradient.build
 import org.hnau.commons.app.projector.fractal.SAnchors
+import org.hnau.commons.app.projector.fractal.SAnchorsContent
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
@@ -24,6 +28,7 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
+import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.map
 
 class RootProjector(
@@ -64,27 +69,47 @@ class RootProjector(
             verticalArrangement = Arrangement.spacedBy(LocalDistance.current.units.padding.along.medium),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SAnchors(
-                modifier = Modifier.fillMaxWidth(),
-                orientation = Orientation.Horizontal,
-                weights = nonEmptyListOf(1f, 0.5f),
-                getPosition = {position},
-                onPositionChanged = { position = it },
-            ) { i ->
-                SText(
-                    text = "Item$i"
+            remember {
+                listOf(
+                    Pair(
+                        first = nonEmptyListOf(1f),
+                        second = SAnchorsContent.Progress,
+                    ),
+                    Pair(
+                        first = nonEmptyListOf(1f),
+                        second = SAnchorsContent.Gradient(
+                            Gradient
+                                .build(Color.Red)
+                                .step(Color.Yellow)
+                                .step(Color.Green)
+                                .step(Color.Cyan)
+                                .step(Color.Blue)
+                                .step(Color.Magenta)
+                                .step(Color.Red)
+                        ),
+                    ),
+                    Pair(
+                        first = nonEmptyListOf(1f, 2f),
+                        second = SAnchorsContent.Items {
+                            SText(
+                                text = "A".repeat(it + 1),
+                            )
+                        },
+                    ),
                 )
-            }
-            SAnchors(
-                modifier = Modifier.fillMaxWidth(),
-                orientation = Orientation.Horizontal,
-                weights = nonEmptyListOf(1f, 0.5f),
-                getPosition = {position},
-                onPositionChanged = null,
-            ) { i ->
-                SText(
-                    text = "Item$i"
-                )
+            }.forEach { (weights, content) ->
+                var position by remember { mutableFloatStateOf(0f) }
+                remember { listOf(true, false) }.forEach { enabled ->
+                    SAnchors(
+                        modifier = Modifier.fillMaxWidth(),
+                        orientation = Orientation.Horizontal,
+                        weights = weights,
+                        snap = content is SAnchorsContent.Items,
+                        getPosition = { position },
+                        onPositionChanged = enabled.ifTrue { { position = it } },
+                        content = content,
+                    )
+                }
             }
         }
         /*BackButtonHost(

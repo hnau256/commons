@@ -7,14 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import org.hnau.commons.app.projector.uikit.utils.Dimens
+import org.hnau.commons.kotlin.foldNullable
 
 
 @Composable
 fun Modifier.option(
     modifierOrNull: Modifier?,
-): Modifier = modifierOrNull
-    ?.let(Modifier::then)
-    ?: this
+): Modifier = modifierOrNull.foldNullable(
+    ifNull = { this },
+    ifNotNull = { then(it) }
+)
 
 @Composable
 fun Modifier.option(
