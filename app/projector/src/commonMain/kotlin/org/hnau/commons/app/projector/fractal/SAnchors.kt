@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
-import arrow.core.nonEmptyListOf
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -267,8 +266,6 @@ private data class Anchor(
     var rect: Rect = Rect.Zero,
 )
 
-private val selectionStates = nonEmptyListOf(false, true)
-
 @Composable
 private fun SAnchorsContent(
     orientation: Orientation,
@@ -282,7 +279,7 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val isEnabled = onPositionChanged != null
+        val drawCursor = !(onPositionChanged == null && drawProgress)
 
         val anchors: NonEmptyList<Anchor> = remember(weights) {
             buildList {
@@ -331,6 +328,13 @@ private fun SAnchorsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
+        val selectionStates = remember(drawCursor) {
+            listOfNotNull(
+                false,
+                drawCursor.ifTrue { true },
+            )
+        }
+
         SAnchorsLayout(
             modifier = Modifier
                 .draggable(
@@ -344,13 +348,15 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
-                    val rect = positionHolder.cursorRect
-                    drawRoundRect(
-                        color = cursorFContext.color,
-                        topLeft = rect.topLeft,
-                        size = rect.size,
-                        cornerRadius = CornerRadius(cornerRadiusPx),
-                    )
+                    drawCursor.ifTrue {
+                        val rect = positionHolder.cursorRect
+                        drawRoundRect(
+                            color = cursorFContext.color,
+                            topLeft = rect.topLeft,
+                            size = rect.size,
+                            cornerRadius = CornerRadius(cornerRadiusPx),
+                        )
+                    }
                 },
             anchors = anchors,
             item = { i ->
@@ -370,14 +376,18 @@ private fun SAnchorsContent(
 
                     selectionStates.forEach { selected ->
                         Box(
-                            modifier = Modifier.clipToCursorRect(
-                                getAnchorRect = { anchors[i].rect },
-                                getCursorRect = { positionHolder.cursorRect },
-                                cornerRadiusPx = cornerRadiusPx,
-                                clipOp = selected.foldBoolean(
-                                    ifTrue = { ClipOp.Intersect },
-                                    ifFalse = { ClipOp.Difference },
-                                ),
+                            modifier = Modifier.option(
+                                drawCursor.ifTrue {
+                                    Modifier.clipToCursorRect(
+                                        getAnchorRect = { anchors[i].rect },
+                                        getCursorRect = { positionHolder.cursorRect },
+                                        cornerRadiusPx = cornerRadiusPx,
+                                        clipOp = selected.foldBoolean(
+                                            ifTrue = { ClipOp.Intersect },
+                                            ifFalse = { ClipOp.Difference },
+                                        ),
+                                    )
+                                }
                             ),
                             propagateMinConstraints = true,
                         ) {
