@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.lerp
@@ -93,6 +94,7 @@ fun SAnchors(
     val units = LocalDistance.current.units
     val padding = units.borderWidth
     val cornerRadius = units.cornerRadius
+
     val containerFContext = LocalFContext
         .current
         .run {
@@ -195,6 +197,10 @@ private class PositionHolder(
 
     val position: Position by derivedStateOf {
         along.let(positionAlongMapper.reverse)
+    }
+
+    val fraction: Float by derivedStateOf {
+        position.position / anchors.lastIndex.toFloat()
     }
 
     val cursorRect: Rect
@@ -326,6 +332,12 @@ private fun SAnchorsContent(
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
+        val progressFContext = drawProgress.ifTrue {
+            onPositionChanged.foldNullable(
+                ifNull = { backgroundFContent.contentOverlay() },
+                ifNotNull = { backgroundFContent.containerOverlay() }
+            )
+        }
         val cursorFContext = backgroundFContent.contentOverlay()
 
         val selectionStates = remember(drawCursor) {
@@ -348,13 +360,37 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
+
+                    val cornerRadius = CornerRadius(cornerRadiusPx)
+
+                    progressFContext?.let { fContext ->
+                        val progressRect = Rect(
+                            offset = Offset.Zero,
+                            size = Size(
+                                along = onPositionChanged
+                                    .foldNullable(
+                                        ifNull = { size.along * positionHolder.fraction },
+                                        ifNotNull = { positionHolder.along.along },
+                                    )
+                                    .coerceAtLeast(cornerRadiusPx * 2),
+                                across = size.across,
+                            ),
+                        )
+                        drawRoundRect(
+                            color = fContext.color,
+                            topLeft = progressRect.topLeft,
+                            size = progressRect.size,
+                            cornerRadius = cornerRadius,
+                        )
+                    }
+
                     drawCursor.ifTrue {
-                        val rect = positionHolder.cursorRect
+                        val cursorRect = positionHolder.cursorRect
                         drawRoundRect(
                             color = cursorFContext.color,
-                            topLeft = rect.topLeft,
-                            size = rect.size,
-                            cornerRadius = CornerRadius(cornerRadiusPx),
+                            topLeft = cursorRect.topLeft,
+                            size = cursorRect.size,
+                            cornerRadius = cornerRadius,
                         )
                     }
                 },
