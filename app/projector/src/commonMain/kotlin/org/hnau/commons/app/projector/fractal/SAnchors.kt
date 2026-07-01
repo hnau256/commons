@@ -109,18 +109,9 @@ fun SAnchors(
     content: SAnchorsContent,
 ) {
 
-    val useBorder = content.fold(
-        ifGradient = { false },
-        ifItems = { true },
-        ifProgress = { true }
-    )
-
     val units = LocalDistance.current.units
 
-    val padding = useBorder.foldBoolean(
-        ifTrue = { units.borderWidth },
-        ifFalse = { 0.dp },
-    )
+    val padding = units.borderWidth
 
     val cornerRadius = units.cornerRadius
 
@@ -131,22 +122,13 @@ fun SAnchors(
                 mood = mood.activateIfNeed(importanceToActivate)
             )
         }
-        .let { withMood ->
-            useBorder.foldBoolean(
-                ifTrue = { withMood.containerOverlay() },
-                ifFalse = { withMood }
-            )
-        }
+        .containerOverlay()
 
     LocalContentPaddingBox(
         modifier = modifier
-            .option(
-                useBorder.ifTrue {
-                    Modifier.background(
-                        color = containerFContext.color,
-                        shape = RoundedCornerShape(cornerRadius),
-                    )
-                }
+            .background(
+                color = containerFContext.color,
+                shape = RoundedCornerShape(cornerRadius),
             )
             .padding(padding),
     ) {
