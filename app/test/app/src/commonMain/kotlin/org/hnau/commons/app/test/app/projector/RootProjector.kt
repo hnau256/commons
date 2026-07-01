@@ -88,6 +88,7 @@ class RootProjector(
                         orientation = Orientation.Horizontal,
                         weights = weights,
                         snap = item != null,
+                        drawProgress = item == null,
                         getPosition = { position },
                         onPositionChanged = enabled.ifTrue { { position = it } },
                         item = item,

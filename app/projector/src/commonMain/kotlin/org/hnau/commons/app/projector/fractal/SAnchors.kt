@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
+import arrow.core.nonEmptyListOf
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +56,7 @@ import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.Size
@@ -86,6 +87,7 @@ fun SAnchors(
     onPositionChanged: ((Float) -> Unit)?,
     modifier: Modifier = Modifier,
     snap: Boolean = true,
+    drawProgress: Boolean = false,
     importanceToActivate: Importance? = Importance.default,
     item: (@Composable (Int) -> Unit)?,
 ) {
@@ -96,7 +98,12 @@ fun SAnchors(
         .current
         .run {
             copy(
-                mood = mood.activateIfNeed(importanceToActivate)
+                mood = importanceToActivate
+                    .takeIf { onPositionChanged != null }
+                    .foldNullable(
+                        ifNull = { mood },
+                        ifNotNull = mood::activate,
+                    )
             )
         }
         .containerOverlay()
@@ -118,6 +125,7 @@ fun SAnchors(
                 cornerRadius = cornerRadius - padding,
                 onPositionChanged = onPositionChanged,
                 snap = snap,
+                drawProgress = drawProgress,
                 item = item,
             )
         }
@@ -259,6 +267,8 @@ private data class Anchor(
     var rect: Rect = Rect.Zero,
 )
 
+private val selectionStates = nonEmptyListOf(false, true)
+
 @Composable
 private fun SAnchorsContent(
     orientation: Orientation,
@@ -267,6 +277,7 @@ private fun SAnchorsContent(
     cornerRadius: Dp,
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
+    drawProgress: Boolean,
     item: (@Composable (Int) -> Unit)?,
 ) {
     with(orientation) {
@@ -320,14 +331,6 @@ private fun SAnchorsContent(
         val backgroundFContent = LocalFContext.current
         val cursorFContext = backgroundFContent.contentOverlay()
 
-
-        val selectionStates: List<Boolean> = remember(isEnabled) {
-            listOfNotNull(
-                false,
-                isEnabled.ifTrue { true },
-            )
-        }
-
         SAnchorsLayout(
             modifier = Modifier
                 .draggable(
@@ -341,15 +344,13 @@ private fun SAnchorsContent(
                     setIsDragging = positionHolder::isDragging::set,
                 )
                 .drawBehind {
-                    isEnabled.ifTrue {
-                        val rect = positionHolder.cursorRect
-                        drawRoundRect(
-                            color = cursorFContext.color,
-                            topLeft = rect.topLeft,
-                            size = rect.size,
-                            cornerRadius = CornerRadius(cornerRadiusPx),
-                        )
-                    }
+                    val rect = positionHolder.cursorRect
+                    drawRoundRect(
+                        color = cursorFContext.color,
+                        topLeft = rect.topLeft,
+                        size = rect.size,
+                        cornerRadius = CornerRadius(cornerRadiusPx),
+                    )
                 },
             anchors = anchors,
             item = { i ->
@@ -369,20 +370,15 @@ private fun SAnchorsContent(
 
                     selectionStates.forEach { selected ->
                         Box(
-                            modifier = Modifier
-                                .option(
-                                    isEnabled.ifTrue {
-                                        Modifier.clipToCursorRect(
-                                            getAnchorRect = { anchors[i].rect },
-                                            getCursorRect = { positionHolder.cursorRect },
-                                            cornerRadiusPx = cornerRadiusPx,
-                                            clipOp = selected.foldBoolean(
-                                                ifTrue = { ClipOp.Intersect },
-                                                ifFalse = { ClipOp.Difference },
-                                            ),
-                                        )
-                                    }
+                            modifier = Modifier.clipToCursorRect(
+                                getAnchorRect = { anchors[i].rect },
+                                getCursorRect = { positionHolder.cursorRect },
+                                cornerRadiusPx = cornerRadiusPx,
+                                clipOp = selected.foldBoolean(
+                                    ifTrue = { ClipOp.Intersect },
+                                    ifFalse = { ClipOp.Difference },
                                 ),
+                            ),
                             propagateMinConstraints = true,
                         ) {
                             val itemContext = selected.foldBoolean(

@@ -23,13 +23,14 @@ import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.foldNullable
 
 @Composable
 fun SPanel(
@@ -46,9 +47,12 @@ fun SPanel(
         FContext(
             update = {
                 copy(
-                    mood = mood.activateIfNeed(
-                        importance = actionOrElseOrDisabled?.let { importanceToActivate },
-                    ),
+                    mood = importanceToActivate
+                        .takeIf { actionOrElseOrDisabled != null }
+                        .foldNullable(
+                            ifNull = { mood },
+                            ifNotNull = mood::activate,
+                        ),
                 ).containerOverlay()
             }
         ) {

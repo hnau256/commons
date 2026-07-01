@@ -44,8 +44,9 @@ import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
+import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
 @Composable
@@ -91,9 +92,12 @@ fun STextField(
         val coroutineScope = rememberCoroutineScope()
 
         val overlayFContext = fContext.copy(
-            mood = fContext.mood.activateIfNeed(
-                importance = isFocused.ifTrue { importanceToActivate },
-            ),
+            mood = isFocused
+                .ifTrue { importanceToActivate }
+                .foldNullable(
+                    ifNull = { fContext.mood },
+                    ifNotNull = fContext.mood::activate,
+                ),
         ).containerOverlay()
         val contentFContext = overlayFContext.contentOverlay()
 

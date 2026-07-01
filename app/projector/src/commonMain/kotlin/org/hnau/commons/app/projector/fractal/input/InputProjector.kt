@@ -11,10 +11,11 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.instant
+import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
@@ -70,9 +71,12 @@ class InputProjector(
                 FContext(
                     update = {
                         copy(
-                            mood = mood.activateIfNeed(
-                                importance = isFocused.ifTrue { importanceToActivate },
-                            ),
+                            mood = isFocused
+                                .ifTrue { importanceToActivate }
+                                .foldNullable(
+                                    ifNull = { mood },
+                                    ifNotNull = mood::activate,
+                                ),
                         )
                     }
                 ) {

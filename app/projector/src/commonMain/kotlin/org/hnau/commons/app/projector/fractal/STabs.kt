@@ -33,11 +33,12 @@ import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.foldNullable
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -64,9 +65,12 @@ fun <T> STabs(
 
             val selectedFContext = LocalFContext.current.rememberRun {
                 copy(
-                    mood = mood.activateIfNeed(
-                        importance = onClick?.let { importanceToActivate },
-                    ),
+                    mood = importanceToActivate
+                        .takeIf { onClick != null }
+                        .foldNullable(
+                            ifNull = { mood },
+                            ifNotNull = mood::activate,
+                        ),
                 )
             }.contentOverlay()
 

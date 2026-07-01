@@ -28,10 +28,11 @@ import org.hnau.commons.app.projector.fractal.size.scale
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
-import org.hnau.commons.app.projector.fractal.utils.activateIfNeed
+import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 import androidx.compose.runtime.remember as rememberInComposer
 
@@ -39,15 +40,18 @@ import androidx.compose.runtime.remember as rememberInComposer
 fun SCheckBox(
     isChecked: Boolean,
     modifier: Modifier = Modifier,
+    importanceToActivate: Importance? = Importance.default,
     onClick: (() -> Unit)? = null,
 ) {
     LocalContentPaddingBox {
         val inactiveState = StateInfo.remember(
             checked = false,
+            importanceToActivate = importanceToActivate,
         )
 
         val activeState = StateInfo.remember(
             checked = true,
+            importanceToActivate = importanceToActivate,
         )
 
         val activePercentage: Float by animateFloatAsState(
@@ -128,15 +132,19 @@ private data class StateInfo(
         @Composable
         fun remember(
             checked: Boolean,
+            importanceToActivate: Importance?,
         ): StateInfo {
 
             val fContext = LocalFContext.current
 
             val containerFContext = fContext
                 .copy(
-                    mood = fContext.mood.activateIfNeed(
-                        importance = checked.ifTrue { Importance.default },
-                    )
+                    mood = checked
+                        .ifTrue { importanceToActivate }
+                        .foldNullable(
+                            ifNull = { fContext.mood },
+                            ifNotNull = fContext.mood::activate,
+                        )
                 )
                 .containerOverlay()
 

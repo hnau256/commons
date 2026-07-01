@@ -1,24 +1,17 @@
 package org.hnau.commons.app.projector.fractal.utils
 
-import org.hnau.commons.kotlin.foldNullable
-
-fun Mood.activateIfNeed(
-    importance: Importance?,
+fun Mood.activate(
+    importance: Importance,
 ): Mood = fold(
     ifError = { Mood.Error },
-    ifActive = { currentImportance ->
+    ifActive = {
         Mood.Active(
-            importance = importance ?: currentImportance,
+            importance = importance,
         )
     },
     ifNeutral = {
-        importance.foldNullable(
-            ifNull = { Mood.Neutral },
-            ifNotNull = { importanceNotNull ->
-                Mood.Active(
-                    importance = importanceNotNull,
-                )
-            }
+        Mood.Active(
+            importance = importance,
         )
     },
 )
