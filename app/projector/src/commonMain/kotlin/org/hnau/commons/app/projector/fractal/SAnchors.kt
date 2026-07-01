@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -82,6 +83,10 @@ import kotlin.math.floor
 import kotlin.time.Clock
 import org.hnau.commons.app.model.color.gradient.Gradient as GradientStops
 import org.hnau.commons.app.model.color.gradient.export
+import org.hnau.commons.app.model.theme.color.Tone
+import org.hnau.commons.app.projector.utils.fold
+import org.hnau.commons.app.projector.utils.rememberRun
+import kotlin.invoke
 
 @Fold
 sealed interface SAnchorsContent {
@@ -124,27 +129,40 @@ fun SAnchors(
         }
         .containerOverlay()
 
+    val gradient = content.fold(
+        ifProgress = { null },
+        ifItems = { null },
+        ifGradient = { gradient -> gradient.rememberRun { export() } },
+    )
+
     LocalContentPaddingBox(
         modifier = modifier
             .background(
-                color = containerFContext.color,
+                brush = gradient.foldNullable(
+                    ifNull = { SolidColor(containerFContext.color) },
+                    ifNotNull = { colors ->
+                        orientation.fold(
+                            ifHorizontal = { Brush.horizontalGradient(colorStops = colors) },
+                            ifVertical = { Brush.verticalGradient(colorStops = colors) },
+                        )
+                    }
+                ),
                 shape = RoundedCornerShape(cornerRadius),
             )
             .padding(padding),
     ) {
-        CompositionLocalProvider(
-            value = LocalFContext provides containerFContext
-        ) {
-            SAnchorsContent(
-                orientation = orientation,
-                weights = weights,
-                getPosition = getPosition,
-                cornerRadius = cornerRadius - padding,
-                onPositionChanged = onPositionChanged,
-                snap = snap,
-                content = content,
-            )
-        }
+        SAnchorsContent(
+            orientation = orientation,
+            weights = weights,
+            getPosition = getPosition,
+            cornerRadius = cornerRadius - padding,
+            onPositionChanged = onPositionChanged,
+            snap = snap,
+            content = content,
+            getBackgroundTone = { along ->
+
+            }
+        )
     }
 }
 
@@ -292,6 +310,7 @@ private fun SAnchorsContent(
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
     content: SAnchorsContent,
+    getBackgroundTone: (along: Float) -> Tone,
 ) {
     with(orientation) {
 
@@ -371,15 +390,7 @@ private fun SAnchorsContent(
 
                     content.fold(
                         ifItems = {},
-                        ifGradient = { gradient ->
-                            drawRoundRect(
-                                brush = Brush.horizontalGradient(
-                                    colorStops = gradient.export(),
-                                ),
-                                size = size,
-                                cornerRadius = cornerRadius,
-                            )
-                        },
+                        ifGradient = {},
                         ifProgress = {
                             drawRoundRect(
                                 color = progressColor,
