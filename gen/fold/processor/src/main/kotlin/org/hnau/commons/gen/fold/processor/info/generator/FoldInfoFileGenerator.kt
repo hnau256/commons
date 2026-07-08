@@ -14,9 +14,8 @@ fun FoldInfo.generateCode(
     val file = FileSpec
         .builder(packageName, fileName)
         .apply {
-            addFunction(
-                toFoldFunSpec()
-            )
+            addFunction(toFoldRawFunSpec())
+            addFunction(toFoldFunSpec())
         }
         .build()
 

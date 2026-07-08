@@ -80,6 +80,9 @@ fun FoldInfo.Companion.create(
                     val identifier = subclass.simpleName.asString()
                     val subclassClassName = subclass.toClassName()
                     val resolution = when {
+                        subclass.classKind == ClassKind.OBJECT ->
+                            FoldInfo.Resolution.Object
+
                         subclass.modifiers.contains(Modifier.DATA) -> FoldInfo.Resolution.Destructured(
                             parameters = subclass
                                 .primaryConstructor
@@ -92,9 +95,6 @@ fun FoldInfo.Companion.create(
                                 }
                                 .orEmpty(),
                         )
-
-                        subclass.classKind == ClassKind.OBJECT ->
-                            FoldInfo.Resolution.Object
 
                         else -> FoldInfo.Resolution.Whole(
                             type = subclass.toClassName(),
