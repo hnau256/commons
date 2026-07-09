@@ -167,7 +167,7 @@ internal object Versions {
             ).map(::buildArrowDependency)
 
         val opticsProcessor: Versioned<LibraryId> =
-            buildArrowDependency("optics")
+            buildArrowDependency("optics-ksp-plugin")
     }
 
     object ComposeMultiplatform {
