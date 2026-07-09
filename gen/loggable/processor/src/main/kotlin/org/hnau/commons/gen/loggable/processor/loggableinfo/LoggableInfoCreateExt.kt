@@ -9,17 +9,22 @@ internal fun LoggableInfo.Companion.create(
     classDeclaration: KSClassDeclaration,
 ): LoggableInfo {
 
-    val className = classDeclaration.simpleName.asString()
+    val classPackage = classDeclaration
+        .packageName
+        .asString()
+
+    val classSimpleNames = classDeclaration.qualifiedName!!
+        .asString()
+        .removePrefix("$classPackage.")
+        .split(".")
 
     return LoggableInfo(
 
-        className = className,
-
         loggableClassDeclaration = classDeclaration,
 
-        classPackage = classDeclaration
-            .packageName
-            .asString(),
+        classPackage = classPackage,
+
+        classSimpleNames = classSimpleNames,
 
         tag = classDeclaration
             .annotations
@@ -28,7 +33,7 @@ internal fun LoggableInfo.Companion.create(
             .find { it.name?.asString() == "tag" }
             ?.value.castOrNull<String>()
             ?.takeIf(String::isNotEmpty)
-            .ifNull { className },
+            .ifNull { classSimpleNames.joinToString("") },
 
         hasCompanion = classDeclaration
             .declarations

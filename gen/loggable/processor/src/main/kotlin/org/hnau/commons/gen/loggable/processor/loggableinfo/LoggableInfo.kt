@@ -4,8 +4,8 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 
 internal data class LoggableInfo(
     val loggableClassDeclaration: KSClassDeclaration,
-    val className: String,
     val classPackage: String,
+    val classSimpleNames: List<String>,
     val tag: String,
     val hasCompanion: Boolean,
 ) {

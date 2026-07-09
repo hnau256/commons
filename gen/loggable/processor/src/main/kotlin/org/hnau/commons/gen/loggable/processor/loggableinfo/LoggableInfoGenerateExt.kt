@@ -12,7 +12,9 @@ import org.hnau.commons.kotlin.ifTrue
 
 internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
 
-    val initializerVarName = "${className}LogInitializer"
+    val classNameJoined = classSimpleNames.joinToString("")
+
+    val initializerVarName = "${classNameJoined}LogInitializer"
 
     val staticLoggerInitializerProperty = PropertySpec
         .builder(
@@ -32,11 +34,10 @@ internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
         .receiver(
             ClassName(
                 packageName = classPackage,
-                simpleNames =
-                    listOfNotNull(
-                        className,
-                        hasCompanion.ifTrue { "Companion" },
-                    ),
+                simpleNames = buildList {
+                    addAll(classSimpleNames)
+                    hasCompanion.ifTrue { add("Companion") }
+                },
             )
         )
         .getter(
@@ -52,7 +53,7 @@ internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
         )
         .build()
 
-    val fileName = "${className}Logger"
+    val fileName = "${classNameJoined}Logger"
 
     val fileSpec = FileSpec
         .builder(classPackage, fileName)
