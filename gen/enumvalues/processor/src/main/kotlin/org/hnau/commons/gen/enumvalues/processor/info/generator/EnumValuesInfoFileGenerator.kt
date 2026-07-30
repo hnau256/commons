@@ -16,6 +16,9 @@ fun EnumValuesInfo.generateCode(
             addType(
                 toTypeSpec()
             )
+            addFunction(
+                toCopyFuncSpec()
+            )
         }
         .build()
 

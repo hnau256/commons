@@ -345,6 +345,62 @@ private fun EnumValuesInfo.toCombineFuncSpec(
     .build()
 
 
+internal fun EnumValuesInfo.toCopyFuncSpec(): FunSpec {
+    val contentType = TypeVariableName(
+        name = "T",
+    )
+    return FunSpec
+        .builder("copy")
+        .apply {
+            modifiers += KModifier.INLINE
+
+            typeVariables += contentType
+
+            receiver(valuesClassName.parameterizedBy(contentType))
+            returns(valuesClassName.parameterizedBy(contentType))
+
+            addParameter(
+                ParameterSpec
+                    .builder(
+                        name = enumIdentifier,
+                        type = enumClassName,
+                    )
+                    .build()
+            )
+
+            addParameter(
+                ParameterSpec
+                    .builder(
+                        name = "transform",
+                        type = LambdaTypeName.get(
+                            parameters = arrayOf(
+                                ParameterSpec(
+                                    name = "value",
+                                    type = contentType,
+                                ),
+                            ),
+                            returnType = contentType,
+                        ),
+                    )
+                    .build()
+            )
+            addCode(
+                format = entries.joinToString(
+                    prefix = "return when ($enumIdentifier) {\n",
+                    postfix = "\n}",
+                    separator = "\n",
+                ) { entry ->
+                    "\t%T.${entry.name} -> copy(\n\t\t${entry.identifier} = transform(${entry.identifier}),\n\t)"
+                },
+                args = entries
+                    .map { enumClassName }
+                    .toTypedArray(),
+            )
+        }
+        .build()
+}
+
+
 private fun EnumValuesInfo.toCompanionObjectSpec(): TypeSpec = TypeSpec
     .companionObjectBuilder()
     .addFunction(toCreateFuncSpec())
@@ -395,15 +451,3 @@ private fun EnumValuesInfo.toCreateFuncSpec(): FunSpec = FunSpec
     )
 }
 .build()
-
-/*
-
-companion object {
-
-    inline fun <T> create(
-        createValue: (amountDirection: AnalyticsTab) -> T,
-    ): AnalyticsTabValues<T> = AnalyticsTabValues(
-        accounts = createValue(AnalyticsTab.Accounts),
-        graph = createValue(AnalyticsTab.Graph),
-    )
-}*/
