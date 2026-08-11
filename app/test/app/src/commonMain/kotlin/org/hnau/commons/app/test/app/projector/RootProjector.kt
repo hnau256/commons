@@ -18,6 +18,7 @@ import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SAnchors
 import org.hnau.commons.app.projector.fractal.SText
+import org.hnau.commons.app.projector.fractal.rememberSAnchorsPositionState
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.utils.Orientation
@@ -83,14 +84,19 @@ class RootProjector(
             }.forEach { (weights, item) ->
                 var position by remember { mutableFloatStateOf(0f) }
                 remember { listOf(true, false) }.forEach { enabled ->
+                    val onPositionChanged = enabled.ifTrue { { newPosition: Float -> position = newPosition } }
+                    val state = rememberSAnchorsPositionState(
+                        orientation = Orientation.Horizontal,
+                        weights = weights,
+                        getPosition = { position },
+                        onPositionChanged = onPositionChanged,
+                    )
                     SAnchors(
                         modifier = Modifier.fillMaxWidth(),
                         orientation = Orientation.Horizontal,
-                        weights = weights,
                         snap = item != null,
                         drawProgress = item == null,
-                        getPosition = { position },
-                        onPositionChanged = enabled.ifTrue { { position = it } },
+                        state = state,
                         item = item,
                     )
                 }

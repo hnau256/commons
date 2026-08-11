@@ -79,93 +79,29 @@ import org.hnau.commons.kotlin.mapper.Mapper
 import kotlin.math.floor
 import kotlin.time.Clock
 
-@Composable
-fun SAnchors(
-    orientation: Orientation,
-    weights: NonEmptyList<Float>,
-    getPosition: () -> Float,
-    onPositionChanged: ((Float) -> Unit)?,
-    modifier: Modifier = Modifier,
-    snap: Boolean = true,
-    drawProgress: Boolean = false,
-    importanceToActivate: Importance? = Importance.default,
-    item: (@Composable (Int) -> Unit)?,
-) {
-    val units = LocalDistance.current.units
-    val padding = units.borderWidth
-    val cornerRadius = units.cornerRadius
-
-    val containerFContext = LocalFContext
-        .current
-        .run {
-            copy(
-                mood = importanceToActivate
-                    .takeIf { onPositionChanged != null }
-                    .foldNullable(
-                        ifNull = { mood },
-                        ifNotNull = mood::activate,
-                    )
-            )
-        }
-        .containerOverlay()
-    LocalContentPaddingBox(
-        modifier = modifier
-            .background(
-                color = containerFContext.color,
-                shape = RoundedCornerShape(cornerRadius),
-            )
-            .padding(padding),
-    ) {
-        CompositionLocalProvider(
-            value = LocalFContext provides containerFContext
-        ) {
-            SAnchorsContent(
-                orientation = orientation,
-                weights = weights,
-                getPosition = getPosition,
-                cornerRadius = cornerRadius - padding,
-                onPositionChanged = onPositionChanged,
-                snap = snap,
-                drawProgress = drawProgress,
-                item = item,
-            )
-        }
-    }
-}
-
-private class PositionHolder(
+class SAnchorsPositionState internal constructor(
     private val orientation: Orientation,
+    val anchors: NonEmptyList<Anchor>,
     scope: CoroutineScope,
     getPosition: () -> Position,
-    val setPosition: ((Position) -> Unit)?,
+    private val positionCallback: ((Position) -> Unit)?,
     private val getAlongVisibilityThreshold: () -> Along,
-    private val anchors: NonEmptyList<Anchor>,
+    val onPositionChanged: ((Float) -> Unit)?,
 ) {
-
-    private fun getRect(
-        position: Position,
-    ): Rect {
+    private fun getRect(position: Position): Rect {
         val fromIndex = position.position.toInt()
         val from = anchors[fromIndex.coerceIn(0, anchors.lastIndex)].rect
         val to = anchors[(fromIndex + 1).coerceIn(0, anchors.lastIndex)].rect
         return when {
             from == to -> from
-            else -> lerp(
-                start = from,
-                stop = to,
-                fraction = position.position - fromIndex
-            )
+            else -> lerp(start = from, stop = to, fraction = position.position - fromIndex)
         }
     }
 
     val positionAlongMapper: Mapper<Position, Along> = Mapper(
         direct = { position ->
             with(orientation) {
-                position
-                    .let(::getRect)
-                    .center
-                    .along
-                    .let(::Along)
+                position.let(::getRect).center.along.let(::Along)
             }
         },
         reverse = { along ->
@@ -184,13 +120,13 @@ private class PositionHolder(
                 } while (result == null && i < anchors.lastIndex)
                 result ?: anchors.lastIndex.toFloat().let(::Position)
             }
-        }
+        },
     )
 
     var isDragging: Boolean by mutableStateOf(false)
 
     private val alongRaw: Along
-            by derivedStateOf { getPosition().let(positionAlongMapper.direct) }
+        by derivedStateOf { getPosition().let(positionAlongMapper.direct) }
 
     var along: Along by mutableStateOf(alongRaw)
         private set
@@ -206,9 +142,11 @@ private class PositionHolder(
     val cursorRect: Rect
         get() = getRect(position)
 
-    val setAlong: ((Along) -> Unit)? = setPosition?.let { set ->
+    internal val setAlong: ((Along) -> Unit)? = positionCallback?.let { set ->
         { along: Along -> set(along.let(positionAlongMapper.reverse)) }
     }
+
+    internal val setPosition: ((Position) -> Unit)? = positionCallback
 
     private val velocityTracker = VelocityTracker()
 
@@ -226,20 +164,16 @@ private class PositionHolder(
                         velocityTracker.addPosition(
                             timeMillis = Clock.System.now().toEpochMilliseconds(),
                             position = with(orientation) {
-                                Offset(
-                                    along = along.along,
-                                    across = 0f,
-                                )
-                            }
+                                Offset(along = along.along, across = 0f)
+                            },
                         )
-                    }
+                    },
                 )
             }
         }
         scope.launch {
             val triggerState = derivedStateOf { getPosition() to isDragging }
             triggerState.observe { (position, dragging) ->
-
                 val currentAlong = along
 
                 val targetAlong = positionAlongMapper
@@ -256,9 +190,7 @@ private class PositionHolder(
                     initialValue = currentAlong,
                     targetValue = targetAlong,
                     typeConverter = Along.twoWayConverter,
-                    animationSpec = spring(
-                        visibilityThreshold = getAlongVisibilityThreshold(),
-                    ),
+                    animationSpec = spring(visibilityThreshold = getAlongVisibilityThreshold()),
                 ) { value, _ ->
                     along = value
                 }
@@ -267,16 +199,113 @@ private class PositionHolder(
     }
 }
 
-private data class Anchor(
+@Composable
+fun rememberSAnchorsPositionState(
+    orientation: Orientation,
+    weights: NonEmptyList<Float>,
+    getPosition: () -> Float,
+    onPositionChanged: ((Float) -> Unit)?,
+): SAnchorsPositionState {
+    val alongVisibilityThreshold by rememberUpdatedState(Along.VisibilityThreshold)
+    val onPositionChangedState by rememberUpdatedState(onPositionChanged)
+    val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
+    val childScopeRef = remember { Mutable<CoroutineScope?>(null) }
+
+    return remember(weights) {
+        childScopeRef.value?.cancel()
+
+        val anchors = buildList {
+            add(Anchor(weightBefore = 0f))
+            val atLeastOneWeight = weights.any { weight -> weight > 0 }
+            addAll(
+                weights.map { weight ->
+                    Anchor(
+                        weightBefore = atLeastOneWeight.foldBoolean(
+                            ifTrue = { weight },
+                            ifFalse = { 1f },
+                        ),
+                    )
+                },
+            )
+        }.toNonEmptyListOrThrow()
+
+        val scope = coroutineScope.createChild()
+        childScopeRef.value = scope
+
+        SAnchorsPositionState(
+            orientation = orientation,
+            anchors = anchors,
+            scope = scope,
+            getPosition = { getPosition().let(::Position) },
+            positionCallback = onPositionChangedState?.let { set ->
+                { position: Position -> position.position.let(set) }
+            },
+            getAlongVisibilityThreshold = { alongVisibilityThreshold },
+            onPositionChanged = onPositionChangedState,
+        )
+    }
+}
+
+@Composable
+fun SAnchors(
+    orientation: Orientation,
+    modifier: Modifier = Modifier,
+    snap: Boolean = true,
+    drawProgress: Boolean = false,
+    importanceToActivate: Importance? = Importance.default,
+    state: SAnchorsPositionState,
+    item: (@Composable (Int) -> Unit)?,
+) {
+    val units = LocalDistance.current.units
+    val padding = units.borderWidth
+    val cornerRadius = units.cornerRadius
+
+    val containerFContext = LocalFContext
+        .current
+        .run {
+            copy(
+                mood = importanceToActivate
+                    .takeIf { state.onPositionChanged != null }
+                    .foldNullable(
+                        ifNull = { mood },
+                        ifNotNull = mood::activate,
+                    )
+            )
+        }
+        .containerOverlay()
+
+    LocalContentPaddingBox(
+        modifier = modifier
+            .background(
+                color = containerFContext.color,
+                shape = RoundedCornerShape(cornerRadius),
+            )
+            .padding(padding),
+    ) {
+        CompositionLocalProvider(
+            value = LocalFContext provides containerFContext
+        ) {
+            SAnchorsContent(
+                state = state,
+                orientation = orientation,
+                cornerRadius = cornerRadius - padding,
+                onPositionChanged = state.onPositionChanged,
+                snap = snap,
+                drawProgress = drawProgress,
+                item = item,
+            )
+        }
+    }
+}
+data class Anchor(
     val weightBefore: Float,
     var rect: Rect = Rect.Zero,
 )
 
 @Composable
 private fun SAnchorsContent(
+    state: SAnchorsPositionState,
     orientation: Orientation,
-    weights: NonEmptyList<Float>,
-    getPosition: () -> Float,
     cornerRadius: Dp,
     onPositionChanged: ((Float) -> Unit)?,
     snap: Boolean,
@@ -286,49 +315,6 @@ private fun SAnchorsContent(
     with(orientation) {
 
         val drawCursor = !(onPositionChanged == null && drawProgress)
-
-        val anchors: NonEmptyList<Anchor> = remember(weights) {
-            buildList {
-                add(
-                    Anchor(
-                        weightBefore = 0f,
-                    )
-                )
-                val atLeastOneWeight = weights.any { weight -> weight > 0 }
-                addAll(
-                    weights.map { weight ->
-                        Anchor(
-                            atLeastOneWeight.foldBoolean(
-                                ifTrue = { weight },
-                                ifFalse = { 1f }
-                            )
-                        )
-                    }
-                )
-            }.toNonEmptyListOrThrow()
-        }
-
-
-        val alongVisibilityThreshold by rememberUpdatedState(Along.VisibilityThreshold)
-
-        val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
-        val positionHolderCoroutineScope = remember { Mutable<CoroutineScope?>(null) }
-
-        val positionHolder = remember(anchors) {
-            positionHolderCoroutineScope.value?.cancel()
-            val scope = coroutineScope.createChild()
-            positionHolderCoroutineScope.value = scope
-            PositionHolder(
-                orientation = orientation,
-                scope = scope,
-                getPosition = { getPosition().let(::Position) },
-                setPosition = onPositionChanged?.let { set ->
-                    { position -> position.position.let(set) }
-                },
-                getAlongVisibilityThreshold = { alongVisibilityThreshold },
-                anchors = anchors,
-            )
-        }
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
@@ -351,13 +337,13 @@ private fun SAnchorsContent(
             modifier = Modifier
                 .draggable(
                     snap = snap,
-                    anchors = anchors,
-                    getAlong = positionHolder::along,
-                    getPosition = positionHolder::position,
-                    updateAlong = positionHolder.setAlong,
-                    updatePosition = positionHolder.setPosition,
-                    getVelocity = positionHolder::velocity,
-                    setIsDragging = positionHolder::isDragging::set,
+                    anchors = state.anchors,
+                    getAlong = state::along,
+                    getPosition = state::position,
+                    updateAlong = state.setAlong,
+                    updatePosition = state.setPosition,
+                    getVelocity = state::velocity,
+                    setIsDragging = { state.isDragging = it },
                 )
                 .drawBehind {
 
@@ -369,8 +355,8 @@ private fun SAnchorsContent(
                             size = Size(
                                 along = onPositionChanged
                                     .foldNullable(
-                                        ifNull = { size.along * positionHolder.fraction },
-                                        ifNotNull = { positionHolder.along.along },
+                                        ifNull = { size.along * state.fraction },
+                                        ifNotNull = { state.along.along },
                                     )
                                     .coerceAtLeast(cornerRadiusPx * 2),
                                 across = size.across,
@@ -385,7 +371,7 @@ private fun SAnchorsContent(
                     }
 
                     drawCursor.ifTrue {
-                        val cursorRect = positionHolder.cursorRect
+                        val cursorRect = state.cursorRect
                         drawRoundRect(
                             color = cursorFContext.color,
                             topLeft = cursorRect.topLeft,
@@ -394,7 +380,7 @@ private fun SAnchorsContent(
                         )
                     }
                 },
-            anchors = anchors,
+            anchors = state.anchors,
             item = { i ->
                 Box(
                     modifier = Modifier
@@ -415,8 +401,8 @@ private fun SAnchorsContent(
                             modifier = Modifier.option(
                                 drawCursor.ifTrue {
                                     Modifier.clipToCursorRect(
-                                        getAnchorRect = { anchors[i].rect },
-                                        getCursorRect = { positionHolder.cursorRect },
+                                        getAnchorRect = { state.anchors[i].rect },
+                                        getCursorRect = { state.cursorRect },
                                         cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(
                                             ifTrue = { ClipOp.Intersect },
@@ -648,7 +634,7 @@ private fun SAnchorsLayout(
 }
 
 @JvmInline
-private value class Along(
+value class Along(
     val along: Float,
 ) : Comparable<Along> {
 
@@ -696,7 +682,7 @@ private value class Along(
 }
 
 @JvmInline
-private value class Position(
+value class Position(
     val position: Float,
 ) : Comparable<Position> {
 
