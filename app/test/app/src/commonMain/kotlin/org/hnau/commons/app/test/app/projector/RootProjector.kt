@@ -25,7 +25,6 @@ import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
-import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.map
 
 class RootProjector(
@@ -58,7 +57,6 @@ class RootProjector(
     fun Content(
         contentPadding: PaddingValues,
     ) {
-        var position by remember { mutableFloatStateOf(0f) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,20 +81,20 @@ class RootProjector(
                 )
             }.forEach { (weights, item) ->
                 var position by remember { mutableFloatStateOf(0f) }
+                val state = rememberSAnchorsPositionState(
+                    orientation = Orientation.Horizontal,
+                    weights = weights,
+                    getPosition = { position },
+                    onPositionChanged = { position = it.position },
+                )
                 remember { listOf(true, false) }.forEach { enabled ->
-                    val onPositionChanged = enabled.ifTrue { { newPosition: Float -> position = newPosition } }
-                    val state = rememberSAnchorsPositionState(
-                        orientation = Orientation.Horizontal,
-                        weights = weights,
-                        getPosition = { position },
-                        onPositionChanged = onPositionChanged,
-                    )
                     SAnchors(
                         modifier = Modifier.fillMaxWidth(),
                         orientation = Orientation.Horizontal,
+                        state = state,
+                        mediator = state.takeIf { enabled },
                         snap = item != null,
                         drawProgress = item == null,
-                        state = state,
                         item = item,
                     )
                 }
