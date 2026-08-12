@@ -89,22 +89,20 @@ interface SAnchorsState {
 }
 
 interface SAnchorsStateMediator {
-    val onPositionChanged: (Position) -> Unit
     fun updateAlong(along: Along)
     fun updatePosition(position: Position)
     fun setIsDragging(isDragging: Boolean)
 }
 
 class SAnchorsPositionState internal constructor(
+    scope: CoroutineScope,
     private val orientation: Orientation,
     override val anchors: NonEmptyList<Anchor>,
-    scope: CoroutineScope,
     getPosition: () -> Position,
     private val getAlongVisibilityThreshold: () -> Along,
-    onPositionChanged: (Position) -> Unit,
+    private val onPositionChanged: (Position) -> Unit,
 ) : SAnchorsState, SAnchorsStateMediator {
 
-    override val onPositionChanged: (Position) -> Unit = onPositionChanged
     private fun getRect(position: Position): Rect {
         val fromIndex = position.position.toInt()
         val from = anchors[fromIndex.coerceIn(0, anchors.lastIndex)].rect
@@ -397,7 +395,7 @@ private fun SAnchorsContent(
                     modifier = Modifier
                         .option(
                             mediator
-                                ?.onPositionChanged
+                                ?.let { it::updatePosition }
                                 ?.takeIf { item != null }
                                 ?.let { callback ->
                                     Modifier
