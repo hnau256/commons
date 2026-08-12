@@ -2,7 +2,6 @@ package org.hnau.commons.app.projector.fractal.anchor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -21,13 +19,8 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import arrow.core.NonEmptyList
 import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsClipToCursorRect
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsDraggable
@@ -42,22 +35,14 @@ import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activate
-import org.hnau.commons.app.projector.uikit.line.ext.IntSize
-import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
-import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
-import org.hnau.commons.app.projector.uikit.line.ext.constrainAlong
-import org.hnau.commons.app.projector.uikit.line.ext.copy
-import org.hnau.commons.app.projector.uikit.line.ext.offset
-import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
-import kotlin.math.floor
 
 @Composable
 fun SAnchors(
@@ -112,11 +97,6 @@ fun SAnchors(
     }
 }
 
-data class Anchor(
-    val weightBefore: Float,
-    var rect: Rect = Rect.Zero,
-)
-
 @Composable
 private fun SAnchorsContent(
     state: SAnchorsState,
@@ -134,8 +114,10 @@ private fun SAnchorsContent(
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
-            if (mediator != null) backgroundFContent.containerOverlay()
-            else backgroundFContent.contentOverlay()
+            mediator.foldNullable(
+                ifNull = { backgroundFContent.contentOverlay() },
+                ifNotNull = { backgroundFContent.containerOverlay() }
+            )
         }
         val cursorFContext = backgroundFContent.contentOverlay()
 
@@ -181,8 +163,7 @@ private fun SAnchorsContent(
                             val progressRect = Rect(
                                 offset = Offset.Zero,
                                 size = Size(
-                                    along = if (mediator != null) state.along.along
-                                    else (size.along * (state.position.position / state.anchors.lastIndex.toFloat())),
+                                    along = state.cursorRect.right,
                                     across = size.across,
                                 ),
                             )
@@ -251,7 +232,12 @@ private fun SAnchorsContent(
                                             LocalDistance
                                                 .current
                                                 .units
-                                                .run { iconSize + padding.across.extraSmall * 2 }
+                                                .run {
+                                                    mediator.foldNullable(
+                                                        ifNull = { padding.across.extraSmall * 2 },
+                                                        ifNotNull = { iconSize + padding.across.extraSmall * 2 }
+                                                    )
+                                                }
                                         )
                                     )
                                 },
