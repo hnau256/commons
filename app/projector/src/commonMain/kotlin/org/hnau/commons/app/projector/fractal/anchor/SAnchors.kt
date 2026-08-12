@@ -111,6 +111,7 @@ fun SAnchors(
         }
     }
 }
+
 data class Anchor(
     val weightBefore: Float,
     var rect: Rect = Rect.Zero,
@@ -128,7 +129,7 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val drawCursor = mediator != null || drawProgress
+        val drawCursor = mediator != null || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
@@ -161,31 +162,47 @@ private fun SAnchorsContent(
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
 
-                    progressFContext?.let { fContext ->
-                        val progressRect = Rect(
-                            offset = Offset.Zero,
-                            size = Size(
-                                along = if (mediator != null) state.along.along
-                                    else (size.along * (state.position.position / state.anchors.lastIndex.toFloat())),
-                                across = size.across,
-                            ),
-                        )
-                        drawRoundRect(
-                            color = fContext.color,
-                            topLeft = progressRect.topLeft,
-                            size = progressRect.size,
-                            cornerRadius = cornerRadius,
-                        )
-                    }
+                    clipPath(
+                        Path().apply {
+                            addRoundRect(
+                                RoundRect(
+                                    rect = Rect(
+                                        offset = Offset.Zero,
+                                        size = size,
+                                    ),
+                                    radiusX = cornerRadiusPx,
+                                    radiusY = cornerRadiusPx,
+                                ),
+                            )
+                        }
+                    ) {
 
-                    drawCursor.ifTrue {
-                        val cursorRect = state.cursorRect
-                        drawRoundRect(
-                            color = cursorFContext.color,
-                            topLeft = cursorRect.topLeft,
-                            size = cursorRect.size,
-                            cornerRadius = cornerRadius,
-                        )
+                        progressFContext?.let { fContext ->
+                            val progressRect = Rect(
+                                offset = Offset.Zero,
+                                size = Size(
+                                    along = if (mediator != null) state.along.along
+                                    else (size.along * (state.position.position / state.anchors.lastIndex.toFloat())),
+                                    across = size.across,
+                                ),
+                            )
+                            drawRoundRect(
+                                color = fContext.color,
+                                topLeft = progressRect.topLeft,
+                                size = progressRect.size,
+                                cornerRadius = cornerRadius,
+                            )
+                        }
+
+                        drawCursor.ifTrue {
+                            val cursorRect = state.cursorRect
+                            drawRoundRect(
+                                color = cursorFContext.color,
+                                topLeft = cursorRect.topLeft,
+                                size = cursorRect.size,
+                                cornerRadius = cornerRadius,
+                            )
+                        }
                     }
                 },
             anchors = state.anchors,
