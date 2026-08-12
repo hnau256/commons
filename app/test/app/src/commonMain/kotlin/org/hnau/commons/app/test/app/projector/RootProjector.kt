@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.projector.fractal.SAnchors
+import org.hnau.commons.app.projector.fractal.anchor.SAnchors
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.rememberSAnchorsPositionState
+import org.hnau.commons.app.projector.fractal.anchor.rememberSAnchorsState
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.utils.Orientation
@@ -81,7 +81,7 @@ class RootProjector(
                 )
             }.forEach { (weights, item) ->
                 var position by remember { mutableFloatStateOf(0f) }
-                val state = rememberSAnchorsPositionState(
+                val state = rememberSAnchorsState(
                     orientation = Orientation.Horizontal,
                     weights = weights,
                     getPosition = { position },
