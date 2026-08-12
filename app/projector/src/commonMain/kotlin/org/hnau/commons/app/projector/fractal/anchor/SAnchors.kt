@@ -163,7 +163,10 @@ private fun SAnchorsContent(
                             val progressRect = Rect(
                                 offset = Offset.Zero,
                                 size = Size(
-                                    along = state.cursorRect.right,
+                                    along = mediator.foldNullable(
+                                        ifNull = { size.along * (state.position.position / state.anchors.lastIndex.toFloat()) },
+                                        ifNotNull = { state.along.along }
+                                    ),
                                     across = size.across,
                                 ),
                             )
