@@ -90,7 +90,11 @@ class SAnchorsMutableState internal constructor(
         val to = anchors[(fromIndex + 1).coerceIn(0, anchors.lastIndex)].rect
         return when {
             from == to -> from
-            else -> lerp(start = from, stop = to, fraction = position.position - fromIndex)
+            else -> lerp(
+                start = from,
+                stop = to,
+                fraction = position.position - fromIndex,
+            )
         }
     }
 
@@ -122,7 +126,7 @@ class SAnchorsMutableState internal constructor(
     override var isDragging: Boolean by mutableStateOf(false)
 
     private val alongRaw: Along
-        by derivedStateOf { getPosition().let(positionAlongMapper.direct) }
+            by derivedStateOf { getPosition().let(positionAlongMapper.direct) }
 
     override var along: Along by mutableStateOf(alongRaw)
         private set
@@ -188,7 +192,9 @@ class SAnchorsMutableState internal constructor(
                     initialValue = currentAlong,
                     targetValue = targetAlong,
                     typeConverter = Along.twoWayConverter,
-                    animationSpec = spring(visibilityThreshold = getAlongVisibilityThreshold()),
+                    animationSpec = spring(
+                        visibilityThreshold = getAlongVisibilityThreshold(),
+                    ),
                 ) { value, _ ->
                     along = value
                 }
