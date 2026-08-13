@@ -1,5 +1,6 @@
 package org.hnau.commons.app.projector.fractal.anchor
 
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
@@ -8,42 +9,43 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.geometry.Rect
 import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.kotlin.foldBoolean
 
 @Composable
 internal fun rememberSAnchorsCursor(
     state: SAnchorsState,
-    calcRectCenterAlongPxByPosition: (Position) -> RectCenterAlongPx,
-): State<RectCenterAlongPx> {
+    calcRectByPosition: (Position) -> Rect,
+): State<Rect> {
 
-    val along = remember(
-        calcRectCenterAlongPxByPosition,
+    val result = remember(
+        calcRectByPosition,
         state,
-    ) { mutableStateOf(calcRectCenterAlongPxByPosition(state.position)) }
+    ) { mutableStateOf(calcRectByPosition(state.position)) }
 
-    LaunchedEffect(calcRectCenterAlongPxByPosition, state) {
+    LaunchedEffect(calcRectByPosition, state) {
         snapshotFlow {
             state.position to state.isDragging
         }.collectLatest { (position, dragging) ->
-            val target = calcRectCenterAlongPxByPosition(position)
-            if (target == along.value) return@collectLatest
+            val target = calcRectByPosition(position)
+            if (target == result.value) return@collectLatest
             dragging.foldBoolean(
                 ifTrue = {
-                    along.value = target
+                    result.value = target
                 },
                 ifFalse = {
                     animate(
-                        initialValue = along.value,
+                        initialValue = result.value,
                         targetValue = target,
-                        typeConverter = RectCenterAlongPx.twoWayConverter,
+                        typeConverter = Rect.VectorConverter,
                         animationSpec = spring(),
                     ) { value, _ ->
-                        along.value = value
+                        result.value = value
                     }
                 },
             )
         }
     }
-    return along
+    return result
 }

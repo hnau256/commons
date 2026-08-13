@@ -19,6 +19,7 @@ import arrow.core.NonEmptyList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.anchor.Position
+import org.hnau.commons.app.projector.fractal.anchor.RectCenterAlongPx
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
@@ -89,10 +90,10 @@ context(_: Orientation)
 internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
     enabled: Boolean,
-    anchors: NonEmptyList<Mutable<Float>>,
+    maxPosition: Position,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
-    positionAtPx: (Float) -> Position,
+    positionAtPx: (RectCenterAlongPx) -> Position,
     updatePosition: (Position) -> Unit,
     setIsDragging: (Boolean) -> Unit,
 ): Modifier {
@@ -101,7 +102,7 @@ internal fun Modifier.sAnchorsDraggable(
     val flingVelocityThresholdPxPerSecond =
         with(LocalDensity.current) { FLING_VELOCITY_THRESHOLD.toPx() }
 
-    return pointerInput(snap, anchors) {
+    return pointerInput(snap, maxPosition) {
         val velocityTracker = VelocityTracker()
         var grabOffsetPx = 0f
 
@@ -109,7 +110,7 @@ internal fun Modifier.sAnchorsDraggable(
             snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
-                        updatePosition(positionAtPx(offset.along))
+                        updatePosition(positionAtPx(offset.along.let(::RectCenterAlongPx)))
                     }
                 }
             }
@@ -123,7 +124,7 @@ internal fun Modifier.sAnchorsDraggable(
                 onDragCancel = { setIsDragging(false) },
                 onDrag = { change, _ ->
                     change.consume()
-                    updatePosition(positionAtPx(change.position.along - grabOffsetPx))
+                    updatePosition(positionAtPx((change.position.along - grabOffsetPx).let(::RectCenterAlongPx)))
                     velocityTracker.addPosition(
                         timeMillis = change.uptimeMillis,
                         position = change.position,
@@ -142,7 +143,7 @@ internal fun Modifier.sAnchorsDraggable(
                             offset > Position(0.5f) -> from + 1
                             else -> from
                         }
-                            .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
+                            .coerceIn(Position(0f), maxPosition)
 
                         updatePosition(target)
                     }
