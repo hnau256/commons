@@ -1,5 +1,7 @@
 package org.hnau.commons.app.projector.fractal.anchor
 
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -8,7 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -16,11 +21,14 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import arrow.core.NonEmptyList
+import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsClipToCursorRect
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsDraggable
@@ -47,8 +55,9 @@ import org.hnau.commons.kotlin.ifTrue
 @Composable
 fun SAnchors(
     orientation: Orientation,
+    weights: NonEmptyList<Float>,
     state: SAnchorsState,
-    mediator: SAnchorsStateMediator?,
+    isEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     snap: Boolean = true,
     drawProgress: Boolean = false,
@@ -64,7 +73,7 @@ fun SAnchors(
         .run {
             copy(
                 mood = importanceToActivate
-                    .takeIf { mediator != null }
+                    .takeIf { isEnabled }
                     .foldNullable(
                         ifNull = { mood },
                         ifNotNull = mood::activate,
@@ -86,8 +95,9 @@ fun SAnchors(
         ) {
             SAnchorsContent(
                 state = state,
-                mediator = mediator,
+                isEnabled = isEnabled,
                 orientation = orientation,
+                weights = weights,
                 cornerRadius = cornerRadius - padding,
                 snap = snap,
                 drawProgress = drawProgress,
@@ -100,8 +110,9 @@ fun SAnchors(
 @Composable
 private fun SAnchorsContent(
     state: SAnchorsState,
-    mediator: SAnchorsStateMediator?,
+    isEnabled: Boolean,
     orientation: Orientation,
+    weights: NonEmptyList<Float>,
     cornerRadius: Dp,
     snap: Boolean,
     drawProgress: Boolean,
@@ -109,15 +120,38 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val drawCursor = mediator != null || !drawProgress
+        val anchors = remember(weights) { buildAnchors(weights) }
+        val mapper = remember(anchors) { SAnchorsMapper(anchors) }
+        val along = remember(mapper, state) { mutableStateOf(mapper.direct(state.position)) }
+
+        LaunchedEffect(mapper) {
+            snapshotFlow { state.position to state.isDragging }
+                .collectLatest { (position, dragging) ->
+                    val target = mapper.direct(position)
+                    val current = along.value
+                    if (target == current) return@collectLatest
+                    if (dragging) {
+                        along.value = target
+                    } else {
+                        animate(
+                            initialValue = current,
+                            targetValue = target,
+                            typeConverter = Along.twoWayConverter,
+                            animationSpec = spring(),
+                        ) { value, _ ->
+                            along.value = value
+                        }
+                    }
+                }
+        }
+
+        val drawCursor = isEnabled || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
-            mediator.foldNullable(
-                ifNull = { backgroundFContent.contentOverlay() },
-                ifNotNull = { backgroundFContent.containerOverlay() }
-            )
+            if (isEnabled) backgroundFContent.containerOverlay()
+            else backgroundFContent.contentOverlay()
         }
         val cursorFContext = backgroundFContent.contentOverlay()
 
@@ -128,21 +162,28 @@ private fun SAnchorsContent(
             )
         }
 
+        val anchorRects = remember(anchors) {
+            MutableList(anchors.size) { Rect.Zero }
+        }
+
+        val getCursorRect = { sAnchorsCursorRect(anchorRects, mapper.reverse(along.value)) }
+
         SAnchorsLayout(
             modifier = Modifier
                 .sAnchorsDraggable(
                     snap = snap,
-                    anchors = state.anchors,
-                    getAlong = state::along,
-                    getPosition = state::position,
-                    updateAlong = mediator?.let { it::updateAlong },
-                    updatePosition = mediator?.let { it::updatePosition },
-                    getVelocity = state::velocity,
-                    setIsDragging = { value -> mediator?.setIsDragging(value) },
+                    enabled = isEnabled,
+                    anchors = anchors,
+                    getAlong = { mapper.direct(state.position) },
+                    getPosition = { state.position },
+                    updateAlong = { newAlong -> state.position = mapper.reverse(newAlong) },
+                    updatePosition = { position -> state.position = position },
+                    setIsDragging = { value -> state.isDragging = value },
                 )
                 .drawBehind {
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
+                    val cursorRect = getCursorRect()
 
                     clipPath(
                         Path().apply {
@@ -163,10 +204,8 @@ private fun SAnchorsContent(
                             val progressRect = Rect(
                                 offset = Offset.Zero,
                                 size = Size(
-                                    along = mediator.foldNullable(
-                                        ifNull = { size.along * (state.position.position / state.anchors.lastIndex.toFloat()) },
-                                        ifNotNull = { state.along.along }
-                                    ),
+                                    along = if (isEnabled) cursorRect.topLeft.along + cursorRect.size.along
+                                    else (size.along * (state.position.position / anchors.lastIndex.toFloat())),
                                     across = size.across,
                                 ),
                             )
@@ -179,7 +218,6 @@ private fun SAnchorsContent(
                         }
 
                         drawCursor.ifTrue {
-                            val cursorRect = state.cursorRect
                             drawRoundRect(
                                 color = cursorFContext.color,
                                 topLeft = cursorRect.topLeft,
@@ -189,19 +227,19 @@ private fun SAnchorsContent(
                         }
                     }
                 },
-            anchors = state.anchors,
+            anchors = anchors,
+            rects = anchorRects,
             item = { i ->
                 Box(
                     modifier = Modifier
                         .option(
-                            mediator
-                                ?.let { it::updatePosition }
-                                ?.takeIf { item != null }
-                                ?.let { callback ->
-                                    Modifier
-                                        .clip(RoundedCornerShape(cornerRadius))
-                                        .clickable { callback(Position(i.toFloat())) }
-                                }
+                            if (isEnabled && item != null) {
+                                Modifier
+                                    .clip(RoundedCornerShape(cornerRadius))
+                                    .clickable { state.position = Position(i.toFloat()) }
+                            } else {
+                                null
+                            }
                         ),
                     propagateMinConstraints = true,
                 ) {
@@ -211,8 +249,8 @@ private fun SAnchorsContent(
                             modifier = Modifier.option(
                                 drawCursor.ifTrue {
                                     Modifier.sAnchorsClipToCursorRect(
-                                        getAnchorRect = { state.anchors[i].rect },
-                                        getCursorRect = { state.cursorRect },
+                                        getAnchorRect = { anchorRects[i] },
+                                        getCursorRect = getCursorRect,
                                         cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(
                                             ifTrue = { ClipOp.Intersect },
@@ -236,10 +274,8 @@ private fun SAnchorsContent(
                                                 .current
                                                 .units
                                                 .run {
-                                                    mediator.foldNullable(
-                                                        ifNull = { padding.across.extraSmall * 2 },
-                                                        ifNotNull = { iconSize + padding.across.extraSmall * 2 }
-                                                    )
+                                                    if (isEnabled) iconSize + padding.across.extraSmall * 2
+                                                    else padding.across.extraSmall * 2
                                                 }
                                         )
                                     )
@@ -260,4 +296,14 @@ private fun SAnchorsContent(
             },
         )
     }
+}
+
+private fun sAnchorsCursorRect(
+    rects: List<Rect>,
+    position: Position,
+): Rect {
+    val i = position.position.toInt().coerceIn(0, rects.lastIndex)
+    val from = rects[i]
+    val to = rects[(i + 1).coerceIn(0, rects.lastIndex)]
+    return if (from == to) from else lerp(from, to, position.position - i)
 }

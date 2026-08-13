@@ -25,6 +25,7 @@ import org.hnau.commons.kotlin.foldBoolean
 context(_: Orientation)
 internal fun SAnchorsLayout(
     anchors: NonEmptyList<Anchor>,
+    rects: MutableList<Rect>,
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -101,7 +102,7 @@ internal fun SAnchorsLayout(
                     along = alongPosition,
                     across = (across - placeable.across) / 2,
                 )
-                anchors[i].rect = Rect(
+                rects[i] = Rect(
                     offset = Offset(
                         along = alongPosition.toFloat(),
                         across = 0f,

@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import arrow.core.NonEmptyList
@@ -80,19 +77,14 @@ class RootProjector(
                     ),
                 )
             }.forEach { (weights, item) ->
-                var position by remember { mutableFloatStateOf(0f) }
-                val state = rememberSAnchorsState(
-                    orientation = Orientation.Horizontal,
-                    weights = weights,
-                    getPosition = { position },
-                    onPositionChanged = { position = it.position },
-                )
+                val state = rememberSAnchorsState()
                 remember { listOf(true, false) }.forEach { enabled ->
                     SAnchors(
                         modifier = Modifier.fillMaxWidth(),
                         orientation = Orientation.Horizontal,
+                        weights = weights,
                         state = state,
-                        mediator = state.takeIf { enabled },
+                        isEnabled = enabled,
                         snap = item != null,
                         drawProgress = item == null,
                         item = item,

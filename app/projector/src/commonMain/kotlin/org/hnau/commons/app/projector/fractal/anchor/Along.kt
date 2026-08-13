@@ -2,10 +2,6 @@ package org.hnau.commons.app.projector.fractal.anchor
 
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 
 @JvmInline
 value class Along(
@@ -41,12 +37,6 @@ value class Along(
     )
 
     companion object {
-
-        val VisibilityThreshold: Along
-            @Composable
-            get() = with(LocalDensity.current) {
-                Dp.VisibilityThreshold.toPx().let(::Along)
-            }
 
         val twoWayConverter: TwoWayConverter<Along, AnimationVector1D> = TwoWayConverter(
             convertToVector = { AnimationVector1D(it.along) },

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -17,9 +18,11 @@ import arrow.core.NonEmptyList
 import org.hnau.commons.app.projector.fractal.anchor.Along
 import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
+import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
 import kotlin.math.floor
+import kotlin.time.Clock
 
 
 internal fun Modifier.sAnchorsClipToCursorRect(
@@ -61,38 +64,44 @@ private val VELOCITY_THRESHOLD: Dp = 10.dp
 context(_: Orientation)
 internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
+    enabled: Boolean,
     anchors: NonEmptyList<Anchor>,
-    setIsDragging: (Boolean) -> Unit,
     getAlong: () -> Along,
     getPosition: () -> Position,
-    getVelocity: () -> Along,
-    updateAlong: ((Along) -> Unit)?,
-    updatePosition: ((Position) -> Unit)?,
+    updateAlong: (Along) -> Unit,
+    updatePosition: (Position) -> Unit,
+    setIsDragging: (Boolean) -> Unit,
 ): Modifier {
-    val updateAlong = updateAlong ?: return this
-    val updatePosition = updatePosition ?: return this
+    if (!enabled) return this
 
-    val velocityThreshold =
+    val velocityThresholdPx =
         with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
 
     return pointerInput(snap) {
+        val totalAlong = size.along.toFloat()
+        val velocityThreshold = velocityThresholdPx / totalAlong
+        val velocityTracker = VelocityTracker()
 
         detectDragGestures(
             onDragStart = { offset ->
                 setIsDragging(true)
-                val along = offset.along.let(::Along)
-                updateAlong(along)
+                velocityTracker.resetTracking()
+                updateAlong(Along(offset.along / totalAlong))
             },
             onDragCancel = { setIsDragging(false) },
             onDrag = { change, offset ->
                 change.consume()
-                val newAlong = getAlong() + offset.along.let(::Along)
+                val newAlong = Along(getAlong().along + offset.along / totalAlong)
                 updateAlong(newAlong)
+                velocityTracker.addPosition(
+                    timeMillis = Clock.System.now().toEpochMilliseconds(),
+                    position = Offset(along = newAlong.along, across = 0f),
+                )
             },
             onDragEnd = {
                 if (snap) {
                     val position = getPosition()
-                    val velocity = getVelocity().along
+                    val velocity = velocityTracker.calculateVelocity().along
                     val from = position.transform(::floor)
                     val offset = position - from
 
