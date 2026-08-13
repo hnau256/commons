@@ -1,6 +1,7 @@
 package org.hnau.commons.app.projector.fractal.anchor.utils
 
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -15,6 +16,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.anchor.Along
 import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
@@ -82,42 +85,51 @@ internal fun Modifier.sAnchorsDraggable(
         val velocityThreshold = velocityThresholdPx / totalAlong
         val velocityTracker = VelocityTracker()
 
-        detectDragGestures(
-            onDragStart = { offset ->
-                setIsDragging(true)
-                velocityTracker.resetTracking()
-                updateAlong(Along(offset.along / totalAlong))
-            },
-            onDragCancel = { setIsDragging(false) },
-            onDrag = { change, offset ->
-                change.consume()
-                val newAlong = Along(getAlong().along + offset.along / totalAlong)
-                updateAlong(newAlong)
-                velocityTracker.addPosition(
-                    timeMillis = Clock.System.now().toEpochMilliseconds(),
-                    position = Offset(along = newAlong.along, across = 0f),
-                )
-            },
-            onDragEnd = {
-                if (snap) {
-                    val position = getPosition()
-                    val velocity = velocityTracker.calculateVelocity().along
-                    val from = position.transform(::floor)
-                    val offset = position - from
-
-                    val target = when {
-                        velocity > velocityThreshold -> from + 1
-                        velocity < -velocityThreshold -> from
-                        offset > Position(0.5f) -> from + 1
-                        else -> from
+        coroutineScope {
+            if (!snap) {
+                launch {
+                    detectTapGestures { offset ->
+                        updateAlong(Along(offset.along / totalAlong))
                     }
-                        .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
-
-                    updatePosition(target)
                 }
-
-                setIsDragging(false)
             }
-        )
+
+            detectDragGestures(
+                onDragStart = {
+                    setIsDragging(true)
+                    velocityTracker.resetTracking()
+                },
+                onDragCancel = { setIsDragging(false) },
+                onDrag = { change, offset ->
+                    change.consume()
+                    val newAlong = Along(getAlong().along + offset.along / totalAlong)
+                    updateAlong(newAlong)
+                    velocityTracker.addPosition(
+                        timeMillis = Clock.System.now().toEpochMilliseconds(),
+                        position = Offset(along = newAlong.along, across = 0f),
+                    )
+                },
+                onDragEnd = {
+                    if (snap) {
+                        val position = getPosition()
+                        val velocity = velocityTracker.calculateVelocity().along
+                        val from = position.transform(::floor)
+                        val offset = position - from
+
+                        val target = when {
+                            velocity > velocityThreshold -> from + 1
+                            velocity < -velocityThreshold -> from
+                            offset > Position(0.5f) -> from + 1
+                            else -> from
+                        }
+                            .coerceIn(Position(0f), Position(anchors.lastIndex.toFloat()))
+
+                        updatePosition(target)
+                    }
+
+                    setIsDragging(false)
+                }
+            )
+        }
     }
 }
