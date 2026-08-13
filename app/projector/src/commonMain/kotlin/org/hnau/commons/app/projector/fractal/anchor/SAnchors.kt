@@ -283,24 +283,12 @@ private fun SAnchorsContent(
 private fun sAnchorsCursorRect(
     rects: List<Rect>,
     position: Position,
-): Rect {
-    val i = position.position.toInt().coerceIn(0, rects.lastIndex)
-    val from = rects[i]
-    val to = rects[(i + 1).coerceIn(0, rects.lastIndex)]
-    return if (from == to) from else lerp(from, to, position.position - i)
-}
+): Rect = rects.lerpAt(position.position, ::lerp)
 
 context(_: Orientation)
 private fun sAnchorsCursorPosition(
     rects: List<Rect>,
     alongPx: Float,
-): Position = when (val i = rects.indexOfFirst { rect -> alongPx <= rect.topLeft.along }) {
-    -1 -> Position(rects.lastIndex.toFloat())
-    0 -> Position(0f)
-    else -> {
-        val from = rects[i - 1].topLeft.along
-        val to = rects[i].topLeft.along
-        val fraction = if (to > from) (alongPx - from) / (to - from) else 0f
-        Position(i - 1 + fraction)
-    }
-}
+): Position = rects
+    .positionAt(alongPx) { rect -> rect.topLeft.along }
+    .let(::Position)
