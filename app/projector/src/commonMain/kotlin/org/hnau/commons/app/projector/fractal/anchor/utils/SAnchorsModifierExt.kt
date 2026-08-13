@@ -18,12 +18,11 @@ import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.projector.fractal.anchor.Along
-import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
+import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.ifFalse
 import kotlin.math.floor
 
@@ -90,7 +89,7 @@ context(_: Orientation)
 internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
     enabled: Boolean,
-    anchors: NonEmptyList<Anchor>,
+    anchors: NonEmptyList<Mutable<Float>>,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
     positionAtPx: (Float) -> Position,

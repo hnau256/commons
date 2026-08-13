@@ -43,6 +43,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.option
+import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
@@ -121,21 +122,21 @@ private fun SAnchorsContent(
         val anchors = remember(weights) {
 
             NonEmptyList(
-                head = Anchor(weightBefore = 0f),
+                head = Mutable(0f),
                 tail = weights
                     .any { weight -> weight > 0f }
                     .foldBoolean(
                         ifTrue = { weights },
                         ifFalse = { weights.map { 1f } }
                     )
-                    .map(::Anchor),
+                    .map(::Mutable),
             )
         }
 
         val positionAlongMapper = remember(anchors) {
             val cumulativeWeights = anchors.runningFold(
                 initial = 0f,
-            ) { acc, anchor -> acc + anchor.weightBefore }
+            ) { acc, anchor -> acc + anchor.value }
 
             val totalWeight = cumulativeWeights.last()
 

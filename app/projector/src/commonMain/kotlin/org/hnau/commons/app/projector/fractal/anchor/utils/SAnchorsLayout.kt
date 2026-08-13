@@ -7,7 +7,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import arrow.core.NonEmptyList
-import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
 import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.Size
@@ -19,12 +18,13 @@ import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.kotlin.Mutable
 import kotlin.math.roundToInt
 
 @Composable
 context(_: Orientation)
 internal fun SAnchorsLayout(
-    anchors: NonEmptyList<Anchor>,
+    anchors: NonEmptyList<Mutable<Float>>,
     rects: MutableList<Rect>,
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -61,7 +61,7 @@ internal fun SAnchorsLayout(
                 Triple(
                     placeables + placeable,
                     usedAlong + placeable.along,
-                    totalWeight + anchors[i].weightBefore,
+                    totalWeight + anchors[i].value,
                 )
             }
 
@@ -88,7 +88,7 @@ internal fun SAnchorsLayout(
             height = size.height,
         ) {
             placeables.forEachIndexed { i, placeable ->
-                val alongStart = alongOffset + anchors[i].weightBefore * additionalAlongByWeight
+                val alongStart = alongOffset + anchors[i].value * additionalAlongByWeight
                 alongOffset = alongStart + placeable.along
                 placeable.placeRelative(
                     along = alongStart.roundToInt(),
