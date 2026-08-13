@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.projector.fractal.anchor.Along
 import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
 import org.hnau.commons.app.projector.uikit.line.ext.along
@@ -91,9 +90,9 @@ internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
     enabled: Boolean,
     anchors: NonEmptyList<Anchor>,
-    getAlong: () -> Along,
+    getCursorRect: () -> Rect,
     getPosition: () -> Position,
-    updateAlong: (Along) -> Unit,
+    positionAtPx: (Float) -> Position,
     updatePosition: (Position) -> Unit,
     setIsDragging: (Boolean) -> Unit,
 ): Modifier {
@@ -104,26 +103,27 @@ internal fun Modifier.sAnchorsDraggable(
 
     return pointerInput(snap, anchors) {
         val velocityTracker = VelocityTracker()
+        var grabOffsetPx = 0f
 
         coroutineScope {
             snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
-                        updateAlong(Along(offset.along / size.along.toFloat()))
+                        updatePosition(positionAtPx(offset.along))
                     }
                 }
             }
 
             detectDragGestures(
-                onDragStart = {
+                onDragStart = { offset ->
                     setIsDragging(true)
                     velocityTracker.resetTracking()
+                    grabOffsetPx = offset.along - getCursorRect().topLeft.along
                 },
                 onDragCancel = { setIsDragging(false) },
-                onDrag = { change, offset ->
+                onDrag = { change, _ ->
                     change.consume()
-                    val newAlong = Along(getAlong().along + offset.along / size.along.toFloat())
-                    updateAlong(newAlong)
+                    updatePosition(positionAtPx(change.position.along - grabOffsetPx))
                     velocityTracker.addPosition(
                         timeMillis = change.uptimeMillis,
                         position = change.position,

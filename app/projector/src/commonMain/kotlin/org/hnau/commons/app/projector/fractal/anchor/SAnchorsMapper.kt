@@ -1,24 +1,19 @@
 package org.hnau.commons.app.projector.fractal.anchor
 
 import arrow.core.NonEmptyList
-import arrow.core.toNonEmptyListOrThrow
-import org.hnau.commons.kotlin.foldBoolean
 
-internal fun buildAnchors(weights: NonEmptyList<Float>): NonEmptyList<Anchor> =
-    buildList {
-        add(Anchor(weightBefore = 0f))
-        val atLeastOneWeight = weights.any { weight -> weight > 0 }
-        addAll(
-            weights.map { weight ->
-                Anchor(
-                    weightBefore = atLeastOneWeight.foldBoolean(
-                        ifTrue = { weight },
-                        ifFalse = { 1f },
-                    ),
-                )
-            },
-        )
-    }.toNonEmptyListOrThrow()
+internal fun buildAnchors(
+    weights: NonEmptyList<Float>,
+): NonEmptyList<Anchor> {
+    val normalizedWeights = when (weights.any { weight -> weight > 0f }) {
+        true -> weights
+        false -> weights.map { 1f }
+    }
+    return NonEmptyList(
+        head = Anchor(weightBefore = 0f),
+        tail = normalizedWeights.map { weight -> Anchor(weightBefore = weight) },
+    )
+}
 
 internal class SAnchorsMapper(anchors: NonEmptyList<Anchor>) {
 
@@ -27,7 +22,8 @@ internal class SAnchorsMapper(anchors: NonEmptyList<Anchor>) {
     private val anchorFractions: List<Float> = cumulativeWeights.drop(1).map { it / totalWeight }
 
     fun direct(position: Position): Along {
-        val value = position.position
+        val value = position
+            .position
             .takeIf(Float::isFinite)
             ?.coerceIn(0f, anchorFractions.lastIndex.toFloat())
             ?: 0f
@@ -38,18 +34,22 @@ internal class SAnchorsMapper(anchors: NonEmptyList<Anchor>) {
     }
 
     fun reverse(along: Along): Position {
-        var result: Position? = null
-        var i = 0
-        do {
-            val from = anchorFractions[i]
-            val to = anchorFractions[i + 1]
-            result = when {
-                along.along <= from -> i.toFloat().let(::Position)
-                along.along <= to -> (i + (along.along - from) / (to - from)).let(::Position)
-                else -> null
+
+        val value = along.along
+            .takeIf(Float::isFinite)
+            ?.coerceIn(0f, 1f)
+            ?: 0f
+
+        val i = anchorFractions.indexOfFirst { fraction -> value <= fraction }
+
+        return when (i) {
+            -1 -> Position(anchorFractions.lastIndex.toFloat())
+            0 -> Position(0f)
+            else -> {
+                val from = anchorFractions[i - 1]
+                val to = anchorFractions[i]
+                Position(i - 1 + (value - from) / (to - from))
             }
-            i++
-        } while (result == null && i < anchorFractions.lastIndex)
-        return result ?: anchorFractions.lastIndex.toFloat().let(::Position)
+        }
     }
 }
