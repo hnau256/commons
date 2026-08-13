@@ -8,20 +8,22 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.geometry.Rect
 import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.mapper.Mapper
 
 @Composable
-internal fun rememberSAnchorsCursorAlong(
+internal fun rememberSAnchorsCursor(
     state: SAnchorsState,
-    mapper: Mapper<Position, Along>,
-): State<Along> {
-    val along = remember(mapper, state) { mutableStateOf(mapper.direct(state.position)) }
-    LaunchedEffect(mapper, state) {
+    calcRectByPosition: (Position) -> Rect,
+): State<AlongPx> {
+    val along =
+        remember(calcRectByPosition, state) { mutableStateOf(calcRectByPosition(state.position)) }
+    LaunchedEffect(calcRectByPosition, state) {
         snapshotFlow { state.position to state.isDragging }
             .collectLatest { (position, dragging) ->
-                val target = mapper.direct(position)
+                val target = calcRectByPosition(position)
                 if (target == along.value) return@collectLatest
                 dragging.foldBoolean(
                     ifTrue = {
@@ -31,7 +33,7 @@ internal fun rememberSAnchorsCursorAlong(
                         animate(
                             initialValue = along.value,
                             targetValue = target,
-                            typeConverter = Along.twoWayConverter,
+                            typeConverter = AlongPx.twoWayConverter,
                             animationSpec = spring(),
                         ) { value, _ ->
                             along.value = value

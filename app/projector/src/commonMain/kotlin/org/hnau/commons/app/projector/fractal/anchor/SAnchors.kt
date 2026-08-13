@@ -48,7 +48,9 @@ import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.mapper.Mapper
-import org.hnau.commons.kotlin.mapper.plus
+import kotlin.math.max
+import kotlin.math.min
+import androidx.compose.ui.util.lerp
 
 @Composable
 fun SAnchors(
@@ -119,39 +121,78 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val anchors = remember(weights) {
+        val anchorRects = remember(weights) {
+            (weights + 0f).map { Mutable(Rect.Zero) }
+        }
 
-            NonEmptyList(
-                head = Mutable(0f),
-                tail = weights
-                    .any { weight -> weight > 0f }
-                    .foldBoolean(
-                        ifTrue = { weights },
-                        ifFalse = { weights.map { 1f } }
-                    )
-                    .map(::Mutable),
+        val calcRectByPosition: (Position) -> Rect = remember {
+            { position ->
+
+                val value = position
+                    .position
+                    .takeIf(Float::isFinite)
+                    ?.coerceIn(0f, anchorRects.lastIndex.toFloat())
+                    ?: 0f
+
+                val from = value.toInt()
+                val to = (from + 1).coerceAtMost(anchorRects.lastIndex)
+
+                (to == from).foldBoolean(
+                    ifTrue = { anchorRects[from].value },
+                    ifFalse = {
+                        lerp(
+                            anchorRects[from].value,
+                            anchorRects[to].value,
+                            value - from,
+                        )
+                    }
+                )
+            }
+        }
+
+        val positionAlongPxMapper: Mapper<Position, AlongPx> = remember {
+
+            val calcAlongPxByPosition: (Position) -> AlongPx = { position ->
+                val rect = calcRectByPosition(position)
+                lerp(
+                    start = min(rect.topLeft.along, rect.bottomRight.along),
+                    stop = max(rect.topLeft.along, rect.bottomRight.along),
+                    fraction = position.position / anchorRects.lastIndex,
+                ).let(::AlongPx)
+            }
+
+            Mapper(
+                direct = calcAlongPxByPosition,
+                reverse = { alongPx ->
+
+                    var toIndex = 0
+                    var toAlongPx = AlongPx(0f)
+                    while (toAlongPx.along < alongPx.along) {
+                        toIndex++
+                        toAlongPx = calcAlongPxByPosition(Position(toIndex.toFloat()))
+                    }
+
+                    if (toIndex <= 0) {
+                        return@Mapper Position(0f)
+                    }
+
+                    val fromIndex = toIndex - 1
+                    val fromAlongPx = calcAlongPxByPosition(Position(fromIndex.toFloat()))
+
+                    val alongPxDelta = (toAlongPx.along - fromAlongPx.along)
+                        .takeIf { it > 0 }
+                        ?: return@Mapper Position(fromIndex.toFloat())
+
+                    val fraction = (alongPx.along - fromAlongPx.along) / alongPxDelta
+
+                    Position(fromIndex + fraction)
+                }
             )
         }
 
-        val positionAlongMapper = remember(anchors) {
-            val cumulativeWeights = anchors.runningFold(
-                initial = 0f,
-            ) { acc, anchor -> acc + anchor.value }
-
-            val totalWeight = cumulativeWeights.last()
-
-            val anchorFractions = cumulativeWeights
-                .drop(1)
-                .map { it / totalWeight }
-
-            Mapper(Position::position, ::Position) +
-                    anchorFractions.knotsMapper() +
-                    Mapper(::Along, Along::along)
-        }
-
-        val along = rememberSAnchorsCursorAlong(
+        val cursor = rememberSAnchorsCursor(
             state = state,
-            mapper = positionAlongMapper,
+            calcRectByPosition = calcRectByPosition,
         )
 
         val drawCursor = isEnabled || !drawProgress
@@ -173,10 +214,6 @@ private fun SAnchorsContent(
             )
         }
 
-        val anchorRects = remember(anchors) {
-            MutableList(anchors.size) { Rect.Zero }
-        }
-
         val rectsMapper = remember(anchorRects) {
             anchorRects.knotsMapper(
                 lerp = ::lerp,
@@ -185,7 +222,7 @@ private fun SAnchorsContent(
         }
 
         val getCursorRect = {
-            val position = positionAlongMapper.reverse(along.value)
+            val position = positionAlongMapper.reverse(cursor.value)
             rectsMapper.direct(position.position)
         }
 
@@ -237,7 +274,7 @@ private fun SAnchorsContent(
                                 size = Size(
                                     along = isEnabled.foldBoolean(
                                         ifTrue = { cursorRect.topLeft.along + cursorRect.size.along },
-                                        ifFalse = { size.along * along.value.along },
+                                        ifFalse = { size.along * cursor.value.along },
                                     ),
                                     across = size.across,
                                 ),
@@ -260,7 +297,7 @@ private fun SAnchorsContent(
                         }
                     }
                 },
-            anchors = anchors,
+            weights = weights,
             rects = anchorRects,
             item = { i ->
                 Box(

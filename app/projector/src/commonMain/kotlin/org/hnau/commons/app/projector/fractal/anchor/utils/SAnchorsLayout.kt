@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal.anchor.utils
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Layout
@@ -19,20 +20,31 @@ import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.Mutable
+import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.roundToInt
 
 @Composable
 context(_: Orientation)
 internal fun SAnchorsLayout(
-    anchors: NonEmptyList<Mutable<Float>>,
-    rects: MutableList<Rect>,
+    weights: NonEmptyList<Float>,
+    rects: List<Mutable<Rect>>,
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val normalizedWeights = remember(weights) {
+        val atLeastOneWeight = weights.any { it > 0 }
+        atLeastOneWeight.foldBoolean(
+            ifTrue = { weights },
+            ifFalse = { weights.map { 1f } },
+        )
+    }
+    val getWeight: (anchorIndex: Int) -> Float = { anchorIndex ->
+        normalizedWeights.getOrElse(anchorIndex - 1) { 0f }
+    }
     Layout(
         modifier = modifier,
         content = {
-            repeat(anchors.size) { i ->
+            repeat(normalizedWeights.size + 1) { i ->
                 Box(
                     propagateMinConstraints = true,
                 ) {
@@ -61,7 +73,7 @@ internal fun SAnchorsLayout(
                 Triple(
                     placeables + placeable,
                     usedAlong + placeable.along,
-                    totalWeight + anchors[i].value,
+                    totalWeight + getWeight(i),
                 )
             }
 
@@ -88,13 +100,13 @@ internal fun SAnchorsLayout(
             height = size.height,
         ) {
             placeables.forEachIndexed { i, placeable ->
-                val alongStart = alongOffset + anchors[i].value * additionalAlongByWeight
+                val alongStart = alongOffset + getWeight(i) * additionalAlongByWeight
                 alongOffset = alongStart + placeable.along
                 placeable.placeRelative(
                     along = alongStart.roundToInt(),
                     across = (across - placeable.across) / 2,
                 )
-                rects[i] = Rect(
+                rects[i].value = Rect(
                     offset = Offset(
                         along = alongStart,
                         across = 0f,
