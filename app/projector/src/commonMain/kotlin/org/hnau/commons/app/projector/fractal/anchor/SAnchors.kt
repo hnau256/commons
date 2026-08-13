@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import arrow.core.NonEmptyList
 import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsClipToCursorRect
@@ -239,8 +240,22 @@ private fun SAnchorsContent(
                                 offset = Offset.Zero,
                                 size = Size(
                                     along = isEnabled.foldBoolean(
-                                        ifTrue = { cursorRect.topLeft.along + cursorRect.size.along },
-                                        ifFalse = { size.along * getCursorRect().center.along },
+                                        ifTrue = { cursorRect.center.along },
+                                        ifFalse = {
+
+                                            val minCenter = cursorRect.size.along / 2
+                                            val maxCenter = size.along - cursorRect.size.along / 2
+                                            val deltaCenter = maxCenter - minCenter
+                                            if (deltaCenter <= 0) {
+                                                return@foldBoolean 0f
+                                            }
+
+                                            lerp(
+                                                start = cursorRect.topLeft.along,
+                                                stop = cursorRect.bottomRight.along,
+                                                fraction = (cursorRect.center.along - minCenter) / deltaCenter,
+                                            )
+                                        },
                                     ),
                                     across = size.across,
                                 ),
