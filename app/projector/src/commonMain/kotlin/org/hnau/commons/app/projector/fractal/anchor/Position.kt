@@ -1,5 +1,8 @@
 package org.hnau.commons.app.projector.fractal.anchor
 
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.TwoWayConverter
+
 @JvmInline
 value class Position(
     val position: Float,
@@ -47,5 +50,13 @@ value class Position(
         other: Number,
     ): Position = transform { position ->
         position - other.toFloat()
+    }
+
+    companion object {
+
+        val twoWayConverter: TwoWayConverter<Position, AnimationVector1D> = TwoWayConverter(
+            convertToVector = { AnimationVector1D(it.position) },
+            convertFromVector = { vector -> Position(vector.value) }
+        )
     }
 }

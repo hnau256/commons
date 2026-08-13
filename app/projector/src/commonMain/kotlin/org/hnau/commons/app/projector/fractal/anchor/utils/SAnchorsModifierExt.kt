@@ -15,7 +15,6 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import arrow.core.NonEmptyList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.anchor.Position
@@ -23,7 +22,6 @@ import org.hnau.commons.app.projector.fractal.anchor.RectCenterAlongPx
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.fold
-import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.ifFalse
 import kotlin.math.floor
 

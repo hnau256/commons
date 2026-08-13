@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
-import co.touchlab.kermit.Logger
 import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsClipToCursorRect
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsDraggable
@@ -122,6 +121,32 @@ private fun SAnchorsContent(
             (weights + 0f).map { Mutable(Rect.Zero) }
         }
 
+        val position = rememberSAnchorsPosition(state)
+
+        val getCursorRect: () -> Rect = {
+            val value = position.value.position
+            val start = value.toInt()
+            (start < 0).foldBoolean(
+                ifTrue = { anchorRects.first().value },
+                ifFalse = {
+                    val stop = start + 1
+                    (stop > anchorRects.lastIndex).foldBoolean(
+                        ifTrue = { anchorRects.last().value },
+                        ifFalse = {
+                            val offset = value - start
+                            lerp(
+                                start = anchorRects[start].value,
+                                stop = anchorRects[stop].value,
+                                fraction = offset,
+                            )
+                        }
+                    )
+                }
+            )
+
+
+        }
+
         val calcPositionByRectCenterAlongPx: (RectCenterAlongPx) -> Position = remember {
             { alongPx ->
 
@@ -158,35 +183,6 @@ private fun SAnchorsContent(
             }
         }
 
-        val cursor = rememberSAnchorsCursor(
-            state = state,
-            calcRectByPosition = remember {
-                { position ->
-
-                    val normalizedPosition = position
-                        .position
-                        .takeIf(Float::isFinite)
-                        ?.coerceIn(0f, anchorRects.lastIndex.toFloat())
-                        ?: 0f
-
-                    val fromIndex = normalizedPosition.toInt()
-                    val toIndex = (fromIndex + 1).coerceAtMost(anchorRects.lastIndex)
-
-                    (toIndex == fromIndex).foldBoolean(
-                        ifTrue = { anchorRects[fromIndex].value },
-                        ifFalse = {
-                            val fromToToFraction = normalizedPosition - fromIndex
-                            lerp(
-                                anchorRects[fromIndex].value,
-                                anchorRects[toIndex].value,
-                                fromToToFraction,
-                            )
-                        }
-                    )
-                }
-            },
-        )
-
         val drawCursor = isEnabled || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
@@ -212,7 +208,7 @@ private fun SAnchorsContent(
                     snap = snap,
                     enabled = isEnabled,
                     maxPosition = Position(anchorRects.lastIndex.toFloat()),
-                    getCursorRect = { cursor.value },
+                    getCursorRect = getCursorRect,
                     getPosition = { state.position },
                     positionAtPx = calcPositionByRectCenterAlongPx,
                     updatePosition = { position -> state.position = position },
@@ -221,7 +217,7 @@ private fun SAnchorsContent(
                 .drawBehind {
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
-                    val cursorRect = cursor.value
+                    val cursorRect = getCursorRect()
 
                     clipPath(
                         Path().apply {
@@ -244,7 +240,7 @@ private fun SAnchorsContent(
                                 size = Size(
                                     along = isEnabled.foldBoolean(
                                         ifTrue = { cursorRect.topLeft.along + cursorRect.size.along },
-                                        ifFalse = { size.along * cursor.value.center.along },
+                                        ifFalse = { size.along * getCursorRect().center.along },
                                     ),
                                     across = size.across,
                                 ),
@@ -287,7 +283,7 @@ private fun SAnchorsContent(
                                 drawCursor.ifTrue {
                                     Modifier.sAnchorsClipToCursorRect(
                                         getAnchorRect = { anchorRects[i].value },
-                                        getCursorRect = { cursor.value },
+                                        getCursorRect = getCursorRect,
                                         cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(
                                             ifTrue = { ClipOp.Intersect },

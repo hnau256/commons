@@ -1,8 +1,5 @@
 package org.hnau.commons.app.projector.fractal.anchor
 
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.TwoWayConverter
-
 @JvmInline
 value class RectCenterAlongPx(
     val along: Float,
@@ -35,12 +32,4 @@ value class RectCenterAlongPx(
         other = other,
         block = Float::minus,
     )
-
-    companion object {
-
-        val twoWayConverter: TwoWayConverter<RectCenterAlongPx, AnimationVector1D> = TwoWayConverter(
-            convertToVector = { AnimationVector1D(it.along) },
-            convertFromVector = { vector -> RectCenterAlongPx(vector.value) }
-        )
-    }
 }
