@@ -211,7 +211,7 @@ private fun SAnchorsContent(
                                 size = Size(
                                     along = isEnabled.foldBoolean(
                                         ifTrue = { cursorRect.topLeft.along + cursorRect.size.along },
-                                        ifFalse = { size.along * (state.position.position / anchors.lastIndex.toFloat()) },
+                                        ifFalse = { size.along * along.value.along },
                                     ),
                                     across = size.across,
                                 ),
