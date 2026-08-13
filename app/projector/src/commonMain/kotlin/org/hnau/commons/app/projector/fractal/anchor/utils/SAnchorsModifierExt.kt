@@ -21,15 +21,14 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.app.projector.fractal.anchor.Along
 import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
-import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.ifFalse
-import org.hnau.commons.kotlin.ifTrue
 import kotlin.math.floor
-import kotlin.time.Clock
 
 
+context(orientation: Orientation)
 internal fun Modifier.sAnchorsClipToCursorRect(
     getAnchorRect: () -> Rect,
     getCursorRect: () -> Rect,
@@ -40,18 +39,35 @@ internal fun Modifier.sAnchorsClipToCursorRect(
     val anchorRect = getAnchorRect()
     val cursorRect = getCursorRect()
 
-    val clipLeft = (cursorRect.left - anchorRect.left).coerceIn(0f, size.width)
-    val clipRight = (cursorRect.right - anchorRect.left).coerceIn(0f, size.width)
+    val alongSize = size.along
+    val clipStart = (cursorRect.topLeft.along - anchorRect.topLeft.along)
+        .coerceIn(0f, alongSize)
+    val clipEnd = (cursorRect.topLeft.along + cursorRect.size.along - anchorRect.topLeft.along)
+        .coerceIn(clipStart, alongSize)
 
     val path = Path().apply {
         addRoundRect(
-            RoundRect(
-                left = clipLeft,
-                top = 0f,
-                right = clipRight.coerceAtLeast(clipLeft),
-                bottom = size.height,
-                radiusX = cornerRadiusPx,
-                radiusY = cornerRadiusPx,
+            orientation.fold(
+                ifHorizontal = {
+                    RoundRect(
+                        left = clipStart,
+                        top = 0f,
+                        right = clipEnd,
+                        bottom = size.height,
+                        radiusX = cornerRadiusPx,
+                        radiusY = cornerRadiusPx,
+                    )
+                },
+                ifVertical = {
+                    RoundRect(
+                        left = 0f,
+                        top = clipStart,
+                        right = size.width,
+                        bottom = clipEnd,
+                        radiusX = cornerRadiusPx,
+                        radiusY = cornerRadiusPx,
+                    )
+                },
             )
         )
     }
@@ -63,7 +79,11 @@ internal fun Modifier.sAnchorsClipToCursorRect(
     }
 }
 
-private val VELOCITY_THRESHOLD: Dp = 10.dp
+/**
+ * Минимальная скорость (в dp/с), при которой drag по завершении
+ * перекидывает курсор к соседнему якорю независимо от позиции.
+ */
+private val FLING_VELOCITY_THRESHOLD: Dp = 100.dp
 
 @Composable
 context(_: Orientation)
@@ -79,19 +99,17 @@ internal fun Modifier.sAnchorsDraggable(
 ): Modifier {
     if (!enabled) return this
 
-    val velocityThresholdPx =
-        with(LocalDensity.current) { VELOCITY_THRESHOLD.toPx() }
+    val flingVelocityThresholdPxPerSecond =
+        with(LocalDensity.current) { FLING_VELOCITY_THRESHOLD.toPx() }
 
-    return pointerInput(snap) {
-        val totalAlong = size.along.toFloat()
-        val velocityThreshold = velocityThresholdPx / totalAlong
+    return pointerInput(snap, anchors) {
         val velocityTracker = VelocityTracker()
 
         coroutineScope {
             snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
-                        updateAlong(Along(offset.along / totalAlong))
+                        updateAlong(Along(offset.along / size.along.toFloat()))
                     }
                 }
             }
@@ -104,23 +122,23 @@ internal fun Modifier.sAnchorsDraggable(
                 onDragCancel = { setIsDragging(false) },
                 onDrag = { change, offset ->
                     change.consume()
-                    val newAlong = Along(getAlong().along + offset.along / totalAlong)
+                    val newAlong = Along(getAlong().along + offset.along / size.along.toFloat())
                     updateAlong(newAlong)
                     velocityTracker.addPosition(
-                        timeMillis = Clock.System.now().toEpochMilliseconds(),
-                        position = Offset(along = newAlong.along, across = 0f),
+                        timeMillis = change.uptimeMillis,
+                        position = change.position,
                     )
                 },
                 onDragEnd = {
                     if (snap) {
                         val position = getPosition()
-                        val velocity = velocityTracker.calculateVelocity().along
+                        val velocityPxPerSecond = velocityTracker.calculateVelocity().along
                         val from = position.transform(::floor)
                         val offset = position - from
 
                         val target = when {
-                            velocity > velocityThreshold -> from + 1
-                            velocity < -velocityThreshold -> from
+                            velocityPxPerSecond > flingVelocityThresholdPxPerSecond -> from + 1
+                            velocityPxPerSecond < -flingVelocityThresholdPxPerSecond -> from
                             offset > Position(0.5f) -> from + 1
                             else -> from
                         }

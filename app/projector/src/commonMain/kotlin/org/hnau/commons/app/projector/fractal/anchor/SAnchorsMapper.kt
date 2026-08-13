@@ -27,10 +27,14 @@ internal class SAnchorsMapper(anchors: NonEmptyList<Anchor>) {
     private val anchorFractions: List<Float> = cumulativeWeights.drop(1).map { it / totalWeight }
 
     fun direct(position: Position): Along {
-        val i = position.position.toInt().coerceIn(0, anchorFractions.lastIndex)
+        val value = position.position
+            .takeIf(Float::isFinite)
+            ?.coerceIn(0f, anchorFractions.lastIndex.toFloat())
+            ?: 0f
+        val i = value.toInt()
         val from = anchorFractions[i]
-        val to = anchorFractions[(i + 1).coerceIn(0, anchorFractions.lastIndex)]
-        return Along(from + (position.position - i) * (to - from))
+        val to = anchorFractions[(i + 1).coerceAtMost(anchorFractions.lastIndex)]
+        return Along(from + (value - i) * (to - from))
     }
 
     fun reverse(along: Along): Position {

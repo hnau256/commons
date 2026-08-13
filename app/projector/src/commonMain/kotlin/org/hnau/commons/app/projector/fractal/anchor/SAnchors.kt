@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
@@ -99,7 +100,7 @@ fun SAnchors(
                 isEnabled = isEnabled,
                 orientation = orientation,
                 weights = weights,
-                cornerRadius = cornerRadius - padding,
+                cornerRadius = (cornerRadius - padding).coerceAtLeast(0.dp),
                 snap = snap,
                 drawProgress = drawProgress,
                 item = item,
