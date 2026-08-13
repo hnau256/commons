@@ -8,39 +8,42 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.geometry.Rect
 import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.mapper.Mapper
 
 @Composable
 internal fun rememberSAnchorsCursor(
     state: SAnchorsState,
-    calcRectByPosition: (Position) -> Rect,
-): State<AlongPx> {
-    val along =
-        remember(calcRectByPosition, state) { mutableStateOf(calcRectByPosition(state.position)) }
-    LaunchedEffect(calcRectByPosition, state) {
-        snapshotFlow { state.position to state.isDragging }
-            .collectLatest { (position, dragging) ->
-                val target = calcRectByPosition(position)
-                if (target == along.value) return@collectLatest
-                dragging.foldBoolean(
-                    ifTrue = {
-                        along.value = target
-                    },
-                    ifFalse = {
-                        animate(
-                            initialValue = along.value,
-                            targetValue = target,
-                            typeConverter = AlongPx.twoWayConverter,
-                            animationSpec = spring(),
-                        ) { value, _ ->
-                            along.value = value
-                        }
-                    },
-                )
-            }
+    calcRectCenterAlongPxByPosition: (Position) -> RectCenterAlongPx,
+): State<RectCenterAlongPx> {
+
+    val along = remember(
+        calcRectCenterAlongPxByPosition,
+        state,
+    ) { mutableStateOf(calcRectCenterAlongPxByPosition(state.position)) }
+
+    LaunchedEffect(calcRectCenterAlongPxByPosition, state) {
+        snapshotFlow {
+            state.position to state.isDragging
+        }.collectLatest { (position, dragging) ->
+            val target = calcRectCenterAlongPxByPosition(position)
+            if (target == along.value) return@collectLatest
+            dragging.foldBoolean(
+                ifTrue = {
+                    along.value = target
+                },
+                ifFalse = {
+                    animate(
+                        initialValue = along.value,
+                        targetValue = target,
+                        typeConverter = RectCenterAlongPx.twoWayConverter,
+                        animationSpec = spring(),
+                    ) { value, _ ->
+                        along.value = value
+                    }
+                },
+            )
+        }
     }
     return along
 }

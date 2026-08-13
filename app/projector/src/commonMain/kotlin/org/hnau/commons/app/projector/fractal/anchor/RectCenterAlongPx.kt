@@ -4,43 +4,43 @@ import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.TwoWayConverter
 
 @JvmInline
-value class AlongPx(
+value class RectCenterAlongPx(
     val along: Float,
-) : Comparable<AlongPx> {
+) : Comparable<RectCenterAlongPx> {
 
     override fun compareTo(
-        other: AlongPx,
+        other: RectCenterAlongPx,
     ): Int = along.compareTo(
         other = other.along,
     )
 
     inline fun combine(
-        other: AlongPx,
+        other: RectCenterAlongPx,
         block: (Float, Float) -> Float,
-    ): AlongPx = block(
+    ): RectCenterAlongPx = block(
         along,
         other.along,
-    ).let(::AlongPx)
+    ).let(::RectCenterAlongPx)
 
     operator fun plus(
-        other: AlongPx,
-    ): AlongPx = combine(
+        other: RectCenterAlongPx,
+    ): RectCenterAlongPx = combine(
         other = other,
         block = Float::plus,
     )
 
     operator fun minus(
-        other: AlongPx,
-    ): AlongPx = combine(
+        other: RectCenterAlongPx,
+    ): RectCenterAlongPx = combine(
         other = other,
         block = Float::minus,
     )
 
     companion object {
 
-        val twoWayConverter: TwoWayConverter<AlongPx, AnimationVector1D> = TwoWayConverter(
+        val twoWayConverter: TwoWayConverter<RectCenterAlongPx, AnimationVector1D> = TwoWayConverter(
             convertToVector = { AnimationVector1D(it.along) },
-            convertFromVector = { vector -> AlongPx(vector.value) }
+            convertFromVector = { vector -> RectCenterAlongPx(vector.value) }
         )
     }
 }

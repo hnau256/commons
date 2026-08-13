@@ -48,8 +48,6 @@ import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.mapper.Mapper
-import kotlin.math.max
-import kotlin.math.min
 import androidx.compose.ui.util.lerp
 
 @Composable
@@ -128,48 +126,80 @@ private fun SAnchorsContent(
         val calcRectByPosition: (Position) -> Rect = remember {
             { position ->
 
-                val value = position
+                val normalizedPosition = position
                     .position
                     .takeIf(Float::isFinite)
                     ?.coerceIn(0f, anchorRects.lastIndex.toFloat())
                     ?: 0f
 
-                val from = value.toInt()
-                val to = (from + 1).coerceAtMost(anchorRects.lastIndex)
+                val fromIndex = normalizedPosition.toInt()
+                val toIndex = (fromIndex + 1).coerceAtMost(anchorRects.lastIndex)
 
-                (to == from).foldBoolean(
-                    ifTrue = { anchorRects[from].value },
-                    ifFalse = {
-                        lerp(
-                            anchorRects[from].value,
-                            anchorRects[to].value,
-                            value - from,
-                        )
-                    }
+                (toIndex == fromIndex)
+                    .foldBoolean(
+                        ifTrue = { anchorRects[fromIndex].value },
+                        ifFalse = {
+                            val fromToToFraction = normalizedPosition - fromIndex
+                            lerp(
+                                anchorRects[fromIndex].value,
+                                anchorRects[toIndex].value,
+                                fromToToFraction,
+                            )
+                        }
+                    )
+            }
+        }
+
+        val calcRectCenterAlongPxByPosition: (Position) -> RectCenterAlongPx = remember {
+            { position ->
+                calcRectByPosition(position)
+                    .center
+                    .along
+                    .let(::RectCenterAlongPx)
+            }
+        }
+
+        val calcRectByRectCenterAlongPx: (RectCenterAlongPx) -> Rect = remember {
+            { alongPx ->
+                var toIndex = 0
+                var toRect = anchorRects.first().value
+                while (toRect.center.along < alongPx.along) {
+                    toIndex++
+                    toRect = anchorRects[toIndex].value
+                }
+
+                if (toIndex <= 0) {
+                    return@remember anchorRects.first().value
+                }
+
+                val fromIndex = toIndex - 1
+                val fromRect = anchorRects[fromIndex].value
+
+                val alongPxDelta = (toRect.center.along - fromRect.center.along)
+                    .takeIf { it > 0 }
+                    ?: return@remember anchorRects[fromIndex].value
+
+                val fraction = (alongPx.along - fromRect.center.along) / alongPxDelta
+
+                lerp(
+                    start = fromRect,
+                    stop = toRect,
+                    fraction = fraction,
                 )
             }
         }
 
-        val positionAlongPxMapper: Mapper<Position, AlongPx> = remember {
-
-            val calcAlongPxByPosition: (Position) -> AlongPx = { position ->
-                val rect = calcRectByPosition(position)
-                lerp(
-                    start = min(rect.topLeft.along, rect.bottomRight.along),
-                    stop = max(rect.topLeft.along, rect.bottomRight.along),
-                    fraction = position.position / anchorRects.lastIndex,
-                ).let(::AlongPx)
-            }
-
+        val positionRectCenterAlongPxMapper: Mapper<Position, RectCenterAlongPx> = remember {
             Mapper(
-                direct = calcAlongPxByPosition,
+                direct = calcRectCenterAlongPxByPosition,
                 reverse = { alongPx ->
 
                     var toIndex = 0
-                    var toAlongPx = AlongPx(0f)
-                    while (toAlongPx.along < alongPx.along) {
+                    var toRectCenterAlongPx = RectCenterAlongPx(0f)
+                    while (toRectCenterAlongPx.along < alongPx.along) {
                         toIndex++
-                        toAlongPx = calcAlongPxByPosition(Position(toIndex.toFloat()))
+                        toRectCenterAlongPx =
+                            calcRectCenterAlongPxByPosition(Position(toIndex.toFloat()))
                     }
 
                     if (toIndex <= 0) {
@@ -177,9 +207,10 @@ private fun SAnchorsContent(
                     }
 
                     val fromIndex = toIndex - 1
-                    val fromAlongPx = calcAlongPxByPosition(Position(fromIndex.toFloat()))
+                    val fromAlongPx =
+                        calcRectCenterAlongPxByPosition(Position(fromIndex.toFloat()))
 
-                    val alongPxDelta = (toAlongPx.along - fromAlongPx.along)
+                    val alongPxDelta = (toRectCenterAlongPx.along - fromAlongPx.along)
                         .takeIf { it > 0 }
                         ?: return@Mapper Position(fromIndex.toFloat())
 
@@ -192,7 +223,7 @@ private fun SAnchorsContent(
 
         val cursor = rememberSAnchorsCursor(
             state = state,
-            calcRectByPosition = calcRectByPosition,
+            calcRectCenterAlongPxByPosition = calcRectCenterAlongPxByPosition,
         )
 
         val drawCursor = isEnabled || !drawProgress
