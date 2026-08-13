@@ -71,9 +71,10 @@ fun SAnchors(
     val containerFContext = LocalFContext
         .current
         .run {
+            val active = isEnabled || drawProgress
             copy(
                 mood = importanceToActivate
-                    .takeIf { isEnabled }
+                    .takeIf { active }
                     .foldNullable(
                         ifNull = { mood },
                         ifNotNull = mood::activate,
