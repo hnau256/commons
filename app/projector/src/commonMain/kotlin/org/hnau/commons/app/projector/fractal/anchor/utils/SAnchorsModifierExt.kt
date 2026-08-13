@@ -24,6 +24,8 @@ import org.hnau.commons.app.projector.fractal.anchor.Position
 import org.hnau.commons.app.projector.uikit.line.ext.Offset
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.kotlin.ifFalse
+import org.hnau.commons.kotlin.ifTrue
 import kotlin.math.floor
 import kotlin.time.Clock
 
@@ -86,7 +88,7 @@ internal fun Modifier.sAnchorsDraggable(
         val velocityTracker = VelocityTracker()
 
         coroutineScope {
-            if (!snap) {
+            snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
                         updateAlong(Along(offset.along / totalAlong))

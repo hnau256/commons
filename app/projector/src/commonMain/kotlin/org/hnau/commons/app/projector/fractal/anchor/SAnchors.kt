@@ -130,18 +130,21 @@ private fun SAnchorsContent(
                     val target = mapper.direct(position)
                     val current = along.value
                     if (target == current) return@collectLatest
-                    if (dragging) {
-                        along.value = target
-                    } else {
-                        animate(
-                            initialValue = current,
-                            targetValue = target,
-                            typeConverter = Along.twoWayConverter,
-                            animationSpec = spring(),
-                        ) { value, _ ->
-                            along.value = value
-                        }
-                    }
+                    dragging.foldBoolean(
+                        ifTrue = {
+                            along.value = target
+                        },
+                        ifFalse = {
+                            animate(
+                                initialValue = current,
+                                targetValue = target,
+                                typeConverter = Along.twoWayConverter,
+                                animationSpec = spring(),
+                            ) { value, _ ->
+                                along.value = value
+                            }
+                        },
+                    )
                 }
         }
 
@@ -150,8 +153,10 @@ private fun SAnchorsContent(
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContent = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
-            if (isEnabled) backgroundFContent.containerOverlay()
-            else backgroundFContent.contentOverlay()
+            isEnabled.foldBoolean(
+                ifTrue = { backgroundFContent.containerOverlay() },
+                ifFalse = { backgroundFContent.contentOverlay() },
+            )
         }
         val cursorFContext = backgroundFContent.contentOverlay()
 
@@ -204,8 +209,10 @@ private fun SAnchorsContent(
                             val progressRect = Rect(
                                 offset = Offset.Zero,
                                 size = Size(
-                                    along = if (isEnabled) cursorRect.topLeft.along + cursorRect.size.along
-                                    else (size.along * (state.position.position / anchors.lastIndex.toFloat())),
+                                    along = isEnabled.foldBoolean(
+                                        ifTrue = { cursorRect.topLeft.along + cursorRect.size.along },
+                                        ifFalse = { size.along * (state.position.position / anchors.lastIndex.toFloat()) },
+                                    ),
                                     across = size.across,
                                 ),
                             )
@@ -231,16 +238,13 @@ private fun SAnchorsContent(
             rects = anchorRects,
             item = { i ->
                 Box(
-                    modifier = Modifier
-                        .option(
-                            if (isEnabled && item != null) {
-                                Modifier
-                                    .clip(RoundedCornerShape(cornerRadius))
-                                    .clickable { state.position = Position(i.toFloat()) }
-                            } else {
-                                null
-                            }
-                        ),
+                    modifier = Modifier.option(
+                        (isEnabled && item != null).ifTrue {
+                            Modifier
+                                .clip(RoundedCornerShape(cornerRadius))
+                                .clickable { state.position = Position(i.toFloat()) }
+                        },
+                    ),
                     propagateMinConstraints = true,
                 ) {
 
@@ -274,8 +278,10 @@ private fun SAnchorsContent(
                                                 .current
                                                 .units
                                                 .run {
-                                                    if (isEnabled) iconSize + padding.across.extraSmall * 2
-                                                    else padding.across.extraSmall * 2
+                                                    isEnabled.foldBoolean(
+                                                        ifTrue = { iconSize + padding.across.extraSmall * 2 },
+                                                        ifFalse = { padding.across.extraSmall * 2 },
+                                                    )
                                                 }
                                         )
                                     )
