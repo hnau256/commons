@@ -118,7 +118,7 @@ internal fun Modifier.sAnchorsDraggable(
                 onDragStart = { offset ->
                     setIsDragging(true)
                     velocityTracker.resetTracking()
-                    grabOffsetPx = offset.along - getCursorRect().topLeft.along
+                    grabOffsetPx = offset.along - getCursorRect().center.along
                 },
                 onDragCancel = { setIsDragging(false) },
                 onDrag = { change, _ ->
