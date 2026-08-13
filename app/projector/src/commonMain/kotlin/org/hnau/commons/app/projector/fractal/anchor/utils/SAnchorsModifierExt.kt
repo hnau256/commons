@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import arrow.core.NonEmptyList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.hnau.commons.app.projector.fractal.anchor.Along
 import org.hnau.commons.app.projector.fractal.anchor.Anchor
 import org.hnau.commons.app.projector.fractal.anchor.Position
 import org.hnau.commons.app.projector.uikit.line.ext.along
@@ -92,7 +93,7 @@ internal fun Modifier.sAnchorsDraggable(
     anchors: NonEmptyList<Anchor>,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
-    positionAtPx: (Float) -> Position,
+    positionAtPx: (Along) -> Position,
     updatePosition: (Position) -> Unit,
     setIsDragging: (Boolean) -> Unit,
 ): Modifier {
@@ -109,7 +110,7 @@ internal fun Modifier.sAnchorsDraggable(
             snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
-                        updatePosition(positionAtPx(offset.along))
+                        updatePosition(positionAtPx(offset.along.let(::Along)))
                     }
                 }
             }
@@ -123,7 +124,7 @@ internal fun Modifier.sAnchorsDraggable(
                 onDragCancel = { setIsDragging(false) },
                 onDrag = { change, _ ->
                     change.consume()
-                    updatePosition(positionAtPx(change.position.along - grabOffsetPx))
+                    updatePosition(positionAtPx((change.position.along - grabOffsetPx).let(::Along)))
                     velocityTracker.addPosition(
                         timeMillis = change.uptimeMillis,
                         position = change.position,

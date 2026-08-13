@@ -10,11 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.mapper.Mapper
 
 @Composable
 internal fun rememberSAnchorsCursorAlong(
     state: SAnchorsState,
-    mapper: SAnchorsMapper,
+    mapper: Mapper<Position, Along>,
 ): State<Along> {
     val along = remember(mapper, state) { mutableStateOf(mapper.direct(state.position)) }
     LaunchedEffect(mapper, state) {

@@ -46,6 +46,8 @@ import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
+import org.hnau.commons.kotlin.mapper.Mapper
+import org.hnau.commons.kotlin.mapper.plus
 
 @Composable
 fun SAnchors(
@@ -116,11 +118,39 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val anchors = remember(weights) { buildAnchors(weights) }
-        val mapper = remember(anchors) { SAnchorsMapper(anchors) }
+        val anchors = remember(weights) {
+
+            NonEmptyList(
+                head = Anchor(weightBefore = 0f),
+                tail = weights
+                    .any { weight -> weight > 0f }
+                    .foldBoolean(
+                        ifTrue = { weights },
+                        ifFalse = { weights.map { 1f } }
+                    )
+                    .map(::Anchor),
+            )
+        }
+
+        val positionAlongMapper = remember(anchors) {
+            val cumulativeWeights = anchors.runningFold(
+                initial = 0f,
+            ) { acc, anchor -> acc + anchor.weightBefore }
+
+            val totalWeight = cumulativeWeights.last()
+
+            val anchorFractions = cumulativeWeights
+                .drop(1)
+                .map { it / totalWeight }
+
+            Mapper(Position::position, ::Position) +
+                    anchorFractions.knotsMapper() +
+                    Mapper(::Along, Along::along)
+        }
+
         val along = rememberSAnchorsCursorAlong(
             state = state,
-            mapper = mapper,
+            mapper = positionAlongMapper,
         )
 
         val drawCursor = isEnabled || !drawProgress
@@ -146,8 +176,27 @@ private fun SAnchorsContent(
             MutableList(anchors.size) { Rect.Zero }
         }
 
-        val getCursorRect = { sAnchorsCursorRect(anchorRects, mapper.reverse(along.value)) }
-        val positionAtPx = { alongPx: Float -> sAnchorsCursorPosition(anchorRects, alongPx) }
+        val rectsMapper = remember(anchorRects) {
+            anchorRects.knotsMapper(
+                lerp = ::lerp,
+                knot = { rect -> rect.center.along },
+            )
+        }
+
+        val getCursorRect = {
+            val position = positionAlongMapper.reverse(along.value)
+            rectsMapper.direct(position.position)
+        }
+
+        val positionAtPx = { along: Along ->
+            anchorRects
+                .map { rect -> rect.center.along }
+                .knotsMapper()
+                .reverse(along.along)
+                .let(::Position)
+
+            sAnchorsCursorPosition(anchorRects, along.along)
+        }
 
         SAnchorsLayout(
             modifier = Modifier
@@ -280,15 +329,12 @@ private fun SAnchorsContent(
     }
 }
 
-private fun sAnchorsCursorRect(
-    rects: List<Rect>,
-    position: Position,
-): Rect = rects.lerpAt(position.position, ::lerp)
-
 context(_: Orientation)
 private fun sAnchorsCursorPosition(
     rects: List<Rect>,
     alongPx: Float,
 ): Position = rects
-    .positionAt(alongPx) { rect -> rect.topLeft.along }
+    .map { rect -> rect.center.along }
+    .knotsMapper()
+    .reverse(alongPx)
     .let(::Position)
