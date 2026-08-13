@@ -93,7 +93,7 @@ internal fun Modifier.sAnchorsDraggable(
     anchors: NonEmptyList<Anchor>,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
-    positionAtPx: (Along) -> Position,
+    positionAtPx: (Float) -> Position,
     updatePosition: (Position) -> Unit,
     setIsDragging: (Boolean) -> Unit,
 ): Modifier {
@@ -110,7 +110,7 @@ internal fun Modifier.sAnchorsDraggable(
             snap.ifFalse {
                 launch {
                     detectTapGestures { offset ->
-                        updatePosition(positionAtPx(offset.along.let(::Along)))
+                        updatePosition(positionAtPx(offset.along))
                     }
                 }
             }
@@ -124,7 +124,7 @@ internal fun Modifier.sAnchorsDraggable(
                 onDragCancel = { setIsDragging(false) },
                 onDrag = { change, _ ->
                     change.consume()
-                    updatePosition(positionAtPx((change.position.along - grabOffsetPx).let(::Along)))
+                    updatePosition(positionAtPx(change.position.along - grabOffsetPx))
                     velocityTracker.addPosition(
                         timeMillis = change.uptimeMillis,
                         position = change.position,

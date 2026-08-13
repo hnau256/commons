@@ -188,14 +188,14 @@ private fun SAnchorsContent(
             rectsMapper.direct(position.position)
         }
 
-        val positionAtPx = { along: Along ->
+        val positionAtPx = { along: Float ->
             anchorRects
                 .map { rect -> rect.center.along }
                 .knotsMapper()
-                .reverse(along.along)
+                .reverse(along)
                 .let(::Position)
 
-            sAnchorsCursorPosition(anchorRects, along.along)
+            sAnchorsCursorPosition(anchorRects, along)
         }
 
         SAnchorsLayout(
