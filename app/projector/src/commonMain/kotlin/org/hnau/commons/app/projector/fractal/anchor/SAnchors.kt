@@ -118,8 +118,8 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val anchorRects = remember(weights) {
-            (weights + 0f).map { Mutable(Rect.Zero) }
+        val anchorRects: MutableList<Rect> = remember {
+            ArrayList(weights.size + 1)
         }
 
         val position = rememberSAnchorsPosition(state)
@@ -128,16 +128,16 @@ private fun SAnchorsContent(
             val value = position.value.position
             val start = value.toInt()
             (start < 0).foldBoolean(
-                ifTrue = { anchorRects.first().value },
+                ifTrue = { anchorRects.first() },
                 ifFalse = {
                     val stop = start + 1
                     (stop > anchorRects.lastIndex).foldBoolean(
-                        ifTrue = { anchorRects.last().value },
+                        ifTrue = { anchorRects.last() },
                         ifFalse = {
                             val offset = value - start
                             lerp(
-                                start = anchorRects[start].value,
-                                stop = anchorRects[stop].value,
+                                start = anchorRects[start],
+                                stop = anchorRects[stop],
                                 fraction = offset,
                             )
                         }
@@ -153,7 +153,6 @@ private fun SAnchorsContent(
 
                 val calcRectCenterAlong: (index: Int) -> RectCenterAlongPx = { index ->
                     anchorRects[index]
-                        .value
                         .center
                         .along
                         .let(::RectCenterAlongPx)
@@ -297,7 +296,7 @@ private fun SAnchorsContent(
                             modifier = Modifier.option(
                                 drawCursor.ifTrue {
                                     Modifier.sAnchorsClipToCursorRect(
-                                        getAnchorRect = { anchorRects[i].value },
+                                        getAnchorRect = { anchorRects[i] },
                                         getCursorRect = getCursorRect,
                                         cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(

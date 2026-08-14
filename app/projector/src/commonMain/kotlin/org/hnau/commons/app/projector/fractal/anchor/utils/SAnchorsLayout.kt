@@ -19,7 +19,6 @@ import org.hnau.commons.app.projector.uikit.line.ext.copy
 import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
-import org.hnau.commons.kotlin.Mutable
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.roundToInt
 
@@ -27,7 +26,7 @@ import kotlin.math.roundToInt
 context(_: Orientation)
 internal fun SAnchorsLayout(
     weights: NonEmptyList<Float>,
-    rects: List<Mutable<Rect>>,
+    rects: MutableList<Rect>,
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,6 +98,7 @@ internal fun SAnchorsLayout(
             width = size.width,
             height = size.height,
         ) {
+            rects.clear()
             placeables.forEachIndexed { i, placeable ->
                 val alongStart = alongOffset + getWeight(i) * additionalAlongByWeight
                 alongOffset = alongStart + placeable.along
@@ -106,14 +106,16 @@ internal fun SAnchorsLayout(
                     along = alongStart.roundToInt(),
                     across = (across - placeable.across) / 2,
                 )
-                rects[i].value = Rect(
-                    offset = Offset(
-                        along = alongStart,
-                        across = 0f,
-                    ),
-                    size = Size(
-                        along = placeable.along.toFloat(),
-                        across = size.across.toFloat(),
+                rects.add(
+                    Rect(
+                        offset = Offset(
+                            along = alongStart,
+                            across = 0f,
+                        ),
+                        size = Size(
+                            along = placeable.along.toFloat(),
+                            across = size.across.toFloat(),
+                        )
                     )
                 )
             }
