@@ -88,13 +88,14 @@ context(_: Orientation)
 internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
     getMaxPosition: () -> Position,
+    enabled: Boolean,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
     positionAtPx: (RectCenterAlongPx) -> Position,
-    updatePosition: ((Position) -> Unit)?,
+    updatePosition: (Position) -> Unit,
     setIsDragging: (Boolean) -> Unit,
 ): Modifier {
-    val updatePosition = updatePosition ?: return this
+    if (!enabled) return this
 
     val flingVelocityThresholdPxPerSecond =
         with(LocalDensity.current) { FLING_VELOCITY_THRESHOLD.toPx() }
