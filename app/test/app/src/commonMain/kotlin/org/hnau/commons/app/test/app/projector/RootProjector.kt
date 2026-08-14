@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,9 +20,9 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SIcon
-import org.hnau.commons.app.projector.fractal.anchor.SAnchors
 import org.hnau.commons.app.projector.fractal.SText
-import org.hnau.commons.app.projector.fractal.anchor.rememberSAnchorsState
+import org.hnau.commons.app.projector.fractal.anchor.Position
+import org.hnau.commons.app.projector.fractal.anchor.SAnchors
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
@@ -31,7 +33,6 @@ import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
 import org.hnau.commons.kotlin.map
-import org.hnau.commons.kotlin.mapper.takeIf
 
 class RootProjector(
     scope: CoroutineScope,
@@ -106,7 +107,7 @@ class RootProjector(
                     ),
                 )
             }.forEach { (weights, item, fillMaxWidth) ->
-                val state = rememberSAnchorsState()
+                val position: MutableState<Position> = remember { mutableStateOf(Position(0f)) }
                 remember { listOf(true, false) }.forEach { enabled ->
                     SAnchors(
                         modifier = Modifier.option(
@@ -116,8 +117,8 @@ class RootProjector(
                         ),
                         orientation = Orientation.Horizontal,
                         weights = weights,
-                        state = state,
-                        isEnabled = enabled,
+                        getPosition = position::value::get,
+                        setPosition = position::value::set.takeIf { enabled },
                         snap = item != null,
                         drawProgress = item == null,
                         item = item,

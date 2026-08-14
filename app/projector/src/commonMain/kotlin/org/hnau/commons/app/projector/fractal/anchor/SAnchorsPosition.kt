@@ -13,16 +13,17 @@ import org.hnau.commons.kotlin.foldBoolean
 
 @Composable
 internal fun rememberSAnchorsPosition(
-    state: SAnchorsState,
+    getPosition: () -> Position,
+    getIsDragging: () -> Boolean,
 ): State<Position> {
 
-    val result = remember(
-        state,
-    ) { mutableStateOf(state.position) }
+    val result = remember(getPosition) {
+        mutableStateOf(getPosition())
+    }
 
-    LaunchedEffect(state) {
+    LaunchedEffect(getPosition, getIsDragging) {
         snapshotFlow {
-            state.position to state.isDragging
+            getPosition() to getIsDragging()
         }.collectLatest { (position, dragging) ->
             val target = position
             if (target == result.value) return@collectLatest

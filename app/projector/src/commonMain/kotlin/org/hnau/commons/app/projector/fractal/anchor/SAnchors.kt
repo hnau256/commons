@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,9 +54,9 @@ import org.hnau.commons.kotlin.ifTrue
 fun SAnchors(
     orientation: Orientation,
     weights: NonEmptyList<Float>,
-    state: SAnchorsState,
+    getPosition: () -> Position,
+    setPosition: ((Position) -> Unit)?,
     modifier: Modifier = Modifier,
-    isEnabled: Boolean = true,
     snap: Boolean = true,
     drawProgress: Boolean = false,
     importanceToActivate: Importance? = Importance.default,
@@ -67,7 +69,7 @@ fun SAnchors(
     val containerFContext = LocalFContext
         .current
         .run {
-            val active = isEnabled || drawProgress
+            val active = setPosition != null || drawProgress
             copy(
                 mood = importanceToActivate
                     .takeIf { active }
@@ -91,8 +93,8 @@ fun SAnchors(
             value = LocalFContext provides containerFContext
         ) {
             SAnchorsContent(
-                state = state,
-                isEnabled = isEnabled,
+                setPosition = setPosition,
+                getPosition = getPosition,
                 orientation = orientation,
                 weights = weights,
                 cornerRadius = (cornerRadius - padding).coerceAtLeast(0.dp),
@@ -106,8 +108,8 @@ fun SAnchors(
 
 @Composable
 private fun SAnchorsContent(
-    state: SAnchorsState,
-    isEnabled: Boolean,
+    getPosition: () -> Position,
+    setPosition: ((Position) -> Unit)?,
     orientation: Orientation,
     weights: NonEmptyList<Float>,
     cornerRadius: Dp,
@@ -121,7 +123,12 @@ private fun SAnchorsContent(
             ArrayList(weights.size + 1)
         }
 
-        val position = rememberSAnchorsPosition(state)
+        val isDragging: MutableState<Boolean> = remember { mutableStateOf(false) }
+
+        val position = rememberSAnchorsPosition(
+            getPosition = getPosition,
+            getIsDragging = isDragging::value::get,
+        )
 
         val getCursorRect: () -> Rect = {
             val value = position.value.position
@@ -182,14 +189,14 @@ private fun SAnchorsContent(
             }
         }
 
-        val drawCursor = isEnabled || !drawProgress
+        val drawCursor = setPosition != null || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContext = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
-            isEnabled.foldBoolean(
-                ifTrue = { backgroundFContext.containerOverlay() },
-                ifFalse = { backgroundFContext.contentOverlay() },
+            setPosition.foldNullable(
+                ifNotNull = { backgroundFContext.containerOverlay() },
+                ifNull = { backgroundFContext.contentOverlay() },
             )
         }
         val cursorFContext = backgroundFContext.contentOverlay()
@@ -205,13 +212,12 @@ private fun SAnchorsContent(
             modifier = Modifier
                 .sAnchorsDraggable(
                     snap = snap,
-                    enabled = isEnabled,
+                    updatePosition = setPosition,
                     maxPosition = Position(anchorRects.lastIndex.toFloat()),
                     getCursorRect = getCursorRect,
-                    getPosition = { state.position },
+                    getPosition = getPosition,
                     positionAtPx = calcPositionByRectCenterAlongPx,
-                    updatePosition = { position -> state.position = position },
-                    setIsDragging = { value -> state.isDragging = value },
+                    setIsDragging = isDragging::value::set,
                 )
                 .drawBehind {
 
@@ -237,15 +243,15 @@ private fun SAnchorsContent(
                             val progressRect = Rect(
                                 offset = Offset.Zero,
                                 size = Size(
-                                    along = isEnabled.foldBoolean(
-                                        ifTrue = { cursorRect.center.along },
-                                        ifFalse = {
+                                    along = setPosition.foldNullable(
+                                        ifNotNull = { cursorRect.center.along },
+                                        ifNull = {
 
                                             val minCenter = cursorRect.size.along / 2
                                             val maxCenter = size.along - cursorRect.size.along / 2
                                             val deltaCenter = maxCenter - minCenter
                                             if (deltaCenter <= 0) {
-                                                return@foldBoolean 0f
+                                                return@foldNullable 0f
                                             }
 
                                             lerp(
@@ -281,11 +287,13 @@ private fun SAnchorsContent(
             item = { i ->
                 Box(
                     modifier = Modifier.option(
-                        (isEnabled && item != null).ifTrue {
-                            Modifier
-                                .clip(RoundedCornerShape(cornerRadius))
-                                .clickable { state.position = Position(i.toFloat()) }
-                        },
+                        setPosition
+                            .takeIf { item != null }
+                            ?.let { set ->
+                                Modifier
+                                    .clip(RoundedCornerShape(cornerRadius))
+                                    .clickable { set(Position(i.toFloat())) }
+                            },
                     ),
                     propagateMinConstraints = true,
                 ) {
@@ -320,9 +328,9 @@ private fun SAnchorsContent(
                                                 .current
                                                 .units
                                                 .run {
-                                                    isEnabled.foldBoolean(
-                                                        ifTrue = { iconSize + padding.across.extraSmall * 2 },
-                                                        ifFalse = { padding.across.extraSmall * 2 },
+                                                    setPosition.foldNullable(
+                                                        ifNotNull = { iconSize + padding.across.extraSmall * 2 },
+                                                        ifNull = { padding.across.extraSmall * 2 },
                                                     )
                                                 }
                                         )
