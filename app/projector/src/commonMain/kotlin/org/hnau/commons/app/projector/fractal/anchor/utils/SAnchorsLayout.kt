@@ -20,6 +20,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.foldNullable
 import kotlin.math.roundToInt
 
 @Composable
@@ -30,16 +31,22 @@ internal fun SAnchorsLayout(
     item: @Composable (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val normalizedWeights = remember(weights) {
-        val atLeastOneWeight = weights.any { it > 0 }
-        atLeastOneWeight.foldBoolean(
-            ifTrue = { weights },
-            ifFalse = { weights.map { 1f } },
+    val (normalizedWeights, totalWeight) = remember(weights) {
+
+        val nonNegativeWeights = weights
+            .map { weight -> weight.coerceAtLeast(0f) }
+
+        val atLeastOnePositiveWeight = nonNegativeWeights.any { it > 0 }
+        val weights = atLeastOnePositiveWeight.foldBoolean(
+            ifTrue = { nonNegativeWeights },
+            ifFalse = { nonNegativeWeights.map { 1f } },
         )
+
+        val totalWeight = weights.sum()
+
+        weights to totalWeight
     }
-    val getWeight: (anchorIndex: Int) -> Float = { anchorIndex ->
-        normalizedWeights.getOrElse(anchorIndex - 1) { 0f }
-    }
+
     Layout(
         modifier = modifier,
         content = {
@@ -53,14 +60,13 @@ internal fun SAnchorsLayout(
         },
     ) { measurables, constraints ->
 
-        val (placeables, _, totalWeight) = measurables
-            .foldIndexed(
-                initial = Triple(
+        val (placeables, _) = measurables
+            .fold(
+                initial = Pair(
                     emptyList<Placeable>(),
                     0,
-                    0f
                 ),
-            ) { i, (placeables, usedAlong, totalWeight), measurable ->
+            ) { (placeables, usedAlong), measurable ->
                 val childConstraints = constraints.offset(
                     along = -usedAlong,
                 ).copy(
@@ -69,10 +75,9 @@ internal fun SAnchorsLayout(
                 val placeable = measurable.measure(
                     constraints = childConstraints,
                 )
-                Triple(
+                Pair(
                     placeables + placeable,
                     usedAlong + placeable.along,
-                    totalWeight + getWeight(i),
                 )
             }
 
@@ -100,7 +105,14 @@ internal fun SAnchorsLayout(
         ) {
             rects.clear()
             placeables.forEachIndexed { i, placeable ->
-                val alongStart = alongOffset + getWeight(i) * additionalAlongByWeight
+
+                val weight = i
+                    .minus(1)
+                    .takeIf { it >= 0 }
+                    ?.let(normalizedWeights::get)
+                    ?: 0f
+
+                val alongStart = alongOffset + weight * additionalAlongByWeight
                 alongOffset = alongStart + placeable.along
                 placeable.placeRelative(
                     along = alongStart.roundToInt(),
