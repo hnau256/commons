@@ -6,23 +6,32 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
+import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.anchor.SAnchors
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.anchor.rememberSAnchorsState
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.app.test.app.model.RootModel
 import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.coroutines.flow.state.mapWithScope
 import org.hnau.commons.kotlin.map
+import org.hnau.commons.kotlin.mapper.takeIf
 
 class RootProjector(
     scope: CoroutineScope,
@@ -62,25 +71,49 @@ class RootProjector(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             remember {
-                listOf<Pair<NonEmptyList<Float>, (@Composable (Int) -> Unit)?>>(
-                    Pair(
+                listOf<Triple<NonEmptyList<Float>, (@Composable (Int) -> Unit)?, Boolean>>(
+                    Triple(
                         first = nonEmptyListOf(1f),
                         second = null,
+                        third = true,
                     ),
-                    Pair(
+                    Triple(
                         first = nonEmptyListOf(1f, 2f),
                         second = {
                             SText(
                                 text = "A".repeat(it + 1),
                             )
                         },
+                        third = true,
+                    ),
+                    Triple(
+                        first = nonEmptyListOf(1f),
+                        second = { i ->
+                            CompositionLocalProvider(
+                                LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.extraSmall,
+                            ) {
+                                SIcon(
+                                    Drawable.Vector(
+                                        when (i) {
+                                            0 -> Icons.Default.Clear
+                                            else -> Icons.Default.Done
+                                        }
+                                    )
+                                )
+                            }
+                        },
+                        third = false,
                     ),
                 )
-            }.forEach { (weights, item) ->
+            }.forEach { (weights, item, fillMaxWidth) ->
                 val state = rememberSAnchorsState()
                 remember { listOf(true, false) }.forEach { enabled ->
                     SAnchors(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.option(
+                            Modifier
+                                .fillMaxWidth()
+                                .takeIf { fillMaxWidth },
+                        ),
                         orientation = Orientation.Horizontal,
                         weights = weights,
                         state = state,
