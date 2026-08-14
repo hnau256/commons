@@ -20,7 +20,6 @@ import org.hnau.commons.app.projector.uikit.line.ext.offset
 import org.hnau.commons.app.projector.uikit.line.ext.placeRelative
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.kotlin.foldBoolean
-import org.hnau.commons.kotlin.foldNullable
 import kotlin.math.roundToInt
 
 @Composable

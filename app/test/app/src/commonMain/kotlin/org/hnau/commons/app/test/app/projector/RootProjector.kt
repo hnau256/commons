@@ -90,7 +90,7 @@ class RootProjector(
                         first = nonEmptyListOf(1f),
                         second = { i ->
                             CompositionLocalProvider(
-                                LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.extraSmall,
+                                LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.small,
                             ) {
                                 SIcon(
                                     Drawable.Vector(
