@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,9 +24,15 @@ import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.anchor.Position
 import org.hnau.commons.app.projector.fractal.anchor.SAnchors
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
+import org.hnau.commons.app.projector.uikit.state.LoadableContent
+import org.hnau.commons.app.projector.uikit.transition.TransitionSpec
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.option
@@ -64,69 +71,7 @@ class RootProjector(
     fun Content(
         contentPadding: PaddingValues,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(LocalDistance.current.units.paddingValues.vertical.medium),
-            verticalArrangement = Arrangement.spacedBy(LocalDistance.current.units.padding.along.medium),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            remember {
-                listOf<Triple<NonEmptyList<Float>, (@Composable (Int) -> Unit)?, Boolean>>(
-                    Triple(
-                        first = nonEmptyListOf(1f),
-                        second = null,
-                        third = true,
-                    ),
-                    Triple(
-                        first = nonEmptyListOf(1f, 2f),
-                        second = {
-                            SText(
-                                text = "A".repeat(it + 1),
-                            )
-                        },
-                        third = true,
-                    ),
-                    Triple(
-                        first = nonEmptyListOf(1f),
-                        second = { i ->
-                            CompositionLocalProvider(
-                                LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.small,
-                            ) {
-                                SIcon(
-                                    Drawable.Vector(
-                                        when (i) {
-                                            0 -> Icons.Default.Clear
-                                            else -> Icons.Default.Done
-                                        }
-                                    )
-                                )
-                            }
-                        },
-                        third = false,
-                    ),
-                )
-            }.forEach { (weights, item, fillMaxWidth) ->
-                val position: MutableState<Position> = remember { mutableStateOf(Position(0f)) }
-                remember { listOf(true, false) }.forEach { enabled ->
-                    SAnchors(
-                        modifier = Modifier.option(
-                            Modifier
-                                .fillMaxWidth()
-                                .takeIf { fillMaxWidth },
-                        ),
-                        orientation = Orientation.Horizontal,
-                        weights = weights,
-                        getPosition = position::value::get,
-                        setPosition = position::value::set.takeIf { enabled },
-                        snap = item != null,
-                        drawProgress = item == null,
-                        item = item,
-                    )
-                }
-            }
-        }
-        /*BackButtonHost(
+        BackButtonHost(
             contentPadding = contentPadding,
             goBackHandler = model.goBackHandler,
             backButtonBackgroundColor = LocalFContext.current.containerOverlay().color,
@@ -141,6 +86,6 @@ class RootProjector(
                         contentPadding = contentPadding
                     )
                 }
-        }*/
+        }
     }
 }
