@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -74,12 +75,12 @@ class ActionProjector(
         SScreen(
             contentPadding = contentPadding,
             title = {
-                val items = remember { listOf("One", "Two", "Three") }
+                val items = remember { nonEmptyListOf("One", "Two", "Three") }
                 var selected by remember { mutableStateOf(items.first()) }
                 STabs(
                     items = items,
                     selection = selected,
-                    onClick = { selected = it },
+                    onSelectionChanged = { selected = it },
                 ) { item ->
                     SText(item)
                 }

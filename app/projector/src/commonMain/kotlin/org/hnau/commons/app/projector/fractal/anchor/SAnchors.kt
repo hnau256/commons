@@ -3,6 +3,7 @@ package org.hnau.commons.app.projector.fractal.anchor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,8 +80,9 @@ fun SAnchors(
         }
         .containerOverlay()
 
-    LocalContentPaddingBox(
+    Box(
         modifier = modifier
+            .padding(LocalContentPadding.current)
             .background(
                 color = containerFContext.color,
                 shape = RoundedCornerShape(cornerRadius),
@@ -88,7 +90,8 @@ fun SAnchors(
             .padding(padding),
     ) {
         CompositionLocalProvider(
-            value = LocalFContext provides containerFContext
+            LocalFContext provides containerFContext,
+            LocalContentPadding provides PaddingValues.Zero,
         ) {
             SAnchorsContent(
                 state = state,
@@ -330,7 +333,6 @@ private fun SAnchorsContent(
                                 },
                                 ifNotNull = { item ->
                                     CompositionLocalProvider(
-                                        LocalContentPadding provides LocalDistance.current.units.paddingValues.horizontal.medium,
                                         LocalFContext provides itemContext,
                                         LocalDistance provides LocalDistance.current + 1,
                                     ) {

@@ -31,7 +31,7 @@ fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorProto
                     STabs(
                         items = inputType.variants,
                         selection = selection,
-                        onClick = updateState.takeIf { enabled },
+                        onSelectionChanged = updateState,
                         item = item,
                     )
                 }
