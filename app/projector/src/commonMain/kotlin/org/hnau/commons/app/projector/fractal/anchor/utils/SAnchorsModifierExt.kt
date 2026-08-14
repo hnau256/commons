@@ -87,7 +87,7 @@ private val FLING_VELOCITY_THRESHOLD: Dp = 100.dp
 context(_: Orientation)
 internal fun Modifier.sAnchorsDraggable(
     snap: Boolean,
-    maxPosition: Position,
+    getMaxPosition: () -> Position,
     getCursorRect: () -> Rect,
     getPosition: () -> Position,
     positionAtPx: (RectCenterAlongPx) -> Position,
@@ -99,7 +99,7 @@ internal fun Modifier.sAnchorsDraggable(
     val flingVelocityThresholdPxPerSecond =
         with(LocalDensity.current) { FLING_VELOCITY_THRESHOLD.toPx() }
 
-    return pointerInput(snap, maxPosition) {
+    return pointerInput(snap) {
         val velocityTracker = VelocityTracker()
         var grabOffsetPx = 0f
 
@@ -140,7 +140,7 @@ internal fun Modifier.sAnchorsDraggable(
                             offset > Position(0.5f) -> from + 1
                             else -> from
                         }
-                            .coerceIn(Position(0f), maxPosition)
+                            .coerceIn(Position(0f), getMaxPosition())
 
                         updatePosition(target)
                     }

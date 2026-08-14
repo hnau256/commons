@@ -213,7 +213,7 @@ private fun SAnchorsContent(
                 .sAnchorsDraggable(
                     snap = snap,
                     updatePosition = setPosition,
-                    maxPosition = Position(anchorRects.lastIndex.toFloat()),
+                    getMaxPosition = { Position(anchorRects.lastIndex.toFloat()) },
                     getCursorRect = getCursorRect,
                     getPosition = getPosition,
                     positionAtPx = calcPositionByRectCenterAlongPx,
