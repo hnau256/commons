@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.systemBars
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,7 +27,6 @@ class AppActivity : ComponentActivity() {
 
     private val viewModel: AppViewModel<RootModel, RootModel.Skeleton> by viewModels {
         AppViewModel.factory(
-            context = applicationContext,
             seed = createCommonsAppTestAppSeed(
                 appFilesDirProvider = AppFilesDirProvider(context = this)
             ),
