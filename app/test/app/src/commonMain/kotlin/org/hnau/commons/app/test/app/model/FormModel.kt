@@ -5,6 +5,7 @@
 
 package org.hnau.commons.app.test.app.model
 
+import arrow.core.Tuple4
 import arrow.core.left
 import arrow.core.plus
 import arrow.core.right
@@ -43,6 +44,7 @@ class FormModel(
         val integer: InputSkeleton<String, Int>,
         val text: InputSkeleton<String, String>,
         val variant: InputSkeleton<Config.Scheme, Config.Scheme>,
+        val fraction: InputSkeleton<Float, Float>,
         val savableDelegate: ModelSavableDelegate.Skeleton<Config> = ModelSavableDelegate.Skeleton(),
     ) {
 
@@ -73,6 +75,11 @@ class FormModel(
                 value = initial.scheme,
                 useValueAsInitial = true,
             ),
+
+            fraction = fractionInputModelFactory.createSkeleton(
+                value = initial.fraction,
+                useValueAsInitial = true,
+            )
         )
     }
 
@@ -112,6 +119,13 @@ class FormModel(
         )
 
 
+    val fraction =
+        fractionInputModelFactory.createModel(
+            scope = scope,
+            skeleton = skeleton.fraction,
+        )
+
+
     val savableDelegate: ModelSavableDelegate<Config> = ModelSavableDelegate(
         scope = scope,
         result = flag
@@ -134,13 +148,19 @@ class FormModel(
             .combineEditableWith(
                 scope = scope,
                 other = variant.editable,
-            ) { (flag, decimal, integer, text), variant ->
+                Tuple4<Boolean, Float, Int, String>::plus
+            )
+            .combineEditableWith(
+                scope = scope,
+                other = fraction.editable,
+            ) { (flag, decimal, integer, text, variant), fraction ->
                 Config(
                     flag = flag,
                     decimal = decimal,
                     integer = integer,
                     text = text,
                     scheme = variant,
+                    fraction = fraction,
                 )
             },
         skeleton = skeleton.savableDelegate,
@@ -201,6 +221,13 @@ class FormModel(
             InputType
                 .Variant(
                     variants = Config.Scheme.entries.toNonEmptyListOrThrow(),
+                )
+                .toInputModelFactory()
+
+        private val fractionInputModelFactory: InputModelFactory<Float, Float, Nothing, InputType.Fraction<Float>> =
+            InputType
+                .Fraction(
+                    range = 10f..100f,
                 )
                 .toInputModelFactory()
     }

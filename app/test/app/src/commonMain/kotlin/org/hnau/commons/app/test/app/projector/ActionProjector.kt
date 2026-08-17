@@ -1,9 +1,7 @@
 package org.hnau.commons.app.test.app.projector
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.OpenInFull
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.projector.fractal.SActions
 import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
-import org.hnau.commons.app.projector.fractal.SElements
 import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.SMainWithAdditional
 import org.hnau.commons.app.projector.fractal.SPanel
@@ -30,7 +27,6 @@ import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.STabs
 import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.context.FContext
-import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableHeader
 import org.hnau.commons.app.projector.fractal.table.Subtable
@@ -76,11 +72,11 @@ class ActionProjector(
             contentPadding = contentPadding,
             title = {
                 val items = remember { nonEmptyListOf("One", "Two", "Three") }
-                var selected by remember { mutableStateOf(items.first()) }
+                val selected = remember { mutableStateOf(items.first()) }
                 STabs(
                     items = items,
-                    selection = selected,
-                    onSelectionChanged = { selected = it },
+                    getSelection = selected::value::get,
+                    onSelectionChanged = selected::value::set,
                 ) { item ->
                     SText(item)
                 }

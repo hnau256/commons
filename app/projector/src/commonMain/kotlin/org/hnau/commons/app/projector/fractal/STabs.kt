@@ -7,7 +7,8 @@ import androidx.compose.ui.Modifier
 import arrow.core.NonEmptyList
 import arrow.core.toNonEmptyListOrThrow
 import org.hnau.commons.app.projector.fractal.anchor.SAnchors
-import org.hnau.commons.app.projector.fractal.anchor.rememberSAnchorsState
+import org.hnau.commons.app.projector.fractal.anchor.SAnchorsState
+import org.hnau.commons.app.projector.fractal.anchor.rememberForIndex
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
@@ -18,26 +19,13 @@ import org.hnau.commons.app.projector.utils.rememberLet
 @Composable
 fun <T> STabs(
     items: NonEmptyList<T>,
-    selection: T,
+    getSelection: () -> T,
     onSelectionChanged: ((T) -> Unit)?,
     modifier: Modifier = Modifier,
     importanceToActivate: Importance? = Importance.default,
     itemPaddingValues: PaddingValues = LocalDistance.current.units.paddingValues.horizontal.small,
     item: @Composable (item: T) -> Unit,
 ) {
-
-    val state = rememberSAnchorsState(
-        getSelectedIndex = {
-            items
-                .indexOf(selection)
-                .takeIf { it >= 0 }
-                ?: 0
-        },
-        setSelectedIndex = onSelectionChanged?.let { updateSelection ->
-            { index: Int -> updateSelection(items[index]) }
-        }
-    )
-
     SAnchors(
         modifier = modifier,
         importanceToActivate = importanceToActivate,
@@ -46,7 +34,17 @@ fun <T> STabs(
             (0 until itemsCount - 1).map { 1f }.toNonEmptyListOrThrow()
         },
         isEnabled = onSelectionChanged != null,
-        state = state,
+        state = SAnchorsState.rememberForIndex(
+            getSelectedIndex = {
+                getSelection()
+                    .let(items::indexOf)
+                    .takeIf { it >= 0 }
+                    ?: 0
+            },
+            setSelectedIndex = onSelectionChanged?.let { updateSelection ->
+                { index: Int -> updateSelection(items[index]) }
+            }
+        ),
         item = {
             CompositionLocalProvider(
                 LocalContentPadding provides itemPaddingValues,

@@ -19,18 +19,18 @@ fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorProto
     toInputProjectorPrototype { inputType, state, updateState ->
         InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
             val enabled by enabled.collectAsState()
-            val selection by state.collectAsState()
+            val selection = state.collectAsState()
             val variants = inputType.variants
             itemDrawer.Item(
                 onClick = {
-                    val selectedIndex = variants.indexOf(selection)
+                    val selectedIndex = variants.indexOf(selection.value)
                     val newIndex = (selectedIndex + 1) % variants.size
                     updateState(variants[newIndex])
                 },
                 endAccessory = {
                     STabs(
                         items = inputType.variants,
-                        selection = selection,
+                        getSelection = selection::value::get,
                         onSelectionChanged = updateState.takeIf { enabled },
                         item = item,
                     )

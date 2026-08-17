@@ -7,13 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
 
-class SAnchorsState(initialPosition: Position = Position(0f)) {
+class SAnchorsState(
+    initialPosition: Position = Position(0f),
+) {
 
     var position: Position by mutableStateOf(initialPosition)
 
@@ -29,30 +30,26 @@ class SAnchorsState(initialPosition: Position = Position(0f)) {
 }
 
 @Composable
-fun rememberSAnchorsState(initialPosition: Position = Position(0f)): SAnchorsState =
-    rememberSaveable(saver = SAnchorsState.saver) { SAnchorsState(initialPosition) }
-
-@Composable
-fun rememberSAnchorsState(
-    getSelectedIndex: () -> Int,
-    setSelectedIndex: ((Int) -> Unit)?,
+private fun SAnchorsState.Companion.rememberForPosition(
+    getPosition: () -> Float,
+    setPosition: ((Float) -> Unit)?,
 ): SAnchorsState {
 
-    val currentGetSelectedIndex by rememberUpdatedState(getSelectedIndex)
-    val currentSetSelectedIndex by rememberUpdatedState(setSelectedIndex)
+    val currentGetPosition by rememberUpdatedState(getPosition)
+    val currentSetPosition by rememberUpdatedState(setPosition)
 
     val state = remember {
         SAnchorsState(
             initialPosition = Position(
-                currentGetSelectedIndex().toFloat(),
+                currentGetPosition(),
             ),
         )
     }
 
     LaunchedEffect(state) {
-        snapshotFlow { currentGetSelectedIndex() }
+        snapshotFlow { currentGetPosition() }
             .collectLatest { index ->
-                val position = Position(index.toFloat())
+                val position = Position(index)
                 if (position != state.position) {
                     state.position = position
                 }
@@ -63,12 +60,32 @@ fun rememberSAnchorsState(
         snapshotFlow { state.position to state.isDragging }
             .collectLatest { (position, dragging) ->
                 if (dragging) return@collectLatest
-                val index = position.position.roundToInt()
-                if (currentGetSelectedIndex() != index) {
-                    currentSetSelectedIndex?.invoke(index)
+                val position = position.position
+                if (currentGetPosition() != position) {
+                    currentSetPosition?.invoke(position)
                 }
             }
     }
 
     return state
 }
+
+@Composable
+fun SAnchorsState.Companion.rememberForFraction(
+    getFraction: () -> Float,
+    setFraction: ((Float) -> Unit)?,
+): SAnchorsState = rememberForPosition(
+    getPosition = getFraction,
+    setPosition = setFraction,
+)
+
+@Composable
+fun SAnchorsState.Companion.rememberForIndex(
+    getSelectedIndex: () -> Int,
+    setSelectedIndex: ((Int) -> Unit)?,
+): SAnchorsState = rememberForPosition(
+    getPosition = { getSelectedIndex().toFloat() },
+    setPosition = setSelectedIndex?.let { set ->
+        { index -> set(index.roundToInt()) }
+    }
+)

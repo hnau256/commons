@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.CropDin
+import androidx.compose.material.icons.filled.DonutLarge
 import androidx.compose.material.icons.filled.Earbuds
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.Save
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import arrow.optics.Iso
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
@@ -104,6 +106,17 @@ class FormProjector(
             icon = Drawable.Vector(Icons.Default.Schema),
         )
 
+    private val fraction: InputProjector = model
+        .fraction
+        .toInputProjectorPrototype(
+            floatIso = Iso.id(),
+        )
+        .createInputProjector(
+            scope = scope,
+            title = "Fraction",
+            icon = Drawable.Vector(Icons.Default.DonutLarge),
+        )
+
     private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(
         scope = scope,
         model = model.savableDelegate,
@@ -141,6 +154,7 @@ class FormProjector(
                         item { STableHeader { SText("Subtitle") } }
                         cell(key = "text") { text.Content() }
                         cell(key = "variant") { variant.Content() }
+                        cell(key = "fraction") { fraction.Content() }
                         item { STableHeader { SText("Subtitle") } }
                         cell(key = "custom_top") {
                             Subtable {

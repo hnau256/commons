@@ -17,6 +17,7 @@ data class Config(
     val integer: Int,
     val text: String,
     val scheme: Scheme,
+    val fraction: Float,
 ) {
 
     enum class Scheme { Http, Https }
@@ -29,6 +30,7 @@ data class Config(
             integer = 123,
             text = "QWERTY",
             scheme = Scheme.Https,
+            fraction = 33.33f,
         )
     }
 }
