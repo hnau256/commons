@@ -13,7 +13,11 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.platformLogWriter
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import kotlin.system.exitProcess
 import org.hnau.commons.app.model.app.AppFilesDirProvider
 import org.hnau.commons.app.model.app.DesktopApp
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
@@ -23,14 +27,21 @@ fun main() = runBlocking {
 
     Logger.setLogWriters(platformLogWriter())
 
+    val scope = CoroutineScope(
+        coroutineContext + SupervisorJob() + CoroutineExceptionHandler { _, throwable ->
+            throwable.printStackTrace()
+            exitProcess(1)
+        }
+    )
+
     val app = DesktopApp(
-        scope = this,
+        scope = scope,
         seed = createCommonsAppTestAppSeed(
             appFilesDirProvider = AppFilesDirProvider()
         ),
     )
     val projector = createAppProjector(
-        scope = this,
+        scope = scope,
         model = app,
         systemPalettes = { SystemPalettes.None },
     )
