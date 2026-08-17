@@ -36,7 +36,6 @@ import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
-import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activate
@@ -81,6 +80,7 @@ fun SAnchors(
         .containerOverlay()
 
     Box(
+        propagateMinConstraints = true,
         modifier = modifier
             .padding(LocalContentPadding.current)
             .background(
