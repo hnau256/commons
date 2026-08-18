@@ -85,6 +85,7 @@ val <T> Editable<T>.valueOrNone: Option<T>
     }
 
 
+@Deprecated("Use editable { } instead")
 inline fun <A, B, Z> Editable.Value<A>.combineEditableValueWith(
     other: Editable.Value<B>,
     crossinline combine: (A, B) -> Z,
@@ -93,6 +94,7 @@ inline fun <A, B, Z> Editable.Value<A>.combineEditableValueWith(
     changed = changed || other.changed,
 )
 
+@Deprecated("Use editable { } instead")
 inline fun <A, B, Z> Editable<A>.combineEditableWith(
     other: Editable<B>,
     crossinline combine: (A, B) -> Z,
@@ -107,6 +109,7 @@ inline fun <A, B, Z> Editable<A>.combineEditableWith(
     }
 }
 
+@Deprecated("Use derivedStateFlowOf(scope) { editable { } } instead")
 inline fun <A, B, Z> StateFlow<Editable<A>>.combineEditableWith(
     scope: CoroutineScope,
     other: StateFlow<Editable<B>>,
@@ -126,6 +129,7 @@ inline fun <A, B, Z> StateFlow<Editable<A>>.combineEditableWith(
     }
 }
 
+@Deprecated("Use editable { } instead")
 inline fun <I, O> Editable<I>.flatMap(
     transform: (I) -> Editable<O>,
 ): Editable<O> = when (this) {
@@ -148,6 +152,7 @@ inline fun <I, O> Editable.Value<I>.map(
     changed = changed,
 )
 
+@Suppress("DEPRECATION")
 inline fun <I, O> Editable<I>.map(
     transform: (I) -> O,
 ): Editable<O> = flatMap { value ->
