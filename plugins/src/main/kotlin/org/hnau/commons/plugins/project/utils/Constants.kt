@@ -14,6 +14,7 @@ internal object Constants {
     val kotlinFreeCompilerArgs: List<String> = listOf(
         "-opt-in=kotlin.time.ExperimentalTime",
         "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
         "-Xcontext-parameters"
     )
