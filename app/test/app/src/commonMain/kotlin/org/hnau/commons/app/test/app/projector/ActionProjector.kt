@@ -8,10 +8,8 @@ import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import arrow.core.nonEmptyListOf
 import kotlinx.coroutines.CoroutineScope
@@ -59,6 +57,7 @@ class ActionProjector(
                 "Integer" to config.integer.toString(),
                 "Text" to config.text,
                 "Scheme" to config.scheme.name,
+                "Fraction" to config.fraction.toString(),
             ).map { (title, value) ->
                 KeyValue(title, value)
             }
