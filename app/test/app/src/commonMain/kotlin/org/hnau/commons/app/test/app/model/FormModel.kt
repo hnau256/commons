@@ -5,9 +5,7 @@
 
 package org.hnau.commons.app.test.app.model
 
-import arrow.core.Tuple4
 import arrow.core.left
-import arrow.core.plus
 import arrow.core.right
 import arrow.core.toNonEmptyListOrThrow
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +23,8 @@ import org.hnau.commons.app.model.input.factory.toInputModelFactory
 import org.hnau.commons.app.model.input.parser.ParsingMapper
 import org.hnau.commons.app.model.input.parser.createValidator
 import org.hnau.commons.app.model.utils.ModelSavableDelegate
-import org.hnau.commons.app.model.utils.combineEditableWith
+import org.hnau.commons.app.model.utils.editable
+import org.hnau.commons.kotlin.coroutines.flow.state.derivedStateFlowOf
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.serialization.BigDecimalSerializer
 import org.hnau.commons.kotlin.serialization.BigIntegerSerializer
@@ -128,41 +127,18 @@ class FormModel(
 
     val savableDelegate: ModelSavableDelegate<Config> = ModelSavableDelegate(
         scope = scope,
-        result = flag
-            .editable
-            .combineEditableWith(
-                scope = scope,
-                other = decimal.editable,
-                combine = ::Pair,
-            )
-            .combineEditableWith(
-                scope = scope,
-                other = integer.editable,
-                combine = Pair<Boolean, Float>::plus,
-            )
-            .combineEditableWith(
-                scope = scope,
-                other = text.editable,
-                combine = Triple<Boolean, Float, Int>::plus,
-            )
-            .combineEditableWith(
-                scope = scope,
-                other = variant.editable,
-                Tuple4<Boolean, Float, Int, String>::plus
-            )
-            .combineEditableWith(
-                scope = scope,
-                other = fraction.editable,
-            ) { (flag, decimal, integer, text, variant), fraction ->
+        result = derivedStateFlowOf(scope) {
+            editable {
                 Config(
-                    flag = flag,
-                    decimal = decimal,
-                    integer = integer,
-                    text = text,
-                    scheme = variant,
-                    fraction = fraction,
+                    flag = flag.editable.state.bind(),
+                    decimal = decimal.editable.state.bind(),
+                    integer = integer.editable.state.bind(),
+                    text = text.editable.state.bind(),
+                    scheme = variant.editable.state.bind(),
+                    fraction = fraction.editable.state.bind(),
                 )
-            },
+            }
+        },
         skeleton = skeleton.savableDelegate,
         modelGoBackHandler = NeverGoBackHandler,
         close = goBack,
