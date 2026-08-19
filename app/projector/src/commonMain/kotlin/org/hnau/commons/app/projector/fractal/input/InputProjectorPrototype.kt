@@ -41,6 +41,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
                     }
                     .getOrNull()
             },
+        decoration = stateHolder.decoration,
         contentProjector = createContentProjector(
             stateHolder.type,
             stateHolder

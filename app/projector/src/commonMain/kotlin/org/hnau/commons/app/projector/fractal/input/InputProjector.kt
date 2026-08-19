@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.app.model.input.InputStateHolder.Decoration
+import org.hnau.commons.app.model.input.fold
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
@@ -12,7 +14,9 @@ import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.instant
+import org.hnau.commons.kotlin.coroutines.noAction
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
@@ -22,6 +26,7 @@ class InputProjector(
     private val startAccessory: (@Composable () -> Unit)? = null,
     importanceToActivate: Importance? = Importance.default,
     titleMaxLines: Int = 1,
+    private val decoration: StateFlow<Decoration?>,
     private val errorMessage: StateFlow<String?>,
 ) {
 
@@ -77,8 +82,31 @@ class InputProjector(
                         )
                     }
                 ) {
+                    val decoration by decoration
+                        .collectAsState()
                     SPanel(
-                        actionOrElseOrDisabled = ActionOrElse.instant(onClick),
+                        actionOrElseOrDisabled = decoration.foldNullable(
+                            ifNull = { ActionOrElse.instant(onClick) },
+                            ifNotNull = { decoration ->
+                                decoration.fold(
+                                    ifInProgress = {
+                                        ActionOrElse.Else(
+                                            onClick.foldNullable(
+                                                ifNull = { CancelOrInProgress.InProgress },
+                                                ifNotNull = CancelOrInProgress::Cancel,
+                                            )
+                                        )
+                                    },
+                                    ifSelected = { ActionOrElse.noAction },
+                                )
+                            }
+                        ),
+                        isSelected = decoration
+                            ?.fold(
+                                ifSelected = { true },
+                                ifInProgress = { false },
+                            )
+                            ?: false,
                         importanceToActivate = null,
                     ) {
                         SItem(
