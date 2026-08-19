@@ -18,6 +18,7 @@ import arrow.optics.Iso
 import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.projector.fractal.SButton
 import org.hnau.commons.app.projector.fractal.SContentWithActions
+import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SScreen
 import org.hnau.commons.app.projector.fractal.SText
@@ -49,7 +50,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Flag",
-            icon = Drawable.Vector(Icons.Default.Mood),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.Mood)) },
         )
 
 
@@ -63,7 +64,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Decimal",
-            icon = Drawable.Vector(Icons.Default.CropDin),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.CropDin)) },
         ) { state, _ ->
             "Unable parse '$state' to BigDecimal"
         }
@@ -78,7 +79,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Integer",
-            icon = Drawable.Vector(Icons.Default.Earbuds),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.Earbuds)) },
         ) { state, _ ->
             "Unable parse '$state' to BigInteger"
         }
@@ -92,7 +93,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Text",
-            icon = Drawable.Vector(Icons.Default.Chair),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.Chair)) },
         ) { state, _ -> "String '$state' is too short" }
 
     private val variant: InputProjector = model
@@ -103,7 +104,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Variant",
-            icon = Drawable.Vector(Icons.Default.Schema),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.Schema)) },
         )
 
     private val fraction: InputProjector = model
@@ -114,7 +115,7 @@ class FormProjector(
         .createInputProjector(
             scope = scope,
             title = "Fraction",
-            icon = Drawable.Vector(Icons.Default.DonutLarge),
+            startAccessory = { SIcon(Drawable.Vector(Icons.Default.DonutLarge)) },
         )
 
     private val savableDelegate: ProjectorSavableDelegate<Config> = ProjectorSavableDelegate(

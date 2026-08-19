@@ -1,11 +1,11 @@
 package org.hnau.commons.app.projector.fractal.input
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
 
@@ -21,7 +21,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
     inline fun createInputProjector(
         scope: CoroutineScope,
         title: String,
-        icon: Drawable?,
+        noinline startAccessory: (@Composable () -> Unit)? = null,
         importanceToActivate: Importance? = Importance.default,
         titleMaxLines: Int = 1,
         crossinline displayError: (S, E) -> String,
@@ -29,7 +29,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
         titleMaxLines = titleMaxLines,
         importanceToActivate = importanceToActivate,
         title = title,
-        icon = icon,
+        startAccessory = startAccessory,
         errorMessage = stateHolder
             .stateWithErrorOrNone
             .mapState(scope) { stateWithErrorOrNone ->
@@ -57,13 +57,13 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
 fun <S, I : InputType<S>> InputProjectorPrototype<S, Nothing, I>.createInputProjector(
     scope: CoroutineScope,
     title: String,
-    icon: Drawable?,
+    startAccessory: (@Composable () -> Unit)? = null,
     titleMaxLines: Int = 1,
     importanceToActivate: Importance? = Importance.default,
 ): InputProjector = createInputProjector(
     scope = scope,
     title = title,
-    icon = icon,
+    startAccessory = startAccessory,
     titleMaxLines = titleMaxLines,
     importanceToActivate = importanceToActivate,
     displayError = { _, _ -> "" }

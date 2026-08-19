@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
-import org.hnau.commons.app.projector.fractal.SIcon
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
@@ -12,17 +11,15 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.activate
-import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.instant
-import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
 
 class InputProjector(
     private val title: String,
-    private val icon: Drawable?,
     contentProjector: InputContentProjector,
+    private val startAccessory: (@Composable () -> Unit)? = null,
     importanceToActivate: Importance? = Importance.default,
     titleMaxLines: Int = 1,
     private val errorMessage: StateFlow<String?>,
@@ -85,9 +82,7 @@ class InputProjector(
                         importanceToActivate = null,
                     ) {
                         SItem(
-                            startAccessory = icon?.let { iconNotNull ->
-                                { SIcon(iconNotNull) }
-                            },
+                            startAccessory = startAccessory,
                             endAccessory = endAccessory,
                             topAccessory = itemTitleWithContent.first?.let { title ->
                                 {
