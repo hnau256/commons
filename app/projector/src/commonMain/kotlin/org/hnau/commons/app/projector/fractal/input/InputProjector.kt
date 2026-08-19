@@ -93,7 +93,9 @@ class InputProjector(
                                         ActionOrElse.Else(
                                             onClick.foldNullable(
                                                 ifNull = { CancelOrInProgress.InProgress },
-                                                ifNotNull = CancelOrInProgress::Cancel,
+                                                ifNotNull = { onClick ->
+                                                    CancelOrInProgress.Cancel(onClick)
+                                                },
                                             )
                                         )
                                     },
