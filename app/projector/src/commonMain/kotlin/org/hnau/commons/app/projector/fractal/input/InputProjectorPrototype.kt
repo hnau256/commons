@@ -14,7 +14,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
     val createContentProjector: (
         type: I,
         state: StateFlow<S>,
-        updateState: (S) -> Unit,
+        updateState: StateFlow<((S) -> Unit)?>,
     ) -> InputContentProjector,
 ) {
 
@@ -49,7 +49,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
                     scope = scope,
                     transform = KeyValue<S, *>::key,
                 ),
-            stateHolder::updateState,
+            stateHolder.updateState,
         )
     )
 }
@@ -73,7 +73,7 @@ internal fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toInputProjector
     createContentProjector: (
         type: I,
         state: StateFlow<S>,
-        updateState: (S) -> Unit,
+        updateState: StateFlow<((S) -> Unit)?>,
     ) -> InputContentProjector,
 ): InputProjectorPrototype<S, E, I> = InputProjectorPrototype(
     stateHolder = this,

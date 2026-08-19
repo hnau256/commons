@@ -10,7 +10,7 @@ import org.hnau.commons.app.projector.fractal.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.rememberRun
-import org.hnau.commons.kotlin.ifTrue
+import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.map
 
 
@@ -20,7 +20,7 @@ fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toIn
 ): InputProjectorPrototype<T, Nothing, InputType.Fraction<T>> =
     toInputProjectorPrototype { inputType, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
-            val enabled by enabled.collectAsState()
+            val updateOrNull by updateState.collectAsState()
             val value by state.collectAsState()
             val (range, length) = inputType.range.rememberRun {
                 val range = map(floatIso::get)
@@ -34,15 +34,17 @@ fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toIn
                         val floatValue = value.let(floatIso::get)
                         (floatValue - range.start) / length
                     },
-                    onFractionChanged = enabled.ifTrue {
+                    onFractionChanged = updateOrNull?.let { update ->
                         { fraction ->
-                            val length = length ?: run {
-                                updateState(inputType.range.start)
-                                return@ifTrue
-                            }
-                            val floatValue = fraction * length + range.start
-                            val value = floatIso.set(floatValue)
-                            updateState(value)
+                            update(
+                                length.foldNullable(
+                                    ifNull = { inputType.range.start },
+                                    ifNotNull = { length ->
+                                        val floatValue = fraction * length + range.start
+                                        floatIso.set(floatValue)
+                                    }
+                                )
+                            )
                         }
                     }
                 )

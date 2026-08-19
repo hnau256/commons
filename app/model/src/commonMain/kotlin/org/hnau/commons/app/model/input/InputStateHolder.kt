@@ -6,13 +6,9 @@ import org.hnau.commons.kotlin.KeyValue
 
 interface InputStateHolder<S, E, I : InputType<S>> {
 
-    val enabled: StateFlow<Boolean>
-
     val type: I
 
     val stateWithErrorOrNone: StateFlow<KeyValue<S, Option<E>>>
 
-    fun updateState(
-        newState: S,
-    )
+    val updateState: StateFlow<((S) -> Unit)?>
 }

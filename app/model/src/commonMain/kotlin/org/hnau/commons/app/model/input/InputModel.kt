@@ -14,6 +14,7 @@ import kotlinx.serialization.UseSerializers
 import org.hnau.commons.app.model.utils.Editable
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.flow.state.mapState
+import org.hnau.commons.kotlin.ifTrue
 import org.hnau.commons.kotlin.serialization.MutableStateFlowSerializer
 
 class InputModel<S, V, E, I : InputType<S>>(
@@ -21,7 +22,7 @@ class InputModel<S, V, E, I : InputType<S>>(
     private val skeleton: InputSkeleton<S, V>,
     override val type: I,
     private val parse: (S) -> Either<E, V>,
-    override val enabled: StateFlow<Boolean>,
+    enabled: StateFlow<Boolean>,
 ) : InputStateHolder<S, E, I> {
 
     private val stateWithValueOrError: StateFlow<KeyValue<S, Either<E, V>>> = skeleton
@@ -41,8 +42,8 @@ class InputModel<S, V, E, I : InputType<S>>(
             }
         }
 
-    override fun updateState(newState: S) {
-        skeleton.state.value = newState
+    override val updateState: StateFlow<((S) -> Unit)?> = enabled.mapState(scope) { enabled ->
+        enabled.ifTrue { skeleton.state::value::set }
     }
 
     val valueOrError: StateFlow<Either<E, V>> = stateWithValueOrError.mapState(

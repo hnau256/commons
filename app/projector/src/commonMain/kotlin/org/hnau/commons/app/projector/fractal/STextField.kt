@@ -48,14 +48,14 @@ import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun STextField(
     value: String,
-    onValueChanged: (String) -> Unit,
+    onValueChanged: ((String) -> Unit)?,
     modifier: Modifier = Modifier,
     textStyle: SizeType = SizeType.default,
-    enabled: Boolean = true,
     inputTransformation: InputTransformation? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActionHandler? = null,
@@ -75,7 +75,7 @@ fun STextField(
 
         LaunchedEffect(internalState) {
             snapshotFlow { internalState.text }.collect { newUiText ->
-                onValueChanged(newUiText.toString())
+                onValueChanged?.invoke(newUiText.toString())
             }
         }
 
@@ -109,13 +109,13 @@ fun STextField(
                     isFocused = focusState.isFocused
                     if (isFocused) {
                         coroutineScope.launch {
-                            delay(100)
+                            delay(100.milliseconds)
                             bringIntoViewRequester.bringIntoView()
                         }
                     }
                 },
-            enabled = enabled,
-            readOnly = !enabled,
+            enabled = onValueChanged != null,
+            readOnly = onValueChanged == null,
             textStyle = units.textStyle[textStyle].merge(
                 color = contentFContext.color,
             ),

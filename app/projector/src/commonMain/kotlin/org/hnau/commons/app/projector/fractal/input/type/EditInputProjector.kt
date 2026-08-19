@@ -28,7 +28,6 @@ import org.hnau.commons.app.projector.fractal.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
-import org.hnau.commons.kotlin.ifTrue
 
 
 @JvmName("toEditInputProjectorPrototype")
@@ -40,7 +39,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
 ): InputProjectorPrototype<String, E, InputType.Edit> =
     toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
-            val enabled by enabled.collectAsState()
+            val updateOrNull by updateState.collectAsState()
             val value by state.collectAsState()
             var isFocused: Boolean by remember { mutableStateOf(false) }
             val focusRequester = remember { FocusRequester() }
@@ -50,17 +49,16 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
             itemDrawer.Item(
                 onClick = { focusRequester.requestFocus() },
                 isFocused = isFocused,
-                endAccessory = value
-                    .isNotEmpty()
-                    .and(enabled)
-                    .and(showClearButton)
-                    .ifTrue {
+                endAccessory = updateOrNull
+                    ?.takeIf { value.isNotEmpty() }
+                    ?.takeIf { showClearButton }
+                    ?.let { update ->
                         {
                             SIcon(
                                 drawable = Drawable.Vector(Icons.Default.Close),
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .clickable { updateState("") }
+                                    .clickable { update("") }
                             )
                         }
                     }
@@ -72,14 +70,13 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                             isFocused = focusState.isFocused
                         },
                     value = value,
-                    onValueChanged = updateState,
+                    onValueChanged = updateOrNull,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         imeAction = imeAction,
                         keyboardType = keyboardType,
                     ),
                     lineLimits = TextFieldLineLimits.SingleLine,
-                    enabled = enabled,
                 )
             }
         }

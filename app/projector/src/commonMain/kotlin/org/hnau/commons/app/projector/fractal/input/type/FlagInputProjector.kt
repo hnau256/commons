@@ -9,17 +9,16 @@ import org.hnau.commons.app.projector.fractal.SText
 import org.hnau.commons.app.projector.fractal.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
-import org.hnau.commons.kotlin.ifTrue
 
 
 @JvmName("toFlagInputProjectorPrototype")
 fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, Nothing, InputType.Flag> =
     toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
-            val enabled by enabled.collectAsState()
+            val updateOrNull by updateState.collectAsState()
             val isChecked by state.collectAsState()
             itemDrawer.Item(
-                onClick = enabled.ifTrue { { updateState(!isChecked) } },
+                onClick = updateOrNull?.let { update -> { update(!isChecked) } },
                 endAccessory = {
                     SCheckBox(
                         isChecked = isChecked
