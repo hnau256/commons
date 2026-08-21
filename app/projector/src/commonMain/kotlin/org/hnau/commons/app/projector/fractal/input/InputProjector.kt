@@ -91,12 +91,10 @@ class InputProjector(
                                 decoration.fold(
                                     ifInProgress = {
                                         ActionOrElse.Else(
-                                            onClick.foldNullable(
-                                                ifNull = { CancelOrInProgress.InProgress },
-                                                ifNotNull = { onClick ->
-                                                    CancelOrInProgress.Cancel(onClick)
-                                                },
-                                            )
+                                            cancelOrInProgress = when (onClick) {
+                                                null -> CancelOrInProgress.InProgress
+                                                else -> CancelOrInProgress.Cancel(onClick)
+                                            } //TODO replace with foldNullable
                                         )
                                     },
                                     ifSelected = { ActionOrElse.noAction },
