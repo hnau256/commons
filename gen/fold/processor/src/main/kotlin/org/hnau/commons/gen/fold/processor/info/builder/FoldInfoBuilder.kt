@@ -19,6 +19,12 @@ import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
 import com.squareup.kotlinpoet.ksp.toTypeName as kspToTypeName
 
+private val nonPublicModifiers: Set<Modifier> = setOf(
+    Modifier.PRIVATE,
+    Modifier.PROTECTED,
+    Modifier.INTERNAL,
+)
+
 fun FoldInfo.Companion.create(
     logger: KSPLogger,
     annotated: KSAnnotated,
@@ -83,18 +89,37 @@ fun FoldInfo.Companion.create(
                         subclass.classKind == ClassKind.OBJECT ->
                             FoldInfo.Resolution.Object
 
-                        subclass.modifiers.contains(Modifier.DATA) -> FoldInfo.Resolution.Destructured(
-                            parameters = subclass
-                                .primaryConstructor
-                                ?.parameters
-                                ?.map { param ->
-                                    FoldInfo.Parameter(
-                                        name = param.name?.asString() ?: "value",
-                                        type = param.type.toTypeName(),
-                                    )
+                        subclass.modifiers.contains(Modifier.DATA) -> {
+
+                            val publicProperties = subclass
+                                .getAllProperties()
+                                .filter { property ->
+                                    property
+                                        .modifiers
+                                        .none { it in nonPublicModifiers }
                                 }
-                                .orEmpty(),
-                        )
+                                .associateBy { it.simpleName.asString() }
+
+                            FoldInfo.Resolution.Destructured(
+                                parameters = subclass
+                                    .primaryConstructor
+                                    ?.parameters
+                                    .orEmpty()
+                                    .mapNotNull { param ->
+
+                                        val name = param
+                                            .name
+                                            ?.asString()
+                                            ?.takeIf { it in publicProperties }
+                                            ?: return@mapNotNull null
+
+                                        FoldInfo.Parameter(
+                                            name = name,
+                                            type = param.type.toTypeName(),
+                                        )
+                                    },
+                            )
+                        }
 
                         else -> FoldInfo.Resolution.Whole(
                             type = subclass.toClassName(),
