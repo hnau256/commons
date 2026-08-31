@@ -12,7 +12,7 @@ val FoldInfo.className: ClassName
     get() = classDeclaration.toClassName()
 
 val FoldInfo.fileName: String
-    get() = classDeclaration.simpleName.asString() + "Fold"
+    get() = className.simpleNames.joinToString("") + "Fold"
 
 val FoldInfo.isEnum: Boolean
     get() = classDeclaration.classKind == ClassKind.ENUM_CLASS
