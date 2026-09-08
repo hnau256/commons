@@ -1,45 +1,84 @@
-# Gradle Convention Plugins — Two-Phase Publishing
+# Commons — publishing a new version to `~/.m2`
 
-Convention plugins live in `plugins/` and are published to `~/.m2` (Maven Local).
-Other modules resolve them from there, **not** from source. When you change plugin source code:
+All Commons artifacts (`commons-kotlin`, `gen/*` annotations+processors, `app-model`, `app-projector`,
+and the `org.hnau.plugin.*` convention plugins) are published to `~/.m2` (Maven Local). Consumer
+projects (e.g. PinFin) resolve them from there, **not** from source. Version lives in
+`version.properties`; it is baked as the `hnauCommonsVersion` const into the compiled `plugins`
+jar, and every `hnau.*` alias in consumer builds resolves through it.
 
-## Two-Phase Deploy
+## Runbook — publish a new version
 
-### Phase 1: Publish plugins from source
+### 1. Bump `version.properties`
 
-1. Restore any plugin code changes you need (e.g. `applyKotlinComposePlugin()`).
-2. In `version.properties`:
-   ```properties
-   version=1.23.X        # bump to a NEW version
-   pluginVersion=1.23.Y  # uncomment, set to LAST published version (for settings plugin bootstrap)
-   ```
-3. Run:
-   ```bash
-   ./gradlew --stop
-   rm -rf plugins/build
-   ./gradlew :plugins:publishToMavenLocal
-   ```
-   This compiles plugins from **current source** and publishes them as `version=X`.
+`pluginVersion` is ALWAYS the last published version — keep it where it is.
 
-### Phase 2: Build the project with new plugins
+```properties
+version=1.27.9        # NEW version being published
+pluginVersion=1.27.8  # the LAST published version — untouched
+```
 
-4. In `version.properties` — comment `pluginVersion` back:
-   ```properties
-   version=1.23.X
-   # pluginVersion=1.23.X
-   ```
-5. Run the main build:
-   ```bash
-   ./gradlew :app:test:android:assembleDebug
-   ```
+- `pluginVersion` bootstraps `org.hnau.plugin.settings` from the last published JAR, which is needed
+  to even parse `settings.gradle.kts` while the new `version` is not yet published.
+- All *other* `org.hnau.plugin.*` resolve to `version` (the catalog) and are built **from source**
+  because `version` is newer than anything in `~/.m2`.
 
-## Why this is needed
+### 2. Publish everything
 
-- `pluginVersion=1.23.Y` bootstraps `HnauSettingsPlugin` from the last published JAR — needed to even parse `settings.gradle.kts`.
-- `version=1.23.X` (new, unpublished) forces Gradle to build plugins from source instead of resolving from `~/.m2`.
-- Without this, Gradle resolves plugins from the cached JAR in `~/.m2` and source changes are silently ignored.
+```bash
+./gradlew publishToMavenLocal
+```
 
-## Bootstrap mechanic in `settings.gradle.kts`
+Publishes ALL modules (kotlin, gen/*, app/model, app/projector, plugins) at `version`.
+Do not publish just `plugins/` — consumers resolve the full `hnau.*` graph at one version, so the
+whole repo must be there.
+
+### 3. Raise the plugin version after a successful publish
+
+Now that `version` is published, move `pluginVersion` up to match:
+
+```properties
+version=1.27.9
+pluginVersion=1.27.9
+```
+
+So `pluginVersion` always points at the last published version — ready for the next bump (there you
+only change `version`, leaving `pluginVersion` at 1.27.9 again).
+
+### 4. Point consumers at the new version
+
+Bump the settings-plugin pin in each consumer, e.g. PinFin `settings.gradle.kts`:
+
+```kotlin
+id("org.hnau.plugin.settings") version "1.27.9"
+```
+
+Because `hnauCommonsVersion` is baked into the settings plugin at build time, this single bump
+re-points ALL `hnau.*` artifact/plugin aliases (including the KSP generators: pipe, loggable,
+sealup, enumvalues, fold) to the new version.
+
+### 5. Rebuild the consumer
+
+```bash
+cd <consumer>
+./gradlew :data:compileKotlinJvm   # e.g. PinFin — first module that runs the KSP generators
+```
+
+## Rules
+
+- **ALWAYS bump `version`** — never republish/overwrite an already-deployed version in `~/.m2`.
+- `pluginVersion` must stay at the last published version at all times (raise it in step 3 right
+  after the publish succeeds; never set it to an unpublished version).
+- `publishToMavenLocal` is versioned, so consumers must resolve the new version (step 4) or they
+  keep using the old jar and your source changes are **silently ignored**.
+- If a consumer fails to resolve the new version after bumping, run with `--refresh-dependencies`
+  (or wipe the stale entry under `~/.gradle/caches/modules-2/files-2.1/org.hnau.commons/...`).
+
+## How version wiring works
+
+- `hnauCommonsVersion` const is generated in `plugins/build.gradle.kts` from
+  `rootProject.extra["hnauCommonsVersion"]` at plugin compile time and read by
+  `plugins/.../utils/versions/Version.kt` (`Version.HnauCommons`). All `hnau.*` aliases use it.
+- Settings plugin bootstrap (`settings.gradle.kts`):
 
 ```kotlin
 resolutionStrategy {
@@ -52,8 +91,9 @@ resolutionStrategy {
 }
 ```
 
-- Settings plugin uses `pluginVersion` (if set) → resolves from published JAR.
-- All other `org.hnau.plugin.*` use `version` from the catalog → resolves from source if version > any published.
+  - Settings plugin uses `pluginVersion` (if set) → resolves from the published JAR.
+  - All other `org.hnau.plugin.*` use `version` from the catalog → resolved from source when
+    `version` is newer than anything published.
 
 ## Important plugin call chain
 
