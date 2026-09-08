@@ -14,6 +14,7 @@ data class FoldInfo(
         val identifier: String,
         val resolution: Resolution,
         val className: ClassName,
+        val typeVariables: List<TypeVariableName> = emptyList(),
     )
 
     sealed interface Resolution {

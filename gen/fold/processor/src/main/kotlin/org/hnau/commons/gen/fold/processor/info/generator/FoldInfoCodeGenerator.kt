@@ -13,9 +13,16 @@ import org.hnau.commons.gen.fold.processor.info.generator.utils.isEnum
 import org.hnau.commons.gen.fold.processor.info.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.kotlin.codeBlock
 
+private fun List<TypeVariableName>.resultTypeVariable(): TypeVariableName {
+    val usedNames = mapTo(mutableSetOf()) { it.name }
+    val name = generateSequence("R") { "${it}_fold" }
+        .first { it !in usedNames }
+    return TypeVariableName(name)
+}
+
 fun FoldInfo.toFoldRawFunSpec(): FunSpec {
-    val returnType = TypeVariableName("R")
     val classTypeVars = this.typeVariables
+    val returnType = classTypeVars.resultTypeVariable()
     return FunSpec
         .builder("foldRaw")
         .apply {
@@ -31,10 +38,10 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
             returns(returnType)
 
             variants.forEach { variant ->
-                val variantType: TypeName = if (classTypeVars.isNotEmpty() &&
+                val variantType: TypeName = if (variant.typeVariables.isNotEmpty() &&
                     variant.resolution !is FoldInfo.Resolution.Object
                 ) {
-                    variant.className.parameterizedBy(*classTypeVars.toTypedArray())
+                    variant.className.parameterizedBy(*variant.typeVariables.toTypedArray())
                 } else {
                     variant.className
                 }
@@ -70,8 +77,8 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
 }
 
 fun FoldInfo.toFoldFunSpec(): FunSpec {
-    val returnType = TypeVariableName("R")
     val classTypeVars = this.typeVariables
+    val returnType = classTypeVars.resultTypeVariable()
     return FunSpec
         .builder("fold")
         .apply {

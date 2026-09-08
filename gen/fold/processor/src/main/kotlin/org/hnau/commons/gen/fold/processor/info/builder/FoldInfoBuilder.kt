@@ -85,6 +85,10 @@ fun FoldInfo.Companion.create(
                 .map { subclass ->
                     val identifier = subclass.simpleName.asString()
                     val subclassClassName = subclass.toClassName()
+                    val subclassTypeVariableNames = subclass
+                        .typeParameters
+                        .map { it.simpleName.asString() }
+                        .toSet()
                     val resolution = when {
                         subclass.classKind == ClassKind.OBJECT ->
                             FoldInfo.Resolution.Object
@@ -129,6 +133,9 @@ fun FoldInfo.Companion.create(
                         identifier = identifier,
                         resolution = resolution,
                         className = subclassClassName,
+                        typeVariables = typeVariables.filter { typeVariable ->
+                            typeVariable.name in subclassTypeVariableNames
+                        },
                     )
                 }
                 .toList()
