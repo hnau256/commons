@@ -10,11 +10,19 @@ jar, and every `hnau.*` alias in consumer builds resolves through it.
 
 ### 1. Bump `version.properties`
 
-`pluginVersion` is ALWAYS the last published version — keep it where it is.
+At rest `pluginVersion` is COMMENTED OUT and its value is the last published version. To publish:
 
 ```properties
 version=1.27.9        # NEW version being published
-pluginVersion=1.27.8  # the LAST published version — untouched
+# pluginVersion=1.27.8  # last published version — the value under the comment
+```
+
+Uncomment `pluginVersion` for the duration of the publication; its value is already correct (it was
+raised to the last published version at the end of the previous publication):
+
+```properties
+version=1.27.9
+pluginVersion=1.27.8
 ```
 
 - `pluginVersion` bootstraps `org.hnau.plugin.settings` from the last published JAR, which is needed
@@ -32,17 +40,17 @@ Publishes ALL modules (kotlin, gen/*, app/model, app/projector, plugins) at `ver
 Do not publish just `plugins/` — consumers resolve the full `hnau.*` graph at one version, so the
 whole repo must be there.
 
-### 3. Raise the plugin version after a successful publish
+### 3. After a successful publish
 
-Now that `version` is published, move `pluginVersion` up to match:
+Raise the `pluginVersion` value to the new version and comment it back out:
 
 ```properties
 version=1.27.9
-pluginVersion=1.27.9
+# pluginVersion=1.27.9
 ```
 
-So `pluginVersion` always points at the last published version — ready for the next bump (there you
-only change `version`, leaving `pluginVersion` at 1.27.9 again).
+So the commented value always points at the last published version — ready for the next bump, where
+you only change `version` and uncomment `pluginVersion` again.
 
 ### 4. Point consumers at the new version
 
@@ -66,8 +74,8 @@ cd <consumer>
 ## Rules
 
 - **ALWAYS bump `version`** — never republish/overwrite an already-deployed version in `~/.m2`.
-- `pluginVersion` must stay at the last published version at all times (raise it in step 3 right
-  after the publish succeeds; never set it to an unpublished version).
+- `pluginVersion` (comment value) always holds the last published version; keep it COMMENTED at rest
+  and uncommented only for the duration of a publication. Never set it to an unpublished version.
 - `publishToMavenLocal` is versioned, so consumers must resolve the new version (step 4) or they
   keep using the old jar and your source changes are **silently ignored**.
 - If a consumer fails to resolve the new version after bumping, run with `--refresh-dependencies`
