@@ -14,6 +14,7 @@ import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
+import com.squareup.kotlinpoet.ksp.toTypeVariableName
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
@@ -49,11 +50,14 @@ fun FoldInfo.Companion.create(
         return null
     }
 
-    val typeVariables = classDeclaration.typeParameters
-        .map { TypeVariableName(it.simpleName.asString()) }
-
     val typeParamResolver: TypeParameterResolver =
         classDeclaration.typeParameters.toTypeParameterResolver()
+
+    val typeVariables = classDeclaration.typeParameters
+        .map { typeParameter ->
+            val variable = typeParameter.toTypeVariableName(typeParamResolver)
+            TypeVariableName(variable.name, variable.bounds)
+        }
 
     fun KSTypeReference.toTypeName(): TypeName {
         val typeName = kspToTypeName(typeParamResolver)
