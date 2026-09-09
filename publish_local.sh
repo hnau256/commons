@@ -52,6 +52,11 @@ echo "--- Phase 1: bootstrap — publish plugins at ${new_version} (via old plug
 # full build resolves the new plugins.
 cat > "$VERSION_FILE" <<EOF
 version=${new_version}
+
+# Optional: override plugin version for bootstrap
+# If not specified, 'version' is used for both artifacts and plugins
+# This is useful when the plugin code itself has breaking changes
+# and you need to bootstrap with an older published version
 # pluginVersion=${new_version}
 EOF
 
