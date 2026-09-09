@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.uikit.line
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
@@ -21,6 +22,7 @@ import arrow.core.left
 import arrow.core.right
 import org.hnau.commons.app.projector.uikit.line.ext.Constraints
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
+import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.copy
@@ -40,6 +42,7 @@ import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.castOrElse
 import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.foldNullable
 
 @Composable
 fun Line(
@@ -47,6 +50,7 @@ fun Line(
     modifier: Modifier = Modifier,
     separation: Dp = 0.dp,
     reverseOrdering: Boolean = false,
+    acrossOrientation: Alignment.Horizontal? = null,
     content: @Composable LineScope.() -> Unit,
 ) {
     Layout(
@@ -55,11 +59,13 @@ fun Line(
             orientation,
             separation,
             reverseOrdering,
+            acrossOrientation,
         ) {
             LineMeasurePolicy(
                 orientation = orientation,
                 separation = separation,
                 reverseOrdering = reverseOrdering,
+                acrossAlignment = acrossOrientation,
             )
         },
         content = { lineScopeImpl.content() },
@@ -72,6 +78,7 @@ private data class LineMeasurePolicy(
     private val orientation: Orientation,
     private val separation: Dp,
     private val reverseOrdering: Boolean,
+    private val acrossAlignment: Alignment.Horizontal?,
 ) : MeasurePolicy {
 
     override fun MeasureScope.measure(
@@ -108,7 +115,10 @@ private data class LineMeasurePolicy(
             useWeight = true,
             measurables = orderedMeasurables,
             constraints = constraints.copy(
-                minAcross = across,
+                minAcross = acrossAlignment.foldNullable(
+                    ifNull = { across },
+                    ifNotNull = { 0 },
+                ),
                 maxAcross = across,
             ),
             extractParentData = Measurable::parentData,
@@ -130,7 +140,16 @@ private data class LineMeasurePolicy(
             placeables.forEach { placeable ->
                 placeable.placeRelative(
                     along = along,
-                    across = 0,
+                    across = acrossAlignment.foldNullable(
+                        ifNull = { 0 },
+                        ifNotNull = { alignment ->
+                            alignment.align(
+                                size = placeable.across,
+                                space = across,
+                                layoutDirection = layoutDirection,
+                            )
+                        }
+                    ),
                 )
                 along += placeable.along + separationPixels
             }

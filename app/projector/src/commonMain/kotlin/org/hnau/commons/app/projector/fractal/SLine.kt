@@ -3,6 +3,7 @@ package org.hnau.commons.app.projector.fractal
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,7 @@ fun SLine(
     modifier: Modifier = Modifier,
     separation: Dp = 0.dp,
     reverseOrdering: Boolean = false,
+    acrossOrientation: Alignment.Horizontal? = null,
     content: @Composable LineScope.() -> Unit,
 ) {
     with(orientation) {
@@ -36,6 +38,7 @@ fun SLine(
             orientation = orientation,
             separation = separation,
             reverseOrdering = reverseOrdering,
+            acrossOrientation = acrossOrientation,
         ) {
             CompositionLocalProvider(
                 value = LocalContentPadding provides PaddingValues(
