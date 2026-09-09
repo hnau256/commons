@@ -61,3 +61,5 @@ echo "--- Phase 2: full publish at ${new_version}"
 git add "$VERSION_FILE"
 git commit -m "v${new_version}"
 echo "Committed version.properties as v${new_version}"
+git push
+echo "Pushed version.properties as v${new_version}"
