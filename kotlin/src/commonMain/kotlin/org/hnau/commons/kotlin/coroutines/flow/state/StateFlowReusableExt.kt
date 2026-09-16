@@ -4,6 +4,7 @@ import arrow.core.NonEmptyList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import org.hnau.commons.kotlin.ZipList
 import org.hnau.commons.kotlin.coroutines.createChild
 
 interface ReusableStateScope<in K, ITEM> {
@@ -19,6 +20,23 @@ fun <I, K, O> StateFlow<NonEmptyList<I>>.mapNonEmptyListReusable(
     extractKey: (I) -> K,
     transform: (CoroutineScope, I) -> O,
 ): StateFlow<NonEmptyList<O>> = mapReusable(
+    scope = scope,
+) { nonEmptyItems ->
+    nonEmptyItems.map { item ->
+        getOrPutItem(
+            key = extractKey(item),
+            build = { itemScope ->
+                transform(itemScope, item)
+            }
+        )
+    }
+}
+
+fun <I, K, O> StateFlow<ZipList<I>>.mapZipListReusable(
+    scope: CoroutineScope,
+    extractKey: (I) -> K,
+    transform: (CoroutineScope, I) -> O,
+): StateFlow<ZipList<O>> = mapReusable(
     scope = scope,
 ) { nonEmptyItems ->
     nonEmptyItems.map { item ->
