@@ -27,7 +27,6 @@ fun SButton(
         isSelected = isSelected,
         importanceToActivate = importanceToActivate,
         contentOrientation = Orientation.Horizontal,
-        contentAlignment = Alignment.Center,
     ) {
         STitleOrIcon(
             titleOrIcon = titleOrIcon.withActionOrElse(
