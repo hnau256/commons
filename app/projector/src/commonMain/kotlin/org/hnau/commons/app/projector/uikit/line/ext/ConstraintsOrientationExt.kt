@@ -54,6 +54,10 @@ context(orientation: Orientation)
 val Constraints.minAcross: Int
     get() = min(Direction.Across)
 
+context(orientation: Orientation)
+val Constraints.fixedAcrossOrNull: Int?
+    get() = maxAcross?.takeIf { it == minAcross }
+
 
 context(orientation: Orientation)
 fun Constraints.constrain(

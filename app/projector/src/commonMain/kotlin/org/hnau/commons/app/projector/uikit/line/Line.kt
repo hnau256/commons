@@ -26,6 +26,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
 import org.hnau.commons.app.projector.uikit.line.ext.copy
+import org.hnau.commons.app.projector.uikit.line.ext.fixedAcrossOrNull
 import org.hnau.commons.app.projector.uikit.line.ext.maxAcross
 import org.hnau.commons.app.projector.uikit.line.ext.maxAlong
 import org.hnau.commons.app.projector.uikit.line.ext.maxIntrinsicAcross
@@ -104,12 +105,14 @@ private data class LineMeasurePolicy(
                 )
         }
 
-        val childrenAcross = calcIntrinsicAcross(
-            measurables = orderedMeasurables,
-            max = true,
-            along = constraints.maxAlong,
-        )
-        val across = constraints.constrainAcross(childrenAcross)
+        val across = constraints.fixedAcrossOrNull
+            ?: constraints.constrainAcross(
+                calcIntrinsicAcross(
+                    measurables = orderedMeasurables,
+                    max = true,
+                    along = constraints.maxAlong,
+                )
+            )
 
         val placeables = measure(
             useWeight = true,
