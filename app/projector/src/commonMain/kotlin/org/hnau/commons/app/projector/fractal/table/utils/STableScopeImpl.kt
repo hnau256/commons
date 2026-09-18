@@ -31,17 +31,8 @@ internal class STableScopeImpl(
         var position by remember { mutableStateOf(LinePosition(false, false)) }
         val tableCorners = this.corners
 
-        val cornersProvider = remember(tableCorners) {
-            ShapeCorners.Provider {
-                val pos = position
-                tableCorners
-                    .getTableCorners()
-                    .close(
-                        orientation = orientation,
-                        startOrTop = !pos.isFirst,
-                        endOrBottom = !pos.isLast,
-                    )
-            }
+        val cornersProvider = remember(tableCorners, orientation) {
+            tableCorners.closeAt(orientation) { position }
         }
         Box(
             modifier = modifier.onPositionInLineChanged { position = it },

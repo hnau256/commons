@@ -27,8 +27,10 @@ import org.hnau.commons.app.projector.fractal.padding.localContentPaddingShadow
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableScope
+import org.hnau.commons.app.projector.fractal.table.utils.closeAt
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
+import org.hnau.commons.app.projector.uikit.line.LinePosition
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.PaddingValues
 import org.hnau.commons.app.projector.utils.acrossFrom
@@ -332,21 +334,20 @@ private class SLazyTableScopeImpl(
                             lazyItemScope = this,
                         )
 
-                        val cornersProvider = ShapeCorners.Provider {
-                            corners
-                                .getTableCorners()
-                                .close(
-                                    orientation = orientation,
-                                    startOrTop = reverseOrdering.foldBoolean(
-                                        ifFalse = { !isFirstCell },
-                                        ifTrue = { !isLastCell },
-                                    ),
-                                    endOrBottom = reverseOrdering.foldBoolean(
-                                        ifFalse = { !isLastCell },
-                                        ifTrue = { !isFirstCell },
-                                    ),
-                                )
+                        val position = LinePosition(
+                            isFirst = isFirstCell,
+                            isLast = isLastCell,
+                        ).let { position ->
+                            reverseOrdering.foldBoolean(
+                                ifFalse = { position },
+                                ifTrue = { position.reversed },
+                            )
                         }
+
+                        val cornersProvider = corners.closeAt(
+                            orientation = orientation,
+                            position = position,
+                        )
 
                         CompositionLocalProvider(
                             LocalShapeCorners provides cornersProvider,

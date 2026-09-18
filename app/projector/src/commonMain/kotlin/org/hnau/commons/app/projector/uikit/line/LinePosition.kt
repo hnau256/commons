@@ -19,6 +19,12 @@ value class LinePosition private constructor(
     val isLast: Boolean
         get() = packed.toInt() and LAST != 0
 
+    val reversed: LinePosition
+        get() = LinePosition(
+            isFirst = isLast,
+            isLast = isFirst,
+        )
+
     override fun toString(): String =
         "LinePosition(isFirst=$isFirst,isLast=$isLast)"
 
