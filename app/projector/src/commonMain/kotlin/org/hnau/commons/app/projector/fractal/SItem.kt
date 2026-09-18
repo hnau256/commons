@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.ConsumeContentPadding
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.SizeType
 import org.hnau.commons.app.projector.fractal.size.units
@@ -66,7 +67,9 @@ fun SItem(
             content.NullableStateContent(
                 transitionSpec = TransitionSpec.rememberCenter(),
             ) { contentNotNull ->
-                contentNotNull()
+                ConsumeContentPadding {
+                    contentNotNull()
+                }
             }
             Accessory(
                 side = Side.Bottom,
