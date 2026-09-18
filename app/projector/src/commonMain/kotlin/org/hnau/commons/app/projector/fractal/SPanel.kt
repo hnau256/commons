@@ -4,10 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
@@ -18,6 +16,7 @@ import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
 import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
@@ -40,7 +39,6 @@ fun SPanel(
     contentOrientation: Orientation = Orientation.Vertical,
     shape: Shape = rememberFShape(),
     importanceToActivate: Importance? = Importance.default,
-    contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable () -> Unit,
 ) {
     LocalContentPaddingBox {
@@ -97,20 +95,14 @@ fun SPanel(
                             }
                         ),
                 ) {
-                    Box(
-                        modifier = Modifier.padding(
-                            paddingValues = LocalDistance.current
-                                .units
-                                .paddingValues[contentOrientation]
-                                .medium
-                        ),
-                        contentAlignment = contentAlignment,
-                    ) {
-                        CompositionLocalProvider(
-                            value = LocalShapeCorners provides ShapeCorners.Provider.opened,
-                            content = content,
-                        )
-                    }
+                    val contentPadding = units
+                        .paddingValues[contentOrientation]
+                        .medium
+                    CompositionLocalProvider(
+                        LocalContentPadding provides contentPadding,
+                        LocalShapeCorners provides ShapeCorners.Provider.opened,
+                        content = content,
+                    )
                 }
             }
         }
