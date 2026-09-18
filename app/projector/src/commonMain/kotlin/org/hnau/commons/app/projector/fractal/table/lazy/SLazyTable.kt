@@ -337,8 +337,14 @@ private class SLazyTableScopeImpl(
                                 .getTableCorners()
                                 .close(
                                     orientation = orientation,
-                                    startOrTop = !isFirstCell,
-                                    endOrBottom = !isLastCell,
+                                    startOrTop = reverseOrdering.foldBoolean(
+                                        ifFalse = { !isFirstCell },
+                                        ifTrue = { !isLastCell },
+                                    ),
+                                    endOrBottom = reverseOrdering.foldBoolean(
+                                        ifFalse = { !isLastCell },
+                                        ifTrue = { !isFirstCell },
+                                    ),
                                 )
                         }
 
