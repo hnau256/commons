@@ -13,6 +13,7 @@ import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.map
 
+import kotlin.jvm.JvmName
 
 @JvmName("toFractionInputProjectorPrototype")
 fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toInputProjectorPrototype(

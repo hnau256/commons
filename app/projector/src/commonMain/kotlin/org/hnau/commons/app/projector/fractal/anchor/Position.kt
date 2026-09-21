@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal.anchor
 
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.TwoWayConverter
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class Position(

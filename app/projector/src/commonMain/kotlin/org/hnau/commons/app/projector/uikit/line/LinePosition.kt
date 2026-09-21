@@ -1,4 +1,5 @@
 package org.hnau.commons.app.projector.uikit.line
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class LinePosition private constructor(

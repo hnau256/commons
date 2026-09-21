@@ -10,6 +10,7 @@ import org.hnau.commons.app.projector.fractal.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 
+import kotlin.jvm.JvmName
 
 @JvmName("toFlagInputProjectorPrototype")
 fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, Nothing, InputType.Flag> =

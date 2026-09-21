@@ -29,6 +29,7 @@ import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
 
+import kotlin.jvm.JvmName
 
 @JvmName("toEditInputProjectorPrototype")
 fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(

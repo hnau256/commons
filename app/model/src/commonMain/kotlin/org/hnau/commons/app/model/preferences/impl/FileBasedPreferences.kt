@@ -4,7 +4,6 @@ import arrow.core.Option
 import arrow.core.toOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -67,7 +66,7 @@ class FileBasedPreferences(
         override suspend fun createPreferences(
             scope: CoroutineScope,
         ): Preferences {
-            val text = withContext(Dispatchers.IO) {
+            val text = withContext(Dispatchers.Default) {
                 preferencesFile
                     .takeIf(File::exists)
                     ?.source()
@@ -86,7 +85,7 @@ class FileBasedPreferences(
                     val text = withContext(Dispatchers.Default) {
                         newValues.let(stringToValuesMapper.reverse)
                     }
-                    withContext(Dispatchers.IO) {
+                    withContext(Dispatchers.Default) {
                         preferencesFile
                             .apply { parent?.mkDirs() }
                             .sink()

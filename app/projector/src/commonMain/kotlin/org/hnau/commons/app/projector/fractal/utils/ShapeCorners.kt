@@ -1,6 +1,7 @@
 package org.hnau.commons.app.projector.fractal.utils
 
 import org.hnau.commons.app.projector.utils.Orientation
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class ShapeCorners private constructor(

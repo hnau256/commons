@@ -1,4 +1,5 @@
 package org.hnau.commons.app.projector.fractal.anchor
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class RectCenterAlongPx(
