@@ -10,6 +10,7 @@ import org.hnau.commons.plugins.project.utils.ProjectConfig
 import org.hnau.commons.plugins.project.utils.ProjectType
 import org.hnau.commons.plugins.project.utils.androidNamespace
 import org.jetbrains.compose.ComposePlugin
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -33,6 +34,7 @@ internal fun Project.configureKmp(
         freeCompilerArgs.addAll(Constants.kotlinFreeCompilerArgs)
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     fun configSourceSets(
         withCompose: Boolean,
     ) {
@@ -46,6 +48,10 @@ internal fun Project.configureKmp(
                     jvm { withSourcesJar() }
                     linuxX64()
                 }
+            }
+
+            wasmJs {
+                nodejs()
             }
         }
     }
@@ -84,7 +90,7 @@ internal fun Project.configureKmp(
                 applyKotlinComposePlugin()
 
                 dependencies.add(
-                    "${Constants.desktopTargetName}MainImplementation",
+                    Constants.desktopMainImplementation,
                     ComposePlugin.Dependencies(project).desktop.currentOs,
                 )
 
@@ -93,9 +99,14 @@ internal fun Project.configureKmp(
                     Versions.ComposeMultiplatform.uiToolingPreview.asDependency,
                 )
 
-                addDependency(
-                    type = projectType,
-                    dependency = Versions.ComposeMultiplatform.uiTooling,
+                dependencies.add(
+                    "androidMainImplementation",
+                    Versions.ComposeMultiplatform.uiTooling.asDependency,
+                )
+
+                dependencies.add(
+                    Constants.desktopMainImplementation,
+                    Versions.ComposeMultiplatform.uiTooling.asDependency,
                 )
 
                 addComposeDependencies(

@@ -11,6 +11,8 @@ internal object Constants {
 
     const val desktopTargetName = "desktop"
 
+    const val desktopMainImplementation = "${desktopTargetName}MainImplementation"
+
     val kotlinFreeCompilerArgs: List<String> = listOf(
         "-opt-in=kotlin.time.ExperimentalTime",
         "-opt-in=kotlin.uuid.ExperimentalUuidApi",
