@@ -16,6 +16,8 @@ data class SharedConfig(
         val developerEmail: String,
         val licenseName: String,
         val licenseUrl: String,
+        /** Gradle project paths (e.g. `:gen-schema`) that must not be published. */
+        val exclude: List<String> = emptyList(),
     )
 
     open class Wrapper(

@@ -29,6 +29,9 @@ class SharedConfigPublishBuilder {
     var licenseName: String? = null
     var licenseUrl: String? = null
 
+    /** Gradle project paths to skip when publishing (e.g. code generators). */
+    var exclude: List<String> = emptyList()
+
     fun build(
         configPath: String,
     ): SharedConfig.Publish = SharedConfig.Publish(
@@ -45,5 +48,6 @@ class SharedConfigPublishBuilder {
         developerEmail = developerEmail ?: "hnau256@gmail.com",
         licenseName = licenseName ?: "MIT",
         licenseUrl = licenseUrl ?: "https://opensource.org/license/MIT",
+        exclude = exclude,
     )
 }

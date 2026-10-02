@@ -55,7 +55,7 @@ internal fun Project.configureCommon(
     }
 
     config.publish?.let { publish ->
-        if (disablePublicationBeforeOrAfterEvaluate()) {
+        if (publish.excluded || disablePublicationBeforeOrAfterEvaluate()) {
             return@let
         }
         configurePublishing(

@@ -20,6 +20,8 @@ data class ProjectConfig(
         val developerEmail: String,
         val licenseName: String,
         val licenseUrl: String,
+        /** True when this module is listed in the shared config's `exclude`. */
+        val excluded: Boolean,
     )
 }
 
@@ -57,6 +59,7 @@ internal fun SharedConfig.toProjectConfig(
                 developerEmail = developerEmail,
                 licenseName = licenseName,
                 licenseUrl = licenseUrl,
+                excluded = project.path in exclude,
             )
         }
     )
