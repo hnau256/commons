@@ -65,13 +65,11 @@ fun FoldInfo.Companion.create(
         .filterIsInstance<KSClassDeclaration>()
         .any { it.isCompanionObject }
 
-    val defaultNonEmptyEntries = isEnum && hasCompanionObject
-
     val nonEmptyEntries = foldAnnotation
         .arguments(logger)
         .get<Boolean>(
             name = "nonEmptyEntries",
-            onNoArgument = { defaultNonEmptyEntries },
+            onNoArgument = { false },
         )
         ?: return null
 
