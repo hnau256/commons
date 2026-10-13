@@ -19,3 +19,8 @@ val FoldInfo.isEnum: Boolean
 
 val FoldInfo.Variant.uppercasedIdentifier: String
     get() = identifier.replaceFirstChar(Char::uppercase)
+
+val FoldInfo.nonEmptyEntriesPropertyName: String
+    get() = className.simpleNames
+        .joinToString("")
+        .replaceFirstChar(Char::lowercase) + "NonEmptyEntries"

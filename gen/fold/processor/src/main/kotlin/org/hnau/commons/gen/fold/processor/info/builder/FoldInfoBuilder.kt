@@ -15,7 +15,9 @@ import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toTypeVariableName
+import org.hnau.commons.gen.fold.processor.AnnotationInfo
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
+import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
 import com.squareup.kotlinpoet.ksp.toTypeName as kspToTypeName
@@ -47,6 +49,45 @@ fun FoldInfo.Companion.create(
 
     if (!isEnum && !isSealed) {
         logger.error("Must be enum class, sealed class, or sealed interface", classDeclaration)
+        return null
+    }
+
+    val foldAnnotation = classDeclaration
+        .annotations
+        .firstOrNull { it.shortName.asString() == AnnotationInfo.simpleName }
+        .ifNull {
+            logger.error("Unable find @${AnnotationInfo.simpleName} annotation", classDeclaration)
+            return null
+        }
+
+    val hasCompanionObject = classDeclaration
+        .declarations
+        .filterIsInstance<KSClassDeclaration>()
+        .any { it.isCompanionObject }
+
+    val defaultNonEmptyEntries = isEnum && hasCompanionObject
+
+    val nonEmptyEntries = foldAnnotation
+        .arguments(logger)
+        .get<Boolean>(
+            name = "nonEmptyEntries",
+            onNoArgument = { defaultNonEmptyEntries },
+        )
+        ?: return null
+
+    if (nonEmptyEntries && !isEnum) {
+        logger.error(
+            "@${AnnotationInfo.simpleName}(nonEmptyEntries = true) can be used only with enum classes",
+            classDeclaration,
+        )
+        return null
+    }
+
+    if (nonEmptyEntries && !hasCompanionObject) {
+        logger.error(
+            "@${AnnotationInfo.simpleName}(nonEmptyEntries = true) requires enum class to have a companion object",
+            classDeclaration,
+        )
         return null
     }
 
@@ -157,6 +198,7 @@ fun FoldInfo.Companion.create(
                 classDeclaration = classDeclaration,
                 typeVariables = typeVariables,
                 variants = variants,
+                nonEmptyEntries = nonEmptyEntries,
             )
         }
 }

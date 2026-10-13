@@ -9,6 +9,7 @@ data class FoldInfo(
     val classDeclaration: KSClassDeclaration,
     val typeVariables: List<TypeVariableName>,
     val variants: NonEmptyList<Variant>,
+    val nonEmptyEntries: Boolean,
 ) {
     data class Variant(
         val identifier: String,

@@ -1,17 +1,25 @@
 package org.hnau.commons.gen.fold.processor.info.generator
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LambdaTypeName
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.gen.fold.processor.info.generator.utils.className
 import org.hnau.commons.gen.fold.processor.info.generator.utils.isEnum
+import org.hnau.commons.gen.fold.processor.info.generator.utils.nonEmptyEntriesPropertyName
 import org.hnau.commons.gen.fold.processor.info.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.kotlin.codeBlock
+
+private val nonEmptyListClassName = ClassName("arrow.core", "NonEmptyList")
+
+private val toNonEmptyListOrThrowMember = MemberName("arrow.core", "toNonEmptyListOrThrow")
 
 private fun List<TypeVariableName>.resultTypeVariable(): TypeVariableName {
     val usedNames = mapTo(mutableSetOf()) { it.name }
@@ -74,6 +82,41 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
             }
         )
         .build()
+}
+
+fun FoldInfo.toNonEmptyEntriesPropertySpecs(): List<PropertySpec> {
+    if (!nonEmptyEntries) return emptyList()
+
+    val nonEmptyListType = nonEmptyListClassName.parameterizedBy(className)
+
+    val entriesProperty = PropertySpec
+        .builder(
+            name = nonEmptyEntriesPropertyName,
+            type = nonEmptyListType,
+        )
+        .addModifiers(KModifier.PRIVATE)
+        .initializer(
+            "%T.entries.%M()",
+            className,
+            toNonEmptyListOrThrowMember,
+        )
+        .build()
+
+    val companionProperty = PropertySpec
+        .builder(
+            name = "nonEmptyEntries",
+            type = nonEmptyListType,
+        )
+        .receiver(className.nestedClass("Companion"))
+        .getter(
+            FunSpec
+                .getterBuilder()
+                .addCode("return %N", nonEmptyEntriesPropertyName)
+                .build()
+        )
+        .build()
+
+    return listOf(entriesProperty, companionProperty)
 }
 
 fun FoldInfo.toFoldFunSpec(): FunSpec {
