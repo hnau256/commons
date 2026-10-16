@@ -41,7 +41,7 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
 
             receiver(
                 if (classTypeVars.isEmpty()) className
-                else className.parameterizedBy(*classTypeVars.toTypedArray())
+                else className.parameterizedBy(*classTypeVars.toTypedArray()),
             )
             returns(returnType)
 
@@ -79,7 +79,7 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
                     val right = "if${variant.uppercasedIdentifier}(this)"
                     "\t$left -> $right"
                 }
-            }
+            },
         )
         .build()
 }
@@ -112,7 +112,7 @@ fun FoldInfo.toNonEmptyEntriesPropertySpecs(): List<PropertySpec> {
             FunSpec
                 .getterBuilder()
                 .addCode("return %N", nonEmptyEntriesPropertyName)
-                .build()
+                .build(),
         )
         .build()
 
@@ -132,7 +132,7 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
 
             receiver(
                 if (classTypeVars.isEmpty()) className
-                else className.parameterizedBy(*classTypeVars.toTypedArray())
+                else className.parameterizedBy(*classTypeVars.toTypedArray()),
             )
             returns(returnType)
 
@@ -140,7 +140,7 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
                 val lambdaParams = when (val resolution = variant.resolution) {
                     is FoldInfo.Resolution.Object -> emptyList()
                     is FoldInfo.Resolution.Whole -> listOf(
-                        ParameterSpec.builder("value", resolution.type).build()
+                        ParameterSpec.builder("value", resolution.type).build(),
                     )
                     is FoldInfo.Resolution.Destructured -> resolution.parameters.map { param ->
                         ParameterSpec.builder(param.name, param.type).build()
@@ -175,7 +175,7 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
                     }
                     "\tif${variant.uppercasedIdentifier} = { variant -> $content }"
                 }
-            }
+            },
         )
         .build()
 }

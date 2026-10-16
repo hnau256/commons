@@ -73,7 +73,7 @@ fun SealedInfo.toTypeSpec(): TypeSpec = TypeSpec
                     index = index,
                     info = this@toTypeSpec,
                 )
-            }
+            },
         )
     }
     .build()

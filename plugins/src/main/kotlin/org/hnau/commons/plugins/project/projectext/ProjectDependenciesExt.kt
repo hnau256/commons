@@ -24,7 +24,8 @@ internal fun Project.addDependency(
 ) {
     when (type) {
         is ProjectType.Jvm -> addDependency("implementation", dependency)
-        is ProjectType.Kmp -> type
+        is ProjectType.Kmp ->
+            type
             .commonMainSourceSet
             .configure { commonMainSourceSet ->
                 commonMainSourceSet.dependencies {
@@ -40,7 +41,8 @@ internal fun Project.addTestDependency(
 ) {
     when (type) {
         is ProjectType.Jvm -> addDependency("testImplementation", dependency)
-        is ProjectType.Kmp -> type
+        is ProjectType.Kmp ->
+            type
             .commonTestSourceSet
             .configure { commonTestSourceSet ->
                 commonTestSourceSet.dependencies {
@@ -101,7 +103,7 @@ internal val Versioned<LibraryId>.asDependency: String
     get() = listOf(
         withoutVersion.groupId.groupId,
         withoutVersion.artifactId.artifactId,
-        version.version
+        version.version,
     ).joinToString(
         separator = ":",
     )

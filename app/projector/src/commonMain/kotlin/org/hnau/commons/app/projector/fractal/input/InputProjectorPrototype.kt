@@ -51,7 +51,7 @@ data class InputProjectorPrototype<S, E, I : InputType<S>>(
                     transform = KeyValue<S, *>::key,
                 ),
             stateHolder.updateState,
-        )
+        ),
     )
 }
 
@@ -67,7 +67,7 @@ fun <S, I : InputType<S>> InputProjectorPrototype<S, Nothing, I>.createInputProj
     startAccessory = startAccessory,
     titleMaxLines = titleMaxLines,
     importanceToActivate = importanceToActivate,
-    displayError = { _, _ -> "" }
+    displayError = { _, _ -> "" },
 )
 
 internal fun <S, E, I : InputType<S>> InputStateHolder<S, E, I>.toInputProjectorPrototype(

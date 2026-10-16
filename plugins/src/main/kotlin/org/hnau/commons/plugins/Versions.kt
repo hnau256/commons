@@ -78,7 +78,7 @@ internal object Versions {
             "kmp",
             "kmpAndroid",
             "kmpAndroidWithCompose",
-            "plugins"
+            "plugins",
         ).map { suffix ->
             PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
         }
@@ -105,7 +105,7 @@ internal object Versions {
 
         val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(
             ArtifactId("commons-app-model") withVersion Version.HnauCommons withAlias "commons-app-model",
-            ArtifactId("commons-app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector"
+            ArtifactId("commons-app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector",
         ).map { aliasedVersionedArtifactId ->
             aliasedVersionedArtifactId.withGroup(group)
         }
@@ -155,15 +155,14 @@ internal object Versions {
 
         private fun buildArrowDependency(
             suffix: String,
-        ): Versioned<LibraryId> =
-            "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
+        ): Versioned<LibraryId> = "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
 
         val unconditioned: List<Versioned<LibraryId>> =
             listOf(
                 "core",
                 "core-serialization",
                 "fx-coroutines",
-                "optics"
+                "optics",
             ).map(::buildArrowDependency)
 
         val opticsProcessor: Versioned<LibraryId> =

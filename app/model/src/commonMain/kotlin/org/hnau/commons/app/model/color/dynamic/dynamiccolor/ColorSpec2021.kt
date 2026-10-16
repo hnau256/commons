@@ -899,9 +899,11 @@ open class ColorSpec2021 : ColorSpec {
       val polarity = toneDeltaPair.polarity
       val stayTogether = toneDeltaPair.stayTogether
       val aIsNearer =
-        (toneDeltaPair.constraint == DeltaConstraint.NEARER ||
+        (
+            toneDeltaPair.constraint == DeltaConstraint.NEARER ||
           (polarity == TonePolarity.LIGHTER && !scheme.isDark) ||
-          (polarity == TonePolarity.DARKER && !scheme.isDark))
+          (polarity == TonePolarity.DARKER && !scheme.isDark)
+        )
       val nearer = if (aIsNearer) roleA else roleB
       val farther = if (aIsNearer) roleB else roleA
       val amNearer = color.name == nearer.name

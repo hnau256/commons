@@ -74,7 +74,7 @@ fun SAnchors(
                     .foldNullable(
                         ifNull = { mood },
                         ifNotNull = mood::activate,
-                    )
+                    ),
             )
         }
         .containerOverlay()
@@ -142,9 +142,9 @@ private fun SAnchorsContent(
                                 stop = anchorRects[stop],
                                 fraction = offset,
                             )
-                        }
+                        },
                     )
-                }
+                },
             )
 
 
@@ -233,7 +233,7 @@ private fun SAnchorsContent(
                                     radiusY = cornerRadiusPx,
                                 ),
                             )
-                        }
+                        },
                     ) {
 
                         progressFContext?.let { fContext ->
@@ -306,7 +306,7 @@ private fun SAnchorsContent(
                                             ifFalse = { ClipOp.Difference },
                                         ),
                                     )
-                                }
+                                },
                             ),
                             propagateMinConstraints = true,
                         ) {
@@ -327,8 +327,8 @@ private fun SAnchorsContent(
                                                         ifTrue = { iconSize + padding.across.extraSmall * 2 },
                                                         ifFalse = { padding.across.extraSmall * 2 },
                                                     )
-                                                }
-                                        )
+                                                },
+                                        ),
                                     )
                                 },
                                 ifNotNull = { item ->
@@ -338,7 +338,7 @@ private fun SAnchorsContent(
                                     ) {
                                         item(i)
                                     }
-                                }
+                                },
                             )
                         }
                     }

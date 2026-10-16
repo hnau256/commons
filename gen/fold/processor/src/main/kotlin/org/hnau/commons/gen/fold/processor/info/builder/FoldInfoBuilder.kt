@@ -13,6 +13,7 @@ import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toTypeName as kspToTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toTypeVariableName
 import org.hnau.commons.gen.fold.processor.AnnotationInfo
@@ -20,7 +21,6 @@ import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
-import com.squareup.kotlinpoet.ksp.toTypeName as kspToTypeName
 
 private val nonPublicModifiers: Set<Modifier> = setOf(
     Modifier.PRIVATE,
@@ -44,8 +44,8 @@ fun FoldInfo.Companion.create(
     }
 
     val isEnum = classDeclaration.classKind == ClassKind.ENUM_CLASS
-    val isSealed = classDeclaration.classKind in setOf(ClassKind.CLASS, ClassKind.INTERFACE)
-            && classDeclaration.modifiers.contains(Modifier.SEALED)
+    val isSealed = classDeclaration.classKind in setOf(ClassKind.CLASS, ClassKind.INTERFACE) &&
+            classDeclaration.modifiers.contains(Modifier.SEALED)
 
     if (!isEnum && !isSealed) {
         logger.error("Must be enum class, sealed class, or sealed interface", classDeclaration)
@@ -182,7 +182,7 @@ fun FoldInfo.Companion.create(
                     )
                 }
                 .toList()
-        }
+        },
     )
 
     return variantList

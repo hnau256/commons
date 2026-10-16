@@ -44,7 +44,7 @@ fun <I, O> MutableAccessor<I>.map(
     set = { valueToSet ->
         val transformedValue = mapper.reverse(valueToSet)
         set(transformedValue)
-    }
+    },
 )
 
 inline fun <T> MutableAccessor<T?>.filter(
@@ -52,18 +52,16 @@ inline fun <T> MutableAccessor<T?>.filter(
 ): MutableAccessor<T?> = map(
     mapper = Mapper(
         direct = { it?.takeIf(predicate) },
-        reverse = ::identity
-    )
+        reverse = ::identity,
+    ),
 )
 
-inline fun <T, reified R : T> MutableAccessor<T?>.shrinkType(): MutableAccessor<R?> =
-    MutableAccessor<R?>(
+inline fun <T, reified R : T> MutableAccessor<T?>.shrinkType(): MutableAccessor<R?> = MutableAccessor<R?>(
         get = { get() as? R },
         set = set,
     )
 
-inline fun <T, reified R : T> MutableAccessor<Option<T>>.shrinkOptionType(): MutableAccessor<Option<R>> =
-    MutableAccessor(
+inline fun <T, reified R : T> MutableAccessor<Option<T>>.shrinkOptionType(): MutableAccessor<Option<R>> = MutableAccessor(
         get = {
             get().flatMap { value ->
                 when (value) {
@@ -93,5 +91,5 @@ fun <I, O> MutableAccessor<I>.extract(
     optics: Lens<I, O>,
 ): MutableAccessor<O> = MutableAccessor(
     get = { optics.get(get()) },
-    set = { value -> optics.set(get(), value) }
+    set = { value -> optics.set(get(), value) },
 )

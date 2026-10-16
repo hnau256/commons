@@ -39,7 +39,7 @@ data class Gradient<C>(
                     weight = 1f,
                     color = color,
                 )
-            }
+            },
         )
     }
 }

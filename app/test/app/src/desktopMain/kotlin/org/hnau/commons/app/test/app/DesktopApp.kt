@@ -17,10 +17,10 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
-import kotlin.system.exitProcess
 import org.hnau.commons.app.model.app.AppFilesDirProvider
 import org.hnau.commons.app.model.app.DesktopApp
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
+import kotlin.system.exitProcess
 
 @OptIn(InternalComposeApi::class, InternalComposeUiApi::class)
 fun main() = runBlocking {
@@ -31,13 +31,13 @@ fun main() = runBlocking {
         coroutineContext + SupervisorJob() + CoroutineExceptionHandler { _, throwable ->
             throwable.printStackTrace()
             exitProcess(1)
-        }
+        },
     )
 
     val app = DesktopApp(
         scope = scope,
         seed = createCommonsAppTestAppSeed(
-            appFilesDirProvider = AppFilesDirProvider()
+            appFilesDirProvider = AppFilesDirProvider(),
         ),
     )
     val projector = createAppProjector(
@@ -54,7 +54,7 @@ fun main() = runBlocking {
                 width = 256.dp * scale,
                 height = 400.dp * scale,
             ),
-            //icon = rememberVectorPainter(commonsAppTestIcon.s256),
+            // icon = rememberVectorPainter(commonsAppTestIcon.s256),
         ) {
             val density = remember(scale) { Density(scale) }
             CompositionLocalProvider(

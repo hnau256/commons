@@ -45,7 +45,9 @@ fun <I, R, S : Stickable<I, R>> StateFlow<I>.stick(
 
 interface Stickable<in I, out R> {
 
-    fun tryUpdateValue(newValue: I): Boolean
+    fun tryUpdateValue(
+        newValue: I,
+    ): Boolean
 
     val result: R
 

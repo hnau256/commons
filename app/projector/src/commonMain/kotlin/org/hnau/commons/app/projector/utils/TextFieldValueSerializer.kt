@@ -16,7 +16,7 @@ object TextFieldValueSerializer :
                     selection = TextRange(
                         start = surrogate.selectionStart,
                         end = surrogate.selectionEnd,
-                    )
+                    ),
                 )
             },
             reverse = { textFieldValue ->
@@ -25,8 +25,8 @@ object TextFieldValueSerializer :
                     selectionStart = textFieldValue.selection.start,
                     selectionEnd = textFieldValue.selection.end,
                 )
-            }
-        )
+            },
+        ),
     ) {
 
     @Serializable

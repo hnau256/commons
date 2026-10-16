@@ -67,7 +67,7 @@ fun <T> Tabs(
         ifNull = { androidx.compose.foundation.shape.RoundedCornerShape(100) },
         ifNotNull = { cornerRadius ->
             androidx.compose.foundation.shape.RoundedCornerShape(cornerRadius - shrinkage)
-        }
+        },
 
     )
 
@@ -92,7 +92,7 @@ fun <T> Tabs(
                 color = containerColor,
                 shape = createShape(
                     shrinkage = 0.dp,
-                )
+                ),
             )
             .padding(padding),
     ) { constraints ->
@@ -111,9 +111,9 @@ fun <T> Tabs(
                                     Modifier
                                         .clip(indicatorShape)
                                         .clickable { onSelectedChanged(item) }
-                                }
+                                },
                             )
-                            .padding(itemPaddingValues)
+                            .padding(itemPaddingValues),
                     ) {
                         val contentColor = isSelected.foldBoolean(
                             ifTrue = { indicatorContentColor },
@@ -163,7 +163,7 @@ fun <T> Tabs(
         val ys = tabs.map { tab ->
             verticalAlignment.align(
                 size = tab.height,
-                space = layoutHeight
+                space = layoutHeight,
             )
         }
 
@@ -191,7 +191,7 @@ fun <T> Tabs(
                         fraction = fraction,
                     ),
                     height = tabsMaxHeight,
-                )
+                ),
             )
         }
 
@@ -203,14 +203,14 @@ fun <T> Tabs(
                     .background(
                         shape = indicatorShape,
                         color = indicatorColor,
-                    )
+                    ),
             )
         }[0]
             .measure(
                 Constraints.fixed(
                     width = indicatorRect.size.width,
                     height = indicatorRect.size.height,
-                )
+                ),
             )
 
         layout(layoutWidth, layoutHeight) {

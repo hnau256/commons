@@ -31,7 +31,7 @@ class ModelBlockBackDelegate<B>(
 
     @Serializable
     data class Skeleton<T>(
-        val visibleBlockReason: MutableStateFlow<Option<T>> = None.toMutableStateFlowAsInitial()
+        val visibleBlockReason: MutableStateFlow<Option<T>> = None.toMutableStateFlowAsInitial(),
     )
 
     data class BlockReasonDialog<B>(

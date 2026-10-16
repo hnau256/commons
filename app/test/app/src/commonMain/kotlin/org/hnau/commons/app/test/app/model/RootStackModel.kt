@@ -123,10 +123,10 @@ class RootStackModel(
                         .stack
                         .push(
                             ElementSkeleton.form(
-                                initial = config.value.value
-                            )
+                                initial = config.value.value,
+                            ),
                         )
-                }
+                },
             )
         },
         ifForm = { formSkeleton ->
@@ -137,7 +137,7 @@ class RootStackModel(
                     delay(3.seconds)
                     config.update(newConfig)
                 },
-                goBack = { skeleton.stack.tryDropLast() }
+                goBack = { skeleton.stack.tryDropLast() },
             )
         },
     )

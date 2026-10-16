@@ -10,7 +10,7 @@ val PaddingValues.alongFrom: Dp
     @Composable
     get() = orientation.fold(
         ifHorizontal = { start },
-        ifVertical = { top }
+        ifVertical = { top },
     )
 
 context(orientation: Orientation)
@@ -18,7 +18,7 @@ val PaddingValues.alongTo: Dp
     @Composable
     get() = orientation.fold(
         ifHorizontal = { end },
-        ifVertical = { bottom }
+        ifVertical = { bottom },
     )
 
 context(orientation: Orientation)
@@ -26,7 +26,7 @@ val PaddingValues.acrossFrom: Dp
     @Composable
     get() = orientation.fold(
         ifHorizontal = { top },
-        ifVertical = { start }
+        ifVertical = { start },
     )
 
 context(orientation: Orientation)
@@ -34,7 +34,7 @@ val PaddingValues.acrossTo: Dp
     @Composable
     get() = orientation.fold(
         ifHorizontal = { bottom },
-        ifVertical = { end }
+        ifVertical = { end },
     )
 
 context(orientation: Orientation)
@@ -59,5 +59,5 @@ fun PaddingValues(
             end = acrossTo,
             bottom = alongTo,
         )
-    }
+    },
 )

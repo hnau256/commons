@@ -6,21 +6,21 @@ import arrow.core.Some
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
-class Initializer<T>: SynchronizedObject() {
+class Initializer<T> : SynchronizedObject() {
 
   @PublishedApi
   internal var cachedValue: Option<T> = None
 
    inline operator fun invoke(
-    init:  () -> T,
-  ): T = when (val localCachedValue = cachedValue) {
+       init: () -> T,
+   ): T = when (val localCachedValue = cachedValue) {
     is Some<T> -> localCachedValue.value
     None -> synchronized(this) { getUnsafe(init) }
   }
 
   @PublishedApi
-  internal  inline fun getUnsafe(
-    init:  () -> T,
+  internal inline fun getUnsafe(
+      init: () -> T,
   ): T = when (val localCachedValue = cachedValue) {
     is Some<T> -> localCachedValue.value
     None -> {

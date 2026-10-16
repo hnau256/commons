@@ -7,7 +7,9 @@ import arrow.core.Some
 import arrow.core.toNonEmptyListOrThrow
 import kotlin.jvm.JvmName
 
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
+inline fun <T> Iterable<T>.sumOf(
+    selector: (T) -> Float,
+): Float {
     var sum = 0f
     for (element in this) {
         sum += selector(element)
@@ -19,7 +21,7 @@ inline fun <T> Iterable<T>.exclude(
     predicate: (T) -> Boolean,
 ): Pair<List<T>, T>? = this
     .fold<_, Pair<List<T>, Option<T>>>(
-        initial = emptyList<T>() to None
+        initial = emptyList<T>() to None,
     ) { (acc, excludedOrNone), item ->
         excludedOrNone.fold(
             ifSome = { (acc + item) to excludedOrNone },

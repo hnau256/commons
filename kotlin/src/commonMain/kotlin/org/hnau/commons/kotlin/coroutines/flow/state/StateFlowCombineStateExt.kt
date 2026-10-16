@@ -67,7 +67,7 @@ fun <I1, I2, R> combineStateLite(
 ): StateFlow<R> = combine(
     flow = first,
     flow2 = second,
-    transform = combine
+    transform = combine,
 ).toFakeStateFlow {
     combine(
         first.value,

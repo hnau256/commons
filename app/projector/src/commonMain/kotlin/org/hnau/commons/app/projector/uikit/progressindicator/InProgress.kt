@@ -28,7 +28,7 @@ fun InProgress(
         ) {
             fillMaxSize.foldBoolean(
                 ifTrue = { ProgressIndicatorInBox() },
-                ifFalse = { CircularProgressIndicator() }
+                ifFalse = { CircularProgressIndicator() },
             )
         }
 }

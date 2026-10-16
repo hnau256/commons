@@ -9,8 +9,8 @@ import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.float
 import org.hnau.commons.app.projector.fractal.utils.map
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
-import kotlin.math.roundToInt
 import kotlin.jvm.JvmInline
+import kotlin.math.roundToInt
 
 @JvmInline
 value class Scale(
@@ -29,7 +29,7 @@ private val scaleBaseWithDecays: ScaleTypeValues<BaseWithDecay<Scale>> = ScaleTy
     space = BaseWithDecay.float(
         initial = 1f,
         decay = 0.75,
-    )
+    ),
 ).map { floatBaseWithDecay ->
     floatBaseWithDecay.map(::Scale)
 }

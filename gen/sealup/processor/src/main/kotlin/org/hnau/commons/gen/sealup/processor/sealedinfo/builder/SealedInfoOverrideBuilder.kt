@@ -63,7 +63,7 @@ fun SealedInfo.Override.Companion.create(
                                 .ifNull {
                                     logger.error(
                                         "Unable resolve function parameter name",
-                                        parameter
+                                        parameter,
                                     )
                                     return null
                                 }
@@ -73,7 +73,7 @@ fun SealedInfo.Override.Companion.create(
                                 .resolve(logger)
                                 ?: return null,
                         )
-                    }
+                    },
                 ),
                 visibility = function.getVisibility(),
                 receiver = function
@@ -87,6 +87,6 @@ fun SealedInfo.Override.Companion.create(
                     .annotations
                     .toList(),
             )
-        }
+        },
     )
 }

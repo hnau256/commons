@@ -10,8 +10,9 @@ import java.util.concurrent.ConcurrentHashMap
 internal class KermitLoggerFactory : ILoggerFactory {
     private val loggers = ConcurrentHashMap<String, Logger>()
 
-    override fun getLogger(name: String): Logger =
-        loggers.computeIfAbsent(name) {
+    override fun getLogger(
+        name: String,
+    ): Logger = loggers.computeIfAbsent(name) {
             KermitSlf4jLogger(name)
         }
 }

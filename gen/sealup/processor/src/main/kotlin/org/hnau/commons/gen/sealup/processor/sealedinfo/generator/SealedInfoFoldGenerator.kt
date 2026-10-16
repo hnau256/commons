@@ -57,7 +57,7 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                         ?.pointer
                         ?.fold(
                             ifClass = { "is " },
-                            ifObject = { null }
+                            ifObject = { null },
                         )
                         .orEmpty()
                     val left = "$prefix${use(wrapper)}"
@@ -67,14 +67,14 @@ fun SealedInfo.toFoldFuncSpec(): FunSpec {
                         ?.pointer
                         ?.fold(
                             ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
-                            ifObject = { null }
+                            ifObject = { null },
                         )
                         .orEmpty()
                     val right = "if${variant.uppercasedIdentifier}($argument)"
 
                     "\t\t$left -> $right"
                 }
-            }
+            },
         )
         .build()
 }

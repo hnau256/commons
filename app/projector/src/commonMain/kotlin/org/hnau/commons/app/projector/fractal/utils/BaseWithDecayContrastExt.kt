@@ -9,7 +9,7 @@ fun BaseWithDecay.Companion.contrast(
 ): BaseWithDecay<Contrast> = BaseWithDecay.double(
     initial = initial.contrast,
     decay = decay,
-    baseline = Contrast.min.contrast
+    baseline = Contrast.min.contrast,
 ).map(::Contrast)
 
 

@@ -96,7 +96,7 @@ private fun Accessory(
     side: Side,
     distanceOffset: Int,
     contentPadding: PaddingValues,
-    accessory: @Composable (() -> Unit)?
+    accessory: @Composable (() -> Unit)?,
 ) {
     val align = side.fold(
         ifStart = { Alignment.CenterEnd },
@@ -118,7 +118,7 @@ private fun Accessory(
                 Box(
                     modifier = Modifier.padding(
                         paddingValues = contentPadding,
-                    )
+                    ),
                 )
             },
             ifNotNull = { localAccessory ->
@@ -137,7 +137,7 @@ private fun Accessory(
                         },
                         ifBottom = {
                             PaddingValues(top = units.padding.across[paddingSize])
-                        }
+                        },
                     )
                     CompositionLocalProvider(
                         value = LocalContentPadding provides accessoryPadding,
@@ -145,7 +145,7 @@ private fun Accessory(
                         localAccessory()
                     }
                 }
-            }
+            },
         )
     }
 }

@@ -45,5 +45,5 @@ fun Size(
             width = across,
             height = along,
         )
-    }
+    },
 )

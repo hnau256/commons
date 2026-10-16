@@ -13,7 +13,7 @@ fun SElements(
     content: @Composable LineScope.() -> Unit,
 ) {
     SLine(
-        modifier = modifier,//.verticalScroll(rememberScrollState()),
+        modifier = modifier, // .verticalScroll(rememberScrollState()),
         orientation = Orientation.Vertical,
         separation = LocalDistance.current.units.padding.along.medium,
         content = content,

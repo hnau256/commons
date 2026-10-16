@@ -25,5 +25,5 @@ data class KeyValue<out K, out V>(
 
 fun <K, V> Map.Entry<K, V>.toKeyValue(): KeyValue<K, V> = KeyValue(
     key = key,
-    value = value
+    value = value,
 )

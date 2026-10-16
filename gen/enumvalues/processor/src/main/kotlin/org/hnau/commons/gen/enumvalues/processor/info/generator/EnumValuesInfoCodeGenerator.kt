@@ -48,11 +48,11 @@ fun EnumValuesInfo.toTypeSpec(): TypeSpec = TypeSpec
                                     name = entry.identifier,
                                     type = contentType,
                                 )
-                                .build()
+                                .build(),
                         )
                     }
                 }
-                .build()
+                .build(),
         )
 
         entries.forEach { entry ->
@@ -68,35 +68,35 @@ fun EnumValuesInfo.toTypeSpec(): TypeSpec = TypeSpec
         addFunction(
             toGetFuncSpec(
                 contentType = contentType,
-            )
+            ),
         )
 
         addFunction(
             toFullMapFuncSpec(
                 contentType = contentType,
-            )
+            ),
         )
 
         addFunction(
             toMapFuncSpec(
                 contentType = contentType,
-            )
+            ),
         )
 
         addFunction(
             toFullCombineFuncSpec(
                 contentType = contentType,
-            )
+            ),
         )
 
         addFunction(
             toCombineFuncSpec(
                 contentType = contentType,
-            )
+            ),
         )
 
         addType(
-            toCompanionObjectSpec()
+            toCompanionObjectSpec(),
         )
     }
     .build()
@@ -114,7 +114,7 @@ private fun EnumValuesInfo.toGetFuncSpec(
                     name = enumIdentifier,
                     type = enumClassName,
                 )
-                .build()
+                .build(),
         )
         addCode(
             format = entries.joinToString(
@@ -165,7 +165,7 @@ private fun EnumValuesInfo.toFullMapFuncSpec(
                         returnType = returnType,
                     ),
                 )
-                .build()
+                .build(),
         )
         addCode(
             format = entries.joinToString(
@@ -212,7 +212,7 @@ private fun EnumValuesInfo.toMapFuncSpec(
                         returnType = returnType,
                     ),
                 )
-                .build()
+                .build(),
         )
         addCode(
             "return map { _, value -> transform(value) }",
@@ -245,7 +245,7 @@ private fun EnumValuesInfo.toFullCombineFuncSpec(
                     name = "other",
                     type = valuesClassName.parameterizedBy(otherType),
                 )
-                .build()
+                .build(),
         )
 
         addParameter(
@@ -270,7 +270,7 @@ private fun EnumValuesInfo.toFullCombineFuncSpec(
                         returnType = returnType,
                     ),
                 )
-                .build()
+                .build(),
         )
 
         addCode(
@@ -315,7 +315,7 @@ private fun EnumValuesInfo.toCombineFuncSpec(
                     name = "other",
                     type = valuesClassName.parameterizedBy(otherType),
                 )
-                .build()
+                .build(),
         )
 
         addParameter(
@@ -336,7 +336,7 @@ private fun EnumValuesInfo.toCombineFuncSpec(
                         returnType = returnType,
                     ),
                 )
-                .build()
+                .build(),
         )
         addCode(
             "return combineWith(other = other) { _, value, other -> combine(value, other) }",
@@ -365,7 +365,7 @@ internal fun EnumValuesInfo.toCopyFuncSpec(): FunSpec {
                         name = enumIdentifier,
                         type = enumClassName,
                     )
-                    .build()
+                    .build(),
             )
 
             addParameter(
@@ -382,7 +382,7 @@ internal fun EnumValuesInfo.toCopyFuncSpec(): FunSpec {
                             returnType = contentType,
                         ),
                     )
-                    .build()
+                    .build(),
             )
             addCode(
                 format = entries.joinToString(
@@ -433,7 +433,7 @@ private fun EnumValuesInfo.toCreateFuncSpec(): FunSpec = FunSpec
                     returnType = returnType,
                 ),
             )
-            .build()
+            .build(),
     )
     addCode(
         format = entries.joinToString(

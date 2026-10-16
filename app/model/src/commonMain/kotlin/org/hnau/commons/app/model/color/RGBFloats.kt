@@ -23,7 +23,7 @@ data class RGBFloats(
         val rgbaBytesMapper: Mapper<RGBABytes, RGBFloats> = run {
             val channelMapper: Mapper<UByte, Float> = Mapper(
                 direct = { byte -> byte.toFloat() / 255f },
-                reverse = { float -> (float * 255).toInt().toUByte() }
+                reverse = { float -> (float * 255).toInt().toUByte() },
             )
             Mapper(
                 direct = { (r, g, b) ->
@@ -39,7 +39,7 @@ data class RGBFloats(
                         g = channelMapper.reverse(g),
                         b = channelMapper.reverse(b),
                     )
-                }
+                },
             )
         }
     }

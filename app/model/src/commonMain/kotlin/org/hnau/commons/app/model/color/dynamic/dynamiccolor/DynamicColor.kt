@@ -233,11 +233,13 @@ fun DynamicColor.extendSpecVersion(
       (if (scheme.specVersion >= specVersion) extendedColor.tone else this.tone).invoke(scheme)
     },
     chromaMultiplier = { scheme ->
-      (if (scheme.specVersion >= specVersion) {
+      (
+          if (scheme.specVersion >= specVersion) {
           extendedColor.chromaMultiplier
         } else {
           this.chromaMultiplier
-        })
+        }
+      )
         ?.invoke(scheme) ?: 1.0
     },
     background = { scheme ->
@@ -245,11 +247,13 @@ fun DynamicColor.extendSpecVersion(
         ?.invoke(scheme)
     },
     secondBackground = { scheme ->
-      (if (scheme.specVersion >= specVersion) {
+      (
+          if (scheme.specVersion >= specVersion) {
           extendedColor.secondBackground
         } else {
           this.secondBackground
-        })
+        }
+      )
         ?.invoke(scheme)
     },
     contrastCurve = { scheme ->

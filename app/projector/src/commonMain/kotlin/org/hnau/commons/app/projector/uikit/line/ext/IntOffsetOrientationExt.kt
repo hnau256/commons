@@ -45,5 +45,5 @@ fun IntOffset(
             x = across,
             y = along,
         )
-    }
+    },
 )

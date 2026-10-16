@@ -29,7 +29,7 @@ inline fun <S, M, K> StateFlow<NonEmptyStack<S>>.withModels(
                 key = getKey(skeleton),
             ) { modelScope ->
                 createModel(modelScope, skeleton)
-            }
+            },
         )
     }
 }
@@ -59,7 +59,7 @@ inline fun <S, M> StateFlow<NonEmptyStack<SkeletonWithModel<S, M>>>.goBackHandle
                         ?.let { newStack ->
                             { updateSkeletonStack(newStack) }
                         }
-                }
+                },
             )
         }
 }

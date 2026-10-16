@@ -10,7 +10,7 @@ value class Tone private constructor(
 ) : Comparable<Tone> {
 
     override fun compareTo(
-        other: Tone
+        other: Tone,
     ): Int = raw.compareTo(
         other = other.raw,
     )
@@ -57,7 +57,7 @@ value class Tone private constructor(
     companion object {
 
         fun create(
-            raw: Double
+            raw: Double,
         ): Tone {
             requireInRange(
                 valueLabel = "Tone",

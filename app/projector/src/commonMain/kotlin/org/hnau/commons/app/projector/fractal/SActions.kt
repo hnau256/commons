@@ -2,6 +2,7 @@ package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember as rememberInCompose
 import androidx.compose.ui.Modifier
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
@@ -16,7 +17,6 @@ import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
-import androidx.compose.runtime.remember as rememberInCompose
 
 @Composable
 fun SActions(

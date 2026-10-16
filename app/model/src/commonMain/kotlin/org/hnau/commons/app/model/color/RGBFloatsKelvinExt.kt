@@ -17,7 +17,7 @@ fun RGBFloats.Companion.fromKelvin(
                 0f
             } else {
                 (138.5177312231 * ln(normalized - 10.0) - 305.0447927307).toFloat()
-            }
+            },
         )
     } else {
         RGBFloats(

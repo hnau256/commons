@@ -23,7 +23,7 @@ fun SMainWithAdditional(
             CompositionLocalProvider(
                 value = LocalContentPadding provides LocalContentPadding.current + PaddingValues(
                     bottom = LocalDistance.current.units.padding.along.medium,
-                )
+                ),
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -32,7 +32,7 @@ fun SMainWithAdditional(
                     additional()
                 }
             }
-        }
+        },
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),

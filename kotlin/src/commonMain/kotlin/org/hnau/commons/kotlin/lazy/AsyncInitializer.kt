@@ -15,7 +15,7 @@ class AsyncInitializer<T> {
   internal var cachedValue: Option<T> = None
 
   suspend inline operator fun invoke(
-    init: suspend () -> T,
+      init: suspend () -> T,
   ): T = when (val localCachedValue = cachedValue) {
     is Some<T> -> localCachedValue.value
     None -> accessCacheMutex.withLock { getUnsafe(init) }
@@ -23,7 +23,7 @@ class AsyncInitializer<T> {
 
   @PublishedApi
   internal suspend inline fun getUnsafe(
-    init: suspend () -> T,
+      init: suspend () -> T,
   ): T = when (val localCachedValue = cachedValue) {
     is Some<T> -> localCachedValue.value
     None -> {

@@ -10,8 +10,10 @@ value class LinePosition private constructor(
         isFirst: Boolean,
         isLast: Boolean,
     ) : this(
-        packed = ((if (isFirst) FIRST else 0) +
-                (if (isLast) LAST else 0)).toByte()
+        packed = (
+            (if (isFirst) FIRST else 0) +
+                (if (isLast) LAST else 0)
+        ).toByte(),
     )
 
     val isFirst: Boolean
@@ -26,8 +28,7 @@ value class LinePosition private constructor(
             isLast = isFirst,
         )
 
-    override fun toString(): String =
-        "LinePosition(isFirst=$isFirst,isLast=$isLast)"
+    override fun toString(): String = "LinePosition(isFirst=$isFirst,isLast=$isLast)"
 
     companion object {
 

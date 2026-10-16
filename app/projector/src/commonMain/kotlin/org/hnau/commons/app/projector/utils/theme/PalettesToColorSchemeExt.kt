@@ -143,6 +143,6 @@ private fun DynamicScheme.toColorScheme(
                 outlineVariant = outlineVariant,
                 scrim = scrim,
             )
-        }
+        },
     )
 }

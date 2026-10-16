@@ -11,6 +11,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember as rememberInComposer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.graphics.TransformOrigin
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import org.hnau.commons.app.projector.utils.opposite
 import org.hnau.commons.kotlin.foldNullable
-import androidx.compose.runtime.remember as rememberInComposer
 
 object TransitionSpec {
 
@@ -93,7 +93,7 @@ object TransitionSpec {
             animationSpec = enterFloatSpec,
             transformOrigin = showAlignment.toTransformOrigin(
                 layoutDirection = layoutDirection,
-            )
+            ),
         )
 
         if (showAlignment != null) {
@@ -113,7 +113,7 @@ object TransitionSpec {
             animationSpec = exitFloatSpec,
             transformOrigin = hideAlignment.toTransformOrigin(
                 layoutDirection = layoutDirection,
-            )
+            ),
         )
 
         if (hideAlignment != null) {
@@ -147,6 +147,6 @@ object TransitionSpec {
                     )
                 }
             }
-        }
+        },
     )
 }

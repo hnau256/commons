@@ -21,7 +21,7 @@ context(orientation: Orientation)
 fun Constraints.max(
     direction: Direction,
 ): Int? = max(
-    orientation = orientation.withDirection(direction)
+    orientation = orientation.withDirection(direction),
 )
 
 context(orientation: Orientation)
@@ -43,7 +43,7 @@ context(orientation: Orientation)
 fun Constraints.min(
     direction: Direction,
 ): Int = min(
-    orientation = orientation.withDirection(direction)
+    orientation = orientation.withDirection(direction),
 )
 
 context(orientation: Orientation)
@@ -140,12 +140,10 @@ fun Constraints.withoutMin(
 )
 
 context(orientation: Orientation)
-fun Constraints.withoutMinAlong(): Constraints =
-    withoutMin(Direction.Along)
+fun Constraints.withoutMinAlong(): Constraints = withoutMin(Direction.Along)
 
 context(orientation: Orientation)
-fun Constraints.withoutMinAcross(): Constraints =
-    withoutMin(Direction.Across)
+fun Constraints.withoutMinAcross(): Constraints = withoutMin(Direction.Across)
 
 
 fun Constraints.withoutMax(
@@ -163,12 +161,10 @@ fun Constraints.withoutMax(
 )
 
 context(orientation: Orientation)
-fun Constraints.withoutMaxAlong(): Constraints =
-    withoutMax(Direction.Along)
+fun Constraints.withoutMaxAlong(): Constraints = withoutMax(Direction.Along)
 
 context(orientation: Orientation)
-fun Constraints.withoutMaxAcross(): Constraints =
-    withoutMax(Direction.Across)
+fun Constraints.withoutMaxAcross(): Constraints = withoutMax(Direction.Across)
 
 context(orientation: Orientation)
 fun Constraints.Companion.fixed(
@@ -186,7 +182,7 @@ fun Constraints.Companion.fixed(
             width = across,
             height = along,
         )
-    }
+    },
 )
 
 context(orientation: Orientation)
@@ -224,7 +220,7 @@ fun Constraints(
             minWidth = minAcross,
             maxWidth = maxAcross ?: Constraints.Infinity,
         )
-    }
+    },
 )
 
 

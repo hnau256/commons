@@ -50,10 +50,11 @@ fun <T> rememberPagerState(
         remember(state, scope) {
             val indexes = items.withIndex().associate { (i, value) -> value to i }
             state.mapMutableState(
-                scope = scope, mapper = Mapper(
+                scope = scope,
+                    mapper = Mapper(
                     direct = indexes::getValue,
                     reverse = items::get,
-                )
+                ),
             )
         }
     },

@@ -29,7 +29,9 @@ fun TypeParameterResolver(
     parametersMap: Map<String, TypeVariableName>,
 ): TypeParameterResolver = object : TypeParameterResolver {
     override val parametersMap: Map<String, TypeVariableName> = parametersMap
-    override fun get(index: String): TypeVariableName = parametersMap.getValue(index)
+    override fun get(
+        index: String,
+    ): TypeVariableName = parametersMap.getValue(index)
 }
 
 private fun KSTypeParameter.toTypeVariableNameLocal(): TypeVariableName {
@@ -38,8 +40,8 @@ private fun KSTypeParameter.toTypeVariableNameLocal(): TypeVariableName {
             parametersMap = typeParameters.associate { typeParameter ->
                 typeParameter.name.getQualifier() to typeParameter.toTypeVariableNameLocal()
 
-            }
-        )
+            },
+        ),
     )
 }
 
@@ -53,13 +55,14 @@ internal fun ImplementedInterface.generateFile(
     val a = buildList {
         add(interfaceToImplement.declaration)
         addAll(
-            factoryMethods.map { it.result.declaration }
+            factoryMethods.map { it.result.declaration },
         )
     }
     val implTypeParametersResolver =
-        TypeParameterResolver(a.flatMap { it.typeParameters }.associate { typeParameter ->
+        TypeParameterResolver(
+            a.flatMap { it.typeParameters }.associate { typeParameter ->
             typeParameter.name.asString() to typeParameter.toTypeVariableName()
-        }
+        },
         )
     FileSpec
         .builder(
@@ -77,7 +80,7 @@ internal fun ImplementedInterface.generateFile(
                 .addTypeVariables(
                     interfaceToImplement.declaration.typeParameters.map { typeParameter ->
                         typeParameter.toTypeVariableName(implTypeParametersResolver)
-                    }
+                    },
                 )
                 .primaryConstructor(
                     FunSpec
@@ -91,13 +94,13 @@ internal fun ImplementedInterface.generateFile(
                                     )
                                 } catch (th: Throwable) {
                                     throw IllegalStateException(
-                                        "Argument: ${argument}. Resolver: ${implTypeParametersResolver.parametersMap}. Class: $implClass",
-                                        th
+                                        "Argument: $argument. Resolver: ${implTypeParametersResolver.parametersMap}. Class: $implClass",
+                                        th,
                                     )
                                 }
-                            }
+                            },
                         )
-                        .build()
+                        .build(),
                 )
                 .addProperties(
                     overrideArguments.map { argument ->
@@ -109,7 +112,7 @@ internal fun ImplementedInterface.generateFile(
                             .initializer(argument.name)
                             .addModifiers(KModifier.OVERRIDE)
                             .build()
-                    }
+                    },
                 )
                 .addProperties(
                     privateArguments.map { argument ->
@@ -121,7 +124,7 @@ internal fun ImplementedInterface.generateFile(
                             .initializer(argument.name)
                             .addModifiers(KModifier.PRIVATE)
                             .build()
-                    }
+                    },
                 )
                 .addSuperinterface(
                     interfaceClass.run {
@@ -133,7 +136,7 @@ internal fun ImplementedInterface.generateFile(
                             null -> this
                             else -> parameterizedBy(typeArguments)
                         }
-                    }
+                    },
                 )
                 .addFunctions(
                     factoryMethods.map { method ->
@@ -146,7 +149,7 @@ internal fun ImplementedInterface.generateFile(
                                         name = argument.name,
                                         type = argument.type.toTypeName(),
                                     )
-                                }
+                                },
                             )
                             .returns(method.result.toTypeName())
                             .addCode(
@@ -159,12 +162,12 @@ internal fun ImplementedInterface.generateFile(
                                         }
                                     }
                                     .add(")")
-                                    .build()
+                                    .build(),
                             )
                             .build()
-                    }
+                    },
                 )
-                .build()
+                .build(),
         )
         .apply {
             if (interfaceToImplement.hasCompanionObject) {
@@ -178,7 +181,7 @@ internal fun ImplementedInterface.generateFile(
                                     name = argument.name,
                                     type = argument.type.toTypeName(implTypeParametersResolver),
                                 )
-                            }
+                            },
                         )
                         .returns(interfaceClass)
                         .addCode(
@@ -191,9 +194,9 @@ internal fun ImplementedInterface.generateFile(
                                     }
                                 }
                                 .add(")")
-                                .build()
+                                .build(),
                         )
-                        .build()
+                        .build(),
                 )
             }
         }

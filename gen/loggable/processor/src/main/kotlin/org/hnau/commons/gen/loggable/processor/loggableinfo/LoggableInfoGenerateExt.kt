@@ -10,7 +10,9 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import org.hnau.commons.kotlin.ifTrue
 
-internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
+internal fun LoggableInfo.generateCode(
+    codeGenerator: CodeGenerator,
+) {
 
     val classNameJoined = classSimpleNames.joinToString("")
 
@@ -38,7 +40,7 @@ internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
                     addAll(classSimpleNames)
                     hasCompanion.ifTrue { add("Companion") }
                 },
-            )
+            ),
         )
         .getter(
             FunSpec
@@ -49,7 +51,7 @@ internal fun LoggableInfo.generateCode(codeGenerator: CodeGenerator) {
                     loggerClassName,
                     tag,
                 )
-                .build()
+                .build(),
         )
         .build()
 

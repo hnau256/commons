@@ -42,7 +42,7 @@ fun <R> derivedStateFlowOf(
     }
 
     val result = MutableStateFlow(
-        value = createState()
+        value = createState(),
     )
 
     scope.launch {
@@ -79,7 +79,7 @@ private class StateFlowStateProviderImpl(
                 scope.async {
                     first { it != result }
                     Unit
-                }
+                },
             )
             return result
         }

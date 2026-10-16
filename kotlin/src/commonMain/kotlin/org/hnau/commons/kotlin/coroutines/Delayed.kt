@@ -34,7 +34,7 @@ inline fun <I, O> StateFlow<I>.mapStateDelayed(
                 Delayed(
                     isInProgress = false,
                     value = transformed,
-                )
+                ),
             )
         }
     }

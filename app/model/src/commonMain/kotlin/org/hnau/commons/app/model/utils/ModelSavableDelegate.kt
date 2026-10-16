@@ -39,19 +39,20 @@ class ModelSavableDelegate<T>(
         blockReason = result.mapState(scope) { editable ->
             when (editable) {
                 Editable.Incorrect -> None.some()
-                is Editable.Value<T> -> editable
+                is Editable.Value<T> ->
+                    editable
                     .changed
                     .foldBoolean(
                         ifTrue = { editable.value.some().some() },
-                        ifFalse = { None }
+                        ifFalse = { None },
                     )
             }
-        }
+        },
     )
 
     @Serializable
     data class Skeleton<T>(
-        val blockBack: ModelBlockBackDelegate.Skeleton<Option<T>> = ModelBlockBackDelegate.Skeleton()
+        val blockBack: ModelBlockBackDelegate.Skeleton<Option<T>> = ModelBlockBackDelegate.Skeleton(),
     )
 
     private fun saveAndCloseFlow(
@@ -73,7 +74,7 @@ class ModelSavableDelegate<T>(
                         MutableStateFlow(
                             ActionOrElse.Action(
                                 action = { _: Unit -> close() },
-                            )
+                            ),
                         )
                     },
                     ifTrue = {
@@ -81,7 +82,7 @@ class ModelSavableDelegate<T>(
                             scope = scope,
                             value = result.value,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -89,7 +90,7 @@ class ModelSavableDelegate<T>(
     data class ExitWithoutSavingDialog(
         val returnToEditing: () -> Unit,
         val exitWithoutSaving: () -> Unit,
-        val saveAndExitIfPossible: StateFlow<ActionOrElse<Unit, CancelOrInProgress.Cancel>>?
+        val saveAndExitIfPossible: StateFlow<ActionOrElse<Unit, CancelOrInProgress.Cancel>>?,
     )
 
     val dialog: StateFlow<ExitWithoutSavingDialog?> = blockBackDelegate
@@ -107,7 +108,7 @@ class ModelSavableDelegate<T>(
                                 value = value,
                             )
                         }
-                        .getOrNull()
+                        .getOrNull(),
                 )
             }
         }

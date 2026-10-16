@@ -17,7 +17,7 @@ import org.hnau.commons.kotlin.foldBoolean
 
 @Composable
 fun rememberFShape(
-    corners: ShapeCorners.Provider = LocalShapeCorners.current
+    corners: ShapeCorners.Provider = LocalShapeCorners.current,
 ): Shape {
     val cornerRadius = LocalDistance.current.units.cornerRadius
     return remember(corners, cornerRadius) {
@@ -36,7 +36,7 @@ private class FShape(
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
-        density: Density
+        density: Density,
     ): Outline {
 
         val corners = tableCorners.getTableCorners()
@@ -50,7 +50,7 @@ private class FShape(
                             ifFalse = { cornerRadii.start },
                         )
                         .toPx()
-                }
+                },
             )
         }
 

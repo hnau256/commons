@@ -19,5 +19,5 @@ fun <S, V> Mapper<S, V>.toParsingMapper(): ParsingMapper<S, V, Nothing> = Parsin
         state
             .let(direct)
             .right()
-    }
+    },
 )

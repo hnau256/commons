@@ -5,7 +5,7 @@ import kotlinx.serialization.builtins.serializer
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.stringToBigDecimal
 
-object BigDecimalSerializer: MappingKSerializer<String, BigDecimal>(
+object BigDecimalSerializer : MappingKSerializer<String, BigDecimal>(
     base = String.serializer(),
     mapper = Mapper.stringToBigDecimal,
 )

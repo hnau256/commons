@@ -153,11 +153,11 @@ private fun InterfaceToImplement.FactoryMethod.implement(
                         Argument(
                             name = key,
                             type = dependentConstructorArgument.type,
-                        )
+                        ),
                     )
                 }
                 key to key
-            }
+            },
     )
     if (factoryMethodsParameters.isNotEmpty()) {
         val unusedParameters = factoryMethodsParameters.joinToString(

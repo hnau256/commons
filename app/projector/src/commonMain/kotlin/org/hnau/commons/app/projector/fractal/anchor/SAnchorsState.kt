@@ -87,5 +87,5 @@ fun SAnchorsState.Companion.rememberForIndex(
     getPosition = { getSelectedIndex().toFloat() },
     setPosition = setSelectedIndex?.let { set ->
         { index -> set(index.roundToInt()) }
-    }
+    },
 )

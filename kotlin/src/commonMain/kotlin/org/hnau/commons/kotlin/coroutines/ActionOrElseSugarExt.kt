@@ -10,6 +10,6 @@ fun ActionOrElse.Else<CancelOrInProgress.Cancel>.cancel() {
 fun ActionOrElse<Unit, CancelOrInProgress.Cancel>.actionOrCancel() {
     fold(
         ifAction = { action -> action() },
-        ifElse = CancelOrInProgress.Cancel::cancel::invoke
+        ifElse = CancelOrInProgress.Cancel::cancel::invoke,
     )
 }

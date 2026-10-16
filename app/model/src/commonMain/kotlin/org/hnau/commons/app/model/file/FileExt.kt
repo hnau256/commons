@@ -4,11 +4,9 @@ import kotlinx.io.RawSink
 import kotlinx.io.RawSource
 import kotlinx.io.files.Path
 
-fun File.exists(): Boolean =
-    fileSystem.exists(path)
+fun File.exists(): Boolean = fileSystem.exists(path)
 
-fun File.source(): RawSource =
-    fileSystem.source(path)
+fun File.source(): RawSource = fileSystem.source(path)
 
 fun File.mkDirs() {
     fileSystem.createDirectories(path)

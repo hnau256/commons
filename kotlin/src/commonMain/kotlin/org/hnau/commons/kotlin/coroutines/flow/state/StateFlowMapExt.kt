@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import org.hnau.commons.kotlin.coroutines.flow.toFakeStateFlow
 
 fun <I, O> StateFlow<I>.mapState(
-  scope: CoroutineScope,
-  transform: (I) -> O,
+    scope: CoroutineScope,
+    transform: (I) -> O,
 ): StateFlow<O> {
 
   val initialValue: I = this@mapState.value

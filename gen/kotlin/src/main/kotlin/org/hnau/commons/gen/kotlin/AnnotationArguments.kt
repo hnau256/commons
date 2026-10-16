@@ -46,11 +46,11 @@ class AnnotationArguments(
             (value as? T).ifNull {
                 logger.error(
                     "Expected type of argument '$name' is ${T::class}, actual is ${value.javaClass}",
-                    annotation
+                    annotation,
                 )
                 null
             }
-        }
+        },
     )
 }
 

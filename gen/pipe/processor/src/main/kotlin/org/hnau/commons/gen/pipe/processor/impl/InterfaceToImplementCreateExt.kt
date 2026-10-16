@@ -29,7 +29,7 @@ internal fun InterfaceToImplement.Companion.create(
             ) { acc, property ->
                 acc + property.toProperty(
                     interfaceClassInfo = interfaceToImplement,
-                    alreadyCollectedProperties = acc
+                    alreadyCollectedProperties = acc,
                 )
             },
         factoryMethods = interfaceToImplement
@@ -92,7 +92,7 @@ private fun KSFunctionDeclaration.toFactoryMethod(
             acc + parameter.toFactoryMethodArgument(
                 declaration = interfaceClassInfo,
                 factoryMethodName = name,
-                previousArguments = acc
+                previousArguments = acc,
             )
         },
     )

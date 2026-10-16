@@ -41,7 +41,7 @@ fun TonalPalette.Companion.create(
     val contrastLevel = config
         .contrast
         .contrast
-    
+
     val spec = when (config.spec) {
         ColorSpec.SpecVersion.SPEC_2021 -> ColorSpec2021()
         ColorSpec.SpecVersion.SPEC_2025 -> ColorSpec2026()
@@ -54,7 +54,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
 
         PaletteType.Secondary -> spec.getSecondaryPalette(
@@ -62,7 +62,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
 
         PaletteType.Tertiary -> spec.getTertiaryPalette(
@@ -70,7 +70,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
 
         PaletteType.Neutral -> spec.getNeutralPalette(
@@ -78,7 +78,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
 
         PaletteType.NeutralVariant -> spec.getNeutralVariantPalette(
@@ -86,7 +86,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
 
         PaletteType.Error -> spec.getErrorPalette(
@@ -94,7 +94,7 @@ fun TonalPalette.Companion.create(
             /* sourceColorHct = */ mainHtc,
             /* isDark = */ isDark,
             /* platform = */ config.platform,
-            /* contrastLevel = */ contrastLevel
+            /* contrastLevel = */ contrastLevel,
         )
     }
 }

@@ -8,7 +8,9 @@ import org.hnau.commons.plugins.utils.versions.ProjectId
 import java.io.File
 
 class HnauSettingsPlugin : Plugin<Settings> {
-    override fun apply(settings: Settings) {
+    override fun apply(
+        settings: Settings,
+    ) {
         val extension =
             settings.extensions.create(
                 "hnau",
@@ -33,7 +35,7 @@ class HnauSettingsPlugin : Plugin<Settings> {
                         projectId = project
                             .name
                             .lowercase()
-                            .let(::ProjectId)
+                            .let(::ProjectId),
                     )
                     .publishToRootProject(project)
             }
@@ -49,8 +51,7 @@ class HnauSettingsPlugin : Plugin<Settings> {
     private fun collectProjects(
         projectDir: File,
         projectIdentifier: String = "",
-    ): List<String> =
-        projectDir
+    ): List<String> = projectDir
             .list()
             .orEmpty()
             .let { fileNames ->
@@ -74,7 +75,9 @@ class HnauSettingsPlugin : Plugin<Settings> {
                     }
             }
 
-    private fun createBomCatalog(catalogs: MutableVersionCatalogContainer) {
+    private fun createBomCatalog(
+        catalogs: MutableVersionCatalogContainer,
+    ) {
         catalogs.create("hnau") { catalog ->
 
             val plugins =

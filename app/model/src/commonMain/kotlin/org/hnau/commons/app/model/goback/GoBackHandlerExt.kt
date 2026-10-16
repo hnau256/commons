@@ -14,6 +14,6 @@ fun GoBackHandler.withFallback(
 ): GoBackHandler = flatMapWithScope(scope) { scope, goBackOrNull ->
     goBackOrNull.foldNullable(
         ifNotNull = { goBack -> goBack.toMutableStateFlowAsInitial() },
-        ifNull = { createFallback(scope) }
+        ifNull = { createFallback(scope) },
     )
 }

@@ -82,7 +82,7 @@ fun Overcompose(
                     bottom = bottomHeight.toDp(),
                     start = contentPadding.calculateStartPadding(layoutDirection),
                     end = contentPadding.calculateEndPadding(layoutDirection),
-                )
+                ),
             )
         }
             .map { contentMeasurable ->

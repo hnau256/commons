@@ -31,7 +31,7 @@ fun <T> Loadable<T>.LoadableContent(
     ) { localValue ->
         localValue.fold(
             ifLoading = { loadingContent() },
-            ifReady = { value -> readyContent(value) }
+            ifReady = { value -> readyContent(value) },
         )
     }
 }

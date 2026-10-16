@@ -12,14 +12,12 @@ import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.rememberRun
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.map
-
 import kotlin.jvm.JvmName
 
 @JvmName("toFractionInputProjectorPrototype")
 fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toInputProjectorPrototype(
-    floatIso: Iso<T, Float>
-): InputProjectorPrototype<T, Nothing, InputType.Fraction<T>> =
-    toInputProjectorPrototype { inputType, state, updateState ->
+    floatIso: Iso<T, Float>,
+): InputProjectorPrototype<T, Nothing, InputType.Fraction<T>> = toInputProjectorPrototype { inputType, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val updateOrNull by updateState.collectAsState()
             val value by state.collectAsState()
@@ -43,11 +41,11 @@ fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toIn
                                     ifNotNull = { length ->
                                         val floatValue = fraction * length + range.start
                                         floatIso.set(floatValue)
-                                    }
-                                )
+                                    },
+                                ),
                             )
                         }
-                    }
+                    },
                 )
             }
         }

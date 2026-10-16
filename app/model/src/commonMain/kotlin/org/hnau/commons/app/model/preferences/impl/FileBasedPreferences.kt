@@ -51,12 +51,12 @@ class FileBasedPreferences(
                     },
                     ifSome = { newValue ->
                         values.value + (key to newValue)
-                    }
+                    },
                 )
                 updateValues(newValues)
                 values.value = newValues
             }
-        }
+        },
     )
 
     class Factory(
@@ -94,7 +94,7 @@ class FileBasedPreferences(
                                 sink.writeString(text)
                             }
                     }
-                }
+                },
             )
         }
 
@@ -114,13 +114,13 @@ class FileBasedPreferences(
                         },
                         reverse = { (key, value) ->
                             key + separator + value
-                        }
+                        },
                     )
                 }
 
                 val entriesMapper = Mapper<List<String>, Map<String, String>>(
                     direct = { it.associate(entryMapper.direct) },
-                    reverse = { it.toList().map(entryMapper.reverse) }
+                    reverse = { it.toList().map(entryMapper.reverse) },
                 )
 
                 val entriesStringsMapper: Mapper<String, List<String>> =

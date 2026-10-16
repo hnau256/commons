@@ -16,7 +16,9 @@ class InProgressRegistry(
         .mapState(scope) { activitiesCount -> activitiesCount > 0 }
 
     @PublishedApi
-    internal fun incActivitiesCount(delta: Int) {
+    internal fun incActivitiesCount(
+        delta: Int,
+    ) {
         activitiesCount.update { it + delta }
     }
 

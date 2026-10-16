@@ -1,8 +1,8 @@
 package org.hnau.commons.kotlin.logging.slf4j
 
+import co.touchlab.kermit.Logger as KermitLogger
 import org.slf4j.Logger
 import org.slf4j.Marker
-import co.touchlab.kermit.Logger as KermitLogger
 
 /**
  * SLF4J Logger implementation that delegates to Kermit
@@ -16,25 +16,37 @@ internal class KermitSlf4jLogger(
 
     override fun isTraceEnabled(): Boolean = true
 
-    override fun isTraceEnabled(marker: Marker?): Boolean = true
+    override fun isTraceEnabled(
+        marker: Marker?,
+    ): Boolean = true
 
     override fun isDebugEnabled(): Boolean = true
 
-    override fun isDebugEnabled(marker: Marker?): Boolean = true
+    override fun isDebugEnabled(
+        marker: Marker?,
+    ): Boolean = true
 
     override fun isInfoEnabled(): Boolean = true
 
-    override fun isInfoEnabled(marker: Marker?): Boolean = true
+    override fun isInfoEnabled(
+        marker: Marker?,
+    ): Boolean = true
 
     override fun isWarnEnabled(): Boolean = true
 
-    override fun isWarnEnabled(marker: Marker?): Boolean = true
+    override fun isWarnEnabled(
+        marker: Marker?,
+    ): Boolean = true
 
     override fun isErrorEnabled(): Boolean = true
 
-    override fun isErrorEnabled(marker: Marker?): Boolean = true
+    override fun isErrorEnabled(
+        marker: Marker?,
+    ): Boolean = true
 
-    override fun trace(msg: String) = logger.v { msg }
+    override fun trace(
+        msg: String,
+    ) = logger.v { msg }
 
     override fun trace(
         format: String,
@@ -87,7 +99,9 @@ internal class KermitSlf4jLogger(
         t: Throwable?,
     ) = trace(msg, t)
 
-    override fun debug(msg: String) = logger.d { msg }
+    override fun debug(
+        msg: String,
+    ) = logger.d { msg }
 
     override fun debug(
         format: String,
@@ -140,7 +154,9 @@ internal class KermitSlf4jLogger(
         t: Throwable?,
     ) = debug(msg, t)
 
-    override fun info(msg: String) = logger.i { msg }
+    override fun info(
+        msg: String,
+    ) = logger.i { msg }
 
     override fun info(
         format: String,
@@ -193,7 +209,9 @@ internal class KermitSlf4jLogger(
         t: Throwable?,
     ) = info(msg, t)
 
-    override fun warn(msg: String) = logger.w { msg }
+    override fun warn(
+        msg: String,
+    ) = logger.w { msg }
 
     override fun warn(
         format: String,
@@ -246,7 +264,9 @@ internal class KermitSlf4jLogger(
         t: Throwable?,
     ) = warn(msg, t)
 
-    override fun error(msg: String) = logger.e { msg }
+    override fun error(
+        msg: String,
+    ) = logger.e { msg }
 
     override fun error(
         format: String,

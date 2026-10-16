@@ -57,7 +57,7 @@ fun AlertDialogContent(
             title?.let {
                 ProvideContentColorTextStyle(
                     contentColor = titleContentColor,
-                    textStyle = MaterialTheme.typography.headlineSmall
+                    textStyle = MaterialTheme.typography.headlineSmall,
                 ) {
                     Box(
                         // Align the title to the center when an icon is present.
@@ -67,8 +67,8 @@ fun AlertDialogContent(
                                     Alignment.Start
                                 } else {
                                     Alignment.CenterHorizontally
-                                }
-                            )
+                                },
+                            ),
                     ) {
                         title()
                     }
@@ -77,12 +77,12 @@ fun AlertDialogContent(
             text?.let {
                 ProvideContentColorTextStyle(
                     contentColor = textContentColor,
-                    textStyle = MaterialTheme.typography.bodyMedium
+                    textStyle = MaterialTheme.typography.bodyMedium,
                 ) {
                     Box(
                         Modifier.weight(weight = 1f, fill = false)
                             .padding(TextPadding)
-                            .align(Alignment.Start)
+                            .align(Alignment.Start),
                     ) {
                         text()
                     }
@@ -95,11 +95,11 @@ fun AlertDialogContent(
                     content = {
                         AlertDialogFlowRow(
                             mainAxisSpacing = ButtonsMainAxisSpacing,
-                            crossAxisSpacing = ButtonsCrossAxisSpacing
+                            crossAxisSpacing = ButtonsCrossAxisSpacing,
                         ) {
                             buttons()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -116,7 +116,7 @@ internal fun ProvideContentColorTextStyle(
     CompositionLocalProvider(
         LocalContentColor provides contentColor,
         LocalTextStyle provides mergedStyle,
-        content = content
+        content = content,
     )
 }
 
@@ -158,8 +158,9 @@ fun AlertDialogFlowRow(
         var currentCrossAxisSize = 0
 
         // Return whether the placeable can be added to the current sequence.
-        fun canAddToCurrentSequence(placeable: Placeable) =
-            currentSequence.isEmpty() ||
+        fun canAddToCurrentSequence(
+            placeable: Placeable,
+        ) = currentSequence.isEmpty() ||
                     currentMainAxisSize + mainAxisSpacing.roundToPx() + placeable.width <=
                     constraints.maxWidth
 
@@ -169,7 +170,8 @@ fun AlertDialogFlowRow(
                 crossAxisSpace += crossAxisSpacing.roundToPx()
             }
             // Ensures that confirming actions appear above dismissive actions.
-            @Suppress("ListIterator") sequences.add(0, currentSequence.toList())
+            @Suppress("ListIterator")
+            sequences.add(0, currentSequence.toList())
             crossAxisSizes += currentCrossAxisSize
             crossAxisPositions += crossAxisSpace
 
@@ -221,7 +223,7 @@ fun AlertDialogFlowRow(
                         mainAxisLayoutSize,
                         childrenMainAxisSizes,
                         layoutDirection,
-                        mainAxisPositions
+                        mainAxisPositions,
                     )
                 }
                 placeables.fastForEachIndexed { j, placeable ->

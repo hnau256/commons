@@ -103,7 +103,7 @@ private fun <T : Any> Side(
                     Spacer(
                         Modifier
                             .padding(contentPadding)
-                            .option(spaceHeight?.let(Modifier::height))
+                            .option(spaceHeight?.let(Modifier::height)),
                     )
                 },
                 ifNotNull = { localValue ->
@@ -112,7 +112,7 @@ private fun <T : Any> Side(
                     ) {
                         content(localValue)
                     }
-                }
+                },
             )
         }
 }

@@ -7,7 +7,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-object UuidSerializer: MappingKSerializer<String, Uuid>(
+object UuidSerializer : MappingKSerializer<String, Uuid>(
     base = String.serializer(),
     mapper = Mapper.stringToUuid,
 )

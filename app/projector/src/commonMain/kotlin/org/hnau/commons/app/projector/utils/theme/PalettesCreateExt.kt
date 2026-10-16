@@ -15,7 +15,8 @@ fun Palettes.Companion.createCached(
     config: PalettesGenerateConfig = PalettesGenerateConfig.default,
 ): Palettes = when (systemPalettes) {
     is SystemPalettes.Some -> systemPalettes.palettes
-    SystemPalettes.None -> palettesCache
+    SystemPalettes.None ->
+        palettesCache
         .getOrPut(fallbackHue) { HashMap() }
         .getOrPut(brightness) { HashMap() }
         .getOrPut(config) {

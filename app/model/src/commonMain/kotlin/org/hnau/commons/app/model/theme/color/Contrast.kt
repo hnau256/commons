@@ -1,7 +1,7 @@
 package org.hnau.commons.app.model.theme.color
 
-import kotlin.jvm.JvmInline
 import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class Contrast(
@@ -9,7 +9,7 @@ value class Contrast(
 ) : Comparable<Contrast> {
 
     override fun compareTo(
-        other: Contrast
+        other: Contrast,
     ): Int = contrast.compareTo(
         other = other.contrast,
     )

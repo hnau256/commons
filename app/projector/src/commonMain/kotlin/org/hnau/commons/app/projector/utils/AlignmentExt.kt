@@ -27,12 +27,12 @@ private class OppositeAlignment(
     override fun align(
         size: IntSize,
         space: IntSize,
-        layoutDirection: LayoutDirection
+        layoutDirection: LayoutDirection,
     ): IntOffset {
         val sourceOffset = source.align(size, space, layoutDirection)
         return IntOffset(
             x = space.width - size.width - sourceOffset.x,
-            y = space.height - size.height - sourceOffset.y
+            y = space.height - size.height - sourceOffset.y,
         )
     }
 }

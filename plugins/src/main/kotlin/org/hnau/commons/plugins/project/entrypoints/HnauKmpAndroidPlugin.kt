@@ -7,14 +7,16 @@ import org.hnau.commons.plugins.project.utils.ModuleType
 
 class HnauKmpAndroidPlugin : Plugin<Project> {
 
-    override fun apply(project: Project) {
+    override fun apply(
+        project: Project,
+    ) {
 
         project.configureForHnau(
             moduleType = ModuleType.Kmp(
                 level = ModuleType.Kmp.Level.Android(
                     withCompose = false,
                 ),
-            )
+            ),
         )
     }
 }

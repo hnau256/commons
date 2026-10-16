@@ -31,7 +31,7 @@ fun <T, C : Comparable<C>> getTransitionSpecForSlideByCompare(
             .compareTo(extractComparable(initialState))
             .sign
             .times(offsetFactor)
-    }
+    },
 )
 
 fun <T> getTransitionSpecForSlide(
@@ -48,20 +48,20 @@ fun <T> getTransitionSpecForSlide(
         val fade = slideCoefficient.absoluteValue < 1
         var enterTransition = slideIn(
             initialOffset = { it.toOffset(orientation) * slideCoefficient },
-            animationSpec = animationSpecInt
+            animationSpec = animationSpecInt,
         )
         if (fade) {
             enterTransition += fadeIn(
-                animationSpec = animationSpecFloat
+                animationSpec = animationSpecFloat,
             )
         }
         var exitTransition = slideOut(
             targetOffset = { it.toOffset(orientation) * (-slideCoefficient) },
-            animationSpec = animationSpecInt
+            animationSpec = animationSpecInt,
         )
         if (fade) {
             exitTransition += fadeOut(
-                animationSpec = animationSpecFloat
+                animationSpec = animationSpecFloat,
             )
         }
         val result = enterTransition togetherWith exitTransition

@@ -14,8 +14,8 @@ fun <I, O> Preference<Option<I>>.map(
     scope = scope,
     mapper = Mapper(
         direct = { it.map(mapper.direct) },
-        reverse = { it.map(mapper.reverse) }
-    )
+        reverse = { it.map(mapper.reverse) },
+    ),
 )
 
 fun <I, O> Preference<Option<I>>.mapOption(
@@ -27,7 +27,7 @@ fun <I, O> Preference<Option<I>>.mapOption(
     },
     update = { newValue ->
         update(newValue.let(mapper.reverse))
-    }
+    },
 )
 
 inline fun <T> Preference<Option<T>>.withDefault(
@@ -39,6 +39,6 @@ inline fun <T> Preference<Option<T>>.withDefault(
         direct = { valueOrNone ->
             valueOrNone.getOrElse(default)
         },
-        reverse = ::Some
-    )
+        reverse = ::Some,
+    ),
 )

@@ -28,7 +28,6 @@ import org.hnau.commons.app.projector.fractal.input.InputContentProjector
 import org.hnau.commons.app.projector.fractal.input.InputProjectorPrototype
 import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import org.hnau.commons.app.projector.utils.Drawable
-
 import kotlin.jvm.JvmName
 
 @JvmName("toEditInputProjectorPrototype")
@@ -37,8 +36,7 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
     keyboardType: KeyboardType,
     requestFocusOnStart: Boolean = false,
     showClearButton: Boolean = true,
-): InputProjectorPrototype<String, E, InputType.Edit> =
-    toInputProjectorPrototype { _, state, updateState ->
+): InputProjectorPrototype<String, E, InputType.Edit> = toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val updateOrNull by updateState.collectAsState()
             val value by state.collectAsState()
@@ -59,10 +57,10 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                                 drawable = Drawable.Vector(Icons.Default.Close),
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .clickable { update("") }
+                                    .clickable { update("") },
                             )
                         }
-                    }
+                    },
             ) {
                 STextField(
                     modifier = Modifier

@@ -7,12 +7,14 @@ import org.hnau.commons.plugins.project.utils.ModuleType
 
 class HnauJvmPlugin : Plugin<Project> {
 
-    override fun apply(project: Project) {
+    override fun apply(
+        project: Project,
+    ) {
 
         project.configureForHnau(
             moduleType = ModuleType.Jvm(
                 isAndroidApp = false,
-            )
+            ),
         )
     }
 }

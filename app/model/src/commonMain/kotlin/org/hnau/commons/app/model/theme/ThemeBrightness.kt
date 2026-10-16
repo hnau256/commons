@@ -16,5 +16,5 @@ enum class ThemeBrightness {
 val ThemeBrightness.isDark: Boolean
     get() = fold(
         ifLight = { false },
-        ifDark = { true }
+        ifDark = { true },
     )

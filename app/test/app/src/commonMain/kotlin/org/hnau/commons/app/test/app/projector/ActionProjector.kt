@@ -65,7 +65,7 @@ class ActionProjector(
 
     @Composable
     fun Content(
-        contentPadding: PaddingValues
+        contentPadding: PaddingValues,
     ) {
         SScreen(
             contentPadding = contentPadding,
@@ -83,16 +83,16 @@ class ActionProjector(
             actions = {
                 Action(
                     actionOrElseOrDisabled = fakeAction.collectAsState().value,
-                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.OpenInFull))
+                    titleOrIcon = TitleOrIcon.Icon(Drawable.Vector(Icons.Default.OpenInFull)),
                 )
                 Action(
                     actionOrElseOrDisabled = fakeAction.collectAsState().value,
                     titleOrIcon = TitleOrIcon.Both(
                         icon = Drawable.Text("Bank of Cyprus"),
                         title = "BoC",
-                    )
+                    ),
                 )
-            }
+            },
         ) {
             SContentWithActions(
                 content = {
@@ -150,7 +150,7 @@ class ActionProjector(
                                     }
                                 }
                             }
-                        }
+                        },
                     )
                 },
                 actions = {
@@ -161,7 +161,7 @@ class ActionProjector(
                             icon = Drawable.Vector(Icons.Default.RocketLaunch),
                         ),
                     )
-                }
+                },
             )
         }
     }

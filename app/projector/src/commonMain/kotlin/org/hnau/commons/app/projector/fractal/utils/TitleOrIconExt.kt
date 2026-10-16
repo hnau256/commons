@@ -35,6 +35,6 @@ fun TitleOrIcon.withActionOrElse(
                 title = title,
                 icon = iconToOverwrite ?: icon,
             )
-        }
+        },
     )
 }

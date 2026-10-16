@@ -28,7 +28,7 @@ fun SText(
 ) {
     LocalContentPaddingBox {
         FContext(
-            update = { contentOverlay() }
+            update = { contentOverlay() },
         ) {
             val fContext = LocalFContext.current
             BasicText(

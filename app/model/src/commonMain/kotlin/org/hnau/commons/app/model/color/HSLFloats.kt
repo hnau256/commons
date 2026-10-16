@@ -81,7 +81,7 @@ data class HSLFloats(
                     .let { (r, g, b) ->
                         RGBFloats(r, g, b)
                     }
-            }
+            },
         )
     }
 }

@@ -14,10 +14,10 @@ fun EnumValuesInfo.generateCode(
         .builder(packageName, valuesClass)
         .apply {
             addType(
-                toTypeSpec()
+                toTypeSpec(),
             )
             addFunction(
-                toCopyFuncSpec()
+                toCopyFuncSpec(),
             )
         }
         .build()

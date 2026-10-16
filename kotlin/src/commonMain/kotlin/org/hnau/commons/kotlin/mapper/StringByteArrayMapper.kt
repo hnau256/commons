@@ -7,7 +7,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @OptIn(ExperimentalEncodingApi::class)
 private val stringAsBase64ByteArrayMapper = Mapper<String, ByteArray>(
     direct = { str -> Base64.decode(str) },
-    reverse = { bytes -> Base64.encode(bytes) }
+    reverse = { bytes -> Base64.encode(bytes) },
 )
 
 val Mapper.Companion.stringAsBase64ByteArray: Mapper<String, ByteArray>

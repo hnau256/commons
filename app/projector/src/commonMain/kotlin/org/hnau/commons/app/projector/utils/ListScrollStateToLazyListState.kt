@@ -12,7 +12,9 @@ import org.hnau.commons.app.model.ListScrollState
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun StateFlow<ListScrollState>.toLazyListState(onListScrollStateChanged: (ListScrollState) -> Unit): LazyListState {
+fun StateFlow<ListScrollState>.toLazyListState(
+    onListScrollStateChanged: (ListScrollState) -> Unit,
+): LazyListState {
     val state =
         remember(this) {
             val initial = value

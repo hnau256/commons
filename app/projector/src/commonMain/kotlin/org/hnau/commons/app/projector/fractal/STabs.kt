@@ -43,7 +43,7 @@ fun <T> STabs(
             },
             setSelectedIndex = onSelectionChanged?.let { updateSelection ->
                 { index: Int -> updateSelection(items[index]) }
-            }
+            },
         ),
         item = {
             CompositionLocalProvider(

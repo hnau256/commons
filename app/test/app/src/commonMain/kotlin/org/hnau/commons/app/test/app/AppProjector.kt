@@ -33,11 +33,11 @@ fun createAppProjector(
         CompositionLocalProvider(
             LocalFContext provides FContext.createBase(
                 palettes = palettes,
-            )
+            ),
         ) {
             rootProjector.Content(
                 contentPadding = contentPadding,
             )
         }
-    }
+    },
 )
