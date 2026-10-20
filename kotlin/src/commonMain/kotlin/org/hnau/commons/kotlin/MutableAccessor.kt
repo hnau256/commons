@@ -61,7 +61,8 @@ inline fun <T, reified R : T> MutableAccessor<T?>.shrinkType(): MutableAccessor<
         set = set,
     )
 
-inline fun <T, reified R : T> MutableAccessor<Option<T>>.shrinkOptionType(): MutableAccessor<Option<R>> = MutableAccessor(
+inline fun <T, reified R : T> MutableAccessor<Option<T>>.shrinkOptionType(): MutableAccessor<Option<R>> =
+    MutableAccessor(
         get = {
             get().flatMap { value ->
                 when (value) {

@@ -27,7 +27,8 @@ fun actionOrCancelIfExecuting(
 fun <A> operationOrInProgressIfExecuting(
     scope: CoroutineScope,
     operation: suspend (scope: CoroutineScope, A) -> Unit,
-): StateFlow<ActionOrElse<A, CancelOrInProgress.InProgress>> = operationOrElseIfExecuting<A, CancelOrInProgress.InProgress>(
+): StateFlow<ActionOrElse<A, CancelOrInProgress.InProgress>> =
+    operationOrElseIfExecuting<A, CancelOrInProgress.InProgress>(
         scope = scope,
         operation = operation,
     )

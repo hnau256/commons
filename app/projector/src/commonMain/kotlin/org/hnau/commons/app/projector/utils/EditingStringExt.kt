@@ -34,4 +34,5 @@ val EditingString.Companion.textFieldValueMapper: Mapper<EditingString, TextFiel
     get() = editingStringTextFieldValueMapper
 
 @Composable
-fun MutableStateFlow<EditingString>.collectAsTextFieldValueMutableAccessor(): MutableAccessor<TextFieldValue> = collectAsMutableAccessor(EditingString.textFieldValueMapper)
+fun MutableStateFlow<EditingString>.collectAsTextFieldValueMutableAccessor(): MutableAccessor<TextFieldValue> =
+    collectAsMutableAccessor(EditingString.textFieldValueMapper)

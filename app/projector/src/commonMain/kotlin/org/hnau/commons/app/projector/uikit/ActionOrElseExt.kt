@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package org.hnau.commons.app.projector.uikit
 
 import androidx.compose.animation.AnimatedContentTransitionScope

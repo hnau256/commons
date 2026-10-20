@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background

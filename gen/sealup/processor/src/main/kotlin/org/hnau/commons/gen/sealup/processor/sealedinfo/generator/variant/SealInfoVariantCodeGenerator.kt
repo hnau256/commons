@@ -108,7 +108,9 @@ fun SealedInfo.Variant.toTypeSpec(
 
                 val wrapped = this@toTypeSpec
                     .wrapped
-                    ?: error("Unable create overrides for variant without wrapped class or object. Variant: $wrapperIdentifier")
+                    ?: error(
+                        "Unable create overrides for variant without wrapped class or object. Variant: $wrapperIdentifier",
+                    )
 
                 overrides.forEach { override ->
                     override

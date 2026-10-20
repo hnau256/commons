@@ -17,7 +17,11 @@ import kotlin.jvm.JvmName
 @JvmName("toFractionInputProjectorPrototype")
 fun <T : Comparable<T>> InputStateHolder<T, Nothing, InputType.Fraction<T>>.toInputProjectorPrototype(
     floatIso: Iso<T, Float>,
-): InputProjectorPrototype<T, Nothing, InputType.Fraction<T>> = toInputProjectorPrototype { inputType, state, updateState ->
+): InputProjectorPrototype<T, Nothing, InputType.Fraction<T>> = toInputProjectorPrototype {
+    inputType,
+    state,
+    updateState,
+    ->
         InputContentProjector.WithoutTitle { itemDrawer ->
             val updateOrNull by updateState.collectAsState()
             val value by state.collectAsState()

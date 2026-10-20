@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package org.hnau.commons.app.projector.fractal.input.type
 
 import androidx.compose.runtime.collectAsState
@@ -12,7 +14,12 @@ import org.hnau.commons.app.projector.fractal.input.toInputProjectorPrototype
 import kotlin.jvm.JvmName
 
 @JvmName("toFlagInputProjectorPrototype")
-fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, Nothing, InputType.Flag> = toInputProjectorPrototype { _, state, updateState ->
+fun InputStateHolder<Boolean, Nothing, InputType.Flag>.toInputProjectorPrototype(): InputProjectorPrototype<Boolean, Nothing, InputType.Flag> =
+    toInputProjectorPrototype {
+    _,
+    state,
+    updateState,
+    ->
         InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
             val updateOrNull by updateState.collectAsState()
             val isChecked by state.collectAsState()

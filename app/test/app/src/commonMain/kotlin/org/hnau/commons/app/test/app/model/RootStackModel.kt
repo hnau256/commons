@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package org.hnau.commons.app.test.app.model
 
 import kotlinx.coroutines.CoroutineScope

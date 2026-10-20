@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 @file:UseSerializers(
     BigDecimalSerializer::class,
     BigIntegerSerializer::class,

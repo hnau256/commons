@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package org.hnau.commons.plugins
 
 import org.hnau.commons.plugins.utils.versions.Aliased
@@ -36,20 +38,26 @@ internal object Versions {
             PluginId("org.jetbrains.kotlin.android") withVersion Version.Kotlin withAlias "kotlin-android"
 
         val kotlinSerialization =
-            PluginId("org.jetbrains.kotlin.plugin.serialization") withVersion Version.Kotlin withAlias "kotlin-serialization"
+            PluginId(
+                "org.jetbrains.kotlin.plugin.serialization",
+            ) withVersion Version.Kotlin withAlias "kotlin-serialization"
 
         val kotlinCompose =
             PluginId("org.jetbrains.kotlin.plugin.compose") withVersion Version.Kotlin withAlias "kotlin-compose"
 
         val androidMultiplatformLibrary =
-            PluginId("com.android.kotlin.multiplatform.library") withVersion Version.AndroidGradlePlugin withAlias "android-multiplatformLibrary"
+            PluginId(
+                "com.android.kotlin.multiplatform.library",
+            ) withVersion Version.AndroidGradlePlugin withAlias "android-multiplatformLibrary"
 
         val androidApplication =
             PluginId("com.android.application") withVersion Version.AndroidGradlePlugin withAlias "android-application"
 
 
         val googleServices =
-            PluginId("com.google.gms.google-services") withVersion Version.GoogleServicesPlugin withAlias "googleServices"
+            PluginId(
+                "com.google.gms.google-services",
+            ) withVersion Version.GoogleServicesPlugin withAlias "googleServices"
 
         val ksp =
             PluginId("com.google.devtools.ksp") withVersion Version.Ksp withAlias "ksp"
@@ -115,7 +123,11 @@ internal object Versions {
         }
 
         val gen: List<AnnotationWithProcessor<Versioned<LibraryId>>> = listOf(
-            "pipe", "loggable", "sealup", "enumvalues", "fold",
+            "pipe",
+            "loggable",
+            "sealup",
+            "enumvalues",
+            "fold",
         ).map { type ->
             AnnotationWithProcessor(
                 annotation = "annotations",

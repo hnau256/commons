@@ -61,7 +61,7 @@ gradlePlugin {
             id = "$prefix.settings"
             implementationClass = "org.hnau.commons.plugins.settings.HnauSettingsPlugin"
             displayName = "Hnau Settings Plugin"
-            description = "Centralized settings with version catalog, pluginManagement, auto-include modules and allModules defaults"
+            description = "Centralized settings with version catalog, pluginManagement and auto-include"
         }
 
         create("HnauJvm") {

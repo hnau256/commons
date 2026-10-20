@@ -15,7 +15,11 @@ import kotlin.jvm.JvmName
 @JvmName("toVariantInputProjectorPrototype")
 fun <S> InputStateHolder<S, Nothing, InputType.Variant<S>>.toInputProjectorPrototype(
     item: @Composable (S) -> Unit,
-): InputProjectorPrototype<S, Nothing, InputType.Variant<S>> = toInputProjectorPrototype { inputType, state, updateState ->
+): InputProjectorPrototype<S, Nothing, InputType.Variant<S>> = toInputProjectorPrototype {
+    inputType,
+    state,
+    updateState,
+    ->
         InputContentProjector.WithTitle { title, titleMaxLines, itemDrawer ->
             val updateOrNull by updateState.collectAsState()
             val selection = state.collectAsState()

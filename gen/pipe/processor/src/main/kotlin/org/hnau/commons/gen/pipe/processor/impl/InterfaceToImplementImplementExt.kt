@@ -145,7 +145,9 @@ private fun InterfaceToImplement.FactoryMethod.implement(
                     .firstOrNull { it.name == key }
                 if (existingByName != null) {
                     val reconciled = commonType(existingByName.type, dependentConstructorArgument.type)
-                        ?: error("Conflicting types for constructor parameter '$key': ${existingByName.type.declaration.qualifiedName?.asString()} vs ${dependentConstructorArgument.type.declaration.qualifiedName?.asString()}")
+                        ?: error(
+                            "Conflicting types for constructor parameter '$key': ${existingByName.type.declaration.qualifiedName?.asString()} vs ${dependentConstructorArgument.type.declaration.qualifiedName?.asString()}",
+                        )
                     val index = privateConstructorProperties.indexOf(existingByName)
                     privateConstructorProperties[index] = existingByName.copy(type = reconciled)
                 } else {
@@ -166,7 +168,9 @@ private fun InterfaceToImplement.FactoryMethod.implement(
             separator = ", ",
             transform = { propertyInfo -> propertyInfo.name },
         )
-        error("Factory method `$name` of interface `${interfaceClassInfo.log}` has unused parameters: $unusedParameters")
+        error(
+            "Factory method `$name` of interface `${interfaceClassInfo.log}` has unused parameters: $unusedParameters",
+        )
     }
     return result
 }

@@ -59,8 +59,14 @@ fun SealedInfo.Override.createPropertySpec(
                         .addCode(
                          codeBlock {
                              receiver.foldNullable(
-                                 ifNull = { "${use(wrapped)}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}" },
-                                 ifNotNull = { "with(${use(wrapped)}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }" },
+                                 ifNull = {
+                                     "${use(wrapped)}.$name = ${SealInfoCodeGeneratorConstants.setterParameterName}"
+                                 },
+                                 ifNotNull = {
+                                     "with(${use(
+                                        wrapped,
+                                    )}) { $name = ${SealInfoCodeGeneratorConstants.setterParameterName} }"
+                                 },
                              )
                          },
                         ).build(),

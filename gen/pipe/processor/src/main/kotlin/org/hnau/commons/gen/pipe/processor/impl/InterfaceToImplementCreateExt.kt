@@ -60,7 +60,9 @@ private fun KSPropertyDeclaration.toProperty(
     val type = type.resolve()
     val previousPropertyWithSameType = alreadyCollectedProperties.firstOrNull { commonType(it.type, type) != null }
     if (previousPropertyWithSameType != null) {
-        error("Properties '${previousPropertyWithSameType.name}' and '$name' of interface ${interfaceClassInfo.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}")
+        error(
+            "Properties '${previousPropertyWithSameType.name}' and '$name' of interface ${interfaceClassInfo.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}",
+        )
     }
     return Argument(
         name = name,
@@ -79,7 +81,9 @@ private fun KSFunctionDeclaration.toFactoryMethod(
     val returnDeclaration = returnType.declaration
 
     if (returnDeclaration !is KSClassDeclaration) {
-        error("Return type of $functionLogString must be class, got ${returnDeclaration.qualifiedName?.asString()} with annotations: $annotations")
+        error(
+            "Return type of $functionLogString must be class, got ${returnDeclaration.qualifiedName?.asString()} with annotations: $annotations",
+        )
     }
 
     val name = simpleName.asString()
@@ -107,7 +111,9 @@ private fun KSValueParameter.toFactoryMethodArgument(
     val type = type.resolve()
     val previousArgumentWithSameType = previousArguments.firstOrNull { commonType(it.type, type) != null }
     if (previousArgumentWithSameType != null) {
-        error("Arguments '${previousArgumentWithSameType.name}' and '$name' of factory method `$factoryMethodName` of interface ${declaration.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}")
+        error(
+            "Arguments '${previousArgumentWithSameType.name}' and '$name' of factory method `$factoryMethodName` of interface ${declaration.qualifiedName?.asString()} has same type ${type.declaration.qualifiedName?.asString()}",
+        )
     }
     return Argument(
         name = name,
