@@ -12,6 +12,8 @@ import com.pinterest.ktlint.rule.engine.core.api.ElementType.VALUE_ARGUMENT
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.VALUE_ARGUMENT_LIST
 import com.pinterest.ktlint.rule.engine.core.api.IndentConfig
 import com.pinterest.ktlint.rule.engine.core.api.Rule
+import com.pinterest.ktlint.rule.engine.core.api.Rule.VisitorModifier.RunAfterRule
+import com.pinterest.ktlint.rule.engine.core.api.Rule.VisitorModifier.RunAfterRule.Mode.REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED
 import com.pinterest.ktlint.rule.engine.core.api.RuleId
 import com.pinterest.ktlint.rule.engine.core.api.TokenSets
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
@@ -43,6 +45,16 @@ public class ArgumentListMultilineRule :
                 issueTrackerUrl = "https://github.com/hnau256/commons/issues",
             ),
         usesEditorConfigProperties = setOf(INDENT_SIZE_PROPERTY, INDENT_STYLE_PROPERTY),
+        visitorModifiers =
+            setOf(
+                // Сначала пусть другие правила разложат выражения по строкам,
+                // чтобы мы считали отступ от уже перенесённого вызова.
+                RunAfterRule(RuleId("standard:wrapping"), REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED),
+                RunAfterRule(RuleId("standard:function-literal"), REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED),
+                RunAfterRule(RuleId("standard:multiline-expression-wrapping"), REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED),
+                RunAfterRule(RuleId("standard:function-signature"), REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED),
+                RunAfterRule(RuleId("standard:class-signature"), REGARDLESS_WHETHER_RUN_AFTER_RULE_IS_LOADED_OR_DISABLED),
+            ),
     ) {
 
     private var editorConfigIndent = IndentConfig.DEFAULT_INDENT_CONFIG
@@ -143,8 +155,14 @@ public class ArgumentListMultilineRule :
                 val prevLeaf = child.prevWhiteSpaceWithNewLine() ?: child.prevLeaf
                 when {
                     prevLeaf != null && prevLeaf.isWhiteSpaceWithNewline20 -> {
-                        // Уже на новой строке — отступ выправит indentation rule (если включён).
-                        return
+                        // Уже на новой строке — поправляем отступ, чтобы повторный проход
+                        // (после переноса объемлющих выражений) дал корректный результат.
+                        if (prevLeaf.text != intendedIndent) {
+                            emit(child.startOffset, errorMessage(child), true)
+                            if (autoCorrect) {
+                                prevLeaf.replaceTextWith(intendedIndent)
+                            }
+                        }
                     }
 
                     prevLeaf != null && prevLeaf.isWhiteSpace20 -> {
