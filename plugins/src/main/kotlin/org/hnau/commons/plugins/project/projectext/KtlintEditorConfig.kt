@@ -8,10 +8,13 @@ package org.hnau.commons.plugins.project.projectext
  */
 internal val ktlintEditorConfig: Map<String, String> = mapOf(
     "ktlint_code_style" to "intellij_idea",
+    "max_line_length" to "120",
     // Параметры всегда построчно, тело — по возможности на строке сигнатуры.
     "ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than" to "1",
     "ktlint_class_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than" to "1",
     "ktlint_function_signature_body_expression_wrapping" to "default",
+    // Аргументы вызова: либо в одну строку, либо каждый на своей (в т.ч. при превышении лимита).
+    "ktlint_argument_list_wrapping_ignore_when_parameter_count_greater_or_equal_than" to "unset",
     // Висячие запятые; порядок импортов как в IntelliJ.
     "ij_kotlin_allow_trailing_comma" to "true",
     "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
@@ -30,7 +33,6 @@ internal val ktlintEditorConfig: Map<String, String> = mapOf(
     "ktlint_standard_no-consecutive-blank-lines" to "disabled",
     "ktlint_standard_no-blank-line-before-rbrace" to "disabled",
     "ktlint_standard_binary-expression-wrapping" to "disabled",
-    "ktlint_standard_argument-list-wrapping" to "disabled",
     "ktlint_standard_enum-wrapping" to "disabled",
     "ktlint_standard_property-wrapping" to "disabled",
     "ktlint_standard_multiline-if-else" to "disabled",
@@ -38,7 +40,6 @@ internal val ktlintEditorConfig: Map<String, String> = mapOf(
     "ktlint_standard_no-blank-line-in-list" to "disabled",
     "ktlint_standard_spacing-between-declarations-with-comments" to "disabled",
     "ktlint_standard_comment-wrapping" to "disabled",
-    "ktlint_standard_max-line-length" to "disabled",
     "ktlint_standard_kdoc" to "disabled",
     "ktlint_standard_no-consecutive-comments" to "disabled",
     "ktlint_standard_backing-property-naming" to "disabled",
