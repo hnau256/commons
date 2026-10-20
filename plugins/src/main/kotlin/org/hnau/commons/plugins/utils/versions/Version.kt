@@ -47,6 +47,12 @@ enum class Version(
     // https://github.com/Kotlin/dokka/releases
     DokkaPlugin("2.2.0"),
 
+    // https://github.com/JLLeitschuh/ktlint-gradle/releases
+    KtlintGradle("14.2.0"),
+
+    // https://github.com/pinterest/ktlint/releases
+    Ktlint("1.8.0"),
+
     // https://github.com/vanniktech/gradle-maven-publish-plugin/releases
     VanniktechPlugin("0.37.0"),
 

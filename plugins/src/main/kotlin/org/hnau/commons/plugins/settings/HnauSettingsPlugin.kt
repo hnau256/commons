@@ -22,6 +22,8 @@ class HnauSettingsPlugin : Plugin<Settings> {
                 repos.google()
                 repos.mavenCentral()
                 repos.mavenLocal()
+                // ktlint-gradle публикуется только в Gradle Plugin Portal.
+                repos.gradlePluginPortal()
             }
             management.versionCatalogs { catalogs ->
                 createBomCatalog(catalogs)

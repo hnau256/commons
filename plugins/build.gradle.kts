@@ -6,6 +6,12 @@ plugins {
     )
 }
 
+// ktlint применяется convention-плагинами, поэтому его классы нужны на classpath
+// уже на этапе сборки самого модуля plugins (bootstrap).
+dependencies {
+    implementation("org.jlleitschuh.gradle:ktlint-gradle:14.2.0")
+}
+
 // Task to generate version constant from settings
 val generateVersionConstant by tasks.registering {
     val version = rootProject.extra["hnauCommonsVersion"] as String

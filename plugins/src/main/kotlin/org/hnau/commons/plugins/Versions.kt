@@ -72,6 +72,9 @@ internal object Versions {
         val javaGradlePlugin: PluginId =
             PluginId("java-gradle-plugin")
 
+        val ktlint =
+            PluginId("org.jlleitschuh.gradle.ktlint") withVersion Version.KtlintGradle withAlias "ktlint"
+
         val hnauProject: List<Aliased<Versioned<PluginId>>> = listOf(
             "jvm",
             "jvmAndroidApp",
@@ -96,6 +99,7 @@ internal object Versions {
         "com.vanniktech" withArtifact "gradle-maven-publish-plugin" withVersion Version.VanniktechPlugin,
         "com.squareup.okhttp3" withArtifact "okhttp-jvm" withVersion Version.OkHttp,
         "org.jetbrains.dokka" withArtifact "dokka-gradle-plugin" withVersion Version.DokkaPlugin,
+        "org.jlleitschuh.gradle" withArtifact "ktlint-gradle" withVersion Version.KtlintGradle,
     )
 
     object HnauCommons {

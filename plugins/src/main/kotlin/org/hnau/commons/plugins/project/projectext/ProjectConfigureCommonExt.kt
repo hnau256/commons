@@ -14,6 +14,8 @@ internal fun Project.configureCommon(
     disablePublicationBeforeOrAfterEvaluate: () -> Boolean,
 ) {
 
+    configureKtlint()
+
     if (!config.isCommons) {
         addDependency(
             type = projectType,
