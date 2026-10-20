@@ -70,17 +70,17 @@ data class DynamicColor(
   init {
     if (background == null && secondBackground != null) {
       throw IllegalArgumentException(
-        "Color $name has secondBackground defined, but background is not defined."
+        "Color $name has secondBackground defined, but background is not defined.",
       )
     }
     if (background == null && contrastCurve != null) {
       throw IllegalArgumentException(
-        "Color $name has contrastCurve defined, but background is not defined."
+        "Color $name has contrastCurve defined, but background is not defined.",
       )
     }
     if (background != null && contrastCurve == null) {
       throw IllegalArgumentException(
-        "Color $name has background defined, but contrastCurve is not defined."
+        "Color $name has background defined, but contrastCurve is not defined.",
       )
     }
   }
@@ -93,7 +93,9 @@ data class DynamicColor(
    * @param scheme Defines the conditions of the user interface, for example, whether or not it is
    *   dark mode or light mode, and what the desired contrast level is.
    */
-  fun getArgb(scheme: DynamicScheme): Int {
+  fun getArgb(
+      scheme: DynamicScheme,
+  ): Int {
     val argb = getHct(scheme).toInt()
     val opacityPercentage = opacity?.invoke(scheme)
     return if (opacityPercentage == null) {
@@ -110,7 +112,9 @@ data class DynamicColor(
    * @param scheme Defines the conditions of the user interface, for example, whether or not it is
    *   dark mode or light mode, and what the desired contrast level is.
    */
-  fun getHct(scheme: DynamicScheme): Hct {
+  fun getHct(
+      scheme: DynamicScheme,
+  ): Hct {
     val cachedAnswer = hctCache[scheme]
     if (cachedAnswer != null) {
       return cachedAnswer
@@ -126,7 +130,9 @@ data class DynamicColor(
   }
 
   /** Returns the tone in HCT, ranging from 0 to 100, of the resolved color given scheme. */
-  fun getTone(scheme: DynamicScheme): Double {
+  fun getTone(
+      scheme: DynamicScheme,
+  ): Double {
     return ColorSpecs.get(scheme.specVersion).getTone(scheme, this)
   }
 
@@ -139,7 +145,10 @@ data class DynamicColor(
      * @param name The name of the dynamic color.
      * @param argb The source color from which to extract the hue and chroma.
      */
-    fun fromArgb(name: String, argb: Int): DynamicColor {
+    fun fromArgb(
+        name: String,
+        argb: Int,
+    ): DynamicColor {
       val hct = Hct.fromInt(argb)
       val palette = TonalPalette.fromInt(argb)
       return DynamicColor(name = name, palette = { palette }, tone = { hct.tone })
@@ -149,7 +158,10 @@ data class DynamicColor(
      * Given a background tone, find a foreground tone, while ensuring they reach a contrast ratio
      * that is as close to ratio as possible.
      */
-    fun foregroundTone(bgTone: Double, ratio: Double): Double {
+    fun foregroundTone(
+        bgTone: Double,
+        ratio: Double,
+    ): Double {
       val lighterTone = Contrast.lighterUnsafe(bgTone, ratio)
       val darkerTone = Contrast.darkerUnsafe(bgTone, ratio)
       val lighterRatio = Contrast.ratioOfTones(lighterTone, bgTone)
@@ -180,7 +192,9 @@ data class DynamicColor(
      * Adjust a tone down such that white has 4.5 contrast, if the tone is reasonably close to
      * supporting it.
      */
-    fun enableLightForeground(tone: Double): Double {
+    fun enableLightForeground(
+        tone: Double,
+    ): Double {
       return if (tonePrefersLightForeground(tone) && !toneAllowsLightForeground(tone)) {
         49.0
       } else {
@@ -198,17 +212,21 @@ data class DynamicColor(
      * Since `tertiaryContainer` in dark monochrome scheme requires a tone of 60, it should not be
      * adjusted. Therefore, 60 is excluded here.
      */
-    fun tonePrefersLightForeground(tone: Double): Boolean {
+    fun tonePrefersLightForeground(
+        tone: Double,
+    ): Boolean {
       return tone.roundToInt() < 60
     }
 
     /** Tones less than ~T50 always permit white at 4.5 contrast. */
-    fun toneAllowsLightForeground(tone: Double): Boolean {
+    fun toneAllowsLightForeground(
+        tone: Double,
+    ): Boolean {
       return tone.roundToInt() <= 49
     }
 
     fun getInitialToneFromBackground(
-      background: ((DynamicScheme) -> DynamicColor?)?
+        background: ((DynamicScheme) -> DynamicColor?)?,
     ): (DynamicScheme) -> Double {
       if (background == null) {
         return { 50.0 }
@@ -219,14 +237,14 @@ data class DynamicColor(
 }
 
 fun DynamicColor.extendSpecVersion(
-  specVersion: SpecVersion,
-  extendedColor: DynamicColor,
+    specVersion: SpecVersion,
+    extendedColor: DynamicColor,
 ): DynamicColor {
   validateExtendedColor(specVersion, extendedColor)
   return copy(
     palette = { scheme ->
       (if (scheme.specVersion >= specVersion) extendedColor.palette else this.palette).invoke(
-        scheme
+        scheme,
       )
     },
     tone = { scheme ->
@@ -266,15 +284,15 @@ fun DynamicColor.extendSpecVersion(
     },
     opacity = { scheme ->
       (if (scheme.specVersion >= specVersion) extendedColor.opacity else this.opacity)?.invoke(
-        scheme
+        scheme,
       )
     },
   )
 }
 
 private fun DynamicColor.validateExtendedColor(
-  specVersion: SpecVersion,
-  extendedColor: DynamicColor,
+    specVersion: SpecVersion,
+    extendedColor: DynamicColor,
 ) {
   require(this.name == extendedColor.name) {
     "Attempting to extend color $name with color ${extendedColor.name} of different name for spec version $specVersion."

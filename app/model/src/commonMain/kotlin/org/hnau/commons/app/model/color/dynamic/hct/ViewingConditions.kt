@@ -79,11 +79,11 @@ private constructor(
      *   perform this process on self-luminous objects like displays.
      */
     fun make(
-      whitePoint: DoubleArray,
-      adaptingLuminance: Double,
-      backgroundLstar: Double,
-      surround: Double,
-      discountingIlluminant: Boolean,
+        whitePoint: DoubleArray,
+        adaptingLuminance: Double,
+        backgroundLstar: Double,
+        surround: Double,
+        discountingIlluminant: Boolean,
     ): ViewingConditions {
       // A background of pure black is non-physical and leads to infinities that represent the idea
       // that any color viewed in pure black can't be seen.
@@ -144,7 +144,9 @@ private constructor(
      *
      * Default viewing conditions have a lstar of 50, midgray.
      */
-    fun defaultWithBackgroundLstar(lstar: Double): ViewingConditions {
+    fun defaultWithBackgroundLstar(
+        lstar: Double,
+    ): ViewingConditions {
       return make(
         ColorUtils.whitePointD65(),
         200.0 / PI * ColorUtils.yFromLstar(50.0) / 100f,

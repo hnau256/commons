@@ -25,13 +25,17 @@ class PointProviderLab : PointProvider {
   /**
    * Convert a color represented in ARGB to a 3-element array of L*a*b* coordinates of the color.
    */
-  override fun fromInt(argb: Int): DoubleArray {
+  override fun fromInt(
+      argb: Int,
+  ): DoubleArray {
     val lab = ColorUtils.labFromArgb(argb)
     return doubleArrayOf(lab[0], lab[1], lab[2])
   }
 
   /** Convert a 3-element array to a color represented in ARGB. */
-  override fun toInt(point: DoubleArray): Int {
+  override fun toInt(
+      point: DoubleArray,
+  ): Int {
     return ColorUtils.argbFromLab(point[0], point[1], point[2])
   }
 
@@ -43,7 +47,10 @@ class PointProviderLab : PointProvider {
    * This relatively minor optimization is helpful because this method is called at least once for
    * each pixel in an image.
    */
-  override fun distance(a: DoubleArray, b: DoubleArray): Double {
+  override fun distance(
+      a: DoubleArray,
+      b: DoubleArray,
+  ): Double {
     val dL = a[0] - b[0]
     val dA = a[1] - b[1]
     val dB = a[2] - b[2]

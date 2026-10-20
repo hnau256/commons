@@ -126,63 +126,71 @@ interface ColorSpec {
   // ////////////////////////////////////////////////////////////////
   // Other //
   // ////////////////////////////////////////////////////////////////
-  fun highestSurface(scheme: DynamicScheme): DynamicColor
+  fun highestSurface(
+      scheme: DynamicScheme,
+  ): DynamicColor
 
   // ////////////////////////////////////////////////////////////////
   // Color value calculations //
   // ////////////////////////////////////////////////////////////////
-  fun getHct(scheme: DynamicScheme, color: DynamicColor): Hct
+  fun getHct(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Hct
 
-  fun getTone(scheme: DynamicScheme, color: DynamicColor): Double
+  fun getTone(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Double
 
   // ////////////////////////////////////////////////////////////////
   // Scheme Palettes //
   // ////////////////////////////////////////////////////////////////
   fun getPrimaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 
   fun getSecondaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 
   fun getTertiaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 
   fun getNeutralPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 
   fun getNeutralVariantPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 
   fun getErrorPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette
 }

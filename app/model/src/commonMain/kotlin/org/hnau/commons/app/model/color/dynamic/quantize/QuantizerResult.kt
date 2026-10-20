@@ -16,4 +16,6 @@
 package org.hnau.commons.app.model.color.dynamic.quantize
 
 /** Represents result of a quantizer run */
-data class QuantizerResult(val colorToCount: Map<Int, Int>)
+data class QuantizerResult(
+    val colorToCount: Map<Int, Int>,
+)

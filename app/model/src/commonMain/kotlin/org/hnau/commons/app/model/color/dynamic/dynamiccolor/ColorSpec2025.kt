@@ -1527,7 +1527,10 @@ open class ColorSpec2025 : ColorSpec2021() {
   // /////////////////////////////////////////////////////////////////
   // Color value calculations //
   // /////////////////////////////////////////////////////////////////
-  override fun getHct(scheme: DynamicScheme, color: DynamicColor): Hct {
+  override fun getHct(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Hct {
     // This is crucial for aesthetics: we aren't simply the taking the standard color
     // and changing its tone for contrast. Rather, we find the tone for contrast, then
     // use the specified chroma from the palette to construct a new color.
@@ -1542,7 +1545,10 @@ open class ColorSpec2025 : ColorSpec2021() {
     return Hct.from(hue, chroma, tone)
   }
 
-  override fun getTone(scheme: DynamicScheme, color: DynamicColor): Double {
+  override fun getTone(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Double {
     val toneDeltaPair = color.toneDeltaPair?.invoke(scheme)
 
     // Case 0: tone delta pair.
@@ -1694,11 +1700,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   // Scheme Palettes //
   // ////////////////////////////////////////////////////////////////
   override fun getPrimaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.NEUTRAL ->
@@ -1736,11 +1742,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   override fun getSecondaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.NEUTRAL ->
@@ -1782,11 +1788,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   override fun getTertiaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.NEUTRAL ->
@@ -1830,11 +1836,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   override fun getNeutralPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.NEUTRAL ->
@@ -1862,11 +1868,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   override fun getNeutralVariantPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     when (variant) {
       Variant.NEUTRAL ->
@@ -1905,11 +1911,11 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   override fun getErrorPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     val errorHue =
       DynamicScheme.getPiecewiseValue(
@@ -1930,7 +1936,9 @@ open class ColorSpec2025 : ColorSpec2021() {
     }
   }
 
-  private fun getExpressiveNeutralHue(sourceColorHct: Hct): Double {
+  private fun getExpressiveNeutralHue(
+      sourceColorHct: Hct,
+  ): Double {
     return DynamicScheme.getRotatedHue(
       sourceColorHct,
       doubleArrayOf(0.0, 71.0, 124.0, 253.0, 278.0, 300.0, 360.0),
@@ -1939,9 +1947,9 @@ open class ColorSpec2025 : ColorSpec2021() {
   }
 
   private fun getExpressiveNeutralChroma(
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
   ): Double {
     val neutralHue = getExpressiveNeutralHue(sourceColorHct)
     return if (platform == Platform.PHONE) {
@@ -1955,7 +1963,9 @@ open class ColorSpec2025 : ColorSpec2021() {
     }
   }
 
-  private fun getVibrantNeutralHue(sourceColorHct: Hct): Double {
+  private fun getVibrantNeutralHue(
+      sourceColorHct: Hct,
+  ): Double {
     return DynamicScheme.getRotatedHue(
       sourceColorHct,
       doubleArrayOf(0.0, 38.0, 105.0, 140.0, 333.0, 360.0),
@@ -1963,35 +1973,38 @@ open class ColorSpec2025 : ColorSpec2021() {
     )
   }
 
-  private fun getVibrantNeutralChroma(sourceColorHct: Hct, platform: Platform): Double {
+  private fun getVibrantNeutralChroma(
+      sourceColorHct: Hct,
+      platform: Platform,
+  ): Double {
     val neutralHue = getVibrantNeutralHue(sourceColorHct)
     return if (platform == Platform.PHONE) 28.0 else if (Hct.isBlue(neutralHue)) 28.0 else 20.0
   }
 
   private fun tMaxC(
-    palette: TonalPalette,
-    lowerBound: Double = 0.0,
-    upperBound: Double = 100.0,
-    chromaMultiplier: Double = 1.0,
+      palette: TonalPalette,
+      lowerBound: Double = 0.0,
+      upperBound: Double = 100.0,
+      chromaMultiplier: Double = 1.0,
   ): Double {
     val answer = findBestToneForChroma(palette.hue, palette.chroma * chromaMultiplier, 100.0, true)
     return answer.coerceIn(lowerBound, upperBound)
   }
 
   private fun tMinC(
-    palette: TonalPalette,
-    lowerBound: Double = 0.0,
-    upperBound: Double = 100.0,
+      palette: TonalPalette,
+      lowerBound: Double = 0.0,
+      upperBound: Double = 100.0,
   ): Double {
     val answer = findBestToneForChroma(palette.hue, palette.chroma, 0.0, false)
     return answer.coerceIn(lowerBound, upperBound)
   }
 
   private fun findBestToneForChroma(
-    hue: Double,
-    chroma: Double,
-    tone: Double,
-    byDecreasingTone: Boolean,
+      hue: Double,
+      chroma: Double,
+      tone: Double,
+      byDecreasingTone: Boolean,
   ): Double {
     var tone = tone
     var answer = tone
@@ -2010,7 +2023,9 @@ open class ColorSpec2025 : ColorSpec2021() {
     return answer
   }
 
-  private fun getContrastCurve(defaultContrast: Double): ContrastCurve {
+  private fun getContrastCurve(
+      defaultContrast: Double,
+  ): ContrastCurve {
     return when (defaultContrast) {
       1.5 -> ContrastCurve(1.5, 1.5, 3.0, 5.5)
       3.0 -> ContrastCurve(3.0, 3.0, 4.5, 7.0)

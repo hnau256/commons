@@ -192,7 +192,9 @@ class TemperatureCache(
      * @param hct HCT to find the relative temperature of.
      * @return Value on a scale from 0 to 1.
      */
-    fun getRelativeTemperature(hct: Hct): Double {
+    fun getRelativeTemperature(
+        hct: Hct,
+    ): Double {
         val range = tempsByHct[warmest]!! - tempsByHct[coldest]!!
         val differenceFromColdest = tempsByHct[hct]!! - tempsByHct[coldest]!!
         // Handle when there's no difference in temperature between warmest and
@@ -283,7 +285,9 @@ class TemperatureCache(
          * - Lower bound: -9.66. Chroma is infinite. Assuming max of Lab chroma 130.
          * - Upper bound: 8.61. Chroma is infinite. Assuming max of Lab chroma 130.
          */
-        fun rawTemperature(color: Hct): Double {
+        fun rawTemperature(
+            color: Hct,
+        ): Double {
             val lab = ColorUtils.labFromArgb(color.toInt())
             val hue = MathUtils.sanitizeDegreesDouble(atan2(lab[2], lab[1]) * 180 / PI)
             val chroma = hypot(lab[1], lab[2])
@@ -296,8 +300,7 @@ class TemperatureCache(
             angle: Double,
             a: Double,
             b: Double,
-        ): Boolean =
-            if (a < b) {
+        ): Boolean = if (a < b) {
                 a <= angle && angle <= b
             } else {
                 a <= angle || angle <= b

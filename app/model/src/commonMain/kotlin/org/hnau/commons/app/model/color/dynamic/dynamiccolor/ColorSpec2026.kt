@@ -21,10 +21,10 @@ import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
 open class ColorSpec2026 : ColorSpec2025() {
 
   private fun findBestToneForChroma(
-    hue: Double,
-    chroma: Double,
-    tone: Double,
-    byDecreasingTone: Boolean,
+      hue: Double,
+      chroma: Double,
+      tone: Double,
+      byDecreasingTone: Boolean,
   ): Double {
     var tone = tone
     var answer = tone
@@ -44,25 +44,27 @@ open class ColorSpec2026 : ColorSpec2025() {
   }
 
   private fun tMaxC(
-    palette: TonalPalette,
-    lowerBound: Double = 0.0,
-    upperBound: Double = 100.0,
-    chromaMultiplier: Double = 1.0,
+      palette: TonalPalette,
+      lowerBound: Double = 0.0,
+      upperBound: Double = 100.0,
+      chromaMultiplier: Double = 1.0,
   ): Double {
     val answer = findBestToneForChroma(palette.hue, palette.chroma * chromaMultiplier, 100.0, true)
     return answer.coerceIn(lowerBound, upperBound)
   }
 
   private fun tMinC(
-    palette: TonalPalette,
-    lowerBound: Double = 0.0,
-    upperBound: Double = 100.0,
+      palette: TonalPalette,
+      lowerBound: Double = 0.0,
+      upperBound: Double = 100.0,
   ): Double {
     val answer = findBestToneForChroma(palette.hue, palette.chroma, 0.0, false)
     return answer.coerceIn(lowerBound, upperBound)
   }
 
-  private fun getContrastCurve(defaultContrast: Double): ContrastCurve {
+  private fun getContrastCurve(
+      defaultContrast: Double,
+  ): ContrastCurve {
     return when (defaultContrast) {
       1.5 -> ContrastCurve(1.5, 1.5, 3.0, 5.5)
       3.0 -> ContrastCurve(3.0, 3.0, 4.5, 7.0)

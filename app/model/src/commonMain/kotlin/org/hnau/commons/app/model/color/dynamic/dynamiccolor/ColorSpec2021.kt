@@ -869,14 +869,19 @@ open class ColorSpec2021 : ColorSpec {
   // ////////////////////////////////////////////////////////////////
   // Other //
   // ////////////////////////////////////////////////////////////////
-  override fun highestSurface(scheme: DynamicScheme): DynamicColor {
+  override fun highestSurface(
+      scheme: DynamicScheme,
+  ): DynamicColor {
     return if (scheme.isDark) surfaceBright else surfaceDim
   }
 
   // ///////////////////////////////////////////////////////////////
   // Color value calculations //
   // ///////////////////////////////////////////////////////////////
-  override fun getHct(scheme: DynamicScheme, color: DynamicColor): Hct {
+  override fun getHct(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Hct {
     // This is crucial for aesthetics: we aren't simply the taking the standard color
     // and changing its tone for contrast. Rather, we find the tone for contrast, then
     // use the specified chroma from the palette to construct a new color.
@@ -887,7 +892,10 @@ open class ColorSpec2021 : ColorSpec {
     return color.palette.invoke(scheme).getHct(tone)
   }
 
-  override fun getTone(scheme: DynamicScheme, color: DynamicColor): Double {
+  override fun getTone(
+      scheme: DynamicScheme,
+      color: DynamicColor,
+  ): Double {
     val decreasingContrast = scheme.contrastLevel < 0
     val toneDeltaPair = color.toneDeltaPair?.invoke(scheme)
 
@@ -1072,15 +1080,16 @@ open class ColorSpec2021 : ColorSpec {
   // Scheme Palettes //
   // ////////////////////////////////////////////////////////////////
   override fun getPrimaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.CONTENT,
-      Variant.FIDELITY -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, sourceColorHct.chroma)
+      Variant.FIDELITY,
+      -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, sourceColorHct.chroma)
       Variant.FRUIT_SALAD ->
         TonalPalette.fromHueAndChroma(
           MathUtils.sanitizeDegreesDouble(sourceColorHct.hue - 50.0),
@@ -1101,15 +1110,16 @@ open class ColorSpec2021 : ColorSpec {
   }
 
   override fun getSecondaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.CONTENT,
-      Variant.FIDELITY ->
+      Variant.FIDELITY,
+      ->
         TonalPalette.fromHueAndChroma(
           sourceColorHct.hue,
           max(sourceColorHct.chroma - 32.0, sourceColorHct.chroma * 0.5),
@@ -1146,28 +1156,29 @@ open class ColorSpec2021 : ColorSpec {
   }
 
   override fun getTertiaryPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.CONTENT ->
         TonalPalette.fromHct(
           DislikeAnalyzer.fixIfDisliked(
-            TemperatureCache(sourceColorHct).getAnalogousColors(count = 3, divisions = 6)[2]
-          )
+            TemperatureCache(sourceColorHct).getAnalogousColors(count = 3, divisions = 6)[2],
+          ),
         )
       Variant.FIDELITY ->
         TonalPalette.fromHct(
-          DislikeAnalyzer.fixIfDisliked(TemperatureCache(sourceColorHct).complement)
+          DislikeAnalyzer.fixIfDisliked(TemperatureCache(sourceColorHct).complement),
         )
       Variant.FRUIT_SALAD -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 36.0)
       Variant.MONOCHROME -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 0.0)
       Variant.NEUTRAL -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 16.0)
       Variant.RAINBOW,
-      Variant.TONAL_SPOT ->
+      Variant.TONAL_SPOT,
+      ->
         TonalPalette.fromHueAndChroma(
           MathUtils.sanitizeDegreesDouble(sourceColorHct.hue + 60.0),
           24.0,
@@ -1195,15 +1206,16 @@ open class ColorSpec2021 : ColorSpec {
   }
 
   override fun getNeutralPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.CONTENT,
-      Variant.FIDELITY ->
+      Variant.FIDELITY,
+      ->
         TonalPalette.fromHueAndChroma(sourceColorHct.hue, sourceColorHct.chroma / 8.0)
       Variant.FRUIT_SALAD -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 10.0)
       Variant.MONOCHROME -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 0.0)
@@ -1218,15 +1230,16 @@ open class ColorSpec2021 : ColorSpec {
   }
 
   override fun getNeutralVariantPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return when (variant) {
       Variant.CONTENT,
-      Variant.FIDELITY ->
+      Variant.FIDELITY,
+      ->
         TonalPalette.fromHueAndChroma(sourceColorHct.hue, (sourceColorHct.chroma / 8.0) + 4.0)
       Variant.FRUIT_SALAD -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 16.0)
       Variant.MONOCHROME -> TonalPalette.fromHueAndChroma(sourceColorHct.hue, 0.0)
@@ -1244,28 +1257,32 @@ open class ColorSpec2021 : ColorSpec {
   }
 
   override fun getErrorPalette(
-    variant: Variant,
-    sourceColorHct: Hct,
-    isDark: Boolean,
-    platform: Platform,
-    contrastLevel: Double,
+      variant: Variant,
+      sourceColorHct: Hct,
+      isDark: Boolean,
+      platform: Platform,
+      contrastLevel: Double,
   ): TonalPalette {
     return TonalPalette.fromHueAndChroma(25.0, 84.0)
   }
 
-  private fun isFidelity(scheme: DynamicScheme): Boolean {
+  private fun isFidelity(
+      scheme: DynamicScheme,
+  ): Boolean {
     return scheme.variant == Variant.FIDELITY || scheme.variant == Variant.CONTENT
   }
 
-  private fun isMonochrome(scheme: DynamicScheme): Boolean {
+  private fun isMonochrome(
+      scheme: DynamicScheme,
+  ): Boolean {
     return scheme.variant == Variant.MONOCHROME
   }
 
   private fun findDesiredChromaByTone(
-    hue: Double,
-    chroma: Double,
-    tone: Double,
-    byDecreasingTone: Boolean,
+      hue: Double,
+      chroma: Double,
+      tone: Double,
+      byDecreasingTone: Boolean,
   ): Double {
     var answer = tone
     var closestToChroma = Hct.from(hue, chroma, tone)

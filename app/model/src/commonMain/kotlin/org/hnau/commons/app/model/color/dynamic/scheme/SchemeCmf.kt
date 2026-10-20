@@ -28,8 +28,7 @@ class SchemeCmf(
   contrastLevel: Double,
   specVersion: ColorSpec.SpecVersion = ColorSpec.SpecVersion.SPEC_2026,
   platform: Platform = DEFAULT_PLATFORM,
-) :
-  DynamicScheme(
+) : DynamicScheme(
     sourceColorHctList = sourceColorHctList,
     variant = Variant.CMF,
     isDark = isDark,
@@ -75,7 +74,9 @@ class SchemeCmf(
   ) : this(listOf(sourceColorHct), isDark, contrastLevel, specVersion, platform)
 }
 
-private fun tertiaryPalette(sourceColorHctList: List<Hct>): TonalPalette {
+private fun tertiaryPalette(
+    sourceColorHctList: List<Hct>,
+): TonalPalette {
   val sourceColorHct = sourceColorHctList.first()
   val secondarySourceColorHct = sourceColorHctList.getOrNull(1) ?: sourceColorHct
   return if (sourceColorHct.toInt() == secondarySourceColorHct.toInt()) {

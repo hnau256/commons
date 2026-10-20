@@ -27,11 +27,16 @@ object ColorSpecs {
     return get(SpecVersion.SPEC_2021)
   }
 
-  fun get(specVersion: SpecVersion): ColorSpec {
+  fun get(
+      specVersion: SpecVersion,
+  ): ColorSpec {
     return get(specVersion, false)
   }
 
-  fun get(specVersion: SpecVersion, isExtendedFidelity: Boolean): ColorSpec {
+  fun get(
+      specVersion: SpecVersion,
+      isExtendedFidelity: Boolean,
+  ): ColorSpec {
     return when (specVersion) {
       SpecVersion.SPEC_2025 -> SPEC_2025
       SpecVersion.SPEC_2026 -> SPEC_2026

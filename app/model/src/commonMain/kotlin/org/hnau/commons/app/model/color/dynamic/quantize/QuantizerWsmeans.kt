@@ -35,7 +35,9 @@ object QuantizerWsmeans {
         var index = -1
         var distance = -1.0
 
-        override fun compareTo(other: Distance): Int = distance.compareTo(other.distance)
+        override fun compareTo(
+            other: Distance,
+        ): Int = distance.compareTo(other.distance)
     }
 
     private const val MAX_ITERATIONS = 10
