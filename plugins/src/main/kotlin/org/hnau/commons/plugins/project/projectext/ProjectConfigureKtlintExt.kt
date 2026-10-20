@@ -32,6 +32,12 @@ internal fun Project.configureKtlint() {
         }
     }
 
+    // Кастомное правило: вызов с 2+ аргументами всегда многострочный.
+    dependencies.add(
+        "ktlintRuleset",
+        "${Versions.HnauCommons.group.groupId}:commons-ktlint-rules:${Version.HnauCommons.version}",
+    )
+
     // Исходники из build/ попадают в source set как выход KSP-задач;
     // упорядочиваем, чтобы Gradle не считал это неявной зависимостью.
     tasks
