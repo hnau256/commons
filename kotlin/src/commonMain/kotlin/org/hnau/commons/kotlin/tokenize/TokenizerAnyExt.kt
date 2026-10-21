@@ -9,7 +9,7 @@ fun <I> Tokenizer.OptionFactory.Companion.any(
     variants = NonEmptyList(
         head = firstVariant,
         tail = otherVariants.toList(),
-    ),
+    )
 )
 
 fun <I> Tokenizer.OptionFactory.Companion.any(

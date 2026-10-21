@@ -62,7 +62,7 @@ value class RGBABytes(
         fun rgb(
             rgb: Int,
         ): RGBABytes = rgba(
-            rgba = rgb.shl(8).toLong() + 0xff,
+            rgba = rgb.shl(8).toLong() + 0xff
         )
 
         fun rgb(

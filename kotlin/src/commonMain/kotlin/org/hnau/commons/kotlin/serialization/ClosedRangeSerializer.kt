@@ -15,13 +15,13 @@ class ClosedRangeSerializer<T : Comparable<T>>(
                 from = range.start,
                 to = range.endInclusive,
             )
-        },
-    ),
+        }
+    )
 ) {
 
     @Serializable
     data class Surrogate<T>(
         val from: T,
-        val to: T,
+        val to: T
     )
 }

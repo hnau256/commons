@@ -21,7 +21,7 @@ data class FContext(
             tone = palettes.brightness.fold(
                 ifLight = { Tone.create(92.0) },
                 ifDark = { Tone.create(6.0) },
-            ),
+            )
         )
     }
 }

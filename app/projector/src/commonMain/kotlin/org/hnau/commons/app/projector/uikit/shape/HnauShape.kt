@@ -32,7 +32,7 @@ class HnauShape(
                         stop = Dimens.cornerRadius.toPx(),
                         fraction = cornerFraction,
                     )
-                },
+                }
             )
         }
 

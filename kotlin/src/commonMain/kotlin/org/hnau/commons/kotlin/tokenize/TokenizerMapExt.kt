@@ -9,7 +9,8 @@ fun <I, TI, TO> Tokenizer<I, TI>.map(
     private val source: Tokenizer<I, TI>
         get() = this@map
 
-    override fun collect(): TO = source.collect().let(transform)
+    override fun collect(): TO =
+        source.collect().let(transform)
 
     override fun tryConsume(
         nextItem: I,

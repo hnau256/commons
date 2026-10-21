@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember as rememberInComposer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +34,7 @@ import org.hnau.commons.app.projector.utils.clickableOption
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
+import androidx.compose.runtime.remember as rememberInComposer
 
 @Composable
 fun SCheckBox(
@@ -58,7 +58,7 @@ fun SCheckBox(
             isChecked.foldBoolean(
                 ifTrue = { 1f },
                 ifFalse = { 0f },
-            ),
+            )
         )
 
         val distance = LocalDistance.current
@@ -113,8 +113,8 @@ fun SCheckBox(
                         ),
                         shape = RoundedCornerShape(
                             size = units.cornerRadius - separation,
-                        ),
-                    ),
+                        )
+                    )
             )
         }
     }
@@ -124,7 +124,7 @@ private data class StateInfo(
     val borderColor: Color,
     val containerColor: Color,
     val contentColor: Color,
-    val handleOffset: Dp,
+    val handleOffset: Dp
 ) {
 
     companion object {
@@ -144,7 +144,7 @@ private data class StateInfo(
                         .foldNullable(
                             ifNull = { fContext.mood },
                             ifNotNull = fContext.mood::activate,
-                        ),
+                        )
                 )
                 .containerOverlay()
 
@@ -165,14 +165,14 @@ private data class StateInfo(
                         alpha = checked.foldBoolean(
                             ifTrue = { contentColor.alpha },
                             ifFalse = { 0f },
-                        ),
+                        )
                     ),
                     contentColor = contentColor,
                     containerColor = containerColor,
                     handleOffset = checked.foldBoolean(
                         ifTrue = { 24.dp.scale(distance.scale.space) },
                         ifFalse = { 0.dp },
-                    ),
+                    )
                 )
             }
         }

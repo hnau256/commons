@@ -11,7 +11,8 @@ import org.hnau.commons.kotlin.foldNullable
 fun <A> operationOrCancelIfExecuting(
     scope: CoroutineScope,
     operation: suspend (scope: CoroutineScope, A) -> Unit,
-): StateFlow<ActionOrElse<A, CancelOrInProgress.Cancel>> = operationOrElseIfExecuting<A, CancelOrInProgress.Cancel>(
+): StateFlow<ActionOrElse<A, CancelOrInProgress.Cancel>> =
+    operationOrElseIfExecuting<A, CancelOrInProgress.Cancel>(
         scope = scope,
         operation = operation,
     )
@@ -67,7 +68,7 @@ private inline fun <A, reified E : CancelOrInProgress> operationOrElseIfExecutin
                             }
                         }
                     }
-                },
+                }
             )
         }
     }

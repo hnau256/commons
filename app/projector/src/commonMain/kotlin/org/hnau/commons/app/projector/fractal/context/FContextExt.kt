@@ -2,7 +2,6 @@ package org.hnau.commons.app.projector.fractal.context
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 import org.hnau.commons.app.model.color.dynamic.hct.Hct
 import org.hnau.commons.app.model.color.dynamic.hct.HctSolver
 import org.hnau.commons.app.model.color.dynamic.palettes.TonalPalette
@@ -18,6 +17,7 @@ import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.app.projector.fractal.utils.fold
 import org.hnau.commons.kotlin.foldBoolean
 import kotlin.math.absoluteValue
+import org.hnau.commons.app.model.color.dynamic.contrast.Contrast as ContrastUtils
 
 val FContext.color: Color
     get() = palettes
@@ -55,7 +55,7 @@ private val FContext.palette: PaletteType
             )
         },
         ifNeutral = { PaletteType.Neutral },
-        ifError = { PaletteType.Error },
+        ifError = { PaletteType.Error }
     )
 
 @Composable
@@ -120,7 +120,7 @@ private fun Tone.lighterOrDarkerWithError(
 ): ToneWithError? = lighter
     .foldBoolean(
         ifTrue = { ContrastUtils.lighter(raw, ratio.contrast) },
-        ifFalse = { ContrastUtils.darker(raw, ratio.contrast) },
+        ifFalse = { ContrastUtils.darker(raw, ratio.contrast) }
     )
     ?.let(Tone.Companion::create)
     ?.let { tone ->
@@ -137,7 +137,7 @@ private fun Tone.lighterOrDarkerWithError(
                 val toneError = (rawTone - actualHct.tone).absoluteValue
                 val chromaError = (palette.chroma - actualHct.chroma).absoluteValue
                 toneError * 0.9 + chromaError * 0.1
-            },
+            }
         )
     }
 

@@ -32,12 +32,13 @@ fun <I, O> MutableStateFlow<I>.collectAsMutableAccessor(
             set = { newValue ->
                 cache = newValue
                 source.value = newValue.let(mapper.reverse)
-            },
+            }
         )
     }
 }
 
 @Composable
-fun <T> MutableStateFlow<T>.collectAsMutableAccessor(): MutableAccessor<T> = collectAsMutableAccessor(
+fun <T> MutableStateFlow<T>.collectAsMutableAccessor(): MutableAccessor<T> =
+    collectAsMutableAccessor(
         mapper = remember { Mapper.equality() },
     )

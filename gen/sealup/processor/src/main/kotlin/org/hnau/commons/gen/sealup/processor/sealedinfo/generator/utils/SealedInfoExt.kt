@@ -44,7 +44,7 @@ fun CodeBlockBuilderContext.use(
     wrapped: SealedInfo.Variant.Wrapped,
 ): String = wrapped.pointer.fold(
     ifClass = SealedInfo.Variant.Wrapped.Pointer.Class::property,
-    ifObject = { use(wrapped.className) },
+    ifObject = { use(wrapped.className) }
 )
 
 inline fun <R> SealedInfo.Variant.Wrapped.Pointer.fold(

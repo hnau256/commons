@@ -54,7 +54,7 @@ fun SealedInfo.Override.createFunSpec(
                             transform = { argument -> argument.name },
                         )
                     }
-            },
+            }
         )
     }
     .build()

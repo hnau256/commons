@@ -39,7 +39,7 @@ class InputProjector(
             },
             ifWithoutTitle = { content ->
                 title to content
-            },
+            }
         )
 
     private val itemDrawer: ItemDrawer = object : ItemDrawer {
@@ -50,7 +50,7 @@ class InputProjector(
             onClick: (() -> Unit)?,
             endAccessory: @Composable (() -> Unit)?,
             isFocused: Boolean,
-            content: @Composable (() -> Unit),
+            content: @Composable (() -> Unit)
         ) {
 
             val errorMessage by errorMessage.collectAsState()
@@ -66,9 +66,9 @@ class InputProjector(
                             copy(
                                 mood = Mood.Error,
                             )
-                        },
+                        }
                     )
-                },
+                }
             ) {
                 FContext(
                     update = {
@@ -80,7 +80,7 @@ class InputProjector(
                                     ifNotNull = mood::activate,
                                 ),
                         )
-                    },
+                    }
                 ) {
                     val decoration by decoration
                         .collectAsState()
@@ -94,12 +94,12 @@ class InputProjector(
                                             cancelOrInProgress = when (onClick) {
                                                 null -> CancelOrInProgress.InProgress
                                                 else -> CancelOrInProgress.Cancel(onClick)
-                                            }, // TODO replace with foldNullable
+                                            } //TODO replace with foldNullable
                                         )
                                     },
                                     ifSelected = { ActionOrElse.noAction },
                                 )
-                            },
+                            }
                         ),
                         isSelected = decoration
                             ?.fold(

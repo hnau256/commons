@@ -45,5 +45,5 @@ fun Velocity(
             x = across,
             y = along,
         )
-    },
+    }
 )

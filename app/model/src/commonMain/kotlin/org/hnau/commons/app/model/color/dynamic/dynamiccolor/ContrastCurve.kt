@@ -28,12 +28,7 @@ import org.hnau.commons.app.model.color.dynamic.utils.MathUtils
  * @property medium Value for contrast level 0.5
  * @property high Value for contrast level 1.0
  */
-class ContrastCurve(
-    val low: Double,
-    val normal: Double,
-    val medium: Double,
-    val high: Double,
-) {
+class ContrastCurve(val low: Double, val normal: Double, val medium: Double, val high: Double) {
   /**
    * Returns the value at a given contrast level.
    *
@@ -41,9 +36,7 @@ class ContrastCurve(
    *   is the highest.
    * @return The value. For contrast ratios, a number between 1.0 and 21.0.
    */
-  fun get(
-      contrastLevel: Double,
-  ): Double {
+  fun get(contrastLevel: Double): Double {
     return when {
       contrastLevel <= -1.0 -> low
       contrastLevel < 0.0 -> MathUtils.lerp(low, normal, contrastLevel + 1.0)

@@ -14,9 +14,7 @@ class SharedMessagesHolder<T> : MessagesReceiver<T> {
     val messages: Flow<T>
         get() = _messages
 
-    override fun sendMessage(
-        message: T,
-    ) {
+    override fun sendMessage(message: T) {
         _messages.tryEmit(message)
     }
 }

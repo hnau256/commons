@@ -13,13 +13,12 @@ fun Modifier.weight(
 ): Modifier = then(
     LineWeightElement(
         weight = weight.coerceAtMost(Float.MAX_VALUE),
-    ),
+    )
 )
 
 private data class LineWeightNode(
     var weight: Float,
-) : Modifier.Node(),
-    ParentDataModifierNode {
+) : Modifier.Node(), ParentDataModifierNode {
     override fun Density.modifyParentData(
         parentData: Any?,
     ): Any = parentData

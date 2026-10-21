@@ -60,7 +60,7 @@ sealed interface Editable<out T> {
                     value = currentValue,
                     initialValueOrNone = initialValueOrNone,
                 )
-            },
+            }
         )
 
         fun <T> create(

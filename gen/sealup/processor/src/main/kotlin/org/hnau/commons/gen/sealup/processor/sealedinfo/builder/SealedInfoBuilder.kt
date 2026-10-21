@@ -75,7 +75,7 @@ fun SealedInfo.Companion.create(
                 .ifNull {
                     logger.error(
                         "Companion object of sealing up interface is expected for generating $target",
-                        classDeclaration,
+                        classDeclaration
                     )
                     null
                 }
@@ -140,7 +140,7 @@ fun SealedInfo.Companion.create(
                     .ifNull { return CreateResult.Error }
                     .replace(".", "")
                     .plus("Sealed")
-            },
+            }
         )
         .ifNull { return CreateResult.Error }
 
@@ -159,6 +159,6 @@ fun SealedInfo.Companion.create(
                 ?: return CreateResult.Error,
             overrides = overrides,
             factoryMethods = factoryMethods,
-        ),
+        )
     )
 }

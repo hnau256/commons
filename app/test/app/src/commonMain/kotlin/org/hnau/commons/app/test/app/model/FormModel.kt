@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:max-line-length")
-
 @file:UseSerializers(
     BigDecimalSerializer::class,
     BigIntegerSerializer::class,
@@ -80,7 +78,7 @@ class FormModel(
             fraction = fractionInputModelFactory.createSkeleton(
                 value = initial.fraction,
                 useValueAsInitial = true,
-            ),
+            )
         )
     }
 
@@ -160,9 +158,9 @@ class FormModel(
                 parsingMapper = ParsingMapper.createValidator { string ->
                     string.takeIf { it.length >= 3 }.foldNullable(
                         ifNull = { Unit.left() },
-                        ifNotNull = { Unit.right() },
+                        ifNotNull = { Unit.right() }
                     )
-                },
+                }
             )
 
         private val integerInputModelFactory: InputModelFactory<String, Int, Unit, InputType.Edit> =
@@ -176,8 +174,8 @@ class FormModel(
                                 ifNull = { Unit.left() },
                                 ifNotNull = Int::right,
                             )
-                    },
-                ),
+                    }
+                )
             )
 
         private val decimalInputModelFactory: InputModelFactory<String, Float, Unit, InputType.Edit> =
@@ -191,8 +189,8 @@ class FormModel(
                                 ifNull = { Unit.left() },
                                 ifNotNull = Float::right,
                             )
-                    },
-                ),
+                    }
+                )
             )
 
         private val variantInputModelFactory: InputModelFactory<Config.Scheme, Config.Scheme, Nothing, InputType.Variant<Config.Scheme>> =

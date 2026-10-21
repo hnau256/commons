@@ -6,12 +6,6 @@ plugins {
     )
 }
 
-// ktlint применяется convention-плагинами, поэтому его классы нужны на classpath
-// уже на этапе сборки самого модуля plugins (bootstrap).
-dependencies {
-    implementation("org.jlleitschuh.gradle:ktlint-gradle:14.2.0")
-}
-
 // Task to generate version constant from settings
 val generateVersionConstant by tasks.registering {
     val version = rootProject.extra["hnauCommonsVersion"] as String
@@ -61,7 +55,7 @@ gradlePlugin {
             id = "$prefix.settings"
             implementationClass = "org.hnau.commons.plugins.settings.HnauSettingsPlugin"
             displayName = "Hnau Settings Plugin"
-            description = "Centralized settings with version catalog, pluginManagement and auto-include"
+            description = "Centralized settings with version catalog, pluginManagement, auto-include modules and allModules defaults"
         }
 
         create("HnauJvm") {

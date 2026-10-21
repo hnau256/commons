@@ -309,9 +309,7 @@ object HctSolver {
      * @param angle An angle in radians; must not deviate too much from 0.
      * @return A coterminal angle between 0 and 2pi.
      */
-    internal fun sanitizeRadians(
-        angle: Double,
-    ): Double = (angle + PI * 8) % (PI * 2)
+    internal fun sanitizeRadians(angle: Double): Double = (angle + PI * 8) % (PI * 2)
 
     /**
      * Delinearizes an RGB component, returning a floating-point number.
@@ -319,9 +317,7 @@ object HctSolver {
      * @param rgbComponent 0.0 <= rgb_component <= 100.0, represents linear R/G/B channel
      * @return 0.0 <= output <= 255.0, color channel converted to regular RGB space
      */
-    internal fun trueDelinearized(
-        rgbComponent: Double,
-    ): Double {
+    internal fun trueDelinearized(rgbComponent: Double): Double {
         val normalized = rgbComponent / 100.0
         val delinearized: Double =
             if (normalized <= 0.0031308) {
@@ -332,9 +328,7 @@ object HctSolver {
         return delinearized * 255.0
     }
 
-    internal fun chromaticAdaptation(
-        component: Double,
-    ): Double {
+    internal fun chromaticAdaptation(component: Double): Double {
         val af = abs(component).pow(0.42)
         return sign(component) * 400.0 * af / (af + 27.13)
     }
@@ -345,9 +339,7 @@ object HctSolver {
      * @param linrgb The linear RGB coordinates of a color.
      * @return The hue of the color in CAM16, in radians.
      */
-    internal fun hueOf(
-        linrgb: DoubleArray,
-    ): Double {
+    internal fun hueOf(linrgb: DoubleArray): Double {
         val scaledDiscount = MathUtils.matrixMultiply(linrgb, SCALED_DISCOUNT_FROM_LINRGB)
         val rA = chromaticAdaptation(scaledDiscount[0])
         val gA = chromaticAdaptation(scaledDiscount[1])
@@ -387,7 +379,8 @@ object HctSolver {
         source: DoubleArray,
         t: Double,
         target: DoubleArray,
-    ): DoubleArray = doubleArrayOf(
+    ): DoubleArray =
+        doubleArrayOf(
             source[0] + (target[0] - source[0]) * t,
             source[1] + (target[1] - source[1]) * t,
             source[2] + (target[2] - source[2]) * t,
@@ -413,9 +406,7 @@ object HctSolver {
         return lerpPoint(source, t, target)
     }
 
-    internal fun isBounded(
-        x: Double,
-    ): Boolean = 0.0 <= x && x <= 100.0
+    internal fun isBounded(x: Double): Boolean = 0.0 <= x && x <= 100.0
 
     /**
      * Returns the nth possible vertex of the polygonal intersection.
@@ -517,13 +508,9 @@ object HctSolver {
         b: DoubleArray,
     ): DoubleArray = doubleArrayOf((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2)
 
-    internal fun criticalPlaneBelow(
-        x: Double,
-    ): Int = floor(x - 0.5).toInt()
+    internal fun criticalPlaneBelow(x: Double): Int = floor(x - 0.5).toInt()
 
-    internal fun criticalPlaneAbove(
-        x: Double,
-    ): Int = ceil(x - 0.5).toInt()
+    internal fun criticalPlaneAbove(x: Double): Int = ceil(x - 0.5).toInt()
 
     /**
      * Finds a color with the given Y and hue on the boundary of the cube.
@@ -577,9 +564,7 @@ object HctSolver {
         return midpoint(left, right)
     }
 
-    internal fun inverseChromaticAdaptation(
-        adapted: Double,
-    ): Double {
+    internal fun inverseChromaticAdaptation(adapted: Double): Double {
         val adaptedAbs = abs(adapted)
         val base = maxOf(0.0, 27.13 * adaptedAbs / (400.0 - adaptedAbs))
         return sign(adapted) * base.pow(1.0 / 0.42)

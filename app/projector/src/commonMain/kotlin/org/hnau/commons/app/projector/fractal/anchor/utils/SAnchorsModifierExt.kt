@@ -66,7 +66,7 @@ internal fun Modifier.sAnchorsClipToCursorRect(
                         radiusY = cornerRadiusPx,
                     )
                 },
-            ),
+            )
         )
     }
     clipPath(
@@ -147,7 +147,7 @@ internal fun Modifier.sAnchorsDraggable(
                     }
 
                     setIsDragging(false)
-                },
+                }
             )
         }
     }

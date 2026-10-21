@@ -39,7 +39,7 @@ internal fun SharedConfig.toProjectConfig(
         project
             .path
             .split(':')
-            .filter(String::isNotEmpty),
+            .filter(String::isNotEmpty)
     )
         .flatten()
         .joinToString(
@@ -61,14 +61,14 @@ internal fun SharedConfig.toProjectConfig(
                 licenseUrl = licenseUrl,
                 excluded = project.path in exclude,
             )
-        },
+        }
     )
 }
 
 internal val ProjectConfig.androidNamespace: String
     get() = listOf(
         groupId.groupId,
-        artifactId.artifactId.replace('-', '.'),
+        artifactId.artifactId.replace('-', '.')
     ).joinToString(
         separator = ".",
     )

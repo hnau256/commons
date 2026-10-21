@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:max-line-length")
-
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
@@ -39,7 +37,7 @@ fun SScreen(
 ) {
     CompositionLocalProvider(
         value = LocalContentPadding provides contentPadding + LocalDistance.current.units.paddingValues.vertical.medium.copy(
-            top = TopBarDefaults.separationTop,
+            top = TopBarDefaults.separationTop
         ),
     ) {
         val fContext = LocalFContext.current
@@ -71,7 +69,7 @@ fun SScreen(
                                 copy(
                                     mood = Mood.Active.default,
                                 )
-                            },
+                            }
                         ) {
                             Box(
                                 modifier = Modifier.weight(1f),

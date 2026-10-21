@@ -24,12 +24,10 @@ value class ShapeCorners private constructor(
         endTopIsOpened: Boolean,
         endBottomIsOpened: Boolean,
     ) : this(
-        packed = (
-            (if (startTopIsOpened) START_TOP else 0) +
+        packed = ((if (startTopIsOpened) START_TOP else 0) +
                 (if (startBottomIsOpened) START_BOTTOM else 0) +
                 (if (endTopIsOpened) END_TOP else 0) +
-                (if (endBottomIsOpened) END_BOTTOM else 0)
-        ).toByte(),
+                (if (endBottomIsOpened) END_BOTTOM else 0)).toByte()
     )
 
     val startTopIsOpened: Boolean

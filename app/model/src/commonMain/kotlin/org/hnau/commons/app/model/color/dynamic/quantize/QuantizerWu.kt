@@ -47,9 +47,7 @@ class QuantizerWu : Quantizer {
         return QuantizerResult(resultMap)
     }
 
-    fun constructHistogram(
-        pixels: Map<Int, Int>,
-    ) {
+    fun constructHistogram(pixels: Map<Int, Int>) {
         weights = IntArray(TOTAL_SIZE)
         momentsR = IntArray(TOTAL_SIZE)
         momentsG = IntArray(TOTAL_SIZE)
@@ -108,9 +106,7 @@ class QuantizerWu : Quantizer {
         }
     }
 
-    internal fun createBoxes(
-        maxColorCount: Int,
-    ): CreateBoxesResult {
+    internal fun createBoxes(maxColorCount: Int): CreateBoxesResult {
         cubes = Array(maxColorCount) { Box() }
         val volumeVariance = DoubleArray(maxColorCount)
         val firstBox = cubes[0]
@@ -145,9 +141,7 @@ class QuantizerWu : Quantizer {
         return CreateBoxesResult(maxColorCount, generatedColorCount)
     }
 
-    fun createResult(
-        colorCount: Int,
-    ): List<Int> {
+    fun createResult(colorCount: Int): List<Int> {
         val colors: MutableList<Int> = arrayListOf()
         for (i in 0 until colorCount) {
             val cube = cubes[i]
@@ -163,9 +157,7 @@ class QuantizerWu : Quantizer {
         return colors
     }
 
-    internal fun variance(
-        cube: Box,
-    ): Double {
+    internal fun variance(cube: Box): Double {
         val dr = volume(cube, momentsR)
         val dg = volume(cube, momentsG)
         val db = volume(cube, momentsB)
@@ -333,7 +325,8 @@ class QuantizerWu : Quantizer {
         internal fun volume(
             cube: Box,
             moment: IntArray,
-        ): Int = (
+        ): Int =
+            (
                 moment[getIndex(cube.r1, cube.g1, cube.b1)] -
                     moment[getIndex(cube.r1, cube.g1, cube.b0)] -
                     moment[getIndex(cube.r1, cube.g0, cube.b1)] + moment[getIndex(cube.r1, cube.g0, cube.b0)] -
@@ -346,7 +339,8 @@ class QuantizerWu : Quantizer {
             cube: Box,
             direction: Direction,
             moment: IntArray,
-        ): Int = when (direction) {
+        ): Int =
+            when (direction) {
                 Direction.RED ->
                     -moment[getIndex(cube.r0, cube.g1, cube.b1)] +
                         moment[getIndex(cube.r0, cube.g1, cube.b0)] +
@@ -369,7 +363,8 @@ class QuantizerWu : Quantizer {
             direction: Direction,
             position: Int,
             moment: IntArray,
-        ): Int = when (direction) {
+        ): Int =
+            when (direction) {
                 Direction.RED ->
                     (
                         moment[getIndex(position, cube.g1, cube.b1)] -

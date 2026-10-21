@@ -22,9 +22,9 @@ inline fun <S, ERROR_THIS, ERROR_OTHER, E, M, V> ParsingMapper<S, M, ERROR_THIS>
             ifRight = {
                 other.parse(it).fold(
                     ifLeft = { otherError -> ifOtherError(otherError).left() },
-                    ifRight = { result -> result.right() },
+                    ifRight = { result -> result.right() }
                 )
-            },
+            }
         )
     },
 )
@@ -35,7 +35,7 @@ operator fun <S, M, V, E> ParsingMapper<S, M, Nothing>.plus(
 ): ParsingMapper<S, V, E> = with(
     other = other,
     ifThisError = ::it,
-    ifOtherError = ::it,
+    ifOtherError = ::it
 )
 
 @JvmName("plusAlwaysSuccess")
@@ -44,7 +44,7 @@ operator fun <S, M, V, E> ParsingMapper<S, M, E>.plus(
 ): ParsingMapper<S, V, E> = with(
     other = other,
     ifThisError = ::it,
-    ifOtherError = ::it,
+    ifOtherError = ::it
 )
 
 operator fun <S, M, V, ERROR_THIS, ERROR_OTHER> ParsingMapper<S, M, ERROR_THIS>.plus(
@@ -52,5 +52,5 @@ operator fun <S, M, V, ERROR_THIS, ERROR_OTHER> ParsingMapper<S, M, ERROR_THIS>.
 ): ParsingMapper<S, V, Either<ERROR_THIS, ERROR_OTHER>> = with(
     other = other,
     ifThisError = { error -> error.left() },
-    ifOtherError = { error -> error.right() },
+    ifOtherError = { error -> error.right() }
 )

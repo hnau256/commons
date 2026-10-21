@@ -20,9 +20,7 @@ data object Loading : Loadable<Nothing>()
 
 @Serializable
 @SerialName("ready")
-data class Ready<out T>(
-    val value: T,
-) : Loadable<T>()
+data class Ready<out T>(val value: T) : Loadable<T>()
 
 inline fun <I, O> Loadable<I>.fold(
     ifLoading: () -> O,
@@ -48,7 +46,8 @@ inline fun <I, O> Loadable<I>.flatMap(
 
 inline fun <T> Loadable<T>.valueOrElse(
     ifLoading: () -> T,
-): T = fold(
+): T =
+    fold(
         ifReady = { it },
         ifLoading = ifLoading,
     )

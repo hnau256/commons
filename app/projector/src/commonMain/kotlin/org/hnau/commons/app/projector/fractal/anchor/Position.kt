@@ -57,7 +57,7 @@ value class Position(
 
         val twoWayConverter: TwoWayConverter<Position, AnimationVector1D> = TwoWayConverter(
             convertToVector = { AnimationVector1D(it.position) },
-            convertFromVector = { vector -> Position(vector.value) },
+            convertFromVector = { vector -> Position(vector.value) }
         )
     }
 }

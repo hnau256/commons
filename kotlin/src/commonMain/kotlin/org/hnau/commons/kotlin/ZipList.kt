@@ -45,7 +45,7 @@ data class ZipList<T>(
                     false,
                     value,
                 )
-            },
+            }
         )
     }
 
@@ -64,7 +64,7 @@ data class ZipList<T>(
                 after = buildList {
                     add(selected)
                     addAll(after)
-                },
+                }
             )
         }
 
@@ -87,7 +87,7 @@ data class ZipList<T>(
         },
         ifNotNull = { nonEmptyBefore ->
             nonEmptyBefore + selected + after
-        },
+        }
     )
 }
 
@@ -95,7 +95,7 @@ inline fun <T> Iterable<T>.toZipListOrNull(
     checkIsSelected: (T) -> Boolean,
 ): ZipList<T>? = this
     .fold(
-        initial = ZipListBuilder<T>(),
+        initial = ZipListBuilder<T>()
     ) { builder, value ->
         builder.add(
             value = value,
@@ -121,25 +121,25 @@ internal data class ZipListBuilder<T>(
                     ZipListBuilder(
                         before = before,
                         selected = Some(value),
-                        after = after,
+                        after = after
                     )
                 },
                 ifFalse = {
                     ZipListBuilder(
                         before = before + value,
                         selected = selected,
-                        after = after,
+                        after = after
                     )
-                },
+                }
             )
         },
         ifSome = {
             ZipListBuilder(
                 before = before,
                 selected = selected,
-                after = after + value,
+                after = after + value
             )
-        },
+        }
     )
 
     fun toSelectedListOrNull(): ZipList<T>? = selected

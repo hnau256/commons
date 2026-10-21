@@ -19,8 +19,8 @@ sealed class ClosedFloatingPointRangeSerializer<T : Comparable<T>>(
                 start = range.start,
                 endInclusive = range.endInclusive,
             )
-        },
-    ),
+        }
+    )
 ) {
 
     @Serializable
@@ -29,14 +29,14 @@ sealed class ClosedFloatingPointRangeSerializer<T : Comparable<T>>(
         val endInclusive: T,
     )
 
-    object Float : ClosedFloatingPointRangeSerializer<kotlin.Float>(
+    object Float: ClosedFloatingPointRangeSerializer<kotlin.Float>(
         itemSerializer = kotlin.Float.serializer(),
         createRange = { start, endInclusive ->
             start..endInclusive
         },
     )
 
-    object Double : ClosedFloatingPointRangeSerializer<kotlin.Double>(
+    object Double: ClosedFloatingPointRangeSerializer<kotlin.Double>(
         itemSerializer = kotlin.Double.serializer(),
         createRange = { start, endInclusive ->
             start..endInclusive

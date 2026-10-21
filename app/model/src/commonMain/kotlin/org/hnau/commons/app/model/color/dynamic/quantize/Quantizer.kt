@@ -16,8 +16,5 @@
 package org.hnau.commons.app.model.color.dynamic.quantize
 
 internal interface Quantizer {
-  fun quantize(
-      pixels: IntArray,
-      maxColors: Int,
-  ): QuantizerResult
+  fun quantize(pixels: IntArray, maxColors: Int): QuantizerResult
 }

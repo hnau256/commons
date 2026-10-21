@@ -28,7 +28,7 @@ class AppActivity : ComponentActivity() {
     private val viewModel: AppViewModel<RootModel, RootModel.Skeleton> by viewModels {
         AppViewModel.factory(
             seed = createCommonsAppTestAppSeed(
-                appFilesDirProvider = AppFilesDirProvider(context = this),
+                appFilesDirProvider = AppFilesDirProvider(context = this)
             ),
         )
     }
@@ -36,9 +36,7 @@ class AppActivity : ComponentActivity() {
     private val goBackHandler: StateFlow<(() -> Unit)?>
         get() = viewModel.appModel.model.goBackHandler
 
-    override fun onCreate(
-        savedInstanceState: Bundle?,
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         initOnBackPressedDispatcherCallback()

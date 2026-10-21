@@ -31,9 +31,7 @@ interface TonalPalette {
     val chroma: Double
         get() = keyColor.chroma
 
-    fun getHct(
-        tone: Double,
-    ): Hct
+    fun getHct(tone: Double): Hct
 
     companion object {
         /**
@@ -42,9 +40,7 @@ interface TonalPalette {
          * @param argb ARGB representation of a color
          * @return Tones matching that color's hue and chroma.
          */
-        fun fromInt(
-            argb: Int,
-        ): TonalPalette {
+        fun fromInt(argb: Int): TonalPalette {
             return fromHct(Hct.fromInt(argb))
         }
 
@@ -54,9 +50,7 @@ interface TonalPalette {
          * @param hct HCT representation of a color.
          * @return Tones matching that color's hue and chroma.
          */
-        fun fromHct(
-            hct: Hct,
-        ): TonalPalette {
+        fun fromHct(hct: Hct): TonalPalette {
             return TonalPaletteImpl(hct.hue, hct.chroma, hct)
         }
 
@@ -67,10 +61,7 @@ interface TonalPalette {
          * @param chroma HCT chroma
          * @return Tones matching hue and chroma.
          */
-        fun fromHueAndChroma(
-            hue: Double,
-            chroma: Double,
-        ): TonalPalette {
+        fun fromHueAndChroma(hue: Double, chroma: Double): TonalPalette {
             val keyColor = KeyColor(hue, chroma).create()
             return TonalPaletteImpl(hue, chroma, keyColor)
         }
@@ -98,9 +89,7 @@ private class TonalPaletteImpl(
      * @param tone HCT tone, measured from 0 to 100.
      * @return ARGB representation of a color with that tone.
      */
-    fun tone(
-        tone: Int,
-    ): Int {
+    fun tone(tone: Int): Int {
         var color = cache[tone]
         if (color == null) {
             color =
@@ -115,16 +104,11 @@ private class TonalPaletteImpl(
     }
 
     /** Given a tone, use hue and chroma of palette to create a color, and return it as HCT. */
-    override fun getHct(
-        tone: Double,
-    ): Hct {
+    override fun getHct(tone: Double): Hct {
         return Hct.from(hue, chroma, tone)
     }
 
-    private fun averageArgb(
-        argb1: Int,
-        argb2: Int,
-    ): Int {
+    private fun averageArgb(argb1: Int, argb2: Int): Int {
         val red1 = argb1 ushr 16 and 0xff
         val green1 = argb1 ushr 8 and 0xff
         val blue1 = argb1 and 0xff
@@ -138,10 +122,7 @@ private class TonalPaletteImpl(
     }
 
     /** Key color is a color that represents the hue and chroma of a tonal palette. */
-    class KeyColor(
-        private val hue: Double,
-        private val requestedChroma: Double,
-    ) {
+    class KeyColor(private val hue: Double, private val requestedChroma: Double) {
         // Cache that maps tone to max chroma to avoid duplicated HCT calculation.
         private val chromaCache: MutableMap<Int, Double> = mutableMapOf()
 
@@ -193,14 +174,12 @@ private class TonalPaletteImpl(
         }
 
         // Find the maximum chroma for a given tone
-        private fun maxChroma(
-            tone: Int,
-        ): Double {
+        private fun maxChroma(tone: Int): Double {
             return chromaCache.getOrPut(tone) {
                 Hct.from(
                     hue,
                     MAX_CHROMA_VALUE,
-                    tone.toDouble(),
+                    tone.toDouble()
                 ).chroma
             }
         }

@@ -17,9 +17,7 @@ class EditableRaise @PublishedApi internal constructor(
 
     fun raise(): Nothing = raise(Editable.Incorrect)
 
-    fun ensure(
-        condition: Boolean,
-    ) {
+    fun ensure(condition: Boolean) {
         contract { returns() implies condition }
         if (!condition) raise()
     }

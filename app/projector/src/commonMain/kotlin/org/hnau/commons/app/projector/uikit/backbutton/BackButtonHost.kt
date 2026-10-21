@@ -47,7 +47,7 @@ fun BackButtonHost(
     )
 
     CompositionLocalProvider(
-        LocalBackButtonWidth provides width,
+        LocalBackButtonWidth provides width
     ) {
         content(contentPadding)
     }
@@ -63,7 +63,7 @@ fun BackButtonHost(
                 y = contentPadding
                     .calculateTopPadding()
                     .plus(TopBarDefaults.separationTop)
-                    .roundToPx(),
+                    .roundToPx()
             )
         },
         backgroundColor = backButtonBackgroundColor,

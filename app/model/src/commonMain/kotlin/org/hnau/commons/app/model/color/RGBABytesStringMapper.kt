@@ -132,17 +132,16 @@ private fun createStringToRGBABytesMapper(
             ) { byte ->
                 charHalfByteMapper.reverse(byte).toString()
             }
-    },
+    }
 )
 
 private const val Prefix = '#'
 
-private fun UByte.duplicate(): UByte = joinHalfBytes(this, this)
+private fun UByte.duplicate(): UByte =
+    joinHalfBytes(this, this)
 
-private fun joinHalfBytes(
-    halfByte1: UByte,
-    halfByte2: UByte,
-): UByte = (halfByte1 * 16.toUByte() + halfByte2).toUByte()
+private fun joinHalfBytes(halfByte1: UByte, halfByte2: UByte): UByte =
+    (halfByte1 * 16.toUByte() + halfByte2).toUByte()
 
 private val charHalfByteMapper: Mapper<Char, UByte> = Mapper(
     direct = { char ->
@@ -158,7 +157,7 @@ private val charHalfByteMapper: Mapper<Char, UByte> = Mapper(
             int < 10 -> Char('0'.code + int)
             else -> Char('A'.code + (int - 10))
         }
-    },
+    }
 )
 
 private fun UByte.splitToHalfBytes(): Pair<UByte, UByte> = toUInt().let { int ->
@@ -186,7 +185,7 @@ private fun throwFormatException(
     .flatMap { channels ->
         listOf(
             channels,
-            channels.flatMap { listOf(it, it) },
+            channels.flatMap { listOf(it, it) }
         )
     }
     .joinToString(

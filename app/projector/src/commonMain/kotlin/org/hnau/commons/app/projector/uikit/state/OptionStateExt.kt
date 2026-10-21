@@ -29,7 +29,7 @@ fun <T> Option<T>.OptionStateContent(
     ) { localValue ->
         localValue.fold(
             ifEmpty = { noneContent() },
-            ifSome = { value -> someContent(value) },
+            ifSome = { value -> someContent(value) }
         )
     }
 }

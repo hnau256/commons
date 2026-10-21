@@ -35,7 +35,7 @@ class ProjectorBlockBackDelegate<B>(
                             titleOrIcon = closeInfo,
                         )
                         actions(blockReason)
-                    },
+                    }
                 )
             }
         }

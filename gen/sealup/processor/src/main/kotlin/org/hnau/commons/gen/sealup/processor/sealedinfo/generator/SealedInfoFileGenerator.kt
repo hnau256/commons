@@ -14,11 +14,11 @@ fun SealedInfo.generateCode(
         .builder(packageName, sealedInterfaceName)
         .apply {
             addType(
-                toTypeSpec(),
+                toTypeSpec()
             )
             if (fold) {
                 addFunction(
-                    toFoldFuncSpec(),
+                    toFoldFuncSpec()
                 )
             }
             factoryMethods?.let { parentExtension ->
@@ -43,7 +43,7 @@ fun SealedInfo.generateCode(
                     addAll(
                         variants.mapNotNull { variant ->
                             variant.wrapped?.type?.declaration?.containingFile
-                        },
+                        }
                     )
                 }
                     .filterNotNull()

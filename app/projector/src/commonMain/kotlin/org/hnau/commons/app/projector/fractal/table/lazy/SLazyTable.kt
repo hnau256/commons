@@ -109,7 +109,7 @@ fun SLazyTable(
                     overscrollEffect = overscrollEffect,
                     content = lazyListContent,
                 )
-            },
+            }
         )
     }
 }
@@ -144,7 +144,7 @@ fun <T> SLazyTableScope.cells(
     items: List<T>,
     key: ((T) -> Any)? = null,
     contentType: (T) -> Any? = { null },
-    cellContent: @Composable (SLazyCellScope.(T) -> Unit),
+    cellContent: @Composable (SLazyCellScope.(T) -> Unit)
 ) {
     cells(
         count = items.size,
@@ -159,7 +159,7 @@ fun <T> SLazyTableScope.cells(
 fun SLazyTableScope.cell(
     key: Any? = null,
     contentType: Any? = null,
-    cellContent: @Composable SLazyCellScope.() -> Unit,
+    cellContent: @Composable SLazyCellScope.() -> Unit
 ) {
     cells(
         count = 1,
@@ -188,7 +188,7 @@ fun <T> SLazyTableScope.items(
 fun SLazyTableScope.item(
     key: Any? = null,
     contentType: Any? = null,
-    cellContent: @Composable LazyItemScope.() -> Unit,
+    cellContent: @Composable LazyItemScope.() -> Unit
 ) {
     items(
         count = 1,
@@ -229,7 +229,7 @@ fun SLazyCellScope.Subtable(
             subtableOrientation.fold(
                 ifHorizontal = { Modifier.fillMaxWidth() },
                 ifVertical = { Modifier.fillMaxHeight() },
-            ),
+            )
         ),
         corners = corners,
         reverseOrdering = reverseOrdering,
@@ -250,7 +250,7 @@ private class SLazyTableScopeImpl(
             val count: Int,
             val key: ((index: Int) -> Any)?,
             val contentType: (index: Int) -> Any?,
-            val cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit),
+            val cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit)
         ) : Element
 
         data class Items(
@@ -267,7 +267,7 @@ private class SLazyTableScopeImpl(
         count: Int,
         key: ((index: Int) -> Any)?,
         contentType: (index: Int) -> Any?,
-        cellContent: @Composable SLazyCellScope.(index: Int) -> Unit,
+        cellContent: @Composable SLazyCellScope.(index: Int) -> Unit
     ) {
         elements.add(
             Element.Cells(
@@ -275,7 +275,7 @@ private class SLazyTableScopeImpl(
                 key = key,
                 contentType = contentType,
                 cellContent = cellContent,
-            ),
+            )
         )
     }
 
@@ -291,7 +291,7 @@ private class SLazyTableScopeImpl(
                 key = key,
                 contentType = contentType,
                 cellContent = cellContent,
-            ),
+            )
         )
     }
 
@@ -367,7 +367,7 @@ private class SLazyTableScopeImpl(
                                     )
                                     .option(
                                         separatorPadding
-                                            ?.let(Modifier::padding),
+                                            ?.let(Modifier::padding)
                                     ),
                                 propagateMinConstraints = true,
                             ) {
@@ -406,5 +406,4 @@ private fun generateCellPaddings(
 private class SLazyCellScopeImpl(
     private val lazyItemScope: LazyItemScope,
     override val orientation: Orientation,
-) : LazyItemScope by lazyItemScope,
-    SLazyCellScope
+) : LazyItemScope by lazyItemScope, SLazyCellScope

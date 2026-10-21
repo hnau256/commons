@@ -38,9 +38,9 @@ fun Modifier.fractalDashBorder(
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(1.seconds.inWholeMilliseconds.toInt(), easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
+            repeatMode = RepeatMode.Restart
         ),
-        label = "DashProgress",
+        label = "DashProgress"
     )
 
     return this.drawWithCache {
@@ -72,9 +72,9 @@ fun Modifier.fractalDashBorder(
                         width = doubleWidthPx,
                         pathEffect = PathEffect.dashPathEffect(
                             intervals = floatArrayOf(finalDash, finalGap),
-                            phase = progress * actualStep,
-                        ),
-                    ),
+                            phase = progress * actualStep
+                        )
+                    )
                 )
             }
         }

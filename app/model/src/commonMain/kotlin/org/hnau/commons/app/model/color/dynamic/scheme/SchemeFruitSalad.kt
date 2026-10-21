@@ -28,7 +28,8 @@ class SchemeFruitSalad(
   contrastLevel: Double,
   specVersion: SpecVersion = DEFAULT_SPEC_VERSION,
   platform: Platform = DEFAULT_PLATFORM,
-) : DynamicScheme(
+) :
+  DynamicScheme(
     sourceColorHctList,
     Variant.FRUIT_SALAD,
     isDark,

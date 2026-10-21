@@ -10,9 +10,9 @@ data object LocalDateRangeSerializer : MappingKSerializer<ClosedRange<LocalDate>
         direct = { range ->
             LocalDateRange(
                 start = range.start,
-                endInclusive = range.endInclusive,
+                endInclusive = range.endInclusive
             )
         },
-        reverse = { range -> range },
-    ),
+        reverse = { range -> range }
+    )
 )

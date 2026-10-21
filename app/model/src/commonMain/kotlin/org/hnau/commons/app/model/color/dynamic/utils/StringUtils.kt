@@ -22,9 +22,7 @@ internal object StringUtils {
      *
      * @param argb ARGB representation of a color.
      */
-    fun hexFromArgb(
-        argb: Int,
-    ): String {
+    fun hexFromArgb(argb: Int): String {
         val red = ColorUtils.redFromArgb(argb)
         val blue = ColorUtils.blueFromArgb(argb)
         val green = ColorUtils.greenFromArgb(argb)

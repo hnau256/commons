@@ -60,7 +60,7 @@ class ProjectorSavableDelegate<T>(
                                 copy(
                                     mood = Mood.Error,
                                 )
-                            },
+                            }
                         ) {
                             Action(
                                 actionOrElseOrDisabled = ActionOrElse.instant(dialog.exitWithoutSaving),
@@ -70,7 +70,7 @@ class ProjectorSavableDelegate<T>(
                                 ),
                             )
                         }
-                    },
+                    }
                 )
             }
         }

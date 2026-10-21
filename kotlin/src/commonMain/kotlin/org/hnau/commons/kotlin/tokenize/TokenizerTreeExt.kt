@@ -14,7 +14,7 @@ fun <T> Tokenizer.OptionFactory.Companion.stringsTree(
             .toNonEmptyListOrNull()
             ?: throw IllegalArgumentException("Unable create tree TokenizerOptionFactory with empty string key")
         items to value
-    },
+    }
 )
 
 fun <I, T> Tokenizer.OptionFactory.Companion.tree(
@@ -28,7 +28,7 @@ fun <I, T> Tokenizer.OptionFactory.Companion.tree(
                 items = listOf(firstItem),
                 variants = variants,
                 item = firstItem,
-                ifNoNextTreeItem = { return@OptionFactory null },
+                ifNoNextTreeItem = { return@OptionFactory null }
             )
             .fold(
                 ifRight = { it },
@@ -130,7 +130,7 @@ private class TreeTokenizer<I, T>(
                             tree = treeItem,
                             previousItems = items,
                             variants = variants,
-                        ),
+                        )
                     )
 
                     is TreeItem.Value -> Either.Left(treeItem.value)

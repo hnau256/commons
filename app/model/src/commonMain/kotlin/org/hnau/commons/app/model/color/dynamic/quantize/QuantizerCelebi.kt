@@ -35,10 +35,7 @@ object QuantizerCelebi {
    * @return Map with keys of colors in ARGB format, and values of number of pixels in the original
    *   image that correspond to the color in the quantized image.
    */
-  fun quantize(
-      pixels: IntArray,
-      maxColors: Int,
-  ): Map<Int, Int> {
+  fun quantize(pixels: IntArray, maxColors: Int): Map<Int, Int> {
     val wu = QuantizerWu()
     val wuResult = wu.quantize(pixels, maxColors)
     val wuClustersAsObjects = wuResult.colorToCount.keys

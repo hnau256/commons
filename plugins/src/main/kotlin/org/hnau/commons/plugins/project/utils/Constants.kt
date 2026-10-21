@@ -18,6 +18,6 @@ internal object Constants {
         "-opt-in=kotlin.uuid.ExperimentalUuidApi",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-        "-Xcontext-parameters",
+        "-Xcontext-parameters"
     )
 }

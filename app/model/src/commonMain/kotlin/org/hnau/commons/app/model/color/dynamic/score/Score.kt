@@ -35,9 +35,7 @@ object Score {
     private const val CUTOFF_CHROMA = 5.0
     private const val CUTOFF_EXCITED_PROPORTION = 0.01
 
-    fun score(
-        colorsToPopulation: Map<Int, Int>,
-    ): List<Int> {
+    fun score(colorsToPopulation: Map<Int, Int>): List<Int> {
         // Fallback color is Google Blue.
         return score(colorsToPopulation, 4, 0xff4285f4.toInt(), true)
     }

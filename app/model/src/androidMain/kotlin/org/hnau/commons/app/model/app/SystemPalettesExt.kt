@@ -31,7 +31,7 @@ fun SystemPalettes.Companion.getForAndroid(
                 ),
                 config = PalettesGenerateConfig.default,
                 brightness = brightness,
-            ),
+            )
         )
     }
 }
@@ -59,7 +59,8 @@ private fun getSystemPalettes(
 }
 
 @RequiresApi(Build.VERSION_CODES.S)
-private fun getResourcesByTones(): PaletteTypeValues<List<KeyValue<Tone, Int>>?> = PaletteTypeValues(
+private fun getResourcesByTones(): PaletteTypeValues<List<KeyValue<Tone, Int>>?> =
+    PaletteTypeValues(
         primary = listOf(
             android.R.color.system_accent1_0 to 0,
             android.R.color.system_accent1_10 to 10,

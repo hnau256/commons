@@ -66,7 +66,7 @@ internal fun Project.configurePublishing(
                 }
 
                 is ProjectType.Kmp -> KotlinMultiplatform(dokkaJavadocJar)
-            },
+            }
         )
 
         publishing.coordinates(
@@ -113,7 +113,7 @@ private fun Project.disablePublishingTasks() {
     listOf(
         tasks.withType(AbstractPublishToMaven::class.java),
         tasks.matching { it.name.startsWith("publish") },
-        tasks.matching { it.name.contains("dokka", ignoreCase = true) },
+        tasks.matching { it.name.contains("dokka", ignoreCase = true) }
     ).forEach { tasksCollection ->
         tasksCollection.configureEach { task ->
             task.enabled = false

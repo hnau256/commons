@@ -37,9 +37,7 @@ import kotlin.math.roundToInt
  * measurement system that can also accurately render what colors will appear as in different
  * lighting environments.
  */
-class Hct private constructor(
-    argb: Int,
-) {
+class Hct private constructor(argb: Int) {
   var hue = 0.0
     private set
 
@@ -65,9 +63,7 @@ class Hct private constructor(
    *
    * @param newHue 0 <= newHue < 360; invalid values are corrected.
    */
-  fun setHue(
-      newHue: Double,
-  ) {
+  fun setHue(newHue: Double) {
     setInternalState(HctSolver.solveToInt(newHue, chroma, tone))
   }
 
@@ -77,9 +73,7 @@ class Hct private constructor(
    *
    * @param newChroma 0 <= newChroma < ?
    */
-  fun setChroma(
-      newChroma: Double,
-  ) {
+  fun setChroma(newChroma: Double) {
     setInternalState(HctSolver.solveToInt(hue, newChroma, tone))
   }
 
@@ -89,9 +83,7 @@ class Hct private constructor(
    *
    * @param newTone 0 <= newTone <= 100; invalid valids are corrected.
    */
-  fun setTone(
-      newTone: Double,
-  ) {
+  fun setTone(newTone: Double) {
     setInternalState(HctSolver.solveToInt(hue, chroma, newTone))
   }
 
@@ -112,9 +104,7 @@ class Hct private constructor(
    *
    * See ViewingConditions.make for parameters affecting color appearance.
    */
-  fun inViewingConditions(
-      vc: ViewingConditions,
-  ): Hct {
+  fun inViewingConditions(vc: ViewingConditions): Hct {
     // 1. Use CAM16 to find XYZ coordinates of color in specified VC.
     val cam16 = Cam16.fromInt(toInt())
     val viewedInVc = cam16.xyzInViewingConditions(vc, null)
@@ -134,9 +124,7 @@ class Hct private constructor(
     return from(recastInVc.hue, recastInVc.chroma, ColorUtils.lstarFromY(viewedInVc[1]))
   }
 
-  private fun setInternalState(
-      argb: Int,
-  ) {
+  private fun setInternalState(argb: Int) {
     this.argb = argb
     val cam = Cam16.fromInt(argb)
     hue = cam.hue
@@ -154,11 +142,7 @@ class Hct private constructor(
      * @param tone 0 <= tone <= 100; invalid values are corrected.
      * @return HCT representation of a color in default viewing conditions.
      */
-    fun from(
-        hue: Double,
-        chroma: Double,
-        tone: Double,
-    ): Hct {
+    fun from(hue: Double, chroma: Double, tone: Double): Hct {
       val argb = HctSolver.solveToInt(hue, chroma, tone)
       return Hct(argb)
     }
@@ -169,27 +153,19 @@ class Hct private constructor(
      * @param argb ARGB representation of a color.
      * @return HCT representation of a color in default viewing conditions
      */
-    fun fromInt(
-        argb: Int,
-    ): Hct {
+    fun fromInt(argb: Int): Hct {
       return Hct(argb)
     }
 
-    fun isBlue(
-        hue: Double,
-    ): Boolean {
+    fun isBlue(hue: Double): Boolean {
       return hue >= 250 && hue < 270
     }
 
-    fun isYellow(
-        hue: Double,
-    ): Boolean {
+    fun isYellow(hue: Double): Boolean {
       return hue >= 105 && hue < 125
     }
 
-    fun isCyan(
-        hue: Double,
-    ): Boolean {
+    fun isCyan(hue: Double): Boolean {
       return hue >= 170 && hue < 207
     }
   }

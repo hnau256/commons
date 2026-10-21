@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:max-line-length")
-
 package org.hnau.commons.plugins
 
 import org.hnau.commons.plugins.utils.versions.Aliased
@@ -38,26 +36,20 @@ internal object Versions {
             PluginId("org.jetbrains.kotlin.android") withVersion Version.Kotlin withAlias "kotlin-android"
 
         val kotlinSerialization =
-            PluginId(
-                "org.jetbrains.kotlin.plugin.serialization",
-            ) withVersion Version.Kotlin withAlias "kotlin-serialization"
+            PluginId("org.jetbrains.kotlin.plugin.serialization") withVersion Version.Kotlin withAlias "kotlin-serialization"
 
         val kotlinCompose =
             PluginId("org.jetbrains.kotlin.plugin.compose") withVersion Version.Kotlin withAlias "kotlin-compose"
 
         val androidMultiplatformLibrary =
-            PluginId(
-                "com.android.kotlin.multiplatform.library",
-            ) withVersion Version.AndroidGradlePlugin withAlias "android-multiplatformLibrary"
+            PluginId("com.android.kotlin.multiplatform.library") withVersion Version.AndroidGradlePlugin withAlias "android-multiplatformLibrary"
 
         val androidApplication =
             PluginId("com.android.application") withVersion Version.AndroidGradlePlugin withAlias "android-application"
 
 
         val googleServices =
-            PluginId(
-                "com.google.gms.google-services",
-            ) withVersion Version.GoogleServicesPlugin withAlias "googleServices"
+            PluginId("com.google.gms.google-services") withVersion Version.GoogleServicesPlugin withAlias "googleServices"
 
         val ksp =
             PluginId("com.google.devtools.ksp") withVersion Version.Ksp withAlias "ksp"
@@ -80,16 +72,13 @@ internal object Versions {
         val javaGradlePlugin: PluginId =
             PluginId("java-gradle-plugin")
 
-        val ktlint =
-            PluginId("org.jlleitschuh.gradle.ktlint") withVersion Version.KtlintGradle withAlias "ktlint"
-
         val hnauProject: List<Aliased<Versioned<PluginId>>> = listOf(
             "jvm",
             "jvmAndroidApp",
             "kmp",
             "kmpAndroid",
             "kmpAndroidWithCompose",
-            "plugins",
+            "plugins"
         ).map { suffix ->
             PluginId("org.hnau.plugin.$suffix") withVersion Version.HnauCommons withAlias "hnau-$suffix"
         }
@@ -107,7 +96,6 @@ internal object Versions {
         "com.vanniktech" withArtifact "gradle-maven-publish-plugin" withVersion Version.VanniktechPlugin,
         "com.squareup.okhttp3" withArtifact "okhttp-jvm" withVersion Version.OkHttp,
         "org.jetbrains.dokka" withArtifact "dokka-gradle-plugin" withVersion Version.DokkaPlugin,
-        "org.jlleitschuh.gradle" withArtifact "ktlint-gradle" withVersion Version.KtlintGradle,
     )
 
     object HnauCommons {
@@ -117,17 +105,13 @@ internal object Versions {
 
         val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(
             ArtifactId("commons-app-model") withVersion Version.HnauCommons withAlias "commons-app-model",
-            ArtifactId("commons-app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector",
+            ArtifactId("commons-app-projector") withVersion Version.HnauCommons withAlias "commons-app-projector"
         ).map { aliasedVersionedArtifactId ->
             aliasedVersionedArtifactId.withGroup(group)
         }
 
         val gen: List<AnnotationWithProcessor<Versioned<LibraryId>>> = listOf(
-            "pipe",
-            "loggable",
-            "sealup",
-            "enumvalues",
-            "fold",
+            "pipe", "loggable", "sealup", "enumvalues", "fold",
         ).map { type ->
             AnnotationWithProcessor(
                 annotation = "annotations",
@@ -171,14 +155,15 @@ internal object Versions {
 
         private fun buildArrowDependency(
             suffix: String,
-        ): Versioned<LibraryId> = "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
+        ): Versioned<LibraryId> =
+            "io.arrow-kt" withArtifact "arrow-$suffix" withVersion Version.Arrow
 
         val unconditioned: List<Versioned<LibraryId>> =
             listOf(
                 "core",
                 "core-serialization",
                 "fx-coroutines",
-                "optics",
+                "optics"
             ).map(::buildArrowDependency)
 
         val opticsProcessor: Versioned<LibraryId> =

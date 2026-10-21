@@ -98,13 +98,9 @@ open class DynamicScheme(
         WATCH,
     }
 
-    fun getHct(
-        dynamicColor: DynamicColor,
-    ): Hct = dynamicColor.getHct(this)
+    fun getHct(dynamicColor: DynamicColor): Hct = dynamicColor.getHct(this)
 
-    fun getArgb(
-        dynamicColor: DynamicColor,
-    ): Int = dynamicColor.getArgb(this)
+    fun getArgb(dynamicColor: DynamicColor): Int = dynamicColor.getArgb(this)
 
     override fun toString(): String {
         val mode = if (isDark) "dark" else "light"
@@ -297,7 +293,8 @@ open class DynamicScheme(
             other: DynamicScheme,
             isDark: Boolean,
             contrastLevel: Double,
-        ): DynamicScheme = DynamicScheme(
+        ): DynamicScheme =
+            DynamicScheme(
                 other.sourceColorHctList,
                 other.variant,
                 isDark,

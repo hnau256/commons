@@ -52,7 +52,7 @@ fun SPanel(
                             ifNotNull = mood::activate,
                         ),
                 ).containerOverlay()
-            },
+            }
         ) {
 
             val backgroundColor = LocalFContext.current.color
@@ -92,7 +92,7 @@ fun SPanel(
                                 )
 
                                 else -> Modifier
-                            },
+                            }
                         ),
                 ) {
                     val contentPadding = units

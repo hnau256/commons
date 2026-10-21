@@ -52,7 +52,7 @@ fun TopBar(
         ),
     ) {
         CompositionLocalProvider(
-            LocalContentColor provides TopBarDefaults.itemContentColor,
+            LocalContentColor provides TopBarDefaults.itemContentColor
         ) {
             content()
         }

@@ -19,9 +19,7 @@ package org.hnau.commons.app.model.color.dynamic.dynamiccolor
 class MaterialDynamicColors {
   private val colorSpec: ColorSpec = ColorSpec2026()
 
-  fun highestSurface(
-      scheme: DynamicScheme,
-  ): DynamicColor = colorSpec.highestSurface(scheme)
+  fun highestSurface(scheme: DynamicScheme): DynamicColor = colorSpec.highestSurface(scheme)
 
   // ////////////////////////////////////////////////////////////////
   // Main Palettes //

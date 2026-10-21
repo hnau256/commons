@@ -36,7 +36,7 @@ fun KSAnnotation.toAnnotationSpec(
 
                     name.foldNullable(
                         ifNull = { addMember("%L", code) },
-                        ifNotNull = { name -> addMember("%L = %L", name, code) },
+                        ifNotNull = { name -> addMember("%L = %L", name, code) }
                     )
                 }
             }

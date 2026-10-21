@@ -88,9 +88,7 @@ data class Cam16
          * astar, bstar in code. CAM16-UCS is included in the CAM16 specification, and is used to measure
          * distances between colors.
          */
-        fun distance(
-            other: Cam16,
-        ): Double {
+        fun distance(other: Cam16): Double {
             val dJ = jstar - other.jstar
             val dA = astar - other.astar
             val dB = bstar - other.bstar
@@ -111,9 +109,7 @@ data class Cam16
          * @param viewingConditions Information about the environment where the color will be viewed.
          * @return ARGB representation of color
          */
-        internal fun viewed(
-            viewingConditions: ViewingConditions,
-        ): Int {
+        internal fun viewed(viewingConditions: ViewingConditions): Int {
             val xyz = xyzInViewingConditions(viewingConditions)
             return ColorUtils.argbFromXyz(xyz[0], xyz[1], xyz[2])
         }
@@ -183,9 +179,7 @@ data class Cam16
              *
              * @param argb ARGB representation of a color.
              */
-            fun fromInt(
-                argb: Int,
-            ): Cam16 = fromIntInViewingConditions(argb, ViewingConditions.DEFAULT)
+            fun fromInt(argb: Int): Cam16 = fromIntInViewingConditions(argb, ViewingConditions.DEFAULT)
 
             /**
              * Create a CAM16 color from a color in defined viewing conditions.

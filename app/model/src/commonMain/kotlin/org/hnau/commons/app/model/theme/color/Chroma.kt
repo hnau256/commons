@@ -9,7 +9,7 @@ value class Chroma private constructor(
 ) : Comparable<Chroma> {
 
     override fun compareTo(
-        other: Chroma,
+        other: Chroma
     ): Int = raw.compareTo(
         other = other.raw,
     )
@@ -56,7 +56,7 @@ value class Chroma private constructor(
     companion object {
 
         fun create(
-            raw: Int,
+            raw: Int
         ): Chroma {
             requireInRange(
                 valueLabel = "Chroma",

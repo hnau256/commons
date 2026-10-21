@@ -8,7 +8,7 @@ import org.hnau.commons.kotlin.castOrNull
 import org.hnau.commons.kotlin.ifNull
 
 fun ClipboardAccessor.Companion.createForAndroid(
-    context: Context,
+    context: Context
 ): ClipboardAccessor = object : ClipboardAccessor {
 
     override fun copyToClipboard(
@@ -21,8 +21,8 @@ fun ClipboardAccessor.Companion.createForAndroid(
             .setPrimaryClip(
                 ClipData.newPlainText(
                     text,
-                    text,
-                ),
+                    text
+                )
             )
     }
 }

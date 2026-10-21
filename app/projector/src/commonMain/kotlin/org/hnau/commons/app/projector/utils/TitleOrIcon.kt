@@ -38,7 +38,7 @@ val TitleOrIcon.asIcon: TitleOrIcon.Icon
     get() = fold(
         ifTitle = { title ->
             TitleOrIcon.Icon(
-                icon = Drawable.Text(title),
+                icon = Drawable.Text(title)
             )
         },
         ifIcon = TitleOrIcon::Icon,

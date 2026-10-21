@@ -101,7 +101,7 @@ private data class LineMeasurePolicy(
                     LinePosition(
                         isFirst = i <= 0,
                         isLast = i >= orderedMeasurables.lastIndex,
-                    ),
+                    )
                 )
         }
 
@@ -111,7 +111,7 @@ private data class LineMeasurePolicy(
                     measurables = orderedMeasurables,
                     max = true,
                     along = constraints.maxAlong,
-                ),
+                )
             )
 
         val placeables = measure(
@@ -151,7 +151,7 @@ private data class LineMeasurePolicy(
                                 space = across,
                                 layoutDirection = layoutDirection,
                             )
-                        },
+                        }
                     ),
                 )
                 along += placeable.along + separationPixels
@@ -165,7 +165,8 @@ private data class LineMeasurePolicy(
         get() = with(density) { separation.roundToPx() }
 
     context(density: Density)
-    private fun Collection<IntrinsicMeasurable>.separationsSum(): Int = (size - 1) * separationPixels
+    private fun Collection<IntrinsicMeasurable>.separationsSum(): Int =
+        (size - 1) * separationPixels
 
     context(orientation: Orientation)
     private inline fun <I : IntrinsicMeasurable, O> IntrinsicMeasureScope.measure(
@@ -201,7 +202,7 @@ private data class LineMeasurePolicy(
 
             val weight = useWeight.foldBoolean(
                 ifTrue = { measurable.let(extractLineParentData).weight },
-                ifFalse = { 0f },
+                ifFalse = { 0f }
             )
             if (weight > 0f) {
                 totalWeight += weight
@@ -241,14 +242,14 @@ private data class LineMeasurePolicy(
                         val size = (remaining * weight / totalWeight).toInt()
                         allocatedWeightedAlong += size
                         size
-                    },
+                    }
                 )
                 val measurable = measurables[i]
                 measurable.measure(
                     constraints.copy(
                         minAlong = along,
                         maxAlong = along,
-                    ),
+                    )
                 )
             }
         }
@@ -257,7 +258,7 @@ private data class LineMeasurePolicy(
     private fun IntrinsicMeasureScope.calcIntrinsicAlong(
         measurables: List<IntrinsicMeasurable>,
         max: Boolean,
-        across: Int?,
+        across: Int?
     ): Int = with(orientation) {
         measure(
             useWeight = false,
@@ -310,7 +311,7 @@ private data class LineMeasurePolicy(
         direction: Direction,
         measurables: List<IntrinsicMeasurable>,
         max: Boolean,
-        oppositeSize: Int?,
+        oppositeSize: Int?
     ): Int = direction.fold(
         ifAlong = {
             calcIntrinsicAlong(
@@ -325,12 +326,12 @@ private data class LineMeasurePolicy(
                 max = max,
                 along = oppositeSize,
             )
-        },
+        }
     )
 
     override fun IntrinsicMeasureScope.maxIntrinsicWidth(
         measurables: List<IntrinsicMeasurable>,
-        height: Int,
+        height: Int
     ): Int = calcIntrinsic(
         direction = Orientation.Horizontal.compareWith(orientation),
         measurables = measurables,
@@ -340,7 +341,7 @@ private data class LineMeasurePolicy(
 
     override fun IntrinsicMeasureScope.minIntrinsicWidth(
         measurables: List<IntrinsicMeasurable>,
-        height: Int,
+        height: Int
     ): Int = calcIntrinsic(
         direction = Orientation.Horizontal.compareWith(orientation),
         measurables = measurables,
@@ -350,7 +351,7 @@ private data class LineMeasurePolicy(
 
     override fun IntrinsicMeasureScope.maxIntrinsicHeight(
         measurables: List<IntrinsicMeasurable>,
-        width: Int,
+        width: Int
     ): Int = calcIntrinsic(
         direction = Orientation.Vertical.compareWith(orientation),
         measurables = measurables,
@@ -360,7 +361,7 @@ private data class LineMeasurePolicy(
 
     override fun IntrinsicMeasureScope.minIntrinsicHeight(
         measurables: List<IntrinsicMeasurable>,
-        width: Int,
+        width: Int
     ): Int = calcIntrinsic(
         direction = Orientation.Vertical.compareWith(orientation),
         measurables = measurables,

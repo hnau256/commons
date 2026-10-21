@@ -47,7 +47,7 @@ class SymbolProcessor(
             }
             logger.error(
                 "Unable to resolve @${AnnotationInfo.simpleName} dependencies. " +
-                    "The following types have unresolved variant types: $names",
+                    "The following types have unresolved variant types: $names"
             )
             return emptyList()
         }

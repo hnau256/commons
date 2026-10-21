@@ -23,14 +23,14 @@ fun SContentWithActions(
             CompositionLocalProvider(
                 value = LocalContentPadding provides LocalContentPadding.current + PaddingValues(
                     top = LocalDistance.current.units.padding.along.medium,
-                ),
+                )
             ) {
                 SActions(
                     modifier = Modifier.fillMaxWidth(),
                     content = actions,
                 )
             }
-        },
+        }
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),

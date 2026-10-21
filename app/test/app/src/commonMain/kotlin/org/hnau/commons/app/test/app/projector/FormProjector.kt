@@ -184,9 +184,9 @@ class FormProjector(
                         titleOrIcon = TitleOrIcon.Both(
                             title = "Save",
                             icon = Drawable.Vector(Icons.Default.Save),
-                        ),
+                        )
                     )
-                },
+                }
             )
             savableDelegate.Dialog()
         }

@@ -32,7 +32,7 @@ fun SIcon(
 ) {
     LocalContentPaddingBox {
         FContext(
-            update = { contentOverlay() },
+            update = { contentOverlay() }
         ) {
             drawable.fold(
                 ifPainter = { painter ->
@@ -52,7 +52,7 @@ fun SIcon(
                         text = text,
                         modifier = modifier,
                     )
-                },
+                }
             )
         }
     }
@@ -72,8 +72,8 @@ private fun PainterIcon(
                 painter = painter,
                 colorFilter = ColorFilter.tint(
                     color = fContext.color,
-                ),
-            ),
+                )
+            )
     )
 }
 
@@ -94,7 +94,7 @@ private fun TextIcon(
         contentAlignment = Alignment.Center,
     ) {
         FContext(
-            update = { contentOverlay() },
+            update = { contentOverlay() }
         ) {
             val fContext = LocalFContext.current
             val units = LocalDistance.current.units
@@ -104,7 +104,7 @@ private fun TextIcon(
                 minLines = 1,
                 style = units.textStyle.extraSmall.merge(
                     color = fContext.color,
-                ),
+                )
             )
         }
     }

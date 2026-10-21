@@ -15,8 +15,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class SharedBubblesHolder(
     scope: CoroutineScope,
-) : BubblesShower,
-    BubblesProvider {
+) : BubblesShower, BubblesProvider {
 
     private val bubbles: MutableSharedFlow<Bubble> = MutableSharedFlow(
         extraBufferCapacity = Int.MAX_VALUE,

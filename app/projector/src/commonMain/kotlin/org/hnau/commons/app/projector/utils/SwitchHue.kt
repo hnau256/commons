@@ -13,7 +13,7 @@ import org.hnau.commons.app.projector.utils.theme.themeBrightness
 private val DynamicSchemeConfigForHue: PalettesGenerateConfig = PalettesGenerateConfig
     .default
     .copy(
-        chroma = Chroma.create(24),
+        chroma = Chroma.create(24)
     )
 
 @Composable
@@ -38,7 +38,7 @@ fun SwitchHue(
                 copy(
                     palettes = palettesWithColorScheme.palettes,
                 )
-            },
+            }
         ) {
             content()
         }

@@ -8,9 +8,7 @@ open class SharedConfigExtension {
 
     var publish: SharedConfig.Publish? = null
 
-    fun publish(
-        action: Action<SharedConfigPublishBuilder>,
-    ) {
+    fun publish(action: Action<SharedConfigPublishBuilder>) {
         publish = SharedConfigPublishBuilder()
             .apply(action::execute)
             .build("${ConfigPath}publish")

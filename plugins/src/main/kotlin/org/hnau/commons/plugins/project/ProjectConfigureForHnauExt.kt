@@ -40,6 +40,6 @@ internal fun Project.configureForHnau(
         projectType = projectType,
         disablePublicationBeforeOrAfterEvaluate = {
             moduleType.disablePublicationBeforeOrAfterEvaluate(project)
-        },
+        }
     )
 }

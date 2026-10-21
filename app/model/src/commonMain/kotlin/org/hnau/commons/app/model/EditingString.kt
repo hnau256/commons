@@ -55,9 +55,7 @@ data class EditingString(
                                 0 -> text.defaultSelection
                                 1 -> IntRange(selectionParts[0])
                                 2 -> IntRange(selectionParts[0], selectionParts[1])
-                                else -> error(
-                                    "EditingString.selection must contains at most 2 numbers. Got $selectionParts",
-                                )
+                                else -> error("EditingString.selection must contains at most 2 numbers. Got $selectionParts")
                             }
                         },
                 )

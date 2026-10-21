@@ -45,5 +45,5 @@ fun IntSize(
             width = across,
             height = along,
         )
-    },
+    }
 )

@@ -21,8 +21,7 @@ internal class STableScopeImpl(
     override val orientation: Orientation,
     private val corners: ShapeCorners.Provider,
     private val lineScope: LineScope,
-) : STableScope,
-    LineScope by lineScope {
+) : STableScope, LineScope by lineScope {
 
     @Composable
     override fun SCell(

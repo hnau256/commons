@@ -27,7 +27,7 @@ fun <I, K, O> StateFlow<NonEmptyList<I>>.mapNonEmptyListReusable(
             key = extractKey(item),
             build = { itemScope ->
                 transform(itemScope, item)
-            },
+            }
         )
     }
 }
@@ -44,7 +44,7 @@ fun <I, K, O> StateFlow<ZipList<I>>.mapZipListReusable(
             key = extractKey(item),
             build = { itemScope ->
                 transform(itemScope, item)
-            },
+            }
         )
     }
 }
@@ -61,7 +61,7 @@ fun <I, K, O> StateFlow<List<I>>.mapListReusable(
             key = extractKey(item),
             build = { itemScope ->
                 transform(itemScope, item)
-            },
+            }
         )
     }
 }
@@ -92,7 +92,7 @@ fun <I, K, ITEM, O> StateFlow<I>.mapReusable(
             val initialState = scope.buildState(items)
             lastCache.values.forEach { it.scope.cancel() }
             newCache to initialState
-        },
+        }
     )
     .mapStateLite { (_, values) -> values }
 

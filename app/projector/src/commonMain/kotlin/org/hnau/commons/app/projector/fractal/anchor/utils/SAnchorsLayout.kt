@@ -83,7 +83,7 @@ internal fun SAnchorsLayout(
         val childrenAlong = placeables.sumOf { placeable -> placeable.along }
 
         val along = constraints.constrainAlong(
-            along = childrenAlong,
+            along = childrenAlong
         )
 
         val across = constraints.constrainAcross(
@@ -126,8 +126,8 @@ internal fun SAnchorsLayout(
                         size = Size(
                             along = placeable.along.toFloat(),
                             across = size.across.toFloat(),
-                        ),
-                    ),
+                        )
+                    )
                 )
             }
         }

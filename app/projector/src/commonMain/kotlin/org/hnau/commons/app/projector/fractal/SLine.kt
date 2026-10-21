@@ -33,7 +33,7 @@ fun SLine(
                 PaddingValues(
                     alongFrom = contentPadding.alongFrom,
                     alongTo = contentPadding.alongTo,
-                ),
+                )
             ),
             orientation = orientation,
             separation = separation,
@@ -44,7 +44,7 @@ fun SLine(
                 value = LocalContentPadding provides PaddingValues(
                     acrossFrom = contentPadding.acrossFrom,
                     acrossTo = contentPadding.acrossTo,
-                ),
+                )
             ) {
                 content()
             }

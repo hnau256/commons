@@ -31,8 +31,8 @@ inline fun <C> Gradient.Companion.create(
             head = get(delta),
             tail = (2 until normalizedSize).map { index ->
                 get(delta * index)
-            },
-        ),
+            }
+        )
     )
 }
 

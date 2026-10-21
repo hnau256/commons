@@ -6,5 +6,5 @@ import arrow.core.right
 
 fun <T> Result<T>.toEither(): Either<Throwable, T> = fold(
     onSuccess = { value -> value.right() },
-    onFailure = { error -> error.left() },
+    onFailure = { error -> error.left() }
 )

@@ -74,7 +74,7 @@ fun <M, K, P> StackProjectorTail(
                     keys = keys,
                     model = model,
                 )
-            },
+            }
         )
         .mapStateLite(TailInfo<K, P>::tail)
 }

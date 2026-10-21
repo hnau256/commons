@@ -18,6 +18,4 @@ inline fun <reified O> Any?.castOrNull(): O? = this as? O
 inline fun <reified O> Any?.castOrThrow(): O = this as O
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <T> it(
-    it: T,
-): T = it
+inline fun <T> it(it: T): T = it

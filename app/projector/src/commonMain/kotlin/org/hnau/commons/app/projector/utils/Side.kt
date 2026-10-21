@@ -16,7 +16,7 @@ val Side.orientation: Orientation
         ifStart = { Orientation.Horizontal },
         ifTop = { Orientation.Vertical },
         ifEnd = { Orientation.Horizontal },
-        ifBottom = { Orientation.Vertical },
+        ifBottom = { Orientation.Vertical }
     )
 
 val Side.opposite: Side
@@ -24,5 +24,5 @@ val Side.opposite: Side
         ifStart = { Side.End },
         ifTop = { Side.Bottom },
         ifEnd = { Side.Start },
-        ifBottom = { Side.Top },
+        ifBottom = { Side.Top }
     )

@@ -17,5 +17,5 @@ inline fun <I, E : CancelOrInProgress, O> ActionOrElse<I, E>.map(
             val transformedValue = transform(value)
             action(transformedValue)
         }
-    },
+    }
 )

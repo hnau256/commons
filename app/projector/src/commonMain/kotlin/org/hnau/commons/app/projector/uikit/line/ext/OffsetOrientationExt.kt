@@ -45,5 +45,5 @@ fun Offset(
             x = across,
             y = along,
         )
-    },
+    }
 )

@@ -52,8 +52,8 @@ fun SDialog(
                     .background(
                         Color.Black.copy(
                             alpha = shadowAlpha[fContext.palettes.brightness][LocalDistance.current],
-                        ),
-                    ),
+                        )
+                    )
             ) {
                 LocalContentPaddingBox {
                     DistanceOffset {

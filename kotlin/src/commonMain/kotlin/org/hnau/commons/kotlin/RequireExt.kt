@@ -1,6 +1,6 @@
 package org.hnau.commons.kotlin
 
-fun <T : Comparable<T>> requireInRange(
+fun <T: Comparable<T>> requireInRange(
     valueLabel: String,
     value: T,
     range: ClosedRange<T>,

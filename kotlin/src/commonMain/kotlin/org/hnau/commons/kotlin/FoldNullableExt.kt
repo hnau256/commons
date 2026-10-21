@@ -15,9 +15,9 @@ inline fun <T, R> T?.foldNullable(
 @Deprecated(
     message = "Receiver is already non-nullable. Just use 'ifNotNull' block directly or standard scoping functions.",
     level = DeprecationLevel.ERROR,
-    replaceWith = ReplaceWith("ifNotNull(this)"),
+    replaceWith = ReplaceWith("ifNotNull(this)")
 )
 fun <T : Any, R> T.foldNullable(
     ifNull: () -> R,
-    ifNotNull: (T) -> R,
+    ifNotNull: (T) -> R
 ): R = ifNotNull(this)

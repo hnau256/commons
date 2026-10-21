@@ -15,7 +15,7 @@ fun Modifier.option(
     modifierOrNull: Modifier?,
 ): Modifier = modifierOrNull.foldNullable(
     ifNull = { this },
-    ifNotNull = { then(it) },
+    ifNotNull = { then(it) }
 )
 
 @Composable

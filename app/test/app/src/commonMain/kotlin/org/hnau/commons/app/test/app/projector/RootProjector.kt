@@ -83,7 +83,7 @@ class RootProjector(
                     transitionSpec = TransitionSpec.rememberCrossfade(),
                 ) { stack ->
                     stack.Content(
-                        contentPadding = contentPadding,
+                        contentPadding = contentPadding
                     )
                 }
         }

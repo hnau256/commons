@@ -61,13 +61,13 @@ private fun SealedInfo.Variant.toFactoriesSpec(
                             },
                     )
                 }
-            },
+            }
         )
         ?: listOf(
             toFactoryPropertySpec(
                 parentExtension = parentExtension,
                 wrapperClassName = wrapperClassName,
-            ).left(),
+            ).left()
         )
 }
 
@@ -81,7 +81,7 @@ private fun SealedInfo.Variant.toFactoryPropertySpec(
         FunSpec
             .getterBuilder()
             .addStatement("return %T", wrapperClassName)
-            .build(),
+            .build()
     )
     .build()
 

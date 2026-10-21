@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:max-line-length")
-
 package org.hnau.commons.app.projector.uikit
 
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -54,7 +52,7 @@ fun <A, E : CancelOrInProgress> ActionOrElseIcon(
                 null, is ActionOrElse.Action -> 0
                 is ActionOrElse.Else -> 1
             }
-        },
+        }
     ) { actionOrElseOrDisabled ->
         when (actionOrElseOrDisabled) {
             null, is ActionOrElse.Action -> actionIcon?.let { actionIcon ->

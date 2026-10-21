@@ -13,13 +13,12 @@ fun Modifier.onPositionInLineChanged(
 ): Modifier = then(
     LinePositionElement(
         onPositionCallback = onPositionCallback,
-    ),
+    )
 )
 
 private data class LinePositionNode(
     var onPositionCallback: ((LinePosition) -> Unit)?,
-) : Modifier.Node(),
-    ParentDataModifierNode {
+) : Modifier.Node(), ParentDataModifierNode {
     override fun Density.modifyParentData(
         parentData: Any?,
     ): Any = parentData
