@@ -1,5 +1,6 @@
 package org.hnau.commons.gen.fold.processor.info.generator
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -16,10 +17,17 @@ import org.hnau.commons.gen.fold.processor.info.generator.utils.isEnum
 import org.hnau.commons.gen.fold.processor.info.generator.utils.nonEmptyEntriesPropertyName
 import org.hnau.commons.gen.fold.processor.info.generator.utils.uppercasedIdentifier
 import org.hnau.commons.gen.kotlin.codeBlock
+import org.hnau.commons.kotlin.foldBoolean
+import org.hnau.commons.kotlin.ifTrue
 
 private val nonEmptyListClassName = ClassName("arrow.core", "NonEmptyList")
 
 private val toNonEmptyListOrThrowMember = MemberName("arrow.core", "toNonEmptyListOrThrow")
+
+private val suppressUncheckedCast: AnnotationSpec = AnnotationSpec
+    .builder(Suppress::class)
+    .addMember("%S", "UNCHECKED_CAST")
+    .build()
 
 private fun List<TypeVariableName>.resultTypeVariable(): TypeVariableName {
     val usedNames = mapTo(mutableSetOf()) { it.name }
@@ -27,6 +35,23 @@ private fun List<TypeVariableName>.resultTypeVariable(): TypeVariableName {
         .first { it !in usedNames }
     return TypeVariableName(name)
 }
+
+private fun FoldInfo.Variant.rawVariantType(): TypeName =
+    (typeVariables.isNotEmpty() && resolution !is FoldInfo.Resolution.Object).foldBoolean(
+        ifTrue = { className.parameterizedBy(*typeVariables.toTypedArray()) },
+        ifFalse = { className },
+    )
+
+private fun FoldInfo.Variant.foldLambdaParameters(): List<ParameterSpec> =
+    when (val resolution = resolution) {
+        is FoldInfo.Resolution.Object -> emptyList()
+        is FoldInfo.Resolution.Whole -> listOf(
+            ParameterSpec.builder("value", resolution.type).build()
+        )
+        is FoldInfo.Resolution.Destructured -> resolution.parameters.map { param ->
+            ParameterSpec.builder(param.name, param.type).build()
+        }
+    }
 
 fun FoldInfo.toFoldRawFunSpec(): FunSpec {
     val classTypeVars = this.typeVariables
@@ -46,18 +71,11 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
             returns(returnType)
 
             variants.forEach { variant ->
-                val variantType: TypeName = if (variant.typeVariables.isNotEmpty() &&
-                    variant.resolution !is FoldInfo.Resolution.Object
-                ) {
-                    variant.className.parameterizedBy(*variant.typeVariables.toTypedArray())
-                } else {
-                    variant.className
-                }
                 addParameter(
                     "if${variant.uppercasedIdentifier}",
                     LambdaTypeName.get(
                         parameters = arrayOf(
-                            ParameterSpec.builder("variant", variantType).build(),
+                            ParameterSpec.builder("variant", variant.rawVariantType()).build(),
                         ),
                         returnType = returnType,
                     ),
@@ -137,20 +155,10 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
             returns(returnType)
 
             variants.forEach { variant ->
-                val lambdaParams = when (val resolution = variant.resolution) {
-                    is FoldInfo.Resolution.Object -> emptyList()
-                    is FoldInfo.Resolution.Whole -> listOf(
-                        ParameterSpec.builder("value", resolution.type).build()
-                    )
-                    is FoldInfo.Resolution.Destructured -> resolution.parameters.map { param ->
-                        ParameterSpec.builder(param.name, param.type).build()
-                    }
-                }
-
                 addParameter(
                     "if${variant.uppercasedIdentifier}",
                     LambdaTypeName.get(
-                        parameters = lambdaParams.toTypedArray(),
+                        parameters = variant.foldLambdaParameters().toTypedArray(),
                         returnType = returnType,
                     ),
                 )
@@ -163,19 +171,80 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
                     postfix = "\n)",
                     separator = ",\n",
                 ) { variant ->
+                    val name = "if${variant.uppercasedIdentifier}"
                     val content = when (val resolution = variant.resolution) {
-                        is FoldInfo.Resolution.Object ->
-                            "if${variant.uppercasedIdentifier}()"
-                        is FoldInfo.Resolution.Whole ->
-                            "if${variant.uppercasedIdentifier}(variant)"
+                        is FoldInfo.Resolution.Object -> "$name()"
+                        is FoldInfo.Resolution.Whole -> "$name(variant)"
                         is FoldInfo.Resolution.Destructured -> {
                             val args = resolution.parameters.joinToString(", ") { "variant.${it.name}" }
-                            "if${variant.uppercasedIdentifier}($args)"
+                            "$name($args)"
                         }
                     }
-                    "\tif${variant.uppercasedIdentifier} = { variant -> $content }"
+                    "\t$name = { variant -> $content }"
                 }
             }
         )
         .build()
+}
+
+private fun FoldInfo.toDispatchFunSpec(
+    name: String,
+    raw: Boolean,
+): FunSpec {
+    val classTypeVars = this.typeVariables
+    val resultType = classTypeVars.single()
+    val foldName = raw.foldBoolean(
+        ifTrue = { "foldRaw" },
+        ifFalse = { "fold" },
+    )
+    return FunSpec
+        .builder(name)
+        .apply {
+            modifiers += KModifier.INLINE
+            addAnnotation(suppressUncheckedCast)
+
+            classTypeVars.forEach { typeVariables += it }
+
+            receiver(className.parameterizedBy(resultType))
+            returns(resultType)
+
+            variants.forEach { variant ->
+                val parameters = raw.foldBoolean(
+                    ifTrue = {
+                        arrayOf(ParameterSpec.builder("variant", variant.rawVariantType()).build())
+                    },
+                    ifFalse = {
+                        variant.foldLambdaParameters().toTypedArray()
+                    },
+                )
+                addParameter(
+                    "if${variant.uppercasedIdentifier}",
+                    LambdaTypeName.get(
+                        parameters = parameters,
+                        returnType = variant.dispatchResultType
+                            ?: error("Dispatch result type is missing for variant ${variant.identifier}"),
+                    ),
+                )
+            }
+        }
+        .addCode(
+            codeBlock {
+                val arguments = variants.joinToString(
+                    separator = ",\n",
+                ) { variant ->
+                    val parameterName = "if${variant.uppercasedIdentifier}"
+                    "\t$parameterName = $parameterName"
+                }
+                "return $foldName(\n$arguments\n) as ${resultType.name}"
+            }
+        )
+        .build()
+}
+
+fun FoldInfo.toDispatchFunSpec(): FunSpec? = dispatch.ifTrue {
+    toDispatchFunSpec(name = "dispatch", raw = false)
+}
+
+fun FoldInfo.toDispatchRawFunSpec(): FunSpec? = dispatch.ifTrue {
+    toDispatchFunSpec(name = "dispatchRaw", raw = true)
 }
