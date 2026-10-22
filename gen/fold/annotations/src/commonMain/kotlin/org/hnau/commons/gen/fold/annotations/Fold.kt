@@ -4,5 +4,4 @@ package org.hnau.commons.gen.fold.annotations
 @Retention(AnnotationRetention.SOURCE)
 annotation class Fold(
     val nonEmptyEntries: Boolean = false,
-    val dispatchTypeParameter: String = "",
 )

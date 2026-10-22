@@ -10,14 +10,12 @@ data class FoldInfo(
     val typeVariables: List<TypeVariableName>,
     val variants: NonEmptyList<Variant>,
     val nonEmptyEntries: Boolean,
-    val dispatchTypeParameterIndex: Int?,
 ) {
     data class Variant(
         val identifier: String,
         val resolution: Resolution,
         val className: ClassName,
         val typeVariables: List<TypeVariableName> = emptyList(),
-        val dispatchResultType: TypeName? = null,
     )
 
     sealed interface Resolution {

@@ -5,7 +5,6 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.validate
@@ -21,7 +20,6 @@ import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.gen.kotlin.arguments
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.ifNull
-import org.hnau.commons.kotlin.ifTrue
 import com.squareup.kotlinpoet.ksp.toTypeName as kspToTypeName
 
 private val nonPublicModifiers: Set<Modifier> = setOf(
@@ -83,24 +81,6 @@ fun FoldInfo.Companion.create(
         return null
     }
 
-    val dispatchTypeParameterName = foldAnnotation
-        .arguments(logger)
-        .get<String>(
-            name = "dispatchTypeParameter",
-            onNoArgument = { "" },
-        )
-        ?: return null
-
-    dispatchTypeParameterName.isNotEmpty().ifTrue {
-        isEnum.ifTrue {
-            logger.error(
-                "@${AnnotationInfo.simpleName}(dispatchTypeParameter = ...) is not supported for enum classes",
-                classDeclaration,
-            )
-            return null
-        }
-    }
-
     if (nonEmptyEntries && !hasCompanionObject) {
         logger.error(
             "@${AnnotationInfo.simpleName}(nonEmptyEntries = true) requires enum class to have a companion object",
@@ -118,21 +98,6 @@ fun FoldInfo.Companion.create(
             TypeVariableName(variable.name, variable.bounds)
         }
 
-    val dispatchTypeParameterIndex: Int? = dispatchTypeParameterName
-        .takeIf(String::isNotEmpty)
-        ?.let { name ->
-            typeVariables
-                .indexOfFirst { typeVariable -> typeVariable.name == name }
-                .takeIf { index -> index >= 0 }
-                .ifNull {
-                    logger.error(
-                        "@${AnnotationInfo.simpleName}(dispatchTypeParameter = \"$name\") type parameter not found",
-                        classDeclaration,
-                    )
-                    return null
-                }
-        }
-
     fun KSTypeReference.toTypeName(): TypeName {
         val typeName = kspToTypeName(typeParamResolver)
         val annotationSpecs = annotations
@@ -141,48 +106,6 @@ fun FoldInfo.Companion.create(
         if (annotationSpecs.isEmpty()) return typeName
         return typeName.copy(false, annotationSpecs, emptyMap())
     }
-
-    val dispatchResultTypes: Map<String, TypeName> = dispatchTypeParameterIndex?.let { dispatchTypeParameterIndex ->
-        run {
-            val parentName = classDeclaration.qualifiedName?.asString()
-            classDeclaration
-                .getSealedSubclasses()
-                .associate { subclass ->
-                    val subclassName = subclass.qualifiedName?.asString().orEmpty()
-                    val superType = subclass
-                        .superTypes
-                        .map { it.resolve() }
-                        .firstOrNull { type ->
-                            type.declaration.qualifiedName?.asString() == parentName
-                        }
-                    val argumentReference = superType
-                        ?.arguments
-                        ?.getOrNull(dispatchTypeParameterIndex)
-                        ?.type
-                    val argumentType = argumentReference?.resolve()
-
-                    when {
-                        argumentReference == null || argumentType == null || argumentType.isError -> {
-                            logger.error(
-                                "Unable to resolve dispatch result type of variant $subclassName",
-                                subclass,
-                            )
-                            return null
-                        }
-
-                        argumentType.declaration is KSTypeParameter -> {
-                            logger.error(
-                                "@${AnnotationInfo.simpleName}(dispatchTypeParameter = ...) does not support generic variants: $subclassName",
-                                subclass,
-                            )
-                            return null
-                        }
-
-                        else -> subclassName to argumentReference.toTypeName()
-                    }
-                }
-        }
-    } ?: emptyMap()
 
     val variantList = isEnum.foldBoolean(
         ifTrue = {
@@ -249,8 +172,6 @@ fun FoldInfo.Companion.create(
                             type = subclass.toClassName(),
                         )
                     }
-                    val dispatchResultType = dispatchResultTypes[subclass.qualifiedName?.asString()]
-
                     FoldInfo.Variant(
                         identifier = identifier,
                         resolution = resolution,
@@ -258,7 +179,6 @@ fun FoldInfo.Companion.create(
                         typeVariables = typeVariables.filter { typeVariable ->
                             typeVariable.name in subclassTypeVariableNames
                         },
-                        dispatchResultType = dispatchResultType,
                     )
                 }
                 .toList()
@@ -277,7 +197,6 @@ fun FoldInfo.Companion.create(
                 typeVariables = typeVariables,
                 variants = variants,
                 nonEmptyEntries = nonEmptyEntries,
-                dispatchTypeParameterIndex = dispatchTypeParameterIndex,
             )
         }
 }
