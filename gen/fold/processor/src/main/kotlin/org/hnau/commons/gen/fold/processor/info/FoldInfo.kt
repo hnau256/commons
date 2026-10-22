@@ -10,7 +10,7 @@ data class FoldInfo(
     val typeVariables: List<TypeVariableName>,
     val variants: NonEmptyList<Variant>,
     val nonEmptyEntries: Boolean,
-    val dispatch: Boolean,
+    val dispatchTypeParameterIndex: Int?,
 ) {
     data class Variant(
         val identifier: String,

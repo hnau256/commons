@@ -190,9 +190,10 @@ fun FoldInfo.toFoldFunSpec(): FunSpec {
 private fun FoldInfo.toDispatchFunSpec(
     name: String,
     raw: Boolean,
+    resultTypeIndex: Int,
 ): FunSpec {
     val classTypeVars = this.typeVariables
-    val resultType = classTypeVars.single()
+    val resultType = classTypeVars[resultTypeIndex]
     val foldName = raw.foldBoolean(
         ifTrue = { "foldRaw" },
         ifFalse = { "fold" },
@@ -205,7 +206,7 @@ private fun FoldInfo.toDispatchFunSpec(
 
             classTypeVars.forEach { typeVariables += it }
 
-            receiver(className.parameterizedBy(resultType))
+            receiver(className.parameterizedBy(*classTypeVars.toTypedArray()))
             returns(resultType)
 
             variants.forEach { variant ->
@@ -241,10 +242,10 @@ private fun FoldInfo.toDispatchFunSpec(
         .build()
 }
 
-fun FoldInfo.toDispatchFunSpec(): FunSpec? = dispatch.ifTrue {
-    toDispatchFunSpec(name = "dispatch", raw = false)
+fun FoldInfo.toDispatchFunSpec(): FunSpec? = dispatchTypeParameterIndex?.let { index ->
+    toDispatchFunSpec(name = "dispatch", raw = false, resultTypeIndex = index)
 }
 
-fun FoldInfo.toDispatchRawFunSpec(): FunSpec? = dispatch.ifTrue {
-    toDispatchFunSpec(name = "dispatchRaw", raw = true)
+fun FoldInfo.toDispatchRawFunSpec(): FunSpec? = dispatchTypeParameterIndex?.let { index ->
+    toDispatchFunSpec(name = "dispatchRaw", raw = true, resultTypeIndex = index)
 }
