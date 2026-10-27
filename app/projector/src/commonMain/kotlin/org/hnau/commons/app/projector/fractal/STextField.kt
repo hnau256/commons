@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -67,15 +68,19 @@ fun STextField(
     importanceToActivate: Importance? = Importance.default,
 ) {
     LocalContentPaddingBox {
-        var isFocused: Boolean by remember { mutableStateOf(false) }
+        var isFocused: Boolean
+                by remember { mutableStateOf(false) }
 
         val internalState = rememberSaveable(saver = TextFieldState.Saver) {
             TextFieldState(value)
         }
 
+        val currentOnValueChanged: ((String) -> Unit)?
+                by rememberUpdatedState(onValueChanged)
+
         LaunchedEffect(internalState) {
             snapshotFlow { internalState.text }.collect { newUiText ->
-                onValueChanged?.invoke(newUiText.toString())
+                currentOnValueChanged?.invoke(newUiText.toString())
             }
         }
 
