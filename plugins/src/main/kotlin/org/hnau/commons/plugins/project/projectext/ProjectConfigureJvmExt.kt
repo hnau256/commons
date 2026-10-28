@@ -50,21 +50,24 @@ internal fun Project.configureJvm(
 
             applyKotlinComposePlugin()
 
-            project
+            val applicationExtension = project
                 .extensions
                 .getByType(ApplicationExtension::class.java)
-                .apply {
-                    namespace = config.androidNamespace
-                    compileSdk = Versions.compileSdk
-                    defaultConfig {
-                        minSdk = Versions.minSdk
-                    }
-                    compileOptions {
-                        val javaVersion = JavaVersion.toVersion(Versions.jvmTargetInt)
-                        sourceCompatibility = javaVersion
-                        targetCompatibility = javaVersion
-                    }
+            applicationExtension.apply {
+                namespace = config.androidNamespace
+                compileSdk = Versions.compileSdk
+                defaultConfig {
+                    minSdk = Versions.minSdk
                 }
+                compileOptions {
+                    val javaVersion = JavaVersion.toVersion(Versions.jvmTargetInt)
+                    sourceCompatibility = javaVersion
+                    targetCompatibility = javaVersion
+                }
+            }
+            configureAndroidVersion(
+                applicationExtension = applicationExtension,
+            )
 
             addAndroidDependencies(
                 projectType = projectType,
