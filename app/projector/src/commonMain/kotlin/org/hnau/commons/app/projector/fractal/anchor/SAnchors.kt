@@ -38,6 +38,7 @@ import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
@@ -63,6 +64,7 @@ fun SAnchors(
     val units = LocalDistance.current.units
     val padding = units.borderWidth
     val cornerRadius = units.cornerRadius
+    val shape = rememberFShape()
 
     val containerFContext = LocalFContext
         .current
@@ -83,9 +85,10 @@ fun SAnchors(
         propagateMinConstraints = true,
         modifier = modifier
             .padding(LocalContentPadding.current)
+            .clip(shape)
             .background(
                 color = containerFContext.color,
-                shape = RoundedCornerShape(cornerRadius),
+                shape = shape,
             )
             .padding(padding),
     ) {
