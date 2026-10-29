@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -30,7 +29,6 @@ context(orientation: Orientation)
 internal fun Modifier.sAnchorsClipToCursorRect(
     getAnchorRect: () -> Rect,
     getCursorRect: () -> Rect,
-    cornerRadiusPx: Float,
     clipOp: ClipOp,
 ): Modifier = drawWithContent {
 
@@ -44,26 +42,22 @@ internal fun Modifier.sAnchorsClipToCursorRect(
         .coerceIn(clipStart, alongSize)
 
     val path = Path().apply {
-        addRoundRect(
+        addRect(
             orientation.fold(
                 ifHorizontal = {
-                    RoundRect(
+                    Rect(
                         left = clipStart,
                         top = 0f,
                         right = clipEnd,
                         bottom = size.height,
-                        radiusX = cornerRadiusPx,
-                        radiusY = cornerRadiusPx,
                     )
                 },
                 ifVertical = {
-                    RoundRect(
+                    Rect(
                         left = 0f,
                         top = clipStart,
                         right = size.width,
                         bottom = clipEnd,
-                        radiusX = cornerRadiusPx,
-                        radiusY = cornerRadiusPx,
                     )
                 },
             )

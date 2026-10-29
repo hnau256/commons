@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -40,9 +38,6 @@ import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.ClosedCornerRadiusDivider
-import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
-import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.uikit.line.ext.Size
@@ -53,7 +48,6 @@ import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
-import kotlin.math.floor
 
 @Composable
 fun SAnchors(
@@ -197,47 +191,6 @@ private fun SAnchorsContent(
         val drawCursor = isEnabled || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
-        val shapeCorners = LocalShapeCorners.current
-        val layoutDirection = LocalLayoutDirection.current
-        val getCursorCorners: () -> CursorCorners = {
-            if (anchorRects.isEmpty()) {
-                CursorCorners(
-                    topLeft = cornerRadiusPx,
-                    topRight = cornerRadiusPx,
-                    bottomLeft = cornerRadiusPx,
-                    bottomRight = cornerRadiusPx,
-                )
-            } else {
-                val lastIndex = anchorRects.lastIndex
-                val positionValue = position.value.position
-                val fromIndex = floor(positionValue).toInt().coerceIn(0, lastIndex)
-                val toIndex = (fromIndex + 1).coerceAtMost(lastIndex)
-                val fraction = (positionValue - fromIndex)
-                    .coerceIn(0f, 1f)
-                    .takeIf { fromIndex != toIndex }
-                    ?: 0f
-                val baseCursorCorners = shapeCorners
-                    .getTableCorners()
-                    .toCursorCorners(
-                        openedRadiusPx = cornerRadiusPx,
-                        closedRadiusPx = cornerRadiusPx / ClosedCornerRadiusDivider,
-                        layoutDirection = layoutDirection,
-                    )
-
-                fun cornersFor(index: Int): CursorCorners = baseCursorCorners.withSharpSides(
-                    orientation = orientation,
-                    layoutDirection = layoutDirection,
-                    sharpStart = index > 0,
-                    sharpEnd = index < lastIndex,
-                )
-
-                cornersFor(fromIndex).lerp(
-                    other = cornersFor(toIndex),
-                    fraction = fraction,
-                )
-            }
-        }
-
         val backgroundFContext = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
             isEnabled.foldBoolean(
@@ -270,18 +223,6 @@ private fun SAnchorsContent(
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
                     val cursorRect = getCursorRect()
-                    val cursorPath = Path().apply {
-                        val cursorCorners = getCursorCorners()
-                        addRoundRect(
-                            RoundRect(
-                                rect = cursorRect,
-                                topLeft = CornerRadius(cursorCorners.topLeft),
-                                topRight = CornerRadius(cursorCorners.topRight),
-                                bottomRight = CornerRadius(cursorCorners.bottomRight),
-                                bottomLeft = CornerRadius(cursorCorners.bottomLeft),
-                            )
-                        )
-                    }
 
                     clipPath(
                         Path().apply {
@@ -332,9 +273,10 @@ private fun SAnchorsContent(
                         }
 
                         drawCursor.ifTrue {
-                            drawPath(
-                                path = cursorPath,
+                            drawRect(
                                 color = cursorFContext.color,
+                                topLeft = cursorRect.topLeft,
+                                size = cursorRect.size,
                             )
                         }
                     }
@@ -360,7 +302,6 @@ private fun SAnchorsContent(
                                     Modifier.sAnchorsClipToCursorRect(
                                         getAnchorRect = { anchorRects[i] },
                                         getCursorRect = getCursorRect,
-                                        cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(
                                             ifTrue = { ClipOp.Intersect },
                                             ifFalse = { ClipOp.Difference },
@@ -408,105 +349,3 @@ private fun SAnchorsContent(
     }
 }
 
-private data class CursorCorners(
-    val topLeft: Float,
-    val topRight: Float,
-    val bottomLeft: Float,
-    val bottomRight: Float,
-) {
-
-    fun lerp(
-        other: CursorCorners,
-        fraction: Float,
-    ): CursorCorners = CursorCorners(
-        topLeft = lerp(topLeft, other.topLeft, fraction),
-        topRight = lerp(topRight, other.topRight, fraction),
-        bottomLeft = lerp(bottomLeft, other.bottomLeft, fraction),
-        bottomRight = lerp(bottomRight, other.bottomRight, fraction),
-    )
-}
-
-private fun CursorCorners.withSharpSides(
-    orientation: Orientation,
-    layoutDirection: LayoutDirection,
-    sharpStart: Boolean,
-    sharpEnd: Boolean,
-): CursorCorners {
-
-    val sharpTop = when (orientation) {
-        Orientation.Vertical -> sharpStart
-        Orientation.Horizontal -> false
-    }
-    val sharpBottom = when (orientation) {
-        Orientation.Vertical -> sharpEnd
-        Orientation.Horizontal -> false
-    }
-    val sharpLeft = when (orientation) {
-        Orientation.Vertical -> false
-        Orientation.Horizontal -> when (layoutDirection) {
-            LayoutDirection.Ltr -> sharpStart
-            LayoutDirection.Rtl -> sharpEnd
-        }
-    }
-    val sharpRight = when (orientation) {
-        Orientation.Vertical -> false
-        Orientation.Horizontal -> when (layoutDirection) {
-            LayoutDirection.Ltr -> sharpEnd
-            LayoutDirection.Rtl -> sharpStart
-        }
-    }
-
-    return CursorCorners(
-        topLeft = (sharpTop || sharpLeft).foldBoolean(
-            ifTrue = { 0f },
-            ifFalse = { topLeft },
-        ),
-        topRight = (sharpTop || sharpRight).foldBoolean(
-            ifTrue = { 0f },
-            ifFalse = { topRight },
-        ),
-        bottomLeft = (sharpBottom || sharpLeft).foldBoolean(
-            ifTrue = { 0f },
-            ifFalse = { bottomLeft },
-        ),
-        bottomRight = (sharpBottom || sharpRight).foldBoolean(
-            ifTrue = { 0f },
-            ifFalse = { bottomRight },
-        ),
-    )
-}
-
-private fun ShapeCorners.toCursorCorners(
-    openedRadiusPx: Float,
-    closedRadiusPx: Float,
-    layoutDirection: LayoutDirection,
-): CursorCorners {
-
-    val radius: (Boolean) -> Float = { opened ->
-        opened.foldBoolean(
-            ifTrue = { openedRadiusPx },
-            ifFalse = { closedRadiusPx },
-        )
-    }
-
-    val startTop = radius(startTopIsOpened)
-    val startBottom = radius(startBottomIsOpened)
-    val endTop = radius(endTopIsOpened)
-    val endBottom = radius(endBottomIsOpened)
-
-    return when (layoutDirection) {
-        LayoutDirection.Ltr -> CursorCorners(
-            topLeft = startTop,
-            topRight = endTop,
-            bottomLeft = startBottom,
-            bottomRight = endBottom,
-        )
-
-        LayoutDirection.Rtl -> CursorCorners(
-            topLeft = endTop,
-            topRight = startTop,
-            bottomLeft = endBottom,
-            bottomRight = startBottom,
-        )
-    }
-}
