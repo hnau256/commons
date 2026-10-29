@@ -5,10 +5,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.translate
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -28,24 +26,49 @@ import org.hnau.commons.kotlin.ifFalse
 import kotlin.math.floor
 
 
+context(orientation: Orientation)
 internal fun Modifier.sAnchorsClipToCursorRect(
     getAnchorRect: () -> Rect,
-    getCursorRoundRect: () -> RoundRect,
+    getCursorRect: () -> Rect,
+    cornerRadiusPx: Float,
     clipOp: ClipOp,
 ): Modifier = drawWithContent {
 
     val anchorRect = getAnchorRect()
-    val cursorRoundRect = getCursorRoundRect().translate(
-        offset = Offset(
-            x = -anchorRect.left,
-            y = -anchorRect.top,
-        ),
-    )
+    val cursorRect = getCursorRect()
+
+    val alongSize = size.along
+    val clipStart = (cursorRect.topLeft.along - anchorRect.topLeft.along)
+        .coerceIn(0f, alongSize)
+    val clipEnd = (cursorRect.topLeft.along + cursorRect.size.along - anchorRect.topLeft.along)
+        .coerceIn(clipStart, alongSize)
 
     val path = Path().apply {
-        addRoundRect(cursorRoundRect)
+        addRoundRect(
+            orientation.fold(
+                ifHorizontal = {
+                    RoundRect(
+                        left = clipStart,
+                        top = 0f,
+                        right = clipEnd,
+                        bottom = size.height,
+                        radiusX = cornerRadiusPx,
+                        radiusY = cornerRadiusPx,
+                    )
+                },
+                ifVertical = {
+                    RoundRect(
+                        left = 0f,
+                        top = clipStart,
+                        right = size.width,
+                        bottom = clipEnd,
+                        radiusX = cornerRadiusPx,
+                        radiusY = cornerRadiusPx,
+                    )
+                },
+            )
+        )
     }
-
     clipPath(
         path = path,
         clipOp = clipOp,

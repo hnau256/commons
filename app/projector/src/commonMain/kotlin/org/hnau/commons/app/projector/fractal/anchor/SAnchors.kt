@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -38,11 +37,7 @@ import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
-import org.hnau.commons.app.projector.fractal.utils.FShape
 import org.hnau.commons.app.projector.fractal.utils.Importance
-import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
-import org.hnau.commons.app.projector.fractal.utils.toFShape
-import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
@@ -52,7 +47,6 @@ import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 import org.hnau.commons.kotlin.ifTrue
-import kotlin.math.floor
 
 @Composable
 fun SAnchors(
@@ -69,7 +63,6 @@ fun SAnchors(
     val units = LocalDistance.current.units
     val padding = units.borderWidth
     val cornerRadius = units.cornerRadius
-    val shape = rememberFShape()
 
     val containerFContext = LocalFContext
         .current
@@ -90,10 +83,9 @@ fun SAnchors(
         propagateMinConstraints = true,
         modifier = modifier
             .padding(LocalContentPadding.current)
-            .clip(shape)
             .background(
                 color = containerFContext.color,
-                shape = shape,
+                shape = RoundedCornerShape(cornerRadius),
             )
             .padding(padding),
     ) {
@@ -195,54 +187,7 @@ private fun SAnchorsContent(
 
         val drawCursor = isEnabled || !drawProgress
 
-        val density = LocalDensity.current
-        val cornerRadiusPx = with(density) { cornerRadius.toPx() }
-        val shapeCorners = LocalShapeCorners.current
-        val layoutDirection = LocalLayoutDirection.current
-
-        val getCursorRoundRect: () -> RoundRect = {
-            val cursorRect = getCursorRect()
-            val anchorLastIndex = anchorRects.lastIndex
-            val baseCorners = shapeCorners.getTableCorners()
-            val shapes: List<FShape> = anchorRects.indices.map { index ->
-                baseCorners
-                    .close(
-                        orientation = orientation,
-                        startOrTop = index > 0,
-                        endOrBottom = index < anchorLastIndex,
-                    )
-                    .toFShape(
-                        cornerRadius = cornerRadius,
-                        layoutDirection = layoutDirection,
-                    )
-            }
-            if (shapes.isEmpty()) {
-                RoundRect(
-                    rect = cursorRect,
-                    radiusX = cornerRadiusPx,
-                    radiusY = cornerRadiusPx,
-                )
-            } else {
-                val lastShapeIndex = shapes.lastIndex
-                val positionValue = position.value.position
-                val fromIndex = floor(positionValue).toInt().coerceIn(0, lastShapeIndex)
-                val toIndex = (fromIndex + 1).coerceAtMost(lastShapeIndex)
-                val fraction = (positionValue - fromIndex)
-                    .coerceIn(0f, 1f)
-                    .takeIf { fromIndex != toIndex }
-                    ?: 0f
-                shapes[fromIndex]
-                    .lerp(
-                        other = shapes[toIndex],
-                        fraction = fraction,
-                    )
-                    .toRoundRect(
-                        rect = cursorRect,
-                        density = density,
-                    )
-            }
-        }
-
+        val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
         val backgroundFContext = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
             isEnabled.foldBoolean(
@@ -275,9 +220,6 @@ private fun SAnchorsContent(
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
                     val cursorRect = getCursorRect()
-                    val cursorPath = Path().apply {
-                        addRoundRect(getCursorRoundRect())
-                    }
 
                     clipPath(
                         Path().apply {
@@ -328,9 +270,11 @@ private fun SAnchorsContent(
                         }
 
                         drawCursor.ifTrue {
-                            drawPath(
-                                path = cursorPath,
+                            drawRoundRect(
                                 color = cursorFContext.color,
+                                topLeft = cursorRect.topLeft,
+                                size = cursorRect.size,
+                                cornerRadius = cornerRadius,
                             )
                         }
                     }
@@ -355,7 +299,8 @@ private fun SAnchorsContent(
                                 drawCursor.ifTrue {
                                     Modifier.sAnchorsClipToCursorRect(
                                         getAnchorRect = { anchorRects[i] },
-                                        getCursorRoundRect = getCursorRoundRect,
+                                        getCursorRect = getCursorRect,
+                                        cornerRadiusPx = cornerRadiusPx,
                                         clipOp = selected.foldBoolean(
                                             ifTrue = { ClipOp.Intersect },
                                             ifFalse = { ClipOp.Difference },
@@ -402,4 +347,3 @@ private fun SAnchorsContent(
         )
     }
 }
-
