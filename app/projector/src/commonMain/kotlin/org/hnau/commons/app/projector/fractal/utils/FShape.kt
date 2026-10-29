@@ -15,6 +15,8 @@ import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.kotlin.foldBoolean
 
+internal const val ClosedCornerRadiusDivider: Float = 3f
+
 @Composable
 fun rememberFShape(
     corners: ShapeCorners.Provider = LocalShapeCorners.current
@@ -23,7 +25,7 @@ fun rememberFShape(
     return remember(corners, cornerRadius) {
         FShape(
             tableCorners = corners,
-            cornerRadii = (cornerRadius / 3)..cornerRadius,
+            cornerRadii = (cornerRadius / ClosedCornerRadiusDivider)..cornerRadius,
         )
     }
 }

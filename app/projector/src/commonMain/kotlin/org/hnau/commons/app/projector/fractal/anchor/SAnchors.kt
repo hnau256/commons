@@ -40,6 +40,7 @@ import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.fractal.utils.Importance
+import org.hnau.commons.app.projector.fractal.utils.ClosedCornerRadiusDivider
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
@@ -225,7 +226,7 @@ private fun SAnchorsContent(
                     )
                     .toCursorCorners(
                         openedRadiusPx = cornerRadiusPx,
-                        closedRadiusPx = cornerRadiusPx / 3f,
+                        closedRadiusPx = cornerRadiusPx / ClosedCornerRadiusDivider,
                         layoutDirection = layoutDirection,
                     )
 
