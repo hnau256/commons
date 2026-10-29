@@ -216,19 +216,20 @@ private fun SAnchorsContent(
                     .coerceIn(0f, 1f)
                     .takeIf { fromIndex != toIndex }
                     ?: 0f
-                val baseCorners = shapeCorners.getTableCorners()
-
-                fun cornersFor(index: Int): CursorCorners = baseCorners
-                    .close(
-                        orientation = orientation,
-                        startOrTop = index > 0,
-                        endOrBottom = index < lastIndex,
-                    )
+                val baseCursorCorners = shapeCorners
+                    .getTableCorners()
                     .toCursorCorners(
                         openedRadiusPx = cornerRadiusPx,
                         closedRadiusPx = cornerRadiusPx / ClosedCornerRadiusDivider,
                         layoutDirection = layoutDirection,
                     )
+
+                fun cornersFor(index: Int): CursorCorners = baseCursorCorners.withSharpSides(
+                    orientation = orientation,
+                    layoutDirection = layoutDirection,
+                    sharpStart = index > 0,
+                    sharpEnd = index < lastIndex,
+                )
 
                 cornersFor(fromIndex).lerp(
                     other = cornersFor(toIndex),
@@ -422,6 +423,56 @@ private data class CursorCorners(
         topRight = lerp(topRight, other.topRight, fraction),
         bottomLeft = lerp(bottomLeft, other.bottomLeft, fraction),
         bottomRight = lerp(bottomRight, other.bottomRight, fraction),
+    )
+}
+
+private fun CursorCorners.withSharpSides(
+    orientation: Orientation,
+    layoutDirection: LayoutDirection,
+    sharpStart: Boolean,
+    sharpEnd: Boolean,
+): CursorCorners {
+
+    val sharpTop = when (orientation) {
+        Orientation.Vertical -> sharpStart
+        Orientation.Horizontal -> false
+    }
+    val sharpBottom = when (orientation) {
+        Orientation.Vertical -> sharpEnd
+        Orientation.Horizontal -> false
+    }
+    val sharpLeft = when (orientation) {
+        Orientation.Vertical -> false
+        Orientation.Horizontal -> when (layoutDirection) {
+            LayoutDirection.Ltr -> sharpStart
+            LayoutDirection.Rtl -> sharpEnd
+        }
+    }
+    val sharpRight = when (orientation) {
+        Orientation.Vertical -> false
+        Orientation.Horizontal -> when (layoutDirection) {
+            LayoutDirection.Ltr -> sharpEnd
+            LayoutDirection.Rtl -> sharpStart
+        }
+    }
+
+    return CursorCorners(
+        topLeft = (sharpTop || sharpLeft).foldBoolean(
+            ifTrue = { 0f },
+            ifFalse = { topLeft },
+        ),
+        topRight = (sharpTop || sharpRight).foldBoolean(
+            ifTrue = { 0f },
+            ifFalse = { topRight },
+        ),
+        bottomLeft = (sharpBottom || sharpLeft).foldBoolean(
+            ifTrue = { 0f },
+            ifFalse = { bottomLeft },
+        ),
+        bottomRight = (sharpBottom || sharpRight).foldBoolean(
+            ifTrue = { 0f },
+            ifFalse = { bottomRight },
+        ),
     )
 }
 
