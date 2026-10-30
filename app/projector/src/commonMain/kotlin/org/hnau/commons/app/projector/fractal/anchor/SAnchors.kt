@@ -20,6 +20,8 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -37,8 +39,10 @@ import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.distance.plus
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.CornersShapeMinRadiusFactor
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activate
+import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
@@ -62,7 +66,6 @@ fun SAnchors(
 ) {
     val units = LocalDistance.current.units
     val padding = units.borderWidth
-    val cornerRadius = units.cornerRadius
 
     val containerFContext = LocalFContext
         .current
@@ -85,7 +88,7 @@ fun SAnchors(
             .padding(LocalContentPadding.current)
             .background(
                 color = containerFContext.color,
-                shape = RoundedCornerShape(cornerRadius),
+                shape = rememberFShape(),
             )
             .padding(padding),
     ) {
@@ -98,7 +101,7 @@ fun SAnchors(
                 isEnabled = isEnabled,
                 orientation = orientation,
                 weights = weights,
-                cornerRadius = (cornerRadius - padding).coerceAtLeast(0.dp),
+                cornerRadius = (units.cornerRadius - padding).coerceAtLeast(0.dp),
                 snap = snap,
                 drawProgress = drawProgress,
                 item = item,
@@ -188,6 +191,10 @@ private fun SAnchorsContent(
         val drawCursor = isEnabled || !drawProgress
 
         val cornerRadiusPx = with(LocalDensity.current) { cornerRadius.toPx() }
+
+        val cornerRadiusMinPx =
+            cornerRadiusPx * CornersShapeMinRadiusFactor
+
         val backgroundFContext = LocalFContext.current
         val progressFContext = drawProgress.ifTrue {
             isEnabled.foldBoolean(
@@ -204,6 +211,10 @@ private fun SAnchorsContent(
             )
         }
 
+        val contentShape: Shape = rememberFShape(
+            cornerRadius = cornerRadius,
+        )
+
         SAnchorsLayout(
             modifier = Modifier
                 .sAnchorsDraggable(
@@ -219,19 +230,18 @@ private fun SAnchorsContent(
                 .drawBehind {
 
                     val cornerRadius = CornerRadius(cornerRadiusPx)
+                    val cornerRadiusMin = CornerRadius(cornerRadiusMinPx)
+
                     val cursorRect = getCursorRect()
 
                     clipPath(
                         Path().apply {
-                            addRoundRect(
-                                RoundRect(
-                                    rect = Rect(
-                                        offset = Offset.Zero,
-                                        size = size,
-                                    ),
-                                    radiusX = cornerRadiusPx,
-                                    radiusY = cornerRadiusPx,
-                                ),
+                            addOutline(
+                                contentShape.createOutline(
+                                    size = size,
+                                    layoutDirection = layoutDirection,
+                                    density = this@drawBehind,
+                                )
                             )
                         }
                     ) {
@@ -265,7 +275,7 @@ private fun SAnchorsContent(
                                 color = fContext.color,
                                 topLeft = progressRect.topLeft,
                                 size = progressRect.size,
-                                cornerRadius = cornerRadius,
+                                cornerRadius = cornerRadiusMin,
                             )
                         }
 
@@ -274,7 +284,10 @@ private fun SAnchorsContent(
                                 color = cursorFContext.color,
                                 topLeft = cursorRect.topLeft,
                                 size = cursorRect.size,
-                                cornerRadius = cornerRadius,
+                                cornerRadius = snap.foldBoolean(
+                                    ifTrue = { cornerRadiusMin },
+                                    ifFalse = { cornerRadius },
+                                ),
                             )
                         }
                     }
