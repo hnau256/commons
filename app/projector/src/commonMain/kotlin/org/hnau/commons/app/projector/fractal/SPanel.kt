@@ -9,20 +9,24 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.fractal.context.color
-import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.fractal.context.contentOverlay
+import org.hnau.commons.app.projector.fractal.context.overlay
 import org.hnau.commons.app.projector.fractal.distance.DistanceOffset
 import org.hnau.commons.app.projector.fractal.distance.LocalDistance
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPadding
 import org.hnau.commons.app.projector.fractal.padding.LocalContentPaddingBox
 import org.hnau.commons.app.projector.fractal.size.units
+import org.hnau.commons.app.projector.fractal.utils.BaseWithDecay
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.LocalShapeCorners
+import org.hnau.commons.app.projector.fractal.utils.SaturationValues
 import org.hnau.commons.app.projector.fractal.utils.ShapeCorners
 import org.hnau.commons.app.projector.fractal.utils.activate
+import org.hnau.commons.app.projector.fractal.utils.container
 import org.hnau.commons.app.projector.fractal.utils.fractalDashBorder
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
 import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
@@ -39,6 +43,7 @@ fun SPanel(
     contentOrientation: Orientation = Orientation.Vertical,
     shape: Shape = rememberFShape(),
     importanceToActivate: Importance? = Importance.default,
+    contrast: SaturationValues<BaseWithDecay<Contrast>> = Contrast.container,
     content: @Composable () -> Unit,
 ) {
     LocalContentPaddingBox {
@@ -51,7 +56,9 @@ fun SPanel(
                             ifNull = { mood },
                             ifNotNull = mood::activate,
                         ),
-                ).containerOverlay()
+                ).overlay(
+                    contrast = contrast,
+                )
             }
         ) {
 
