@@ -84,6 +84,62 @@ fun FoldInfo.toFoldRawFunSpec(): FunSpec {
         .build()
 }
 
+private fun FoldInfo.toVariantPropertySpec(
+    propertyName: String,
+    type: TypeName,
+    value: (index: Int, variant: FoldInfo.Variant) -> String,
+): PropertySpec {
+    val classTypeVars = typeVariables
+    return PropertySpec
+        .builder(propertyName, type)
+        .apply {
+            classTypeVars.forEach { addTypeVariable(it) }
+
+            receiver(
+                if (classTypeVars.isEmpty()) className
+                else className.parameterizedBy(*classTypeVars.toTypedArray())
+            )
+
+            getter(
+                FunSpec
+                    .getterBuilder()
+                    .addCode(
+                        codeBlock {
+                            variants
+                                .mapIndexed { index, variant ->
+                                    "\tif${variant.uppercasedIdentifier} = { ${value(index, variant)} }"
+                                }
+                                .joinToString(
+                                    prefix = "return foldRaw(\n",
+                                    postfix = "\n)",
+                                    separator = ",\n",
+                                )
+                        }
+                    )
+                    .build()
+            )
+        }
+        .build()
+}
+
+fun FoldInfo.toOrdinalPropertySpec(): PropertySpec? {
+    if (!ordinal) return null
+    return toVariantPropertySpec(
+        propertyName = "ordinal",
+        type = ClassName("kotlin", "Int"),
+        value = { index, _ -> index.toString() },
+    )
+}
+
+fun FoldInfo.toNamePropertySpec(): PropertySpec? {
+    if (!name) return null
+    return toVariantPropertySpec(
+        propertyName = "name",
+        type = ClassName("kotlin", "String"),
+        value = { _, variant -> "\"${variant.identifier}\"" },
+    )
+}
+
 fun FoldInfo.toNonEmptyEntriesPropertySpecs(): List<PropertySpec> {
     if (!nonEmptyEntries) return emptyList()
 

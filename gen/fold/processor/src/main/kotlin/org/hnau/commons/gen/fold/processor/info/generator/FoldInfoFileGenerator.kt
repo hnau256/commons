@@ -16,6 +16,8 @@ fun FoldInfo.generateCode(
         .apply {
             addFunction(toFoldRawFunSpec())
             addFunction(toFoldFunSpec())
+            toOrdinalPropertySpec()?.let { addProperty(it) }
+            toNamePropertySpec()?.let { addProperty(it) }
             toNonEmptyEntriesPropertySpecs().forEach { addProperty(it) }
         }
         .build()

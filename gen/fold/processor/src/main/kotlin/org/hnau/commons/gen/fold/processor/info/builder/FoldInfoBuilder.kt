@@ -65,8 +65,9 @@ fun FoldInfo.Companion.create(
         .filterIsInstance<KSClassDeclaration>()
         .any { it.isCompanionObject }
 
-    val nonEmptyEntries = foldAnnotation
-        .arguments(logger)
+    val foldArguments = foldAnnotation.arguments(logger)
+
+    val nonEmptyEntries = foldArguments
         .get<Boolean>(
             name = "nonEmptyEntries",
             onNoArgument = { false },
@@ -84,6 +85,34 @@ fun FoldInfo.Companion.create(
     if (nonEmptyEntries && !hasCompanionObject) {
         logger.error(
             "@${AnnotationInfo.simpleName}(nonEmptyEntries = true) requires enum class to have a companion object",
+            classDeclaration,
+        )
+        return null
+    }
+
+    val ordinal = foldArguments
+        .get<Boolean>(
+            name = "ordinal",
+            onNoArgument = { false },
+        )
+        ?: return null
+
+    val name = foldArguments
+        .get<Boolean>(
+            name = "name",
+            onNoArgument = { false },
+        )
+        ?: return null
+
+    if (isEnum && (ordinal || name)) {
+        val parameters = listOfNotNull(
+            "ordinal".takeIf { ordinal },
+            "name".takeIf { name },
+        )
+        logger.error(
+            "@${AnnotationInfo.simpleName}(${parameters.joinToString { "$it = true" }}) " +
+                "can be used only with sealed classes or interfaces: " +
+                "enum entries already provide ordinal and name",
             classDeclaration,
         )
         return null
@@ -197,6 +226,8 @@ fun FoldInfo.Companion.create(
                 typeVariables = typeVariables,
                 variants = variants,
                 nonEmptyEntries = nonEmptyEntries,
+                ordinal = ordinal,
+                name = name,
             )
         }
 }
