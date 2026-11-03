@@ -7,10 +7,9 @@ fun <I> ActionOrElse.Companion.instant(
 )
 
 fun ActionOrElse.Companion.instant(
-    instantAction: (() -> Unit)?,
-): ActionOrElse.Action<Unit>? = instantAction?.let { action ->
-    ActionOrElse.instant { _ -> action() }
-}
+    instantAction: () -> Unit,
+): ActionOrElse.Action<Unit> =
+    ActionOrElse.instant { _ -> instantAction() }
 
 val ActionOrElse.Companion.noAction: ActionOrElse.Action<Unit>?
     get() = null

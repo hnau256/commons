@@ -86,7 +86,11 @@ class InputProjector(
                         .collectAsState()
                     SPanel(
                         actionOrElseOrDisabled = decoration.foldNullable(
-                            ifNull = { ActionOrElse.instant(onClick) },
+                            ifNull = {
+                                onClick?.let {
+                                    ActionOrElse.instant(it)
+                                }
+                            },
                             ifNotNull = { decoration ->
                                 decoration.fold(
                                     ifInProgress = {
