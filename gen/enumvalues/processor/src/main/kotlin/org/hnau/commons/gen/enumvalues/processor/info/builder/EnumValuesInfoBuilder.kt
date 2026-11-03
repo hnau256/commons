@@ -5,7 +5,6 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.validate
 import org.hnau.commons.gen.enumvalues.annotations.EnumValues
 import org.hnau.commons.gen.enumvalues.processor.AnnotationInfo
 import org.hnau.commons.gen.enumvalues.processor.info.EnumValuesInfo
@@ -17,11 +16,6 @@ fun EnumValuesInfo.Companion.create(
     logger: KSPLogger,
     annotated: KSAnnotated,
 ): EnumValuesInfo? {
-
-    if (!annotated.validate()) {
-        logger.error("Is not valid", annotated)
-        return null
-    }
 
     val classDeclaration = (annotated as? KSClassDeclaration).ifNull {
         logger.error("Is not class", annotated)

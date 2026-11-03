@@ -7,7 +7,6 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Modifier
-import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.ksp.TypeParameterResolver
@@ -32,11 +31,6 @@ fun FoldInfo.Companion.create(
     logger: KSPLogger,
     annotated: KSAnnotated,
 ): FoldInfo? {
-
-    if (!annotated.validate()) {
-        logger.error("Is not valid", annotated)
-        return null
-    }
 
     val classDeclaration = (annotated as? KSClassDeclaration).ifNull {
         logger.error("Is not class", annotated)

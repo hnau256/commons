@@ -8,6 +8,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import org.hnau.commons.gen.fold.processor.info.FoldInfo
 import org.hnau.commons.gen.fold.processor.info.builder.create
 import org.hnau.commons.gen.fold.processor.info.generator.generateCode
+import org.hnau.commons.gen.kotlin.processDeferrableSymbols
 
 class SymbolProcessor(
     private val codeGenerator: CodeGenerator,
@@ -16,22 +17,19 @@ class SymbolProcessor(
 
     override fun process(
         resolver: Resolver,
-    ): List<KSAnnotated> {
-
-        resolver
-            .getSymbolsWithAnnotation(AnnotationInfo.nameWithPackage)
-            .mapNotNull { annotated ->
-                FoldInfo.create(
-                    logger = logger,
-                    annotated = annotated,
-                )
-            }
-            .forEach { foldInfo ->
-                foldInfo.generateCode(
-                    codeGenerator = codeGenerator,
-                )
-            }
-
-        return emptyList()
-    }
+    ): List<KSAnnotated> = processDeferrableSymbols(
+        resolver = resolver,
+        annotationName = AnnotationInfo.nameWithPackage,
+        create = { annotated ->
+            FoldInfo.create(
+                logger = logger,
+                annotated = annotated,
+            )
+        },
+        generate = { foldInfo ->
+            foldInfo.generateCode(
+                codeGenerator = codeGenerator,
+            )
+        },
+    )
 }

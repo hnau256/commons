@@ -5,12 +5,12 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.validate
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import org.hnau.commons.gen.kotlin.processDeferrableSymbols
 import org.hnau.commons.gen.pipe.processor.impl.InterfaceToImplement
 import org.hnau.commons.gen.pipe.processor.impl.create
 import org.hnau.commons.gen.pipe.processor.impl.implement
 import org.hnau.commons.gen.pipe.processor.utils.PipeAnnotationClassInfo
-import org.hnau.commons.kotlin.ifFalse
 
 class PipeSymbolProcessor(
     private val codeGenerator: CodeGenerator,
@@ -20,28 +20,28 @@ class PipeSymbolProcessor(
     override fun process(
         resolver: Resolver,
     ): List<KSAnnotated> {
-
-        resolver
-            .getSymbolsWithAnnotation(PipeAnnotationClassInfo.nameWithPackage)
-            .onEach { annotated ->
-                annotated
-                    .validate()
-                    .ifFalse {
-                        logger.warn("${annotated.location} is not valid")
-                    }
-            }
-            .map { annotated ->
+        val toImplement = mutableListOf<InterfaceToImplement>()
+        val deferred = processDeferrableSymbols(
+            resolver = resolver,
+            annotationName = PipeAnnotationClassInfo.nameWithPackage,
+            create = { annotated ->
                 InterfaceToImplement.create(
                     annotated = annotated,
                 )
-            }
-            .toList()
-            .implement(
-                codeGenerator = codeGenerator,
-                resolver = resolver,
-                logger = logger,
-            )
-
-        return emptyList()
+            },
+            generate = { interfaceToImplement ->
+                toImplement += interfaceToImplement
+            },
+        )
+        val deferredDeclarations = deferred
+            .mapNotNull { it as? KSClassDeclaration }
+            .toSet()
+        val unresolved = toImplement.implement(
+            codeGenerator = codeGenerator,
+            resolver = resolver,
+            logger = logger,
+            deferredDeclarations = deferredDeclarations,
+        )
+        return deferred + unresolved.map { it.declaration }
     }
 }

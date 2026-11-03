@@ -25,7 +25,7 @@ internal data class ForeignDependentImplementation(
             resolver: Resolver,
             logger: KSPLogger,
             interfaceDeclaration: KSClassDeclaration,
-        ): ForeignDependentImplementation {
+        ): ForeignDependentImplementation? {
             val interfaceLog = interfaceDeclaration.qualifiedNameOrThrow.log
             val implementationName = interfaceDeclaration.implementationName
             logger.info("Getting implementation: ${implementationName.log} for pipe segment $interfaceLog")
@@ -38,7 +38,7 @@ internal data class ForeignDependentImplementation(
                         .filterIsInstance<KSClassDeclaration>()
                         .firstOrNull { it.qualifiedNameOrThrow.asString() == implementationName.asString() }
                 }
-                ?: error("Unable find implementation (${implementationName.log}) of ${interfaceDeclaration.log}")
+                ?: return null
 
             val constructor = implementation
                 .primaryConstructor

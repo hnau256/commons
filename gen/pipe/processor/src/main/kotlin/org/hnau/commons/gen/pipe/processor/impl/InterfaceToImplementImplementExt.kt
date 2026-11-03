@@ -13,7 +13,8 @@ internal fun Iterable<InterfaceToImplement>.implement(
     resolver: Resolver,
     logger: KSPLogger,
     codeGenerator: CodeGenerator,
-) {
+    deferredDeclarations: Set<KSClassDeclaration>,
+): Set<InterfaceToImplement> {
     val implemented = HashMap<KSClassDeclaration, ImplementedInterface>()
     var toImplement: Set<InterfaceToImplement> = toSet()
     val toImplementLog = toImplement.joinToString { it.declaration.qualifiedNameOrThrow.log }
@@ -26,6 +27,7 @@ internal fun Iterable<InterfaceToImplement>.implement(
                     .tryImplement(
                         alreadyImplemented = implemented,
                         toImplement = toImplement,
+                        deferredDeclarations = deferredDeclarations,
                         resolver = resolver,
                         logger = logger,
                     )
@@ -39,7 +41,7 @@ internal fun Iterable<InterfaceToImplement>.implement(
             .toSet()
         toImplement = toImplement - implementedOnThisStep
         if (toImplement.isEmpty()) {
-            return
+            return emptySet()
         }
 
         if (implementedOnThisStep.isEmpty()) {
@@ -49,7 +51,8 @@ internal fun Iterable<InterfaceToImplement>.implement(
                 postfix = "]",
                 transform = { it.declaration.qualifiedNameOrThrow.log },
             )
-            error("Unable resolve dependencies tree, maybe there are circled dependencies between $remainingInterfaces")
+            logger.warn("Unable to implement pipe interfaces in this round, deferring: $remainingInterfaces")
+            return toImplement
         }
     } while (true)
 }
@@ -58,6 +61,7 @@ private fun InterfaceToImplement.tryImplement(
     resolver: Resolver,
     logger: KSPLogger,
     toImplement: Set<InterfaceToImplement>,
+    deferredDeclarations: Set<KSClassDeclaration>,
     alreadyImplemented: Map<KSClassDeclaration, ImplementedInterface>,
 ): ImplementedInterface? {
 
@@ -68,7 +72,8 @@ private fun InterfaceToImplement.tryImplement(
             val dependentDeclaration = dependentType.declaration as KSClassDeclaration
             alreadyImplemented[dependentDeclaration] ?: run {
                 val willBeImplementedInFuture =
-                    toImplement.any { it.declaration == dependentDeclaration }
+                    toImplement.any { it.declaration == dependentDeclaration } ||
+                        dependentDeclaration in deferredDeclarations
                 if (willBeImplementedInFuture) {
                     null
                 } else {
