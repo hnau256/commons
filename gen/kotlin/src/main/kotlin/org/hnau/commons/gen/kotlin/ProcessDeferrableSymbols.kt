@@ -13,6 +13,7 @@ fun <T : Any> processDeferrableSymbols(
     resolver: Resolver,
     annotationName: String,
     create: (KSAnnotated) -> T?,
+    generate: ((T) -> Unit)? = null,
 ): DeferrableSymbolsResult<T> = resolver
     .getSymbolsWithAnnotation(annotationName)
     .fold(initial = DeferrableSymbolsResult()) { result, annotated ->
@@ -23,6 +24,7 @@ fun <T : Any> processDeferrableSymbols(
 
             else -> create(annotated)
                 ?.let { value ->
+                    generate?.invoke(value)
                     result.copy(
                         values = result.values + value,
                     )

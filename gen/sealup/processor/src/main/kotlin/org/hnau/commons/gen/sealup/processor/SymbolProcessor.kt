@@ -17,17 +17,17 @@ class SymbolProcessor(
 
     override fun process(
         resolver: Resolver,
-    ): List<KSAnnotated> {
-        val deferred = mutableListOf<KSAnnotated>()
-        resolver
-            .getSymbolsWithAnnotation(AnnotationInfo.nameWithPackage)
-            .forEach { annotated ->
-                when (val result = SealedInfo.create(logger, annotated)) {
-                    is CreateResult.Success -> result.value.generateCode(codeGenerator)
-                    is CreateResult.Deferred -> deferred += annotated
-                    is CreateResult.Error -> Unit
+    ): List<KSAnnotated> = resolver
+        .getSymbolsWithAnnotation(AnnotationInfo.nameWithPackage)
+        .fold(initial = emptyList()) { deferred, annotated ->
+            when (val result = SealedInfo.create(logger, annotated)) {
+                is CreateResult.Success -> {
+                    result.value.generateCode(codeGenerator)
+                    deferred
                 }
+
+                is CreateResult.Deferred -> deferred + annotated
+                is CreateResult.Error -> deferred
             }
-        return deferred
-    }
+        }
 }

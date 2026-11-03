@@ -31,5 +31,5 @@ class SymbolProcessor(
                 codeGenerator = codeGenerator,
             )
         },
-    )
+    ).deferred
 }

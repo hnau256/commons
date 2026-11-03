@@ -37,5 +37,5 @@ internal class SymbolProcessor(
         generate = { loggableInfo ->
             loggableInfo.generateCode(codeGenerator)
         },
-    )
+    ).deferred
 }

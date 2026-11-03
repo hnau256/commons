@@ -20,8 +20,7 @@ class PipeSymbolProcessor(
     override fun process(
         resolver: Resolver,
     ): List<KSAnnotated> {
-        val toImplement = mutableListOf<InterfaceToImplement>()
-        val deferred = processDeferrableSymbols(
+        val result = processDeferrableSymbols(
             resolver = resolver,
             annotationName = PipeAnnotationClassInfo.nameWithPackage,
             create = { annotated ->
@@ -29,19 +28,16 @@ class PipeSymbolProcessor(
                     annotated = annotated,
                 )
             },
-            generate = { interfaceToImplement ->
-                toImplement += interfaceToImplement
-            },
         )
-        val deferredDeclarations = deferred
-            .mapNotNull { it as? KSClassDeclaration }
+        val deferredDeclarations = result.deferred
+            .filterIsInstance<KSClassDeclaration>()
             .toSet()
-        val unresolved = toImplement.implement(
+        val unresolved = result.values.implement(
             codeGenerator = codeGenerator,
             resolver = resolver,
             logger = logger,
             deferredDeclarations = deferredDeclarations,
         )
-        return deferred + unresolved.map { it.declaration }
+        return result.deferred + unresolved.map { it.declaration }
     }
 }
