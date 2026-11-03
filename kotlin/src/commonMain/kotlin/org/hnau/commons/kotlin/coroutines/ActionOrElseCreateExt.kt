@@ -2,15 +2,15 @@ package org.hnau.commons.kotlin.coroutines
 
 fun <I> ActionOrElse.Companion.instant(
     instantAction: (I) -> Unit,
-): ActionOrElse<I, CancelOrInProgress.Cancel> = ActionOrElse.Action(
+): ActionOrElse.Action<I> = ActionOrElse.Action(
     action = instantAction,
 )
 
 fun ActionOrElse.Companion.instant(
     instantAction: (() -> Unit)?,
-): ActionOrElse<Unit, CancelOrInProgress.Cancel>? = instantAction?.let { action ->
+): ActionOrElse.Action<Unit>? = instantAction?.let { action ->
     ActionOrElse.instant { _ -> action() }
 }
 
-val ActionOrElse.Companion.noAction: ActionOrElse<Unit, CancelOrInProgress.Cancel>?
+val ActionOrElse.Companion.noAction: ActionOrElse.Action<Unit>?
     get() = null
