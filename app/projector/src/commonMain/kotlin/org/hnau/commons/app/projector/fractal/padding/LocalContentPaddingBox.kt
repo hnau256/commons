@@ -18,10 +18,6 @@ fun LocalContentPaddingBox(
             .padding(LocalContentPadding.current),
         propagateMinConstraints = true,
     ) {
-        CompositionLocalProvider(
-            value = LocalContentPadding provides PaddingValues.Zero,
-        ) {
-            content()
-        }
+        ConsumeContentPadding { content() }
     }
 }
