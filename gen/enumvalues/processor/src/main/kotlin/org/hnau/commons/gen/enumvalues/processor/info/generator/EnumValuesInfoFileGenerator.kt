@@ -25,7 +25,7 @@ fun EnumValuesInfo.generateCode(
     codeGenerator
         .createNewFile(
             dependencies = Dependencies(
-                aggregating = false,
+                aggregating = true,
                 sources = listOfNotNull(enumClass.containingFile).toTypedArray(),
             ),
             packageName = packageName,
