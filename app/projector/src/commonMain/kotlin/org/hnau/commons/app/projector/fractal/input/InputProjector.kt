@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
 import org.hnau.commons.app.model.input.InputStateHolder.Decoration
 import org.hnau.commons.app.model.input.fold
+import org.hnau.commons.app.model.theme.color.Contrast
 import org.hnau.commons.app.projector.fractal.SItem
 import org.hnau.commons.app.projector.fractal.SPanel
 import org.hnau.commons.app.projector.fractal.SText
@@ -13,11 +14,15 @@ import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.Mood
 import org.hnau.commons.app.projector.fractal.utils.activate
+import org.hnau.commons.app.projector.fractal.utils.container
+import org.hnau.commons.app.projector.fractal.utils.content
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.CancelOrInProgress
 import org.hnau.commons.kotlin.coroutines.instant
 import org.hnau.commons.kotlin.coroutines.noAction
+import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
+import org.hnau.commons.kotlin.ifNull
 import org.hnau.commons.kotlin.ifTrue
 
 class InputProjector(
@@ -105,12 +110,16 @@ class InputProjector(
                                 )
                             }
                         ),
-                        isSelected = decoration
+                        contrast = decoration
                             ?.fold(
                                 ifSelected = { true },
                                 ifInProgress = { false },
                             )
-                            ?: false,
+                            .ifNull { false }
+                            .foldBoolean(
+                                ifTrue = { Contrast.content },
+                                ifFalse = { Contrast.container },
+                            ),
                         importanceToActivate = null,
                     ) {
                         SItem(

@@ -1,7 +1,6 @@
 package org.hnau.commons.app.projector.fractal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -33,13 +32,13 @@ import org.hnau.commons.app.projector.uikit.rememberActionOrCancel
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.orNoAction
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
+import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
 
 @Composable
 fun SPanel(
     modifier: Modifier = Modifier,
     actionOrElseOrDisabled: ActionOrElse<Unit, *>? = null,
-    isSelected: Boolean = false,
     contentOrientation: Orientation = Orientation.Vertical,
     shape: Shape = rememberFShape(),
     importanceToActivate: Importance? = Importance.default,
@@ -86,20 +85,15 @@ fun SPanel(
                         )
                         .background(backgroundColor)
                         .then(
-                            when {
-                                isInProgress -> Modifier.fractalDashBorder(
-                                    color = foregroundColor,
-                                    shape = shape,
-                                )
-
-                                isSelected -> Modifier.border(
-                                    width = units.borderWidth,
-                                    color = foregroundColor,
-                                    shape = shape,
-                                )
-
-                                else -> Modifier
-                            }
+                            isInProgress.foldBoolean(
+                                ifTrue = {
+                                    Modifier.fractalDashBorder(
+                                        color = foregroundColor,
+                                        shape = shape,
+                                    )
+                                },
+                                ifFalse = { Modifier },
+                            )
                         ),
                 ) {
                     val contentPadding = units
