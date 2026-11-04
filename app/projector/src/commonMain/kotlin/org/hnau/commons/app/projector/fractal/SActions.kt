@@ -89,7 +89,7 @@ data class STableActionsScope(
         actionOrElseOrDisabled: ActionOrElse<Unit, E>?,
         titleOrIcon: TitleOrIcon,
         modifier: Modifier = Modifier,
-        importanceToActivate: Importance? = Importance.default,
+        importanceToActivate: Importance? = null,
     ) {
         tableScope.SCell(
             modifier = modifier,

@@ -3,10 +3,13 @@ package org.hnau.commons.app.projector.fractal.anchor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -51,6 +54,7 @@ import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.onRectInLineChanged
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation
+import org.hnau.commons.app.projector.utils.fold
 import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
 import org.hnau.commons.kotlin.foldNullable
@@ -296,7 +300,10 @@ private fun SAnchorsContent(
 
         SLine(
             orientation = orientation,
-            modifier = Modifier
+            modifier = orientation.fold(
+                ifHorizontal = { Modifier.width(IntrinsicSize.Max) },
+                ifVertical = { Modifier.height(IntrinsicSize.Max) },
+            )
                 .sAnchorsDraggable(
                     snap = snap,
                     enabled = isEnabled,
