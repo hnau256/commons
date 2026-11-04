@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.Layout
@@ -22,6 +23,8 @@ import arrow.core.left
 import arrow.core.right
 import org.hnau.commons.app.projector.uikit.line.ext.Constraints
 import org.hnau.commons.app.projector.uikit.line.ext.IntSize
+import org.hnau.commons.app.projector.uikit.line.ext.Offset
+import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
 import org.hnau.commons.app.projector.uikit.line.ext.constrainAcross
@@ -140,7 +143,7 @@ private data class LineMeasurePolicy(
             height = size.height,
         ) {
             var along = 0
-            placeables.forEach { placeable ->
+            placeables.forEachIndexed { index, placeable ->
                 placeable.placeRelative(
                     along = along,
                     across = acrossAlignment.foldNullable(
@@ -154,6 +157,22 @@ private data class LineMeasurePolicy(
                         }
                     ),
                 )
+                orderedMeasurables[index]
+                    .parentData
+                    ?.castOrNull<LineParentData>()
+                    ?.onRectCallback
+                    ?.invoke(
+                        Rect(
+                            offset = Offset(
+                                along = along.toFloat(),
+                                across = 0f,
+                            ),
+                            size = Size(
+                                along = placeable.along.toFloat(),
+                                across = across.toFloat(),
+                            ),
+                        )
+                    )
                 along += placeable.along + separationPixels
             }
         }

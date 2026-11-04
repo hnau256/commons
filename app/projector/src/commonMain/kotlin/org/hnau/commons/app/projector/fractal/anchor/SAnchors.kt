@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import arrow.core.NonEmptyList
-import org.hnau.commons.app.projector.fractal.anchor.utils.SAnchorsLayout
+import org.hnau.commons.app.projector.fractal.SLine
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsClipToCursorRect
 import org.hnau.commons.app.projector.fractal.anchor.utils.sAnchorsDraggable
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
@@ -43,9 +44,12 @@ import org.hnau.commons.app.projector.fractal.utils.CornersShapeMinRadiusFactor
 import org.hnau.commons.app.projector.fractal.utils.Importance
 import org.hnau.commons.app.projector.fractal.utils.activate
 import org.hnau.commons.app.projector.fractal.utils.rememberFShape
+import org.hnau.commons.app.projector.uikit.line.LineScope
 import org.hnau.commons.app.projector.uikit.line.ext.Size
 import org.hnau.commons.app.projector.uikit.line.ext.across
 import org.hnau.commons.app.projector.uikit.line.ext.along
+import org.hnau.commons.app.projector.uikit.line.onRectInLineChanged
+import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.kotlin.foldBoolean
@@ -123,8 +127,8 @@ private fun SAnchorsContent(
 ) {
     with(orientation) {
 
-        val anchorRects: MutableList<Rect> = remember {
-            ArrayList(weights.size + 1)
+        val anchorRects: MutableList<Rect> = remember(weights) {
+            MutableList(weights.size + 1) { Rect.Zero }
         }
 
         val position = rememberSAnchorsPosition(state)
@@ -215,7 +219,83 @@ private fun SAnchorsContent(
             cornerRadius = cornerRadius,
         )
 
-        SAnchorsLayout(
+        val normalizedWeights = remember(weights) {
+            val nonNegativeWeights = weights.map { weight -> weight.coerceAtLeast(0f) }
+            nonNegativeWeights
+                .takeIf { weights -> weights.any { weight -> weight > 0f } }
+                ?: nonNegativeWeights.map { 1f }
+        }
+
+        val itemContent: @Composable LineScope.(Int) -> Unit = { i ->
+            Box(
+                modifier = Modifier
+                    .onRectInLineChanged { rect ->
+                        anchorRects[i] = rect
+                    }
+                    .option(
+                        (isEnabled && item != null).ifTrue {
+                            Modifier
+                                .clip(RoundedCornerShape(cornerRadius))
+                                .clickable { state.position = Position(i.toFloat()) }
+                        },
+                    ),
+                propagateMinConstraints = true,
+            ) {
+
+                selectionStates.forEach { selected ->
+                    Box(
+                        modifier = Modifier.option(
+                            drawCursor.ifTrue {
+                                Modifier.sAnchorsClipToCursorRect(
+                                    getAnchorRect = { anchorRects[i] },
+                                    getCursorRect = getCursorRect,
+                                    cornerRadiusPx = cornerRadiusPx,
+                                    clipOp = selected.foldBoolean(
+                                        ifTrue = { ClipOp.Intersect },
+                                        ifFalse = { ClipOp.Difference },
+                                    ),
+                                )
+                            }
+                        ),
+                        propagateMinConstraints = true,
+                    ) {
+                        val itemContext = selected.foldBoolean(
+                            ifTrue = { cursorFContext },
+                            ifFalse = { backgroundFContext },
+                        )
+
+                        item.foldNullable(
+                            ifNull = {
+                                Box(
+                                    modifier = Modifier.size(
+                                        LocalDistance
+                                            .current
+                                            .units
+                                            .run {
+                                                isEnabled.foldBoolean(
+                                                    ifTrue = { iconSize + padding.across.extraSmall * 2 },
+                                                    ifFalse = { padding.across.extraSmall * 2 },
+                                                )
+                                            }
+                                    )
+                                )
+                            },
+                            ifNotNull = { item ->
+                                CompositionLocalProvider(
+                                    LocalFContext provides itemContext,
+                                    LocalDistance provides LocalDistance.current + 1,
+                                ) {
+                                    item(i)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        SLine(
+            orientation = orientation,
             modifier = Modifier
                 .sAnchorsDraggable(
                     snap = snap,
@@ -292,71 +372,14 @@ private fun SAnchorsContent(
                         }
                     }
                 },
-            weights = weights,
-            rects = anchorRects,
-            item = { i ->
-                Box(
-                    modifier = Modifier.option(
-                        (isEnabled && item != null).ifTrue {
-                            Modifier
-                                .clip(RoundedCornerShape(cornerRadius))
-                                .clickable { state.position = Position(i.toFloat()) }
-                        },
-                    ),
-                    propagateMinConstraints = true,
-                ) {
-
-                    selectionStates.forEach { selected ->
-                        Box(
-                            modifier = Modifier.option(
-                                drawCursor.ifTrue {
-                                    Modifier.sAnchorsClipToCursorRect(
-                                        getAnchorRect = { anchorRects[i] },
-                                        getCursorRect = getCursorRect,
-                                        cornerRadiusPx = cornerRadiusPx,
-                                        clipOp = selected.foldBoolean(
-                                            ifTrue = { ClipOp.Intersect },
-                                            ifFalse = { ClipOp.Difference },
-                                        ),
-                                    )
-                                }
-                            ),
-                            propagateMinConstraints = true,
-                        ) {
-                            val itemContext = selected.foldBoolean(
-                                ifTrue = { cursorFContext },
-                                ifFalse = { backgroundFContext },
-                            )
-
-                            item.foldNullable(
-                                ifNull = {
-                                    Box(
-                                        modifier = Modifier.size(
-                                            LocalDistance
-                                                .current
-                                                .units
-                                                .run {
-                                                    isEnabled.foldBoolean(
-                                                        ifTrue = { iconSize + padding.across.extraSmall * 2 },
-                                                        ifFalse = { padding.across.extraSmall * 2 },
-                                                    )
-                                                }
-                                        )
-                                    )
-                                },
-                                ifNotNull = { item ->
-                                    CompositionLocalProvider(
-                                        LocalFContext provides itemContext,
-                                        LocalDistance provides LocalDistance.current + 1,
-                                    ) {
-                                        item(i)
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            },
-        )
+        ) {
+            itemContent(0)
+            normalizedWeights.forEachIndexed { index, weight ->
+                Spacer(
+                    modifier = Modifier.weight(weight),
+                )
+                itemContent(index + 1)
+            }
+        }
     }
 }
