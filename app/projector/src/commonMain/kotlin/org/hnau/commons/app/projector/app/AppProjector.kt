@@ -20,9 +20,9 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.system
 
-class AppProjector<M, S, P>(
+class AppProjector<S, M, P>(
     scope: CoroutineScope,
-    private val model: AppModel<M, S>,
+    private val model: AppModel<S, M>,
     private val createSystemPalettes: (ThemeBrightness) -> SystemPalettes,
     private val fallbackHue: Hue,
     private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,

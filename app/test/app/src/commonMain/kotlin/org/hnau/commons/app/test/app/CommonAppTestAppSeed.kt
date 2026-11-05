@@ -9,7 +9,7 @@ import org.hnau.commons.app.test.app.model.impl
 
 fun createCommonsAppTestAppSeed(
     appFilesDirProvider: AppFilesDirProvider,
-): AppSeed<RootModel, RootModel.Skeleton> = AppSeed(
+): AppSeed<RootModel.Skeleton, RootModel> = AppSeed(
     skeletonSerializer = RootModel.Skeleton.serializer(),
     createDefaultSkeleton = { RootModel.Skeleton() },
     createModel = { scope, skeleton ->

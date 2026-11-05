@@ -5,10 +5,10 @@ import kotlinx.serialization.json.Json
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.toMapper
 
-class AppModel<M, S>(
+class AppModel<S, M>(
     scope: CoroutineScope,
     savedState: SavedState,
-    seed: AppSeed<M, S>,
+    seed: AppSeed<S, M>,
 ) {
 
     private val modelSkeletonMapper: Mapper<String, S> =

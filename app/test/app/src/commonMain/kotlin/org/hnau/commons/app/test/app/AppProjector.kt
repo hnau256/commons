@@ -16,8 +16,8 @@ import org.hnau.commons.app.test.app.projector.impl
 fun createAppProjector(
     scope: CoroutineScope,
     systemPalettes: (ThemeBrightness) -> SystemPalettes,
-    model: AppModel<RootModel, RootModel.Skeleton>,
-): AppProjector<RootModel, RootModel.Skeleton, RootProjector> = AppProjector(
+    model: AppModel<RootModel.Skeleton, RootModel>,
+): AppProjector<RootModel.Skeleton, RootModel, RootProjector> = AppProjector(
     scope = scope,
     model = model,
     createSystemPalettes = systemPalettes,

@@ -25,7 +25,7 @@ import org.hnau.commons.app.test.app.model.RootModel
 
 class AppActivity : ComponentActivity() {
 
-    private val viewModel: AppViewModel<RootModel, RootModel.Skeleton> by viewModels {
+    private val viewModel: AppViewModel<RootModel.Skeleton, RootModel> by viewModels {
         AppViewModel.factory(
             seed = createCommonsAppTestAppSeed(
                 appFilesDirProvider = AppFilesDirProvider(context = this)

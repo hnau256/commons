@@ -2,10 +2,10 @@ package org.hnau.commons.app.model.app
 
 import kotlinx.coroutines.CoroutineScope
 
-fun <M, S> DesktopApp(
+fun <S, M> DesktopApp(
     scope: CoroutineScope,
-    seed: AppSeed<M, S>,
-): AppModel<M, S> = AppModel(
+    seed: AppSeed<S, M>,
+): AppModel<S, M> = AppModel(
     scope = scope,
     savedState = SavedState(null),
     seed = seed,

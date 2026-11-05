@@ -9,9 +9,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
-class AppViewModel<M, S>(
+class AppViewModel<S, M>(
     private val state: SavedStateHandle,
-    seed: AppSeed<M, S>,
+    seed: AppSeed<S, M>,
 ) : ViewModel() {
 
     val appModel = AppModel(
@@ -34,8 +34,8 @@ class AppViewModel<M, S>(
 
         private const val StateKey = "state"
 
-        fun <M, S> factory(
-            seed: AppSeed<M, S>,
+        fun <S, M> factory(
+            seed: AppSeed<S, M>,
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val savedStateHandle = createSavedStateHandle()
