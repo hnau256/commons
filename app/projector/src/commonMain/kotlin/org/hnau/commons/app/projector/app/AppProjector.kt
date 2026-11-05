@@ -14,9 +14,10 @@ import kotlinx.coroutines.CoroutineScope
 import org.hnau.commons.app.model.app.AppModel
 import org.hnau.commons.app.model.theme.ThemeBrightness
 import org.hnau.commons.app.model.theme.color.Hue
-import org.hnau.commons.app.model.theme.palette.Palettes
 import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
+import org.hnau.commons.app.projector.fractal.context.FContext
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.system
 
@@ -27,7 +28,7 @@ class AppProjector<S, M, P>(
     private val fallbackHue: Hue,
     private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
     createProjector: (CoroutineScope, M) -> P,
-    private val content: @Composable (P, PaddingValues, Palettes) -> Unit,
+    private val content: @Composable (P, PaddingValues) -> Unit,
 ) {
 
     private val projector = createProjector(
@@ -56,6 +57,9 @@ class AppProjector<S, M, P>(
         ) {
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+                LocalFContext provides FContext.createBase(
+                    palettes = palettesWithColorScheme.palettes,
+                )
             ) {
                 Box(
                     modifier = Modifier
@@ -65,7 +69,6 @@ class AppProjector<S, M, P>(
                     content(
                         projector,
                         contentPadding,
-                        palettesWithColorScheme.palettes,
                     )
                 }
             }

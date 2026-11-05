@@ -29,15 +29,9 @@ fun createAppProjector(
             dependencies = RootProjector.Dependencies.impl(),
         )
     },
-    content = { rootProjector, contentPadding, palettes ->
-        CompositionLocalProvider(
-            LocalFContext provides FContext.createBase(
-                palettes = palettes,
-            )
-        ) {
-            rootProjector.Content(
-                contentPadding = contentPadding,
-            )
-        }
+    content = { rootProjector, contentPadding ->
+        rootProjector.Content(
+            contentPadding = contentPadding,
+        )
     }
 )
