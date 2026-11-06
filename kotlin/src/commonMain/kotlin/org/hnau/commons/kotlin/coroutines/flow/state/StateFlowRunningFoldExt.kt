@@ -10,20 +10,24 @@ fun <I, O> StateFlow<I>.runningFoldState(
     createInitial: (I) -> O,
     operation: suspend (O, I) -> O,
 ): StateFlow<O> {
-    val result = MutableStateFlow(value to createInitial(value))
+    val initialValue: I = value
+    val onceCache: OnceCache<I, Unit> = OnceCache(initialValue, Unit)
+    val result: MutableStateFlow<O> = MutableStateFlow(createInitial(initialValue))
+
     scope.launch {
-        collect { value ->
-            val current = result.value
-            val (previousValue, acc) = current
-            val new = when (value) {
-                previousValue -> current
-                else -> value to operation(acc, value)
+        collect { newValue: I ->
+            val isValueSameAsInitial: Boolean =
+                onceCache.popValueIfKeyIsSameAsInitial(newValue) != null
+
+            if (isValueSameAsInitial) {
+                return@collect
             }
-            result.value = new
+
+            result.value = operation(result.value, newValue)
         }
     }
-    @Suppress("DEPRECATION")
-    return result.mapStateLite(Pair<*, O>::second)
+
+    return result
 }
 
 fun <T> StateFlow<T>.runningFoldState(
