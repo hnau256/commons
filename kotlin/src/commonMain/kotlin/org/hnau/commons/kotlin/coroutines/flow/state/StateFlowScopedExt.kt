@@ -17,8 +17,8 @@ fun <T> StateFlow<T>.scopedInState(
         Scoped(initialScope, value)
     },
     operation = { previousScopeWithValue, nextValue ->
-        previousScopeWithValue.scope.cancel()
         val nextScope = parentScope.createChild(createChildJob = createChildJob)
+        previousScopeWithValue.scope.cancel()
         Scoped(nextScope, nextValue)
     },
 )
