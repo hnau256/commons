@@ -1,4 +1,4 @@
-package org.hnau.commons.app.test.android
+package org.hnau.commons.app.projector.app
 
 import android.os.Build
 import android.os.Bundle
@@ -10,42 +10,49 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.hnau.commons.app.model.app.AppFilesDirProvider
-import org.hnau.commons.app.model.app.AppViewModel
-import org.hnau.commons.app.model.app.getForAndroid
+import org.hnau.commons.app.model.app.RootModelFactory
+import org.hnau.commons.app.model.goback.GoBackHandler
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
-import org.hnau.commons.app.test.app.createAppProjector
-import org.hnau.commons.app.test.app.createCommonsAppTestAppSeed
-import org.hnau.commons.app.test.app.model.RootModel
 
-class AppActivity : ComponentActivity() {
+abstract class AppActivity<S, M, P> : ComponentActivity() {
 
-    private val viewModel: AppViewModel<RootModel.Skeleton, RootModel> by viewModels {
-        AppViewModel.factory(
-            seed = createCommonsAppTestAppSeed(
-                appFilesDirProvider = AppFilesDirProvider(context = this)
-            ),
-        )
+    abstract fun createRootModelFactory(): RootModelFactory<S, M>
+
+    abstract fun createRootProjectorFactory(): RootProjectorFactory<M, P>
+
+    private val viewModel: RootModelWrapperViewModel<S, M> by viewModels {
+        viewModelFactory {
+            initializer {
+                RootModelWrapperViewModel(
+                    savedStateHandle = createSavedStateHandle(),
+                    rootModelFactory = createRootModelFactory(),
+                )
+            }
+        }
     }
 
-    private val goBackHandler: StateFlow<(() -> Unit)?>
-        get() = viewModel.appModel.model.goBackHandler
+    private val goBackHandler: GoBackHandler
+        get() = viewModel.rootModelWrapper.goBackHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         initOnBackPressedDispatcherCallback()
-        val projector = createAppProjector(
+        val projector = RootProjectorWrapper(
             scope = lifecycleScope,
-            model = viewModel.appModel,
-            systemPalettes = SystemPalettes.getForAndroid(
+            model = viewModel.rootModelWrapper,
+            root = createRootProjectorFactory(),
+            createSystemPalettes = SystemPalettes.getForAndroid(
                 context = this,
-            ),
+            )
+
         )
         setContent {
             val systemBarsPadding = WindowInsets.safeDrawing.asPaddingValues()
@@ -92,4 +99,5 @@ class AppActivity : ComponentActivity() {
 
         private val useOnBackPressedDispatcher: Boolean = Build.VERSION.SDK_INT >= 33
     }
+
 }

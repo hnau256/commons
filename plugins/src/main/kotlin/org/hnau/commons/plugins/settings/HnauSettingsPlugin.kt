@@ -114,6 +114,8 @@ class HnauSettingsPlugin : Plugin<Settings> {
             )
                 .flatten()
                 .map { it.withoutAlias.version }
+                .plus(Versions.Kotlinx.bareVersions)
+                .distinct()
 
             usedVersions.forEach { version ->
                 catalog.version(

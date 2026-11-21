@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    implementation(hnau.kotlinx.io)
     implementation(project(":app:projector"))
     implementation(project(":app:model"))
     implementation(project(":app:test:app"))

@@ -1,4 +1,4 @@
-package org.hnau.commons.app.model.app
+package org.hnau.commons.app.projector.app
 
 import android.content.Context
 import android.os.Build
@@ -16,7 +16,7 @@ import org.hnau.commons.app.model.theme.palette.create
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.lerp
 
-fun SystemPalettes.Companion.getForAndroid(
+internal fun SystemPalettes.Companion.getForAndroid(
     context: Context,
 ): (ThemeBrightness) -> SystemPalettes {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {

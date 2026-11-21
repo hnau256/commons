@@ -13,12 +13,14 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.hnau.commons.app.model.goback.GoBackHandler
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.context.color
+import org.hnau.commons.app.projector.fractal.context.containerOverlay
 import org.hnau.commons.app.projector.uikit.TopBarAction
 import org.hnau.commons.app.projector.uikit.TopBarDefaults
 import org.hnau.commons.app.projector.utils.Icon
@@ -28,7 +30,6 @@ import org.hnau.commons.kotlin.foldNullable
 fun BackButtonHost(
     contentPadding: PaddingValues,
     goBackHandler: GoBackHandler,
-    backButtonBackgroundColor: Color = TopBarDefaults.itemContainerColor,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val goBackState: State<(() -> Unit)?> = goBackHandler.collectAsState()
@@ -66,7 +67,7 @@ fun BackButtonHost(
                     .roundToPx()
             )
         },
-        backgroundColor = backButtonBackgroundColor,
+        backgroundColor = LocalFContext.current.containerOverlay().color,
         onClick = { goBackHandler.value?.invoke() },
     ) {
         Icon(

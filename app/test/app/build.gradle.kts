@@ -16,6 +16,11 @@ kotlin {
                 implementation(project(":gen:pipe:annotations"))
             }
         }
+        desktopMain {
+            dependencies {
+                implementation(hnau.kotlinx.io)
+            }
+        }
     }
 }
 

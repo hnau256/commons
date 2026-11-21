@@ -14,6 +14,11 @@ kotlin {
                 implementation(project(":gen:fold:annotations"))
             }
         }
+        desktopMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${hnau.versions.kotlinxCoroutines.get()}")
+            }
+        }
     }
 }
 

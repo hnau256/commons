@@ -2,27 +2,29 @@ package org.hnau.commons.app.model.app
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
+import org.hnau.commons.app.model.goback.GoBackHandler
 import org.hnau.commons.kotlin.mapper.Mapper
 import org.hnau.commons.kotlin.mapper.toMapper
 
-class AppModel<S, M>(
+class RootModelWrapper<S, M>(
     scope: CoroutineScope,
-    savedState: SavedState,
-    seed: AppSeed<S, M>,
+    savedState: String?,
+    root: RootModelFactory<S, M>,
 ) {
 
     private val modelSkeletonMapper: Mapper<String, S> =
-        json.toMapper(seed.skeletonSerializer)
+        json.toMapper(root.skeletonSerializer)
 
     private val modelSkeleton: S = savedState
-        .savedState
         ?.let(modelSkeletonMapper.direct)
-        ?: seed.createDefaultSkeleton()
+        ?: root.createDefaultSkeleton()
 
-    val model: M = seed.createModel(scope, modelSkeleton)
+    val model: M = root.createRootModel(scope, modelSkeleton)
 
-    val savableState: SavedState
-        get() = modelSkeletonMapper.reverse(modelSkeleton).let(::SavedState)
+    val goBackHandler: GoBackHandler = root.extractGoBackHandler(model)
+
+    val savableState: String
+        get() = modelSkeletonMapper.reverse(modelSkeleton)
 
     companion object {
 

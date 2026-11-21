@@ -143,6 +143,10 @@ internal object Versions {
             aliasedVersionedArtifactId.withGroup(group)
         }
 
+        val bareVersions: List<Version> = listOf(
+            Version.KotlinxCoroutines,
+        )
+
         val unconditioned: List<Versioned<LibraryId>> = listOf(
             ArtifactId("kotlinx-coroutines-core") withVersion Version.KotlinxCoroutines,
             ArtifactId("kotlinx-datetime") withVersion Version.KotlinxDateTime,

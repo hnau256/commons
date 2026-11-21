@@ -11,30 +11,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
-import org.hnau.commons.app.model.app.AppModel
+import org.hnau.commons.app.model.app.RootModelWrapper
 import org.hnau.commons.app.model.theme.ThemeBrightness
-import org.hnau.commons.app.model.theme.color.Hue
-import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
 import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.system
 
-class AppProjector<S, M, P>(
+internal class RootProjectorWrapper<M, P>(
     scope: CoroutineScope,
-    private val model: AppModel<S, M>,
+    private val model: RootModelWrapper<*, M>,
+    private val root: RootProjectorFactory<M, P>,
     private val createSystemPalettes: (ThemeBrightness) -> SystemPalettes,
-    private val fallbackHue: Hue,
-    private val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
-    createProjector: (CoroutineScope, M) -> P,
-    private val content: @Composable (P, PaddingValues) -> Unit,
 ) {
 
-    private val projector = createProjector(
-        scope,
-        model.model,
-    )
+    private val rootProjector: P = root.createRootProjector(scope, model.model)
 
     @Composable
     fun Content(
@@ -44,12 +37,12 @@ class AppProjector<S, M, P>(
         val brightness: ThemeBrightness = ThemeBrightness.system
 
         val palettesWithColorScheme = PalettesWithColorScheme.createCached(
-            hue = fallbackHue,
+            hue = root.fallbackHue,
             systemPalettes = remember(createSystemPalettes, brightness) {
                 createSystemPalettes(brightness)
             },
             brightness = brightness,
-            config = palettesGenerateConfig,
+            config = root.palettesGenerateConfig,
         )
 
         MaterialTheme(
@@ -66,10 +59,15 @@ class AppProjector<S, M, P>(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background),
                 ) {
-                    content(
-                        projector,
-                        contentPadding,
-                    )
+                    BackButtonHost(
+                        contentPadding = contentPadding,
+                        goBackHandler = model.goBackHandler,
+                    ) { contentPadding ->
+                        root.content(
+                            rootProjector,
+                            contentPadding,
+                        )
+                    }
                 }
             }
         }
