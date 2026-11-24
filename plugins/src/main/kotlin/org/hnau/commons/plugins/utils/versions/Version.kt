@@ -53,6 +53,9 @@ enum class Version(
     //https://github.com/arrow-kt/arrow/releases
     Arrow("2.2.3"),
 
+    //https://github.com/ktorio/ktor/releases
+    Ktor("3.5.2"),
+
     //https://github.com/Kotlin/kotlinx.coroutines/releases
     KotlinxCoroutines("1.11.0"),
 

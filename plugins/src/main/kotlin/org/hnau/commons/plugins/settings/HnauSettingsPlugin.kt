@@ -106,6 +106,7 @@ class HnauSettingsPlugin : Plugin<Settings> {
                     addAll(Versions.Kotlinx.forBom)
                     addAll(Versions.Kotlinx.Serialization.forBom)
                     addAll(Versions.Standalone.forBom)
+                    addAll(Versions.Ktor.forBom)
                 }
 
             val usedVersions = listOf(

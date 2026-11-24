@@ -174,6 +174,23 @@ internal object Versions {
             buildArrowDependency("optics-ksp-plugin")
     }
 
+    object Ktor {
+        private val group = GroupId("io.ktor")
+
+        val forBom: List<Aliased<Versioned<LibraryId>>> = listOf(
+            "ktor-io",
+            "ktor-http",
+            "ktor-client-core",
+            "ktor-client-cio",
+            "ktor-client-mock",
+            "ktor-server-core",
+            "ktor-server-cio",
+            "ktor-server-websockets",
+        ).map { artifact ->
+            group withArtifact artifact withVersion Version.Ktor withAlias artifact
+        }
+    }
+
     object ComposeMultiplatform {
 
         private val materialGroupId = GroupId("org.jetbrains.compose.material")
