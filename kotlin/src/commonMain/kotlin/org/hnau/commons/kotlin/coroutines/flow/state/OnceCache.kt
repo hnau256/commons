@@ -2,7 +2,7 @@ package org.hnau.commons.kotlin.coroutines.flow.state
 
 import org.hnau.commons.kotlin.KeyValue
 
-internal class OnceCache<K, V : Any>(
+class OnceCache<K, V : Any>(
     key: K,
     value: V,
 ) {
