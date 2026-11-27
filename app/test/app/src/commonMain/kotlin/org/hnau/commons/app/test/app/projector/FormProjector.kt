@@ -12,7 +12,9 @@ import androidx.compose.material.icons.filled.Schema
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import arrow.optics.Iso
 import kotlinx.coroutines.CoroutineScope
@@ -57,8 +59,10 @@ class FormProjector(
     private val decimal: InputProjector = model
         .decimal
         .toInputProjectorPrototype(
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Decimal,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next,
+            ),
             requestFocusOnStart = true,
         )
         .createInputProjector(
@@ -73,8 +77,10 @@ class FormProjector(
     private val integer: InputProjector = model
         .integer
         .toInputProjectorPrototype(
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Number,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next,
+            ),
         )
         .createInputProjector(
             scope = scope,
@@ -87,8 +93,11 @@ class FormProjector(
     private val text = model
         .text
         .toInputProjectorPrototype(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Text,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+                capitalization = KeyboardCapitalization.Sentences,
+            ),
         )
         .createInputProjector(
             scope = scope,

@@ -3,6 +3,9 @@ package org.hnau.commons.app.projector.fractal.input.type
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.KeyboardActionHandler
+import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -17,9 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import org.hnau.commons.app.model.input.InputStateHolder
 import org.hnau.commons.app.model.input.InputType
 import org.hnau.commons.app.projector.fractal.SIcon
@@ -33,10 +33,13 @@ import kotlin.jvm.JvmName
 
 @JvmName("toEditInputProjectorPrototype")
 fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
-    imeAction: ImeAction = ImeAction.Default,
-    keyboardType: KeyboardType,
+    keyboardOptions: KeyboardOptions,
+    onKeyboardAction: KeyboardActionHandler? = null,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
+    inputTransformation: InputTransformation? = null,
     requestFocusOnStart: Boolean = false,
     showClearButton: Boolean = true,
+    outputTransformation: OutputTransformation? = null,
 ): InputProjectorPrototype<String, E, InputType.Edit> =
     toInputProjectorPrototype { _, state, updateState ->
         InputContentProjector.WithoutTitle { itemDrawer ->
@@ -72,12 +75,11 @@ fun <E> InputStateHolder<String, E, InputType.Edit>.toInputProjectorPrototype(
                         },
                     value = value,
                     onValueChanged = updateOrNull,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = imeAction,
-                        keyboardType = keyboardType,
-                    ),
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    keyboardOptions = keyboardOptions,
+                    onKeyboardAction = onKeyboardAction,
+                    lineLimits = lineLimits,
+                    inputTransformation = inputTransformation,
+                    outputTransformation = outputTransformation,
                 )
             }
         }
