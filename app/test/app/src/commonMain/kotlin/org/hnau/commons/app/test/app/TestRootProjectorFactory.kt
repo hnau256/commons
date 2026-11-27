@@ -8,11 +8,13 @@ import org.hnau.commons.app.test.app.projector.impl
 
 val TestRootProjectorFactory: RootProjectorFactory<RootModel, RootProjector> = RootProjectorFactory(
     fallbackHue = Hue(300),
-    createRootProjector = { scope, model ->
+    createRootProjector = { scope, model, appUIContext ->
         RootProjector(
             scope = scope,
             model = model,
-            dependencies = RootProjector.Dependencies.impl(),
+            dependencies = RootProjector.Dependencies.impl(
+                bubblesShower = appUIContext.bubblesShower,
+            ),
         )
     },
     content = { rootProjector, contentPadding ->

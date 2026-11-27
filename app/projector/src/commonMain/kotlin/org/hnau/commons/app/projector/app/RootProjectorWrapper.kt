@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -17,6 +18,8 @@ import org.hnau.commons.app.model.theme.palette.SystemPalettes
 import org.hnau.commons.app.projector.fractal.context.FContext
 import org.hnau.commons.app.projector.fractal.context.LocalFContext
 import org.hnau.commons.app.projector.uikit.backbutton.BackButtonHost
+import org.hnau.commons.app.projector.uikit.bubble.Content
+import org.hnau.commons.app.projector.uikit.bubble.SharedBubblesHolder
 import org.hnau.commons.app.projector.utils.theme.PalettesWithColorScheme
 import org.hnau.commons.app.projector.utils.theme.system
 
@@ -27,7 +30,15 @@ internal class RootProjectorWrapper<M, P>(
     private val createSystemPalettes: (ThemeBrightness) -> SystemPalettes,
 ) {
 
-    private val rootProjector: P = root.createRootProjector(scope, model.model)
+    private val bubblesHolder: SharedBubblesHolder = SharedBubblesHolder(scope)
+
+    private val rootProjector: P = root.createRootProjector(
+        scope,
+        model.model,
+        AppUIContext(
+            bubblesShower = bubblesHolder,
+        ),
+    )
 
     @Composable
     fun Content(
@@ -68,6 +79,9 @@ internal class RootProjectorWrapper<M, P>(
                             contentPadding,
                         )
                     }
+                    bubblesHolder.Content(
+                        modifier = Modifier.padding(contentPadding),
+                    )
                 }
             }
         }

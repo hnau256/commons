@@ -20,7 +20,10 @@ class RootStackProjector(
 ) {
 
     @Pipe
-    interface Dependencies
+    interface Dependencies {
+
+        fun action(): ActionProjector.Dependencies
+    }
 
     @SealUp(
         variants = [
@@ -57,6 +60,7 @@ class RootStackProjector(
                         Element.action(
                             scope = scope,
                             model = actionModel,
+                            dependencies = dependencies.action(),
                         )
                     },
                     ifForm = { formModel ->

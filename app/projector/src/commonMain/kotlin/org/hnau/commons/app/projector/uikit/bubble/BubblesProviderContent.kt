@@ -16,6 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import org.hnau.commons.app.projector.fractal.SPanel
+import org.hnau.commons.app.projector.fractal.SText
+import org.hnau.commons.app.projector.fractal.context.LocalFContext
+import org.hnau.commons.app.projector.fractal.distance.LocalDistance
+import org.hnau.commons.app.projector.fractal.size.units
 import org.hnau.commons.app.projector.uikit.utils.Dimens
 
 @Composable
@@ -65,9 +70,9 @@ fun BubblesProvider.Content(
         },
     ) { localBubbleOrNull ->
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimens.separation),
+                .padding(LocalDistance.current.units.paddingValues.vertical.large),
             contentAlignment = Alignment.TopCenter,
         ) {
             localBubbleOrNull?.Content()
@@ -76,4 +81,8 @@ fun BubblesProvider.Content(
 }
 
 @Composable
-private fun Bubble.Content(): Nothing = TODO()
+private fun Bubble.Content() {
+    SPanel {
+        SText(text)
+    }
+}

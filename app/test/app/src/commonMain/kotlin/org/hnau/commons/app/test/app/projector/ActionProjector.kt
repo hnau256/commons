@@ -29,11 +29,14 @@ import org.hnau.commons.app.projector.fractal.table.STable
 import org.hnau.commons.app.projector.fractal.table.STableHeader
 import org.hnau.commons.app.projector.fractal.table.Subtable
 import org.hnau.commons.app.projector.fractal.utils.Mood
+import org.hnau.commons.app.projector.uikit.bubble.Bubble
+import org.hnau.commons.app.projector.uikit.bubble.BubblesShower
 import org.hnau.commons.app.projector.uikit.line.weight
 import org.hnau.commons.app.projector.utils.Drawable
 import org.hnau.commons.app.projector.utils.Orientation
 import org.hnau.commons.app.projector.utils.TitleOrIcon
 import org.hnau.commons.app.test.app.model.ActionModel
+import org.hnau.commons.gen.pipe.annotations.Pipe
 import org.hnau.commons.kotlin.KeyValue
 import org.hnau.commons.kotlin.coroutines.ActionOrElse
 import org.hnau.commons.kotlin.coroutines.actionOrCancelIfExecuting
@@ -44,9 +47,23 @@ import kotlin.time.Duration.Companion.seconds
 class ActionProjector(
     scope: CoroutineScope,
     private val model: ActionModel,
+    private val dependencies: Dependencies,
 ) {
 
-    private val fakeAction = actionOrCancelIfExecuting(scope) { delay(3.seconds) }
+    @Pipe
+    interface Dependencies {
+
+        val bubblesShower: BubblesShower
+    }
+
+    private val fakeAction = actionOrCancelIfExecuting(scope) {
+        delay(1.seconds)
+        dependencies.bubblesShower.showBubble(
+            Bubble(
+                text = "Fake action finished"
+            )
+        )
+    }
 
     private val configItems: StateFlow<List<KeyValue<String, String>>> = model
         .config

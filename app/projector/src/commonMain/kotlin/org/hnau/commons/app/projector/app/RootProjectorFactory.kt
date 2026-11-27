@@ -9,6 +9,6 @@ import org.hnau.commons.app.model.theme.palette.PalettesGenerateConfig
 data class RootProjectorFactory<M, P>(
     val fallbackHue: Hue,
     val palettesGenerateConfig: PalettesGenerateConfig = PalettesGenerateConfig.default,
-    val createRootProjector: (CoroutineScope, M) -> P,
+    val createRootProjector: (CoroutineScope, M, AppUIContext) -> P,
     val content: @Composable (P, PaddingValues) -> Unit,
 )
