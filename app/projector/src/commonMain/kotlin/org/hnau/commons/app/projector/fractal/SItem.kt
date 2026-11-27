@@ -24,11 +24,9 @@ import org.hnau.commons.app.projector.utils.Side
 import org.hnau.commons.app.projector.utils.bottom
 import org.hnau.commons.app.projector.utils.copy
 import org.hnau.commons.app.projector.utils.fold
-import org.hnau.commons.app.projector.utils.option
 import org.hnau.commons.app.projector.utils.plus
 import org.hnau.commons.app.projector.utils.top
 import org.hnau.commons.kotlin.foldNullable
-import org.hnau.commons.kotlin.ifTrue
 
 @Composable
 fun SItem(

@@ -1,8 +1,8 @@
 package org.hnau.commons.app.projector.uikit.bubble
 
+import kotlin.jvm.JvmInline
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlin.jvm.JvmInline
 
 @JvmInline
 value class BubbleDuration(

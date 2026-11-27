@@ -2,13 +2,8 @@ package org.hnau.commons.app.projector.utils
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.SnapshotStateObserver
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 /*
 suspend fun <T> State<T>.observe(
