@@ -244,24 +244,26 @@ private class SLazyTableScopeImpl(
     private val reverseOrdering: Boolean,
 ) : SLazyTableScope {
 
-    private sealed interface Element {
+    private data class Element(
+        val count: Int,
+        val key: ((index: Int) -> Any)?,
+        val contentType: (index: Int) -> Any?,
+        val kind: Kind,
+    ) {
 
-        data class Cells(
-            val count: Int,
-            val key: ((index: Int) -> Any)?,
-            val contentType: (index: Int) -> Any?,
-            val cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit)
-        ) : Element
+        sealed interface Kind {
 
-        data class Items(
-            val count: Int,
-            val key: ((index: Int) -> Any)?,
-            val contentType: (index: Int) -> Any?,
-            val cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
-        ) : Element
+            data class Cells(
+                val cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit),
+            ) : Kind
+
+            data class Items(
+                val cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
+            ) : Kind
+        }
     }
 
-    private val elements: MutableList<Element> = mutableListOf<Element>()
+    private val elements: MutableList<Element> = mutableListOf()
 
     override fun cells(
         count: Int,
@@ -270,11 +272,13 @@ private class SLazyTableScopeImpl(
         cellContent: @Composable SLazyCellScope.(index: Int) -> Unit
     ) {
         elements.add(
-            Element.Cells(
+            Element(
                 count = count,
                 key = key,
                 contentType = contentType,
-                cellContent = cellContent,
+                kind = Element.Kind.Cells(
+                    cellContent = cellContent,
+                ),
             )
         )
     }
@@ -286,96 +290,95 @@ private class SLazyTableScopeImpl(
         cellContent: @Composable LazyItemScope.(index: Int) -> Unit,
     ) {
         elements.add(
-            Element.Items(
+            Element(
                 count = count,
                 key = key,
                 contentType = contentType,
-                cellContent = cellContent,
+                kind = Element.Kind.Items(
+                    cellContent = cellContent,
+                ),
             )
         )
     }
 
     fun apply() {
-        elements.forEachIndexed { elementIndex, element ->
-            when (element) {
-                is Element.Items -> {
-                    lazyListScope.items(
-                        count = element.count,
-                        contentType = element.contentType,
-                        key = element.key,
-                    ) { cellIndex ->
-                        CompositionLocalProvider(
-                            LocalContentPadding provides cellContentPadding,
-                        ) {
-                            element.cellContent(this, cellIndex)
-                        }
+        val nonEmptyElements = elements.filter { element -> element.count > 0 }
+        nonEmptyElements.forEachIndexed { elementIndex, element ->
+            val isFirstCells = nonEmptyElements.getOrNull(elementIndex - 1)?.kind !is Element.Kind.Cells
+            val isLastCells = nonEmptyElements.getOrNull(elementIndex + 1)?.kind !is Element.Kind.Cells
+            lazyListScope.items(
+                count = element.count,
+                contentType = element.contentType,
+                key = element.key,
+            ) { cellIndex ->
+                when (val kind = element.kind) {
+                    is Element.Kind.Items -> CompositionLocalProvider(
+                        LocalContentPadding provides cellContentPadding,
+                    ) {
+                        kind.cellContent(this, cellIndex)
                     }
+
+                    is Element.Kind.Cells -> Cell(
+                        cellContent = kind.cellContent,
+                        cellIndex = cellIndex,
+                        isFirstCell = isFirstCells && cellIndex == 0,
+                        isLastCell = isLastCells && cellIndex == element.count - 1,
+                    )
                 }
+            }
+        }
+    }
 
-                is Element.Cells -> {
-                    val isFirstCells = when (elements.getOrNull(elementIndex - 1)) {
-                        is Element.Cells -> false
-                        null, is Element.Items -> true
-                    }
-                    val isLastCells = when (elements.getOrNull(elementIndex + 1)) {
-                        is Element.Cells -> false
-                        null, is Element.Items -> true
-                    }
-                    lazyListScope.items(
-                        count = element.count,
-                        contentType = element.contentType,
-                        key = element.key,
-                    ) { cellIndex ->
-                        val isFirstCell = isFirstCells && cellIndex == 0
-                        val isLastCell = isLastCells && cellIndex == element.count - 1
+    @Composable
+    private fun LazyItemScope.Cell(
+        cellContent: @Composable (SLazyCellScope.(index: Int) -> Unit),
+        cellIndex: Int,
+        isFirstCell: Boolean,
+        isLastCell: Boolean,
+    ) {
+        val cellScope = SLazyCellScopeImpl(
+            orientation = orientation,
+            lazyItemScope = this,
+        )
 
-                        val cellScope = SLazyCellScopeImpl(
-                            orientation = orientation,
-                            lazyItemScope = this,
-                        )
+        val position = LinePosition(
+            isFirst = isFirstCell,
+            isLast = isLastCell,
+        ).let { position ->
+            reverseOrdering.foldBoolean(
+                ifFalse = { position },
+                ifTrue = { position.reversed },
+            )
+        }
 
-                        val position = LinePosition(
-                            isFirst = isFirstCell,
-                            isLast = isLastCell,
-                        ).let { position ->
-                            reverseOrdering.foldBoolean(
-                                ifFalse = { position },
-                                ifTrue = { position.reversed },
-                            )
-                        }
+        val cornersProvider = corners.closeAt(
+            orientation = orientation,
+            position = position,
+        )
 
-                        val cornersProvider = corners.closeAt(
-                            orientation = orientation,
-                            position = position,
-                        )
-
-                        CompositionLocalProvider(
-                            LocalShapeCorners provides cornersProvider,
-                            LocalContentPadding provides cellContentPadding,
-                        ) {
-                            val separatorPadding: PaddingValues? = generateCellPaddings(
-                                orientation = orientation,
-                                separation = LocalDistance.current.units.borderWidth,
-                                reverseOrdering = reverseOrdering,
-                                isFirstCell = isFirstCell,
-                            )
-                            Box(
-                                modifier = orientation
-                                    .fold(
-                                        ifHorizontal = { Modifier.fillMaxHeight() },
-                                        ifVertical = { Modifier.fillMaxWidth() },
-                                    )
-                                    .option(
-                                        separatorPadding
-                                            ?.let(Modifier::padding)
-                                    ),
-                                propagateMinConstraints = true,
-                            ) {
-                                element.cellContent(cellScope, cellIndex)
-                            }
-                        }
-                    }
-                }
+        CompositionLocalProvider(
+            LocalShapeCorners provides cornersProvider,
+            LocalContentPadding provides cellContentPadding,
+        ) {
+            val separatorPadding: PaddingValues? = generateCellPaddings(
+                orientation = orientation,
+                separation = LocalDistance.current.units.borderWidth,
+                reverseOrdering = reverseOrdering,
+                isFirstCell = isFirstCell,
+            )
+            Box(
+                modifier = orientation
+                    .fold(
+                        ifHorizontal = { Modifier.fillMaxHeight() },
+                        ifVertical = { Modifier.fillMaxWidth() },
+                    )
+                    .option(
+                        separatorPadding
+                            ?.let(Modifier::padding)
+                    ),
+                propagateMinConstraints = true,
+            ) {
+                cellContent(cellScope, cellIndex)
             }
         }
     }
