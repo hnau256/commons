@@ -9,7 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":kotlin"))
-                implementation(project(":app:model"))
+                api(project(":app:model"))
                 implementation(project(":gen:enumvalues:annotations"))
                 implementation(project(":gen:fold:annotations"))
             }
